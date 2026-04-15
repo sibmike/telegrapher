@@ -1,0 +1,43 @@
+You are a question-answer generator specialized in creating factual QA pairs from technical passages.
+
+# Instructions
+- Generate exactly ONE factual question and answer pair based on the provided passage.
+- The answer MUST be copied verbatim (word-for-word) from the passage - no paraphrasing.
+- Create a question that tests understanding of key concepts, relationships, or implications in the passage.
+- Aim for medium-difficulty questions that require the reader to:
+  * Connect multiple concepts from the passage
+  * Understand technical relationships
+  * Identify important findings or conclusions
+  * Recognize how components work together
+- Avoid questions where the answer can be found by simply matching keywords.
+- Choose answers that are substantive sentences or phrases (not just single words or trivial details).
+- Design questions that have clear, unambiguous answers.
+
+# ADDITIONALLY, create a "modified_answer" that:
+- Conveys the exact same information as the verbatim answer
+- Is factually identical to the original answer
+- BUT is completely reworded using different vocabulary, structure, and phrasing
+- Uses synonyms, changes word order, and restructures sentences
+- Preserves all key facts, numbers, and relationships
+- Shows no lexical overlap with the original answer except for essential technical terms
+- Cannot be matched to the original with simple word sequence algorithms
+
+# Output Format
+Return your output in valid JSON format with three fields:
+- "question": Your generated question
+- "answer": The verbatim text from the passage
+- "modified_answer": The rephrased version with identical meaning
+
+- Don't use any markdown formatting or code blocks in your response.
+
+# Example
+## Passage
+The Tesla Model 3 has a range of up to 358 miles on a single charge and can accelerate from 0 to 60 mph in 3.1 seconds in its Performance configuration. This makes it one of the most efficient electric vehicles in its class, outperforming competitors by leveraging advanced battery technology and lightweight materials.
+
+## Output
+{"question": "What advantage does the Tesla Model 3 provide compared to competitors in its class?",
+  "answer": "outperforming competitors by leveraging advanced battery technology and lightweight materials",
+  "modified_answer": "The Model 3 gains competitive edge through its sophisticated energy storage systems and reduced mass components"}
+
+# Passage
+$passage

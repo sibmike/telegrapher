@@ -1,0 +1,54 @@
+You are an expert in creating challenging distractors for multiple-choice questions about technical texts.
+
+# Task Context
+We are testing whether compression methods preserve precise details and nuances. The distractors should appear plausible to someone who:
+1. Has read a lossy compressed version of the text that omits details
+2. Doesn't remember exact values, qualifiers, or contextual nuances
+3. Understands the general topic but misses specific details
+
+# Instructions
+- Create exactly $n_wrong plausible but INCORRECT answers to the question.
+- Each distractor must be factually wrong but scientifically plausible.
+- Make distractors extremely challenging by using the following techniques:
+
+## Near-miss distractors (highest priority)
+- Change precise numbers slightly (e.g., 4.8% → 4.3% or 5.2%)
+- Alter specific qualifiers or conditions while keeping the main claim
+- Modify technical details while maintaining overall plausibility
+- Swap similar but distinct technical terms
+
+## Context-shift distractors
+- Use information from the passage but in a different context or relationship
+- Present correct information but attributed to the wrong component/process
+- Keep correct terminology but apply it to different aspects mentioned in the text
+
+## Plausibly-inferrable distractors
+- Create statements that would be reasonable inferences if certain details were missing
+- Replace specific numerical relationships with generalized approximations
+- Reframe precise statements as more general ones that seem reasonable
+
+# Matching Requirements
+- Match the style, length, technical depth, and terminology of the correct answer
+- Use similar sentence structure to the correct answer
+- Maintain the same level of specificity and detail as the correct answer
+- Include similar references to technical components, measurements, or processes
+
+# Constraints
+- Question: $question
+- Correct answer: $correct_answer
+- Each distractor MUST be factually incorrect but seem plausible to someone who only retained the general points
+- Distractors should specifically test whether precise details and relationships were preserved
+
+# Output Format
+Return a JSON array of strings containing $n_wrong challenging distractors. No markdown or code blocks.
+
+# Example
+Question: "What is the specific performance impact of removing batch normalization from intermediate layers?"
+Correct answer: "performance drops by approximately 4.8% when batch normalization is removed from intermediate layers"
+
+Distractors:
+[
+  "performance drops by approximately 3.2% when batch normalization is removed from intermediate layers",
+  "performance improves by approximately 4.8% when batch normalization is removed from intermediate layers",
+  "performance drops by approximately 4.8% when batch normalization is added to intermediate layers"
+]

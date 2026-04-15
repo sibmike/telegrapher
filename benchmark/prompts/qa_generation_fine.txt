@@ -1,0 +1,70 @@
+You are an expert QA generator creating adversarial questions that differentiate lossless from lossy text compression.
+
+# Task Context
+Lossless compression (like Telegraph English) preserves ALL semantic information. Lossy compression (like summarization) preserves main points but sacrifices details.
+
+# Instructions
+- Generate ONE factual question and answer pair from the passage.
+- The answer MUST be copied verbatim (word-for-word) from the passage.
+- CRITICAL: Focus on information that is BOTH:
+  1. Non-negligible to the meaning of the text
+  2. Likely to be dropped by lossy compression algorithms
+
+# Target Information Types (in priority order)
+1. Precise qualifiers and modifiers that alter meaning significantly:
+   * Exact percentages or numerical ranges (e.g., "5-7%" not just "small percentage")
+   * The CONTEXTUAL MEANING of numbers - not just the values themselves, but what they imply,
+     their significance, how they compare to baselines, or what conditions they apply under
+   * Numerical relationships (ratios, proportional changes, relative improvements)
+   * Nuanced interpretations of statistical results (e.g., "statistically significant at p<0.01")
+   * Specific limitations of measurements (e.g., "with a margin of error of ±2.5%")
+   * Exact timelines or durations with their implications
+
+2. Secondary but semantically important details:
+   * Supporting evidence with its precise implications
+   * Technical specifications that clarify methodology and affect interpretation
+   * Attributions to specific researchers with their notable findings
+   * Parenthetical clarifications that limit the scope of claims
+   * Caveats, exceptions, or boundary conditions that define when claims apply
+
+3. Contextual precision:
+   * Specific examples that illustrate how a concept works in practice
+   * Implementation parameters and their significance
+   * Relationships between variables or concepts that may appear minor but affect outcomes
+   * Details from middle paragraphs that connect major points
+
+4. Information density points:
+   * Parts of complex, multi-component sentences that contain subtle distinctions
+   * Qualifying phrases that modify the strength or applicability of claims
+   * Nested dependent clauses that establish important logical relationships
+   * Conditional statements (if X, then Y, under conditions Z)
+
+- AVOID questions about:
+  * Main thesis statements or central arguments
+  * Section headers or key definitions
+  * Information mentioned repeatedly
+  * Abstract concepts without specific details
+
+# ADDITIONALLY, create a "modified_answer" that:
+- Contains the exact same factual information and nuanced meaning
+- Is rephrased with different vocabulary and structure
+- Preserves all details, numbers, and contextual significance
+- Has minimal lexical overlap except for unavoidable technical terms
+
+# Output Format
+Return valid JSON with:
+- "question": Your generated question
+- "answer": Verbatim text from passage
+- "modified_answer": Rephrased version with identical meaning
+
+# Example
+## Passage
+The BERT-Large model achieved a score of 80.5% on the GLUE benchmark when fine-tuned with a learning rate of 2e-5 for 3 epochs, outperforming previous models by an average of 7.2%. Researchers from Stanford also noted that performance drops by approximately 4.8% when batch normalization is removed from intermediate layers, suggesting this component is critical for maintaining model stability across diverse tasks.
+
+## Output
+{"question": "What is the specific performance impact of removing batch normalization from intermediate layers, and what does this suggest about its role?",
+  "answer": "performance drops by approximately 4.8% when batch normalization is removed from intermediate layers, suggesting this component is critical for maintaining model stability across diverse tasks",
+  "modified_answer": "eliminating batch normalization from the middle layers causes roughly a 4.8% decrease in effectiveness, indicating that this architectural element plays an essential role in preserving consistent performance across various problem types"}
+
+# Passage
+$passage

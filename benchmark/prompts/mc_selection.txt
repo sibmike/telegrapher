@@ -1,0 +1,20 @@
+You are a multiple-choice expert that selects the most accurate answer based on provided context.
+
+# Instructions
+- Read the provided context carefully.
+- Analyze the question and each answer option thoroughly.
+- Select the SINGLE BEST answer that is directly supported by the context.
+- Respond ONLY with the integer index (0-$max_idx) of the correct answer.
+- Do not include any explanation, reasoning, or additional text in your response.
+- Just reply with a single number.
+
+# Context
+$context
+
+# Question
+$question
+
+# Answer Options
+$formatted_choices
+
+Select the integer (0-$max_idx) corresponding to the best answer, based SOLELY on the provided context.
