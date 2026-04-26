@@ -47,7 +47,7 @@ What makes TE architecturally distinctive is a property that emerges from the gr
 Our contributions:
 
 1. A formal grammar specification for structured prompt compression (Section 3), released under CC-BY-SA 4.0.
-2. A unified compression-and-chunking framework where semantic compression, retrieval-ready indexing, and dynamic context management emerge from a single rewriting pass (Sections 3.8, 6.5).
+2. A unified compression-and-chunking framework where semantic compression, retrieval-ready indexing, and dynamic context management emerge from a single rewriting pass (Sections 3.6, 6.5).
 3. A large-scale empirical comparison against LLMLingua-2 on 4,081 key-fact and 801 fine-detail QA pairs across five models (Section 5).
 4. Evidence — clean, consistent, and largest where it matters most for production deployment — that semantic rewriting beats token deletion on smaller models and on detail-intensive tasks (Section 6).
 5. A reference implementation with CLI tools for compression, benchmarking, and error analysis (Section 7).
@@ -101,23 +101,19 @@ TE defines a fixed vocabulary of relational and logical operators. The full set 
 
 Each symbol has a single, non-interchangeable meaning. The grammar caps symbol density at three consecutive symbols per line---a readability constraint learned from early iterations where dense symbol chains became opaque even to GPT-4.
 
-### 3.3 Tagging System
+### 3.3 Tags and Domain Conventions
 
-Structured tags handle temporal state (`PAST:`, `NOW:`, `FUTURE:`), modality (`LIKELY:`, `POSSIBLE:`, `CONF=0.87`), roles (`AGENT:`, `PATIENT:`, `INSTRUMENT:`), scope (`CTX:` for shared context), and structured content types (`DEF:` for definitions, `Q:` / `A:` for questions and answers). These tags serve double duty: they compress verbose natural-language framing into single tokens, and they provide the structural handles that enable downstream selective retrieval and context management.
+Beyond the symbol vocabulary, the grammar provides a tagging system and a set of domain-specific formatting rules. Tags handle the framing that natural language carries through verbose syntactic constructions: temporal state (`PAST:`, `NOW:`, `FUTURE:`), modality (`LIKELY:`, `POSSIBLE:`, `CONF=0.87`), roles (`AGENT:`, `PATIENT:`, `INSTRUMENT:`), scope (`CTX:` for shared context), and structured content types (`DEF:` for definitions, `Q:` / `A:` for questions and answers). Each tag does double duty — it collapses verbose natural-language framing into a single token, and it provides the structural handle that downstream systems use for selective retrieval and context management.
 
-### 3.4 Domain-Specific Conventions
+Domain conventions standardise the surface forms that vary most across writers: quantities (`VAR=VALUEUNIT`, SI case rules), citations (`[AUTH:YEAR]`, `DOI:`, `ARXIV:`), financial data (`USD10.5 M`, `Y/Y+5%`, `+2.5PT` for percentage points), and URLs (`URL:https://...`). The motivation here is not aesthetic; ambiguity in any of these categories is a routine source of factual error in compressed text, and locking them down at the grammar level removes a class of failure modes the compressor would otherwise need to handle case by case.
 
-The grammar standardises formatting for quantities (`VAR=VALUEUNIT`, SI case rules), citations (`[AUTH:YEAR]`, `DOI:`, `ARXIV:`), financial data (`USD10.5 M`, `Y/Y+5%`, `+2.5PT` for percentage points), and URLs (`URL:https://...`).
+### 3.4 Compressor Self-Verification
 
-### 3.5 Quality Gate
+Two mechanisms in the specification keep the compressor honest within a single LLM call: a quality gate and a prescribed distillation sequence. The quality gate is a 12-point checklist covering formatting consistency, symbol precision, abbreviation policy, number formatting, information preservation, and citation integrity. It is embedded directly in the compression prompt, so the compressor model self-verifies output before returning it. Failures at the gate are rare in practice once the prompt has been calibrated, but the gate's value is structural — it makes the failure modes legible when they do occur.
 
-Every TE output must pass a 12-point verification checklist covering formatting consistency, symbol precision, abbreviation policy, number formatting, information preservation, and citation integrity. The checklist is embedded directly in the compression prompt, so the compressor model self-verifies before returning output.
+The distillation sequence prescribes a six-pass reasoning order: (1) concept identification, (2) claim extraction, (3) relation mapping, (4) redundancy elimination, (5) numerical verification, and (6) citation cross-checking. This is a chain-of-thought scaffold inside a single inference, not a multi-call pipeline. The ordering matters: numerical verification before citation cross-checking, because citations sometimes attach to numerical claims that must be confirmed first; redundancy elimination after relation mapping, because two facts that look redundant often differ in their relational connectives.
 
-### 3.6 Information Distillation Process
-
-The specification prescribes a six-pass distillation: (1) concept identification, (2) claim extraction, (3) relation mapping, (4) redundancy elimination, (5) numerical verification, and (6) citation cross-checking. This is a prescribed reasoning sequence for the compressor model, not a multi-call pipeline---all six passes happen within a single LLM inference.
-
-### 3.7 Compression Example
+### 3.5 Compression Example
 
 A single sentence, expanded and compressed:
 
@@ -131,7 +127,7 @@ MACHINE-LEARNING→MEDICAL-DIAGNOSTICS: EARLY-DETECTION+27.5% ∧ FALSE-POSITIVE
 
 Compression ratio: 4.9x. The causal relationship, both quantitative claims, and the citation are all preserved. The `→` operator makes the causal direction explicit---something the original expressed with the phrase "application of... resulted in," which is six tokens doing the work of one symbol.
 
-### 3.8 Compression as Semantic Chunking
+### 3.6 Compression as Semantic Chunking
 
 Here is the property we consider most architecturally significant: compression and semantic chunking are not separate stages. They are the same operation.
 
@@ -173,6 +169,8 @@ The context window reflects the current state of knowledge, not a chronological 
 ### 4.1 Dataset
 
 LongBench-v2 (Bai et al., 2024) supplies the source corpus: 503 long-context documents. We filter to three categories suitable for factual QA---Single-Document QA, Multi-Document QA, and Long-Dialogue History Understanding---which leaves 339 documents. NLTK sentence tokenisation chunks each one into segments of at most 1,000 words, producing 4,081 chunk-level evaluation units.
+
+LongBench-v2 was chosen for two reasons. The first is genre coverage: the three categories we use span technical reports, multi-source narrative synthesis, and conversational history — three regimes where compression methods fail differently. The second is question quality: LongBench-v2 questions are vetted for verifiable, single-answer factuality, which lets us evaluate compression preservation rather than the model's general world knowledge. The 1,000-word chunk cap matches the practical input size for which prompt compression actually saves money — short prompts are not worth compressing.
 
 ### 4.2 Compression
 
@@ -369,7 +367,7 @@ Each stage is accessible as both a CLI command (`python -m cli.compress`, `pytho
 
 **QA generation bias.** Both the QA pairs and the evaluation are produced by OpenAI models, creating a risk of systematic bias. An ideal evaluation would include human-written questions or a diverse set of QA generators.
 
-**Dynamic context management is not yet benchmarked.** The semantic chunking and dynamic state management capabilities described in Sections 3.8 and 6.5 are architectural arguments supported by the structure of the TE output, not empirical results from a multi-turn evaluation. We have demonstrated that the format supports these operations; we have not yet measured their effect on accuracy or efficiency over extended sessions. This is the most important gap in the current evaluation and the most pressing direction for future work.
+**Dynamic context management is not yet benchmarked.** The semantic chunking and dynamic state management capabilities described in Sections 3.6 and 6.5 are architectural arguments supported by the structure of the TE output, not empirical results from a multi-turn evaluation. We have demonstrated that the format supports these operations; we have not yet measured their effect on accuracy or efficiency over extended sessions. This is the most important gap in the current evaluation and the most pressing direction for future work.
 
 **Comparison scope.** We benchmark against LLMLingua-2 only — currently the strongest published baseline at the compression ratios we operate in. A broader comparison against AutoCompressors, RECOMP, and more recent methods would strengthen the claims.
 

@@ -41,7 +41,7 @@ arXiv renders the abstract field as plain text — strip Markdown emphasis befor
 Build verification (already passed):
 
 - [x] `paper_telegraph_english.pdf` builds via `bash paper_telegraph_english/build.sh`
-- [x] PDF has 15 pages, ~170 KB, valid metadata (Title + Author present in `pdfinfo`)
+- [x] PDF has 16 pages, ~172 KB, valid metadata (Title + Author present in `pdfinfo`)
 - [x] Title page renders once (no duplicate title/author block)
 - [x] Authors render as: "Mikhail L. Arbuzov  Alexey A. Shvets  Sisong Bei"
 - [x] No draft disclaimers anywhere in the PDF
