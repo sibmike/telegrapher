@@ -44,3 +44,11 @@ benchmark_*/
 reviews/
 error_files/
 *.log
+
+# LaTeX build intermediates (arxiv/)
+*.aux
+*.toc
+*.out
+*.fdb_latexmk
+*.fls
+*.synctex.gz
