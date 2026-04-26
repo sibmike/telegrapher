@@ -41,7 +41,7 @@ arXiv renders the abstract field as plain text — strip Markdown emphasis befor
 Build verification (already passed):
 
 - [x] `paper_telegraph_english.pdf` builds via `bash paper_telegraph_english/build.sh`
-- [x] PDF has 15 pages, ~169 KB, valid metadata (Title + Author present in `pdfinfo`)
+- [x] PDF has 15 pages, ~170 KB, valid metadata (Title + Author present in `pdfinfo`)
 - [x] Title page renders once (no duplicate title/author block)
 - [x] Authors render as: "Mikhail L. Arbuzov  Alexey A. Shvets  Sisong Bei"
 - [x] No draft disclaimers anywhere in the PDF
@@ -113,9 +113,7 @@ $zip.Dispose()
 
 On Linux/macOS the regular `cd arxiv/paper_telegraph_english && zip -r paper_telegraph_english.zip paper_telegraph_english.tex figures/` works.
 
-## Open editorial flags (raised post-build, not blocking submission)
+## Editorial notes
 
-Spotted while preparing the submission. Not arXiv-rejection issues, but worth a look before submitting:
-
-1. **Five vs. three vs. two models.** The abstract claims "five OpenAI models and two difficulty levels," and §4.5 lists five models in a table. But Table 1 (key_facts) has results for only 3 models, and Table 2 (fine_facts) has results for only 2. Probably intentional (different suites use different model subsets) — confirm or add a note.
-2. **Fine-tuned GPT-4o is unused.** §4.5 lists "Fine-tuned GPT-4o" as one of the five models, but it doesn't appear in any results table. Either drop it from §4.5 or add a row showing its results.
+- §4.5 now includes a clarifying paragraph documenting which model subset runs which evaluation suite, and notes that the fine-tuned GPT-4o variant is used as a sanity check rather than a separate accuracy benchmark. This addresses the earlier "five-vs-three-vs-two models" inconsistency between abstract, §4.5, and the results tables.
+- The paper has been through a style-guide pass (`telegrapher_paper_style_guide.md`) and the final-pass checklist (`telegrapher_final_pass_checklist.md`) for human-texture interventions before this build. Future revisions should re-run both passes after substantive content edits.

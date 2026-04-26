@@ -51,10 +51,10 @@ What makes TE architecturally distinctive is a property that emerges from the gr
 
 Our contributions:
 
-1. A formal grammar specification for structured prompt compression (Section 3), published under CC-BY-SA 4.0.
+1. A formal grammar specification for structured prompt compression (Section 3), released under CC-BY-SA 4.0.
 2. A unified compression-and-chunking framework where semantic compression, retrieval-ready indexing, and dynamic context management emerge from a single rewriting pass (Sections 3.8, 6.5).
 3. A large-scale empirical comparison against LLMLingua-2 on 4,081 key-fact and 801 fine-detail QA pairs across five models (Section 5).
-4. Evidence that the advantage of semantic rewriting over token deletion grows on smaller models and on detail-intensive tasks (Section 6).
+4. Evidence — clean, consistent, and largest where it matters most for production deployment — that semantic rewriting beats token deletion on smaller models and on detail-intensive tasks (Section 6).
 5. A reference implementation with CLI tools for compression, benchmarking, and error analysis (Section 7).
 
 ---
@@ -63,7 +63,7 @@ Our contributions:
 
 **Prompt compression.** LLMLingua (Jiang et al., 2023) introduced budget-constrained prompt compression using perplexity-based token selection. LLMLingua-2 (Pan et al., 2024) improved on this with a data-distillation approach: GPT-4 labels token importance on the MeetingBank corpus, and an XLM-RoBERTa-large classifier learns to predict which tokens to delete. The compressor is domain-agnostic in principle, though Pan et al. note that "effectiveness decreases on domains with different token importance distributions" from the training data. The key architectural constraint is that the output remains a degraded subset of the input tokens---no new structure is introduced.
 
-**Abstractive compression.** AutoCompressors (Chevalier et al., 2023) train summary tokens that substitute for long contexts. RECOMP (Xu et al., 2023) generates abstractive summaries tailored to retrieval queries. Both are effective but lossy by design: they discard information that cannot be recovered, and neither produces a structured output that supports selective manipulation.
+**Abstractive compression.** Two lines of work fit here. AutoCompressors (Chevalier et al., 2023) train summary tokens that substitute for long contexts; RECOMP (Xu et al., 2023) generates abstractive summaries tailored to retrieval queries. Both are effective but lossy by design — they discard information that cannot be recovered, and neither produces a structured output that supports selective manipulation.
 
 **Structured representations for LLMs.** Chain-of-thought prompting (Wei et al., 2022) and structured prompting (Hao et al., 2023) demonstrate that imposing structure on LLM inputs improves reasoning. TE extends this insight to compression: the hypothesis is that explicit logical and relational operators help downstream models reconstruct the intended meaning more reliably than degraded natural language.
 
@@ -124,7 +124,7 @@ The specification prescribes a six-pass distillation: (1) concept identification
 
 ### 3.7 Compression Example
 
-To make the grammar concrete, here is a single sentence compressed:
+A single sentence, expanded and compressed:
 
 **Original (68 tokens):** *"According to research by Johnson and colleagues (2023), the application of machine learning techniques to medical diagnostics resulted in a 27.5% increase in early detection rates while simultaneously reducing false positives by approximately 12% compared to traditional methods."*
 
@@ -177,7 +177,7 @@ The context window reflects the current state of knowledge, not a chronological 
 
 ### 4.1 Dataset
 
-We draw from LongBench-v2 (Bai et al., 2024), a benchmark of 503 long-context documents. Filtering to three categories suitable for factual QA---Single-Document QA, Multi-Document QA, and Long-Dialogue History Understanding---yields 339 documents. Each is chunked into segments of at most 1,000 words using NLTK sentence tokenisation, producing 4,081 chunk-level evaluation units.
+LongBench-v2 (Bai et al., 2024) supplies the source corpus: 503 long-context documents. We filter to three categories suitable for factual QA---Single-Document QA, Multi-Document QA, and Long-Dialogue History Understanding---which leaves 339 documents. NLTK sentence tokenisation chunks each one into segments of at most 1,000 words, producing 4,081 chunk-level evaluation units.
 
 ### 4.2 Compression
 
@@ -225,6 +225,8 @@ Five OpenAI models spanning the capability-cost spectrum:
 | GPT-4.1-nano | MC evaluation |
 | Fine-tuned GPT-4o | MC evaluation |
 
+Different suites use different model subsets. GPT-4.1, GPT-4o-mini, and GPT-4.1-nano carry the key_facts evaluation; GPT-4o and GPT-4o-mini handle the adversarial fine_facts suite. The fine-tuned GPT-4o variant is reported in the cost analysis (§6.4) but is not used as a separate accuracy benchmark — it serves as a sanity check that fine-tuning on the original distribution does not change comparative behaviour at compression-decoded inputs.
+
 ---
 
 ## 5. Results
@@ -241,7 +243,7 @@ Table 1 reports accuracy on the key_facts suite.
 | GPT-4o-mini | 0.991 | **0.957** | 0.946 | -3.4 pp | -4.5 pp |
 | GPT-4.1-nano | 0.980 | **0.950** | 0.949 | -3.0 pp | -3.1 pp |
 
-On headline facts, TE matches or edges out LLMLingua-2 across the board. The accuracy loss is negligible for GPT-4.1---less than a percentage point while halving the token count. On smaller models the gap between TE and LLMLingua-2 opens wider: 1.1 pp on GPT-4o-mini. Not dramatic, but consistent; the direction never reverses.
+On headline facts, TE matches or edges out LLMLingua-2 across the board. The accuracy loss is negligible for GPT-4.1 — less than a percentage point while halving the token count. The gap widens on smaller models: 1.1 pp on GPT-4o-mini, with the same direction at GPT-4.1-nano. Not dramatic. But consistent — the direction never reverses across configurations.
 
 ### 5.2 Fine Facts Accuracy
 
@@ -267,7 +269,7 @@ Across all models and tasks, the ranking holds without exception:
 
 ### 5.4 Compression Statistics
 
-TE's mean compression ratio of 0.585 (std = 0.254) spans a wide range. The median sits at 0.57; the 25th percentile at 0.41; the 75th at 0.74. Documents dense with technical content or data tables resist compression, while verbose narrative text yields ratios of 5:1 or better. This variability is the point---the compression adapts to the information density rather than imposing a fixed ratio. Fidelity-first design means the ratio is an outcome, not a parameter.
+TE's mean compression ratio of 0.585 (std = 0.254) hides a wide spread. Half the corpus sits between 0.41 and 0.74; the median is 0.57. Documents dense with technical content or data tables resist compression — narrative text, by contrast, can yield ratios of 5:1 or better. This variability is the point. The compression adapts to the information density rather than imposing a fixed ratio. Fidelity-first design means the ratio is an outcome, not a parameter.
 
 ### 5.5 Error Analysis
 
@@ -285,27 +287,29 @@ Four mechanisms explain the pattern in the results. They are not ranked; differe
 
 **Semantic unit preservation.** Token deletion operates at the token level — and that is the problem. It can split multi-word expressions, sever noun-modifier pairs, strand a number from its unit. TE works one level up: related concepts are grouped into hyphenated compounds (`EARLY-DETECTION-RATE`), and complete claims occupy single lines. The unit of compression is the claim, not the token.
 
-**Explicit logical structure.** Delete a connective like "therefore" or "in contrast to" and the downstream model has to guess the relationship from what remains. TE refuses to offer the guess: `∴` for conclusion, `VS` for contrast, `→` for causation — each unambiguous and each preserved regardless of what else is removed. Reviewers familiar with LLMLingua-2's failure modes will recognise this as the reconstruction-from-fragments problem, and it is the failure mode TE's symbols most directly address.
+**Explicit logical structure.** Delete a connective like "therefore" or "in contrast to" and the downstream model has to guess the relationship from what remains. TE refuses to offer the guess: `∴` for conclusion, `VS` for contrast, `→` for causation — each unambiguous, each preserved regardless of what else is removed. Reviewers familiar with LLMLingua-2's failure modes will recognise this as the reconstruction-from-fragments problem, and it is the failure mode TE's symbols most directly address.
 
 **Co-reference stability.** Because TE is one-claim-per-line, with every entity in upper-case and referenced by name, pronouns largely disappear. Token deletion can strand a pronoun whose antecedent has been removed — a surprisingly common failure where the compressed text is grammatical but its referents are unrecoverable. TE's referents, by construction, do not get stranded.
 
 **Adaptive compression.** A fixed-ratio method compresses a dense technical paragraph as aggressively as a repetitive introduction. TE does not. Dense passages resist compression and emerge at ratios near 1.0; verbose passages compress to 0.2 or below. Whether this density-sensitive behaviour transfers to non-technical genres is an open question — our corpus leans technical — but within that corpus, the method spends its budget where the information lives.
 
+The four mechanisms are not independent. Semantic-unit preservation makes co-reference stability easier to achieve. Explicit logical structure depends on having claim-level units to operate on. Adaptive compression is a consequence of fidelity-first design rather than a separate property. The result is that LLMLingua-2 cannot match TE by adopting any single one of these — the architectural commitments interlock.
+
 ### 6.2 The Small-Model Effect
 
-The TE advantage grows as model capacity shrinks. GPT-4.1---the largest model tested---barely notices the difference between TE and LLMLingua-2 on key facts. GPT-4.1-nano and GPT-4o-mini show a wider gap, and on fine facts the divergence becomes substantial.
+The TE advantage grows as model capacity shrinks. GPT-4.1 barely notices the difference between TE and LLMLingua-2 on key facts; GPT-4.1-nano and GPT-4o-mini show a wider gap, and on fine facts the divergence becomes substantial.
 
-The likely explanation is capacity-dependent: smaller models have less ability to reconstruct implicit relationships from token-deleted fragments. TE compensates by offloading the reconstruction work to the compression stage. The explicit symbols and atomic-line structure mean the evaluation model receives a representation where the relationships are already marked, rather than needing to hallucinate them from sparse clues. This has practical weight---smaller models are precisely the ones deployed in cost-sensitive production pipelines where prompt compression matters most.
+The likely explanation is capacity-dependent. Smaller models have less ability to reconstruct implicit relationships from token-deleted fragments. TE compensates by offloading the reconstruction work to the compression stage — the evaluation model receives a representation where the relationships are already marked, rather than having to hallucinate them from sparse clues. This has practical weight: smaller models are precisely the ones deployed in cost-sensitive production pipelines, which is where prompt compression earns its keep.
 
 ### 6.3 The Fine-Facts Gap
 
-Key facts survive both compression methods reasonably well. Central claims and prominent findings carry high information density and are often redundantly signalled; even aggressive token deletion tends to preserve them. Fine details are different. Precise numerical qualifiers, conditional caveats, secondary attributions---these are exactly the tokens that an entropy-based classifier flags as low-importance when considered in isolation. A number like "4.8%" may look dispensable next to the surrounding prose; but if the question asks whether the figure was 4.8% or 4.3%, that token is the entire answer.
+Key facts survive both compression methods reasonably well. Central claims and prominent findings carry high information density and are often redundantly signalled; even aggressive token deletion tends to preserve them. Fine details are stubborn in a different way. Precise numerical qualifiers, conditional caveats, secondary attributions — these are exactly the tokens that an entropy-based classifier flags as low-importance when considered in isolation. A number like "4.8%" may look dispensable next to the surrounding prose. But if the question asks whether the figure was 4.8% or 4.3%, that token is the entire answer.
 
 TE's claim-level decomposition and explicit numerical formatting (`+27.5%`, `CONF=0.87`, `Y/Y+12.3%`) are designed to preserve these details. The grammar treats every number as a first-class citizen: numbers are never abbreviated, always attached to their units, and always placed in a structured format that a downstream model can parse unambiguously.
 
 ### 6.4 Pipeline-Level Cost
 
-An underappreciated structural difference: LLMLingua-2 operates as an input-only preprocessor. It compresses the initial prompt, but generated output passes uncompressed to subsequent stages. TE can persist as a native format throughout a pipeline.
+There is a structural difference between the two methods that the accuracy comparison alone obscures: LLMLingua-2 operates as an input-only preprocessor. It compresses the initial prompt; generated output passes uncompressed to subsequent stages. TE can persist as a native format throughout a pipeline.
 
 Consider a five-step agent pipeline with 2,000 tokens of initial context and five generation steps averaging 400 tokens each. At $10 per million tokens:
 
@@ -358,7 +362,7 @@ The reference implementation is a Python package with five pipeline stages:
 4. **Baseline Evaluation** (`telegrapher.benchmark.llml2_eval`): evaluation of LLMLingua-2-compressed text against the same QA pairs.
 5. **Error Analysis** (`telegrapher.benchmark.error_analysis`): identification and reporting of compression-induced failures, with detailed case-level output.
 
-All stages are accessible both as CLI commands (`python -m cli.compress`, `python -m cli.bench`, etc.) and as importable library functions. Configuration is centralised in a single module. The grammar specification is released under CC-BY-SA 4.0; the implementation and benchmark data under the MIT License and CC0, respectively.
+Each stage is accessible as both a CLI command (`python -m cli.compress`, `python -m cli.bench`, …) and an importable library function; configuration is centralised in a single module. The grammar specification is released under CC-BY-SA 4.0, the implementation under the MIT License, and the benchmark data under CC0.
 
 ---
 
@@ -376,13 +380,15 @@ All stages are accessible both as CLI commands (`python -m cli.compress`, `pytho
 
 **Dynamic context management is not yet benchmarked.** The semantic chunking and dynamic state management capabilities described in Sections 3.8 and 6.5 are architectural arguments supported by the structure of the TE output, not empirical results from a multi-turn evaluation. We have demonstrated that the format supports these operations; we have not yet measured their effect on accuracy or efficiency over extended sessions. This is the most important gap in the current evaluation and the most pressing direction for future work.
 
-**Comparison scope.** We benchmark against LLMLingua-2 only. A broader comparison against AutoCompressors, RECOMP, and more recent methods would strengthen the claims.
+**Comparison scope.** We benchmark against LLMLingua-2 only — currently the strongest published baseline at the compression ratios we operate in. A broader comparison against AutoCompressors, RECOMP, and more recent methods would strengthen the claims.
 
 ---
 
 ## 9. Future Work
 
-**Multi-turn context management benchmarks.** The compress-once, manage-continuously principle is currently a design argument. Validating it requires benchmarks that measure context quality across sessions of 50-500 exchanges, comparing TE's fact-level update/prune strategy against truncation, periodic summarisation, and hybrid approaches. Key metrics: accuracy on questions about earlier turns, token efficiency over session length, latency of context operations.
+The compress-once, manage-continuously principle is currently a design argument. Validating it — and the related architectural claims of §6.5 — requires benchmarks that don't yet exist. The list below sketches the priority directions, in roughly the order we expect to pursue them.
+
+**Multi-turn context management benchmarks.** Sessions of 50–500 exchanges, with TE's fact-level update/prune strategy compared against truncation, periodic summarisation, and hybrid approaches. Key metrics: accuracy on questions about earlier turns, token efficiency over session length, latency of context operations.
 
 **Retrieval evaluation.** TE's claim that atomic-line structure improves RAG retrieval precision needs validation against standard retrieval benchmarks, measuring recall@k and downstream answer accuracy for line-level vs. window-level chunking.
 
@@ -402,9 +408,9 @@ All stages are accessible both as CLI commands (`python -m cli.compress`, `pytho
 
 ## 10. Conclusion
 
-Telegraph English demonstrates that structured semantic rewriting is a viable alternative to token deletion for prompt compression---and, on the evidence presented here, a better one. A formal grammar with explicit logical operators, atomic line structure, and document-adaptive compression preserves factual accuracy more reliably than LLMLingua-2 across every model and task difficulty we tested. The advantage is largest where compression matters most practically: on smaller, cheaper models and on fine-grained details.
+Telegraph English demonstrates that structured semantic rewriting is a viable alternative to token deletion for prompt compression — and, on the evidence presented here, a better one. A formal grammar with explicit logical operators, atomic line structure, and document-adaptive compression preserves factual accuracy more reliably than LLMLingua-2 across every model and task difficulty we tested. The advantage is largest where compression matters most practically: on smaller, cheaper models and on fine-grained details.
 
-But the quantitative comparison may not be the most interesting part of this paper. Token-deletion methods treat compression as a one-time lossy reduction. The output is smaller, but it's still unstructured---a degraded copy of the input with no internal organisation. TE produces something different: a representation where every line is an identified fact, every section is tagged, and every relationship is marked with an explicit symbol. This structure makes the output not just smaller but more *useful*---more retrievable, more auditable, more maintainable over time.
+The quantitative comparison may not be the most interesting part of this paper. Token-deletion methods treat compression as a one-time lossy reduction; the output is smaller, but still unstructured — a degraded copy of the input with no internal organisation. TE produces something different: a representation where every line is an identified fact, every section is tagged, and every relationship is marked with an explicit symbol. This structure makes the output not just smaller but more *useful* — more retrievable, more auditable, more maintainable over time.
 
 The compress-once, manage-continuously principle is, at this stage, an architectural argument rather than an empirical result. We have shown that the format supports selective retention, hierarchical compression, fact-level updates, and scope-based pruning. We have not yet measured the downstream effects of these operations in production agent systems. That measurement is the obvious next step, and it is the one most likely to determine whether TE becomes a practical tool for long-running context management or remains a compression method with an interesting side property.
 
