@@ -2,14 +2,9 @@
 
 This directory holds NeurIPS 2026 main-track submission packages for papers from this repo. Each paper lives in its own `paper_<slug>/` subfolder; the official template is shared across all papers in `_template_reference/`.
 
-## Papers
+## Submission folders
 
-| Paper | Folder | Status |
-|---|---|---|
-| Telegraph English: Semantic Prompt Compression via Structured Symbolic Rewriting | [`paper_telegraph_english/`](paper_telegraph_english/) | Built; ready to upload |
-| Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models | [`paper_beyond_exponential_decay/`](paper_beyond_exponential_decay/) | Built; ready to upload |
-
-Each paper folder contains its own `README.md` (submission metadata, anonymization notes, page-budget table, rebuild instructions) and a `submission/` directory holding the upload artifacts.
+Each `paper_<slug>/` subfolder is a self-contained NeurIPS submission package, with its own `README.md` covering submission metadata, anonymization notes, page-budget table, and rebuild instructions, and a `submission/` directory holding the upload artifacts. See the per-folder READMEs for details.
 
 ## Shared deadlines (NeurIPS 2026 main track)
 

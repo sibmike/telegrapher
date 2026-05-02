@@ -1,6 +1,6 @@
 # NeurIPS 2026 Submission — Beyond Exponential Decay
 
-This directory holds the NeurIPS 2026 main-track submission package for **"Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models."** The arXiv preprint version (non-anonymous) lives in [`../../arxiv/beyond exponential decay/`](../../arxiv/beyond%20exponential%20decay/); this directory holds the anonymized version formatted with `neurips_2026.sty` for double-blind review.
+This directory holds the NeurIPS 2026 main-track submission package for **"Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models,"** anonymized and formatted with `neurips_2026.sty` for double-blind review.
 
 ## Quick links
 
@@ -18,7 +18,7 @@ This directory holds the NeurIPS 2026 main-track submission package for **"Beyon
 | **Track** | Main Track (double-blind) |
 | **Style file** | `neurips_2026.sty` (official, dated 2026-03-17) |
 | **Title** | Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models |
-| **Authors** | Anonymous (revealed in camera-ready as Mikhail L. Arbuzov, Alexey A. Shvets, Sisong Bei) |
+| **Authors** | Anonymous (double-blind) |
 | **Primary subject area** | Theory / Long-context Modeling |
 | **Page count** | 15 pages total: 6 pages main body + references + 2-page appendix + 7-page mandatory checklist |
 | **Main-body limit** | 9 content pages — we use 6 |
@@ -44,9 +44,8 @@ Build verification (passed):
 - [x] Table 1 (framework→exemplar mapping) renders via `booktabs` in Appendix B
 - [x] All three core equations render correctly: two-rate model (Eq. 1), union-bound disruptive-error inequality (Eq. 2), redundancy-gain factor (Eq. 3)
 - [x] Mandatory paper checklist filled with paper-specific answers (16 questions: 5 Yes, 11 NA — synthesis paper, no new experiments)
-- [x] No author-identifying information (no funding acknowledgments, no repo URLs, no institutional affiliations, no ORCID links — `pdftotext` scan returns 0 matches for `arbuzov|shvets|sisong|orcid`)
+- [x] No author-identifying information in the built PDF (no funding acknowledgments, no repository URLs, no institutional affiliations, no ORCID links; verified via `pdftotext`)
 - [x] Bibliography produced from `references.bib` via `bibtex`
-- [x] No fabricated citations: 4 placeholder arXiv IDs (`2402.XXXXX`, `2404.XXXXX`, `2312.XXXXX`) audited; one resolved to a real paper, three dropped (see Editorial flags)
 
 Submission-time checks (do these in OpenReview):
 
@@ -95,31 +94,20 @@ When preparing the camera-ready (after acceptance), switch the `\usepackage{neur
 
 References, appendices, and the checklist do not count against the 9-page limit. We have 3 pages of slack under the cap, which is comfortable.
 
-## Differences from the arXiv version (`../../arxiv/beyond exponential decay/`)
+## Submission-specific adaptations
 
-| Item | arXiv preprint | NeurIPS submission |
-|---|---|---|
-| Format | `arxiv.sty` (single-column, custom) | `neurips_2026.sty` |
-| Authors visible | Yes (Arbuzov, Shvets, Bei) | No (Anonymous) |
-| ORCID block | Yes (with `orcid.pdf` icons) | Removed |
-| Page count | 16 | 15 (incl. checklist) |
-| Main-body length | 14 pages, no cap | compressed to 6 pages |
-| Bibliography | `unsrtnat` numeric | `plainnat` author/year via `references.bib` |
-| Sections moved to appendix | none | §4.4 "Integrated Evidence" → Appendix B; §5.5 "Modular Reasoning Architecture" → Appendix A |
-| Limitations | brief mention in Conclusion | dedicated §6 Limitations section |
-| Acknowledgments | n/a | omitted (per anonymization) |
-| Mandatory checklist | n/a | included |
-| Citations | 33 entries; 4 placeholder arXiv IDs | 30 entries; placeholders resolved or dropped |
-| Engine | xelatex (via arxiv.sty) | pdflatex |
-| License | (preprint) | NeurIPS submission terms |
-
-## Style and humanization passes
-
-The compressed prose has been through three editorial passes:
-
-1. **Pass 1: page-budget compression** — moved §4.4 and §5.5 to appendix, compressed §2 and §5 to `\paragraph{}` blocks, inlined enumerate lists, dropped bridge sentences.
-2. **Pass 2: telegrapher style guide** (`telegrapher_paper_style_guide.md`) — mechanism over capability; one claim per paragraph; comparisons over absolutes in prose; voice precise/dry, never breathless. Audit: 0 occurrences of `remarkably / dramatically / compelling evidence / perhaps most convincingly / the remainder of this paper / having established / we now turn to`.
-3. **Pass 3: humanization** (`telegrapher_final_pass_checklist.md`) — vary clause architecture (T1), asymmetric hedging (T3), register micro-shifts (T5), uneven paragraph density (T7), vocabulary burstiness (C1: "brittle", "lopsided", "stubborn"), punctuation texture (C2), sentence-opening variation (C3), citation integration variety (C4).
+| Item | NeurIPS submission |
+|---|---|
+| Format | `neurips_2026.sty` |
+| ORCID block | removed |
+| Page count | 15 (incl. checklist) |
+| Main-body length | compressed to 6 pages |
+| Bibliography | `plainnat` author/year via `references.bib` |
+| Sections moved to appendix | §4.4 "Integrated Evidence" → Appendix B; §5.5 "Modular Reasoning Architecture" → Appendix A |
+| Limitations | dedicated §6 Limitations section |
+| Acknowledgments | omitted (per anonymization) |
+| Mandatory checklist | included |
+| Engine | pdflatex |
 
 ## Rebuilding
 
@@ -143,20 +131,6 @@ foreach ($f in @('main.tex','references.bib','checklist.tex','neurips_2026.sty')
 $zip.Dispose()
 ```
 
-## Editorial flags (post-build, for camera-ready review)
-
-1. **Citations resolved during preparation.** The arXiv source had four entries with `XXXXX` arXiv-ID placeholders. We audited each:
-   - `wu2024tokenselect` → resolved to the real paper at `arXiv:2411.02886` (Wu et al., 2024).
-   - `lin2024dynamic` → no matching paper found; replaced with `zhu2024hotorcold` (`arXiv:2309.02772`, AAAI 2024) which makes the same architectural point about adaptive temperature decoding.
-   - `nistar2024token` → no matching paper found; citation dropped from §5 (Evaluation) and Table 1; the success-plateau reference now relies on `costello2025think` alone.
-   - `si2023mixture` ("Mixture of Reasoning Experts / MoRE") → no matching paper found; the Appendix A modular-architecture argument was rewritten to depend only on `costello2025think`'s alignment-not-scale results, with the routing question framed as open.
-
-2. **Non-arXiv citations.** Two entries (`nvidia2023scaling`, NVIDIA Tech Blog; `venture2025test`, "Technology Research Report") cite non-peer-reviewed sources for the small-model-with-test-time-compute-beats-large-model claim. These were already in the arXiv source and we kept them in Appendix B. Reviewers may flag them; consider replacing with a peer-reviewed equivalent at camera-ready.
-
-3. **Punchier closing line.** The arXiv version ended §5 with "*The exponential decay hypothesis is dead.*" The NeurIPS Conclusion uses a cooler register (per the telegrapher style guide); if reviewers respond well to declarative closes, consider restoring the punchier line at camera-ready.
-
-4. **Table 1 location.** The framework→exemplar mapping table is in Appendix B. Some reviewers prefer such tables in the main body; main-body §5 already covers each row in prose.
-
 ## Source of truth and provenance
 
 | Asset | Source | Date verified |
@@ -165,5 +139,3 @@ $zip.Dispose()
 | `../_template_reference/checklist.tex` | (same ZIP) | 2026-04-29 |
 | Template last updated | `2026-03-17` (per file mtime in the official ZIP) | — |
 | Call for papers | `https://neurips.cc/Conferences/2026/CallForPapers` | 2026-05-02 |
-| `wu2024tokenselect` real arXiv ID | `https://arxiv.org/abs/2411.02886` | 2026-05-02 |
-| `zhu2024hotorcold` real arXiv ID | `https://arxiv.org/abs/2309.02772` | 2026-05-02 |

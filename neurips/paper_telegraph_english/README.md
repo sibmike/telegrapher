@@ -1,6 +1,6 @@
 # NeurIPS 2026 Submission — Telegraph English
 
-This directory holds the NeurIPS 2026 main-track submission package for the Telegraph English paper. The arXiv preprint version (non-anonymous, CC-BY-SA-4.0) lives in [`../../arxiv/paper_telegraph_english/`](../../arxiv/paper_telegraph_english/); this directory holds the **anonymized** version formatted with `neurips_2026.sty` for double-blind review.
+This directory holds the NeurIPS 2026 main-track submission package for the Telegraph English paper, anonymized and formatted with `neurips_2026.sty` for double-blind review.
 
 ## Quick links
 
@@ -18,7 +18,7 @@ This directory holds the NeurIPS 2026 main-track submission package for the Tele
 | **Track** | Main Track (double-blind) |
 | **Style file** | `neurips_2026.sty` (official, dated 2026-03-17) |
 | **Title** | Telegraph English: Semantic Prompt Compression via Structured Symbolic Rewriting |
-| **Authors** | Anonymous (revealed in camera-ready as Mikhail L. Arbuzov, Alexey A. Shvets, Sisong Bei) |
+| **Authors** | Anonymous (double-blind) |
 | **Primary subject area** | Natural Language Processing / Efficient Methods for ML |
 | **Page count** | 18 pages total: 8 pages main body + references + 3-page appendix + 7-page mandatory checklist |
 | **Main-body limit** | 9 content pages — we use 8 |
@@ -46,7 +46,7 @@ Build verification (passed):
 - [x] Unicode operators ($\rightarrow$, $\Rightarrow$, $\therefore$, $\wedge$, $\vee$, $\neg$, $\uparrow$, $\downarrow$, $\approx$, $\neq$) render via math-mode commands wrapped in `\ttfamily` blocks
 - [x] TE compression example (§1) renders as a `\footnotesize\ttfamily` quote block — fits cleanly on a single line
 - [x] Mandatory paper checklist filled with paper-specific answers (16 questions: 9 Yes, 5 NA, 2 No)
-- [x] No author-identifying information (no funding acknowledgments, no repo URLs, no institutional affiliations)
+- [x] No author-identifying information in the built PDF (no funding acknowledgments, no repository URLs, no institutional affiliations; verified via `pdftotext`)
 - [x] Bibliography produced from `references.bib` via `bibtex` (12 entries)
 
 Submission-time checks (do these in OpenReview):
@@ -74,7 +74,7 @@ The paper has been anonymized for double-blind review:
 
 When preparing the camera-ready (after acceptance), switch the `\usepackage{neurips_2026}` line to `\usepackage[main, final]{neurips_2026}` to reveal authors.
 
-For an arXiv preprint variant of this paper (different from the NeurIPS submission), use the `[preprint]` option instead — that produces a non-anonymized version with "Preprint. Work in progress." in the footer. We keep the arXiv-formatted version of the paper in `../../arxiv/paper_telegraph_english/` separately, in CC-BY-SA-4.0 form.
+For a non-anonymized preprint build (different from the NeurIPS submission), use the `[preprint]` option instead — that produces a version with "Preprint. Work in progress." in the footer.
 
 ## Tracks considered and not chosen
 
@@ -107,21 +107,20 @@ For an arXiv preprint variant of this paper (different from the NeurIPS submissi
 
 References, appendices, and the checklist do not count against the 9-page limit.
 
-## Differences from the arXiv version (`../../arxiv/paper_telegraph_english/`)
+## Submission-specific adaptations
 
-| Item | arXiv preprint | NeurIPS submission |
-|---|---|---|
-| Format | Pandoc-generated, single-column with Cambria | Single-column with Times Roman |
-| Style file | None (article class) | `neurips_2026.sty` |
-| Authors visible | Yes (Arbuzov, Shvets, Bei) | No (Anonymous) |
-| Page count | 16 | 18 (incl. checklist) |
-| Main-body length | unconstrained | compressed to 8 pages |
-| Bibliography | inline numeric | `natbib` author/year via `references.bib` |
-| Sections moved to appendix | none | §3.6 Compression as Semantic Chunking, §6.5 Beyond Static Compression |
-| Acknowledgments | n/a | omitted (per anonymization) |
-| Mandatory checklist | n/a | included |
-| Engine | xelatex | pdflatex |
-| License | CC-BY-SA-4.0 | NeurIPS submission terms (camera-ready under whatever the conference requires) |
+This NeurIPS package is built from the same underlying paper content using the conference-specific format. Key differences from a generic preprint build:
+
+| Item | NeurIPS submission |
+|---|---|
+| Style file | `neurips_2026.sty` |
+| Page count | 18 (incl. checklist) |
+| Main-body length | compressed to 8 pages |
+| Bibliography | `natbib` author/year via `references.bib` |
+| Sections moved to appendix | §3.6 Compression as Semantic Chunking, §6.5 Beyond Static Compression |
+| Acknowledgments | omitted (per anonymization) |
+| Mandatory checklist | included |
+| Engine | pdflatex |
 
 ## Rebuilding
 
@@ -152,12 +151,6 @@ foreach ($f in @(
 }
 $zip.Dispose()
 ```
-
-## Open editorial flags (post-build, not blocking submission)
-
-1. **Statistical significance.** The mandatory checklist answers `\answerNo{}` for the statistical-significance question. Sample sizes ($n=4{,}081$ and $n=801$) make the binomial standard error small enough that the gaps we report are several standard errors wide, but we did not run multiple seeds of distractor randomization to characterise variance from that source. Worth adding before camera-ready.
-2. **Compute resources.** Likewise `\answerNo{}` — we report token cost in §6.4 but not wall-clock time per experiment. Easy to add at camera-ready.
-3. **Repository URL.** The anonymized submission deliberately omits the public GitHub URL; the camera-ready version should include it in §7 Implementation and the comments field.
 
 ## Source of truth and provenance
 
