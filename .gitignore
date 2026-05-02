@@ -45,10 +45,12 @@ reviews/
 error_files/
 *.log
 
-# LaTeX build intermediates (arxiv/)
+# LaTeX build intermediates (arxiv/, neurips/)
 *.aux
 *.toc
 *.out
 *.fdb_latexmk
 *.fls
 *.synctex.gz
+*.bbl
+*.blg
