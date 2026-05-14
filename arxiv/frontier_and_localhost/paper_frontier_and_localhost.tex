@@ -68,6 +68,7 @@
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{xurl}
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
@@ -522,11 +523,11 @@ Aggregating the survey by substrate gives this distribution:
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1765}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2353}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2353}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1765}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1765}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1400}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0400}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2200}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.5500}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Substrate
@@ -594,10 +595,10 @@ space.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1400}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1400}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.4200}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 Cluster
@@ -1076,16 +1077,18 @@ integrated patch-plasticity score (0--5) used in the survey; the
 (T1 peer-reviewed; T2 arXiv preprint; T3 production claim; T4
 open-source artifact; T5 industry blog).
 
+\begingroup\small
+
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1538}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1538}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1212}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.0404}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.0707}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.0707}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.0404}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1818}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.3636}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
 System
@@ -1130,8 +1133,8 @@ CASCADE & 2025 & Integrated & Auto & Human & 4.5 & T2 (arXiv:2512.23880)
 & Largest published ablation gain in corpus: +57.9 pp on
 SciSkillBench \\
 OpenCore & 2025 & Integrated & Human & Human & 4 & T4
-(github.com/sibmike/opencore) & Only {[}Human × Human{]} system with
-explicit cross-organisation federation \\
+(\url{github.com/sibmike/opencore}) & Only {[}Human × Human{]} system
+with explicit cross-organisation federation \\
 Voyager & 2023 & Integrated & Auto & Auto & 4 & T2 (arXiv:2305.16291) &
 Foundational skill-library result; 3.3× items, 15.3× tech-tree
 milestones \\
@@ -1142,11 +1145,11 @@ Claude Code CLAUDE.md & 2025 & S1 Instructions & n/a & n/a & 4 & T3/T4
 (docs.anthropic.com) & Four scoping levels including org-IT policy +
 auto-memory layer; ceiling for S1 \\
 Cursor Rules & 2024 & S1 Instructions & n/a & n/a & 3 & T3/T4
-(docs.cursor.com/rules) & \texttt{.cursor/rules/*.mdc} multi-scope + MCP
-attach; git-tracked \\
+(\url{docs.cursor.com/rules}) & \texttt{.cursor/rules/*.mdc} multi-scope
++ MCP attach; git-tracked \\
 Anthropic Agent Skills & 2025 & S2 Skills & n/a & Human & 3 & T3
-(anthropic.com/engineering) & Progressive disclosure spec; LangChain
-replication 29\%→95\% pass-rate \\
+(\url{anthropic.com/engineering}) & Progressive disclosure spec;
+LangChain replication 29\%→95\% pass-rate \\
 SAGE & 2025 & S2 Skills & Auto & Auto & 5 & T2 (arXiv:2512.17102) &
 +8.9\% SGC, 26\% fewer steps, 59\% fewer tokens on AppWorld \\
 COSPLAY & 2026 & S2 Skills & Auto & Auto & 5 & T2 (arXiv:2604.20987) &
@@ -1165,26 +1168,33 @@ downloads/month \\
 Harvey & 2026 & S4 Tools & n/a & n/a & 5 & T3 (harvey.ai) & 400K
 queries/day; 18,000+ workflows; 200+ legal data sources \\
 Hippocratic AI & 2026 & S4 Tools & n/a & n/a & 5 & T3
-(hippocraticai.com) &
-\(3.5B valuation; 30% readmission reduction; 360% care-capacity boost |
-| Multi-Agent Evolve (MAE) | 2025 | S5 Orchestration | Auto | n/a | 5 | T2 (arXiv:2510.23595) | RL co-evolution of Proposer/Solver/Judge population |
-| Memento-Skills | 2026 | S5 Orchestration | Auto | Auto | 5 | T2 (arXiv:2604.02460) | Unit-test-gated skill promotion within multi-agent topology |
-| Cemri et al. (AG2) | 2025 | S5 Orchestration | n/a | n/a | 3 | T2 (arXiv:2503.13657) | Specialisation +4.5 pp on GSM-Plus (\)p
-= 0.03\$); MAST 14 failure modes \\
+(hippocraticai.com) & \$3.5B valuation; 30\% readmission reduction;
+360\% care-capacity boost \\
+Multi-Agent Evolve (MAE) & 2025 & S5 Orchestration & Auto & n/a & 5 & T2
+(arXiv:2510.23595) & RL co-evolution of Proposer/Solver/Judge
+population \\
+Memento-Skills & 2026 & S5 Orchestration & Auto & Auto & 5 & T2
+(arXiv:2604.02460) & Unit-test-gated skill promotion within multi-agent
+topology \\
+Cemri et al.~(AG2) & 2025 & S5 Orchestration & n/a & n/a & 3 & T2
+(arXiv:2503.13657) & Specialisation +4.5 pp on GSM-Plus (\(p = 0.03\));
+MAST 14 failure modes \\
 Braintrust & 2024 & S6 Governance & n/a & Auto & 5 & T3 (braintrust.dev)
 & Prompts-as-code: immutable commits, eval-gated PR merge, sub-5 min
 rollback \\
 Vellum & 2024 & S6 Governance & n/a & Auto & 5 & T3 (vellum.ai) & Same
 governance pattern; production deployment with eval thresholds \\
 LangSmith Hub & 2024 & S6 Governance & n/a & Auto & 5 & T3
-(smith.langchain.com) & Prompt repository with environment promotion and
-eval blocking \\
+(\url{smith.langchain.com}) & Prompt repository with environment
+promotion and eval blocking \\
 Self-Refine* & 2023 & (contrast) & n/a & n/a & 1 & T2 (arXiv:2303.17651)
 & Fails the patch-plastic discriminator: in-context iteration only \\
 Mem0* & 2024 & (contrast) & n/a & n/a & 2 & T3/T4 (mem0.ai) & Fails Loop
 2: per-user memory with no cross-context promotion path \\
 \end{longtable}
 }
+
+\endgroup
 
 \emph{Asterisks mark contrast systems included for definitional
 clarity.}

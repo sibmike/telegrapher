@@ -5,6 +5,8 @@ author:
   - Alexey A. Shvets
   - Sisong Bei
 date: ""
+header-includes:
+  - \usepackage{xurl}
 ---
 
 **Abstract**
@@ -129,7 +131,7 @@ The 104-system core corpus does not mature uniformly. Tools and integrated syste
 Aggregating the survey by substrate gives this distribution:
 
 | Substrate | $n$ | Mean | Score-5 systems | Survey finding |
-|---|---:|---:|---|---|
+|--------------|---:|----:|----------------------|-------------------------------------------------------|
 | **S1 — Instructions** | 12 | 2.83 | *(none)* | Rules persist across IDEs and agents (Claude Code's CLAUDE.md, Cursor Rules, AGENTS.md, Windsurf, Continue.dev) but no surveyed instruction system closes both an automated inner loop and a governed two-loop promotion. Ceiling held at 4 by Claude Code and Replit |
 | **S2 — Skills** | 16 | 2.62 | SAGE, COSPLAY | Research frontier is active (failure-triggered skill update); production governance is weaker. Anthropic's skills repository is one-pool with PR review but no automated eval gate |
 | **S3 — Memory** | 19 | 3.16 | SSGM | Cross-session memory is widespread; *correctable, versioned* memory is rare. Production memory systems (ChatGPT Memory, Claude Memory, Mem0, Zep, MemGPT) treat memory as append-only |
@@ -145,7 +147,7 @@ The unevenness is the survey's central empirical pattern. The field has independ
 Five clusters recur across the corpus. The four-cluster grouping below maps each system to its gate types and to the structural lesson it carries. The matrix in §8 places the same systems on the 3×3 design space.
 
 | Cluster | Representative systems (year, PP score) | Loop 1 / Loop 2 | What the cluster proves |
-|---|---|---|---|
+|--------------|------------------------------|--------------|------------------------------------------|
 | Research full-auto | NanoResearch (2026, 5), SkillRL (2026, 5), AlphaEvolve (2025, 4), DGM (2025, 4), ADAS (2024, 4), Voyager (2023, 4) | Auto / Auto | Both loops can be fully automated under algorithmic gates; benchmark gains compound; enterprise governance is uniformly absent |
 | Production hybrid | SkillForge (2026, 4), CASCADE (2025, 4.5), Sierra OS 2.0 (2025, 3), Cognition Devin (2024, 3) | Auto / Human | Algorithmic Loop-1 gate plus reviewer-judgment Loop-2 gate is the production-viable cell; SkillForge is the architectural exemplar |
 | Reviewer-judgment | OpenCore (2025, 4) | Human / Human | Automated extraction machinery with reviewer-judgment gates on both loops; the only published $n>1$ mini-batch rule in the corpus (5-dream threshold); cross-organisation federation via fork-and-contribute-back |
@@ -247,8 +249,12 @@ The frontier model generalises. The localhost scaffold specialises. Reliability 
 
 The full per-system spreadsheet is `p3_master_scores.csv` in the repository. The 30 rows below are a representative spot-check covering all six substrates, both research and production, and all five clusters of §6.2. *Loop 1* and *Loop 2* columns apply to systems satisfying the composite-two-loop criterion; *n/a* means the loop is absent for that system. The *PP* column is the integrated patch-plasticity score (0–5) used in the survey; the *Evidence* column abbreviates the strongest available source tier (T1 peer-reviewed; T2 arXiv preprint; T3 production claim; T4 open-source artifact; T5 industry blog).
 
+```{=latex}
+\begingroup\small
+```
+
 | System | Year | Substrate | Loop 1 | Loop 2 | PP | Evidence | Why included |
-|---|---:|---|---|---|---:|---|---|
+|------------|---:|-----------|-------|-------|---:|------------------|------------------------------------|
 | NanoResearch | 2026 | Integrated | Auto | Auto | 5 | T2 (arXiv:2605.10813) | Tri-level Skills/Memory/Policy co-evolution; cleanest full-auto exemplar |
 | AutoAgent | 2026 | Integrated | Auto | Auto | 5 | T2 (arXiv:2603.09716) | Dual-cycle Execution+Evolution + elastic memory orchestration |
 | SkillRL | 2026 | Integrated | Auto | Auto | 5 | T2 (arXiv:2602.08234) | Recursive skill-augmented RL with $\text{SR}<0.4$ threshold gate |
@@ -257,12 +263,12 @@ The full per-system spreadsheet is `p3_master_scores.csv` in the repository. The
 | ADAS | 2024 | Integrated | Auto | Auto | 4 | T2 (arXiv:2408.08435) | Meta-agent search; Turing-complete agent representation |
 | SkillForge | 2026 | Integrated | Auto | Human | 4 | T2 (arXiv:2604.08618) | Production hybrid exemplar; LLM-judge >90% + VFS versioning |
 | CASCADE | 2025 | Integrated | Auto | Human | 4.5 | T2 (arXiv:2512.23880) | Largest published ablation gain in corpus: +57.9 pp on SciSkillBench |
-| OpenCore | 2025 | Integrated | Human | Human | 4 | T4 (github.com/sibmike/opencore) | Only [Human × Human] system with explicit cross-organisation federation |
+| OpenCore | 2025 | Integrated | Human | Human | 4 | T4 (\url{github.com/sibmike/opencore}) | Only [Human × Human] system with explicit cross-organisation federation |
 | Voyager | 2023 | Integrated | Auto | Auto | 4 | T2 (arXiv:2305.16291) | Foundational skill-library result; 3.3× items, 15.3× tech-tree milestones |
 | AGENTS.md | 2025 | S1 Instructions | n/a | n/a | 2 | T3/T4 (agents.md) | Cross-vendor standard; 60k+ repos; Lulla 2026 measures −28.6% runtime |
 | Claude Code CLAUDE.md | 2025 | S1 Instructions | n/a | n/a | 4 | T3/T4 (docs.anthropic.com) | Four scoping levels including org-IT policy + auto-memory layer; ceiling for S1 |
-| Cursor Rules | 2024 | S1 Instructions | n/a | n/a | 3 | T3/T4 (docs.cursor.com/rules) | `.cursor/rules/*.mdc` multi-scope + MCP attach; git-tracked |
-| Anthropic Agent Skills | 2025 | S2 Skills | n/a | Human | 3 | T3 (anthropic.com/engineering) | Progressive disclosure spec; LangChain replication 29%→95% pass-rate |
+| Cursor Rules | 2024 | S1 Instructions | n/a | n/a | 3 | T3/T4 (\url{docs.cursor.com/rules}) | `.cursor/rules/*.mdc` multi-scope + MCP attach; git-tracked |
+| Anthropic Agent Skills | 2025 | S2 Skills | n/a | Human | 3 | T3 (\url{anthropic.com/engineering}) | Progressive disclosure spec; LangChain replication 29%→95% pass-rate |
 | SAGE | 2025 | S2 Skills | Auto | Auto | 5 | T2 (arXiv:2512.17102) | +8.9% SGC, 26% fewer steps, 59% fewer tokens on AppWorld |
 | COSPLAY | 2026 | S2 Skills | Auto | Auto | 5 | T2 (arXiv:2604.20987) | Boundary proposal + segmentation; only S2 = 5 with contracts |
 | Reflexion | 2023 | S3 Memory | Auto | n/a | 4 | T1 (NeurIPS 2023; arXiv:2303.11366) | Canonical failure-triggered episodic memory; +8% HotpotQA |
@@ -270,15 +276,19 @@ The full per-system spreadsheet is `p3_master_scores.csv` in the repository. The
 | Governed Collaborative Memory (SSGM) | 2026 | S3 Memory | Auto | Auto | 5 | T2 (arXiv:2605.04264) | Only memory system with full provenance + versioning + correction |
 | MCP | 2024 | S4 Tools | n/a | n/a | 5 | T3 (modelcontextprotocol.io) | Cross-vendor; 9,400+ servers; 78% enterprise; ~97M SDK downloads/month |
 | Harvey | 2026 | S4 Tools | n/a | n/a | 5 | T3 (harvey.ai) | 400K queries/day; 18,000+ workflows; 200+ legal data sources |
-| Hippocratic AI | 2026 | S4 Tools | n/a | n/a | 5 | T3 (hippocraticai.com) | $3.5B valuation; 30% readmission reduction; 360% care-capacity boost |
+| Hippocratic AI | 2026 | S4 Tools | n/a | n/a | 5 | T3 (hippocraticai.com) | \$3.5B valuation; 30% readmission reduction; 360% care-capacity boost |
 | Multi-Agent Evolve (MAE) | 2025 | S5 Orchestration | Auto | n/a | 5 | T2 (arXiv:2510.23595) | RL co-evolution of Proposer/Solver/Judge population |
 | Memento-Skills | 2026 | S5 Orchestration | Auto | Auto | 5 | T2 (arXiv:2604.02460) | Unit-test-gated skill promotion within multi-agent topology |
 | Cemri et al. (AG2) | 2025 | S5 Orchestration | n/a | n/a | 3 | T2 (arXiv:2503.13657) | Specialisation +4.5 pp on GSM-Plus ($p = 0.03$); MAST 14 failure modes |
 | Braintrust | 2024 | S6 Governance | n/a | Auto | 5 | T3 (braintrust.dev) | Prompts-as-code: immutable commits, eval-gated PR merge, sub-5 min rollback |
 | Vellum | 2024 | S6 Governance | n/a | Auto | 5 | T3 (vellum.ai) | Same governance pattern; production deployment with eval thresholds |
-| LangSmith Hub | 2024 | S6 Governance | n/a | Auto | 5 | T3 (smith.langchain.com) | Prompt repository with environment promotion and eval blocking |
+| LangSmith Hub | 2024 | S6 Governance | n/a | Auto | 5 | T3 (\url{smith.langchain.com}) | Prompt repository with environment promotion and eval blocking |
 | Self-Refine\* | 2023 | (contrast) | n/a | n/a | 1 | T2 (arXiv:2303.17651) | Fails the patch-plastic discriminator: in-context iteration only |
 | Mem0\* | 2024 | (contrast) | n/a | n/a | 2 | T3/T4 (mem0.ai) | Fails Loop 2: per-user memory with no cross-context promotion path |
+
+```{=latex}
+\endgroup
+```
 
 *Asterisks mark contrast systems included for definitional clarity.*
 
