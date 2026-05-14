@@ -561,20 +561,22 @@ Proposition 1: once enough failures have been sampled that
 sampling does not enlarge the catalogue and the intervention budget
 becomes a domain-constant function of \(|C_D|\) alone.
 
-This framing is consistent with the empirical heterogeneity observed
-across domains: MMLU-Pro reports 14-domain accuracy variance from
-\(\sim 20\%\) to \(> 70\%\) on a single base model (Wang Y. et
-al.~2024); Kandpal et al.~(2023) find log-linear scaling between
+Two lines of evidence support the cap. Structurally, embedding-space
+analyses find that representations decompose into local strata whose
+intrinsic dimensions range \(\sim 5\)--\(15\) across domains, well below
+the ambient \(\sim 10^3\) scale (Park et al.~2024; Li \& Sarwate 2025)
+--- the differential-geometric anchor for treating \(P_D\) as a
+sub-manifold rather than a slogan. Empirically, cross-domain
+heterogeneity is now routine: MMLU-Pro reports a 14-domain accuracy
+spread from \(\sim 20\%\) to \(> 70\%\) on a single base model (Wang Y.
+et al.~2024); Kandpal et al.~(2023) find log-linear scaling between
 training-document count and retrieval accuracy
 (\(R^2 \in [0.98, 0.99]\)); Mallen et al.~(PopQA, 2023) identify a
 log-popularity threshold below which scaling does not help. None of
-these \emph{measures} \(|C_D|\) directly; together they support the
-structural claim that \(C_D\) is bounded and heavy-tailed per patch. The
-stratified-manifold construct in Park et al.~(2024) and the explicit
-stratum decomposition in Li \& Sarwate (2025) supply the
-differential-geometric anchor: the embedding space decomposes into local
-strata whose intrinsic dimensions range \(\sim 5\)--\(15\) across
-domains, far below the ambient \(\sim 10^3\) scale.
+these \emph{measures} \(|C_D|\) directly. Together they support the
+structural claim that \(C_D\) is bounded and heavy-tailed per patch ---
+the content of any specific \(C_D\) remains a per-domain empirical
+question.
 
 Crucially, \(\sigma_D\), \(A_D\), \(\beta_D\), and \(|C_D|\) are all
 domain-indexed. Deploying the same base model in three different
@@ -1402,15 +1404,14 @@ Section 6 walks through each one.
 
 \subsection{5. Practical Implications}\label{practical-implications}
 
-\textbf{Reliability engineering is local patch coverage.} Section 3.4's
-polylog bound implies that, \emph{within a fixed domain patch},
-reliability is a small-catalogue engineering problem rather than an
-asymptotic scaling problem (Section 3.2 closing paragraph). A team
-building a reliable LLM system in a specific domain --- cardiology RAG,
-legal contract drafting, code review --- should expect to need on the
-order of tens of named interventions, one per recurring failure mode in
-\emph{that} domain's patch. The same base model deployed in three
-different patches yields three different intervention libraries because
+\textbf{Reliability engineering is local patch coverage.} Within a fixed
+domain patch, Proposition 1's polylog bound makes reliability a
+small-catalogue engineering problem rather than an asymptotic scaling
+problem. A team building a reliable LLM system in a specific domain ---
+cardiology RAG, legal contract drafting, code review --- should expect
+to need on the order of tens of named interventions, one per recurring
+failure mode in \emph{that} patch. The same base model in three
+different patches yields three different intervention libraries:
 \(C_D\), \(A_D\), and \(\sigma_D\) all change with the deployment
 domain. The engineering goal is not global manifold mastery; it is
 identifying the recurring transition types available in the target patch
@@ -1708,16 +1709,16 @@ application domain to another --- say, from general-purpose chat to
 clinical decision support --- the four domain-indexed quantities
 \(A_D\), \(\sigma_D\), \(\beta_D\), and \(|C_D|\) all change. A library
 calibrated against one patch will under-cover the next patch's mode
-catalogue. The framework predicts this transfer failure structurally ---
-heavy-tailed and bounded per patch --- but it does not predict the
+catalogue. The framework predicts this transfer failure structurally
+(heavy-tailed and bounded per patch) but says nothing about the
 \emph{content} of \(C_{D'}\) in advance. The operationally useful
 response is to re-measure inside the new patch and re-fit the head of
-the local distribution. The most useful follow-up evidence would be
-per-domain mode-discovery measurement (subsamples of size \(t\)
-vs.~distinct discovered modes, the falsifiability test of §3.6); no such
-curve has been published for any published taxonomy at the time of
-writing. The framework's prediction is that such curves should rise
-log/Heaps-style inside the patch and asymptote to a domain-specific
+the local distribution. The cleanest follow-up evidence would be
+per-domain mode-discovery measurement --- subsamples of size \(t\)
+versus distinct discovered modes, the falsifiability test of §3.6 ---
+but no such curve has been published at the time of writing. The
+framework's prediction is that such curves should rise log- or
+Heaps-style inside the patch and asymptote to a domain-specific
 \(|C_D|\).
 
 \textbf{The irreducible-semantic residual.} Of the 17 ErrorAtlas
