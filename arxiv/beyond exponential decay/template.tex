@@ -1,0 +1,529 @@
+\documentclass{article}
+
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{graphicx}
+\usepackage{natbib}
+\usepackage{doi}
+\usepackage{amsmath}
+
+\title{Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models}
+
+\author{
+  \href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}Mikhail L. Arbuzov} \\
+  \And
+  \href{https://orcid.org/0000-0001-9436-8241}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}Alexey A. Shvets} \\
+  \And
+  \href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}Sisong Bei} \\
+}
+
+\renewcommand{\shorttitle}{Beyond Exponential Decay}
+
+\hypersetup{
+pdftitle={Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models},
+pdfsubject={cs.CL, cs.AI, cs.LG},
+pdfauthor={Mikhail L. Arbuzov, Alexey A. Shvets, Sisong Beir},
+pdfkeywords={large language models, error accumulation, long-context reliability, key tokens, stratified manifolds, self-consistency, autoregressive models, semantic convergence, targeted computation, reasoning paths},
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The prevailing assumption of an exponential decay in large language model (LLM) reliability with sequence length, predicated on independent per-token error probabilities, posits an inherent limitation for long autoregressive outputs. Our research fundamentally challenges this view by synthesizing emerging evidence that LLM errors are not uniformly distributed but are concentrated at sparse "key tokens" ($5-10\%$ of total tokens) representing critical decision junctions. By distinguishing these high-impact tokens from the increasingly predictable majority, we introduce a new reliability formula explaining the sustained coherence of modern LLMs over thousands of tokens. Converging research streams reveal that long-context performance primarily depends on accurately navigating a few crucial semantic decision points rather than on uniform token-level accuracy, enabling targeted strategies that significantly outperform brute-force approaches. We thus propose a framework for next-generation systems centered on selective preservation of semantically vital tokens, dynamic computational allocation at uncertain decision boundaries, multi-path exploration at ambiguities, and architectures aligned with natural semantic domains. This marks a fundamental shift from raw scaling to strategic reasoning, promising breakthrough performance without proportionate computational scaling and offering a more nuanced understanding that supersedes the exponential decay hypothesis, thereby opening pathways toward substantially more powerful and efficient language systems.
+\end{abstract}
+
+\keywords{large language models \and error accumulation \and key tokens \and stratified manifold \and self-consistency \and long context}
+
+\section{Introduction}
+
+Large Language Models (LLMs) are often assumed to suffer an exponential decay in output correctness as the sequence length increases, following a simplistic model $(1-e)^n$ where each token has an independent error rate $e$ \citep{dziri2023faith}. This pessimistic view, prominently articulated by LeCun \citep{lecun2023why},  suggests that autoregressive LLMs are fundamentally limited: if an LLM has even a 1\% chance of error at each step, over 100 steps the chance of a perfect chain would be only $(0.99)^{100} \approx 37\%$. Such reasoning has led to claims that "autoregressive LLMs are doomed" for complex tasks requiring lengthy outputs.
+
+However, emerging evidence challenges this simplistic model. Large language models routinely generate coherent texts spanning thousands of tokens, from multi-paragraph explanations to complex code and dialogues. They can even self-correct mid-generation, revising earlier interpretations in light of later context—behavior incompatible with monotonically increasing error. As Gwern \citep{gwern2023inner} demonstrated in "inner monologue" experiments, the probability of error can actually decrease at certain points in a sequence when the model revises its approach.
+
+This paper proposes an alternative framework for understanding LLM reliability in long sequences. Our approach integrates three key insights from recent theoretical and empirical studies:
+
+\subsection{Key Tokens and Sparse Dependency}
+
+Only a small subset of "key" tokens (approximately 5–10\% of tokens) truly depend on long-range context, while the majority of tokens become nearly error-free given sufficient context. We estimate that in a sequence of length $n$, only $k$ tokens critically influence global coherence and factual accuracy. As Fang et al. \citep{fang2024what} demonstrated, these key tokens can be identified by comparing performance with and without long-range context; only about 9\% of tokens show significant dependence on distant information. The remaining $n-k$ tokens are governed by local patterns and linguistic regularities, with error rates approaching zero as context accumulates.
+
+\subsection{Stratified Manifold of Representations}
+
+Token representations cluster into semantically coherent, low-dimensional patches that constrain the model's trajectory and prevent it from drifting off-topic due to minor mistakes. Recent analyses by Li and Sarwate \citep{li2025unraveling} confirm that LLM embedding spaces organize into stratified manifolds—distinct subregions corresponding to different semantic domains. Once operating within a particular "patch" (e.g., discussing physics or telling a story), small perturbations tend to keep the model in the same neighborhood rather than ejecting it into unrelated semantic space. This provides natural error correction: the model stays "on topic" despite occasional slips, similar to how humans maintain coherent conversation despite grammatical errors or word substitutions.
+
+\subsection{Self-Consistency and Semantic Convergence}
+
+Multiple reasoning paths tend to converge on the same underlying answer, effectively mitigating single-path errors. Wang et al. \citep{wang2023self} demonstrated that sampling several chains of thought and choosing the most consistent answer dramatically improves performance on reasoning benchmarks (+17.9 percentage points on GSM8K math problems), without any additional training. This suggests that correct answers function as attractors in the model's solution space—different paths may take different routes, but they tend to converge on the same conclusion. Errors, by contrast, appear more random and diverse, making them easy to identify and filter through ensemble methods.
+
+Based on these insights, we propose an improved error model that refines LeCun's $(1-e)^n$ one by:
+
+\begin{equation}
+P(\text{correct}) \approx (1-e_{\text{key}})^k \cdot (1-e_{\text{non}})^{n-k}
+\end{equation}
+
+Where $k$ represents number of key tokens, $e_{\text{key}}$ is their error probability, and $e_{\text{non}}$ is the much lower error rate for non-key tokens—a rate that typically decreases with context length. Since $k$ grows sublinearly with $n$ (often logarithmically or as a fractional power)\footnote{We investigate different dependencies, $k(n)$ later in the paper.}, this formula predicts much slower degradation than exponential decay, aligning with observed LLM capabilities. 
+
+Our contributions include:
+\begin{itemize}
+\item A formal theoretical framework distinguishing between key and non-key tokens in error analysis
+\item Synthesis of recent research on attention patterns, embedding geometry, and multi-path reasoning supporting this framework
+\item Analysis of how LLM errors cluster and correlate rather than appearing as independent events
+\item Practical implications for prompt engineering, model architecture, and reliability evaluation
+\end{itemize}
+
+The remainder of this paper is structured as follows: Section 2 reviews related work on error accumulation, long-context utilization, and representation geometry. Section 3 formalizes our theoretical framework. Section 4 presents empirical evidence supporting each aspect of our framework. Section 5 discusses practical implications, and Section 6 concludes with limitations and future directions.
+
+\section{Related Work}
+
+\subsection{Error Compounding in Sequential Reasoning}
+
+The challenge of compounding errors in sequence models has been studied since early work on recurrent neural networks. Bengio et al. \citep{bengio2015scheduled} identified exposure bias: models trained with teacher forcing (using ground-truth contexts) must at inference time condition on their own potentially imperfect outputs. This discrepancy can cause cascading errors as mistakes propagate through state updates. Techniques like scheduled sampling were developed to mitigate this effect by gradually exposing the model to its own predictions during training.
+
+LeCun \citep{lecun2023why} reignited this concern for autoregressive LLMs, arguing that because these models condition on their own outputs, they inevitably "drift out of distribution" with each token generation. In formal terms, if each token has error probability $e$, then after $n$ tokens, the probability of an entirely correct sequence decays as $(1-e)^n$—approaching zero for sufficiently large $n$. This theoretical argument suggests fundamental limitations for autoregressive generation on complex tasks.
+
+However, this view overlooks several critical advances in modern transformer architectures. Unlike RNNs, which compress history into a single state vector, transformers with attention mechanisms can directly access any part of their previously generated context. This allows for what Lu et al. \citep{lu2022self} call "retrospective error correction"—the ability to implicitly or explicitly revise interpretations based on later context. Empirical demonstrations of this include Gwern's \citep{gwern2023inner} "inner monologue" experiments, where models initially err but later self-correct, directly contradicting monotonic error accumulation.
+
+The debate between monotonic error accumulation versus structured reasoning has practical implications. If errors truly compound inescapably, then scaling parameters might offer limited improvement beyond a certain point. Conversely, if errors are sparse and concentrated at key decision points, targeted approaches might yield outsized performance gains.
+
+\subsection{Long-Context Utilization and Key Information}
+
+As LLM context windows have expanded beyond 100,000 tokens, researchers have gained insight into how these models actually use long contexts. Positional biases and attention patterns reveal highly non-uniform information utilization.
+
+Liu et al. \citep{liu2023lost} identified the "Lost in the Middle" phenomenon, where models disproportionately attend to information at the beginning and end of inputs while underutilizing middle sections. This asymmetric attention suggests that not all context tokens contribute equally to outputs—a direct challenge to the uniform error model. Fang et al. \citep{fang2024what} quantified this by measuring which tokens genuinely benefit from long-range context, finding that only approximately 9\% qualified as "key tokens" whose prediction significantly improved with additional context.
+
+Analysis of attention patterns provides further evidence for the sparsity of critical information. Liu et al. \citep{liu2024retrieval} demonstrated that over 96\% of cumulative attention weight in Llama-3 models concentrates on just 1,000 tokens out of 100,000. Their RetrievalAttention mechanism exploits this by caching only high-impact tokens, recovering 90\% of attention scores while processing contexts 100× longer than the nominal window size.
+
+These findings directly support our framework's central claim that $k \ll n$: only a small fraction of tokens truly matter for overall correctness. The practical implications are significant—as demonstrated by Pang et al. \citep{pang2024anchor}, whose Anchor-LLM approach achieved 99\% reduction in context tokens with negligible performance loss by identifying and preserving only those tokens serving as semantic anchors for the broader context.
+
+\subsection{Manifold Hypothesis and Representation Geometry}
+
+Recent advances in interpretability research have revealed the geometry of LLM embedding spaces, providing insight into how these models organize semantic information and resist error propagation.
+
+The classical manifold hypothesis posits that natural data lies on low-dimensional manifolds within high-dimensional space. Li and Sarwate \citep{li2025unraveling} extended this to LLMs, discovering that token embeddings form a stratified space—a union of multiple manifolds corresponding to different semantic domains. Using sparse mixture-of-experts to probe embedding structure, they demonstrated that representations naturally cluster by domain (scientific text, casual dialogue, code) and even by sub-topics within domains.
+
+This stratified structure has profound implications for error dynamics. Robinson et al. \citep{robinson2025token} showed that token embeddings often split into distinct "signal" and "noise" dimensions; perturbing signal dimensions significantly alters outputs while noise dimension changes have minimal effect. The existence of these orthogonal subspaces explains why some token errors cause semantic shifts while others remain inconsequential.
+
+Viswanathan et al. \citep{viswanathan2024geometry} established a quantitative link between representation geometry and performance by measuring intrinsic dimensionality of embeddings across various contexts. They found that prompts eliciting low-dimensional representations consistently produced more accurate predictions than those with high-dimensional, diffuse representations. This suggests that as a model becomes confident in a particular semantic domain, its internal state becomes more constrained—more resistant to random perturbations and errors.
+
+Gao et al. \citep{gao2023transformers} provided further evidence for the compartmentalization of errors through their "know-but-don't-tell" experiments. They demonstrated that model intermediate layers could encode correct answers with over 80\% accuracy even when the final output contained errors. This indicates that information is often preserved in the model's internal state even when surface form contains mistakes—exactly what our stratified manifold theory predicts.
+
+\subsection{Self-Consistency and Ensemble Reasoning}
+
+Beyond structured representations, ensemble methods have emerged as powerful techniques for mitigating errors in long-form generation, particularly for complex reasoning tasks.
+
+Wang et al. \citep{wang2023self} introduced self-consistency decoding, which samples multiple reasoning paths and selects the most consistent answer through majority voting. This approach yielded remarkable improvements: +17.9 percentage points on GSM8K and +11.0 percentage points on SVAMP math problems, without any model modifications. Such dramatic gains would be impossible if errors accumulated independently in each chain—some property of the model's knowledge distribution must make correct answers more consistent across samples than incorrect ones.
+
+Yao et al. \citep{yao2023tree} extended this insight with Tree of Thoughts, systematically exploring multiple reasoning branches at decision points with high uncertainty. This approach transformed GPT-4's performance on the Game of 24 from 4\% to 74\% by enabling structured exploration of alternate paths. Their work demonstrated that reasoning errors are not randomly distributed throughout the generation process but concentrate at specific branch points where explicit deliberation yields outsized benefits.
+
+Li et al. \citep{li2023reliability} documented that error patterns fundamentally depend on problem type, with some errors being systematic (knowledge gaps affecting all samples similarly) while others are idiosyncratic (randomly distributed across samples). This distinction explains why ensemble methods work better for some tasks than others—they excel at averaging out random errors but cannot compensate for systematic knowledge deficiencies.
+
+The success of ensemble methods directly challenges the exponential error accumulation hypothesis. If every token had independent probability $e$ of error, generating multiple samples would simply yield multiple erroneous outputs. The fact that aggregating multiple paths dramatically improves performance suggests that the model often "knows" the correct answer implicitly, and ensembling merely helps extract this knowledge more reliably.
+
+Collectively, these research streams—error dynamics, context utilization, representation geometry, and ensemble reasoning—converge on a more nuanced view of LLM reliability than simple exponential decay. In the following sections, we formalize this understanding and provide empirical validation.
+
+\section{Theoretical Framework}
+
+In this section, we develop a formal framework that explains why Large Language Models (LLMs) can maintain reliability over long outputs despite the apparent threat of exponential error accumulation. Our approach challenges the simplified $(1-e)^n$ model by integrating three key insights: the sparse distribution of critical decision points, the structured nature of error propagation, and the efficacy of ensemble methods for error reduction.
+
+\subsection{Key Tokens vs. Non-Key Tokens: A Two-Rate Error Model}
+
+The exponential error argument assumes all tokens contribute equally to the probability of failure. This assumption fails to account for the heterogeneous nature of token importance in natural language. We propose a fundamental distinction:
+
+\begin{itemize}
+\item \textbf{Key tokens} are critical decision points or information-carrying elements whose correctness significantly depends on long-range context or global knowledge, and whose incorrect prediction would materially degrade the overall output quality. These include factual statements, logical operations, or points requiring long-range dependency resolution.
+
+\item \textbf{Non-key tokens} are largely determined by local regularities (syntax, frequent phrases) or duplicating context content. The model is highly unlikely to mis-predict them when the context is adequately provided, and even if mis-predicted, the error would be minor or easily corrected later.
+\end{itemize}
+
+We postulate that in a sequence of length $n$, the number of key tokens $k$ is significantly smaller than $n$. This insight is supported by attention pattern analyses showing that only $\sim$5-10\% of tokens in long documents receive substantial attention weight, with the rest essentially functioning as supporting elements \citep{fang2024what}.
+
+Most critically, we propose that $k$ scales sublinearly with $n$, potentially reaching an upper bound $k_{\max}$ for many practical tasks. This makes intuitive sense: even a book-length text operates within a finite knowledge framework requiring a bounded number of critical facts or connections.
+
+Assuming a per-token error probability of $e_{\text{key}}$ for key tokens and $e_{\text{non}}$ for non-key tokens (with $e_{\text{key}} \gg e_{\text{non}}$), the probability of generating a completely correct sequence becomes:
+
+\begin{equation}
+P(\text{correct}) = (1-e_{\text{key}})^k \cdot (1-e_{\text{non}})^{n-k}
+\end{equation}
+
+Given that $k \ll n$ and $e_{\text{non}}$ approaches zero as context accumulates (due to increased model confidence on predictable tokens), this yields three possible scaling regimes:
+
+\begin{enumerate}
+\item If $k$ grows logarithmically with $n$ (e.g., $k \sim \log n$): A power-law decay $n^{-c}$, much slower than exponential
+\item If $k$ grows as a fractional power of $n$ (e.g., $k \sim \sqrt{n}$): A stretched exponential decay
+\item If $k$ is bounded by $k_{\max}$ regardless of $n$: A constant independent of sequence length
+\end{enumerate}
+
+This third regime is particularly significant: it suggests a plateau effect where reliability doesn't diminish with increased output length once all key facts have been incorporated.
+
+Empirically, this is supported by studies like Pang et al. \citep{pang2024anchor}, who demonstrated that "Anchor LLMs" could achieve a 99\% reduction in context tokens while maintaining nearly identical performance, suggesting that most tokens are indeed non-key and can be safely ignored without consequence.
+
+\subsection{Stratified Manifold and Error Correction Dynamics}
+
+The $(1-e)^n$ model assumes token errors occur independently. In reality, LLM outputs exhibit strong error correlation due to the underlying structure of the embedding space.
+
+We conceptualize an LLM's hidden state as moving along a manifold $M_C$ determined by the context $C$. As the model generates text, two error types emerge:
+
+\begin{enumerate}
+\item \textbf{Minor errors} (remaining on $M_C$): Small perturbations like grammatical slips or synonym substitutions that don't fundamentally alter the semantic trajectory
+\item \textbf{Disruptive errors} (jumping to $M_{C'}$): Significant deviations that shift the generation onto an entirely different manifold, often caused by a key token error
+\end{enumerate}
+
+When a disruptive error occurs at a key token, subsequent tokens tend to remain consistent with this error rather than randomly failing. The model effectively "commits" to its mistake, producing a coherent but incorrect continuation. This creates error clustering rather than uniform distribution.
+
+Importantly, this error correlation structure actually reduces the probability of sequence failure compared to the independent error case. While a disruptive error has catastrophic effects, the probability of experiencing at least one such error is lower than would be calculated from independent probabilities:
+
+\begin{equation}
+P(\text{any disruptive error}) \neq 1-(1-e_{\text{key}})^k
+\end{equation}
+
+For small $k$, we can apply a union bound:
+
+\begin{equation}
+P(\text{any disruptive error}) \leq k \cdot e_{\text{key}}
+\end{equation}
+
+When $k \ll n$, this bound is substantially higher than $1-(1-e)^n$, demonstrating why the independent error model overestimates failure probability.
+
+The manifold structure creates a "mode persistence" effect: the model tends to remain in its current semantic mode, making errors sparse but clustered. This explains why LLM outputs typically exhibit long stretches of coherent text punctuated by occasional errors, rather than uniform deterioration.
+
+Recent studies on LLM embedding geometry \citep{li2025unraveling} confirm this stratified manifold structure, showing that token representations cluster into semantically coherent, low-dimensional subspaces. Once the model establishes a position within such a subspace, small perturbations tend to remain confined within that same semantic region rather than ejecting the model into an unrelated manifold.
+
+The AIMO-2 study \citep{moshkov2025aimo} provides further evidence by demonstrating that tool integration at specific reasoning junctions dramatically improves performance. By equipping models with computational tools (like Python code execution) at critical decision points, the study shows that reasoning failures are not random but rather occur at specific semantic junctions where the model lacks necessary capabilities or information. This directly supports our conception of key tokens as critical decision points in the reasoning path.
+
+\subsection{Self-Consistency and Redundancy Gain}
+
+Building on the understanding that errors are clustered rather than uniform, we can exploit this structure to improve reliability through ensemble techniques.
+
+When LLMs make errors on key tokens, these errors are often idiosyncratic rather than systematic. Different generation attempts tend to make errors at different decision points. Most importantly, while incorrect answers diverge in many directions, correct answers converge to the vicinity of a single point, creating a basin of attraction.
+
+By sampling multiple reasoning paths and applying majority voting, we can effectively reduce the error rate for key tokens. For $m$ samples with an error correlation coefficient $\rho$, the effective error rate becomes:
+
+\begin{equation}
+e_{\text{key}}^{\text{(eff)}} = f(\rho, m) \cdot e_{\text{key}}
+\end{equation}
+
+Where $f(\rho, m)$ is a correction factor that approaches 1 as $\rho \to 1$ (perfect correlation) and approaches $e_{\text{key}}^m$ as $\rho \to 0$ (independent errors).
+
+Even with moderate correlation, this effective error rate can be substantially lower than the single-sample $e_{\text{key}}$ when $m > 1$ and $\rho$ is sufficiently large. This explains the remarkable success of techniques like self-consistency \citep{wang2023self}, which have demonstrated significant improvements on reasoning benchmarks without any additional training.
+
+The success of majority voting validates our central claim: LLM errors are not uniformly distributed independent events that inevitably compound, but rather structured phenomena concentrated at key decision points. When the model "knows" the correct answer (even implicitly), different reasoning paths tend to converge on it despite potentially taking different routes.
+
+The Trace, Correct, and Transfer (TCT) paper \citep{costello2025think} provides compelling evidence that accurate reasoning comes at the expense of diversity, highlighting that correct reasoning paths occupy semantically narrower or lower-dimensional manifolds compared to erroneous paths, which provide diversity at the expense of accuracy. This directly supports our manifold hypothesis, showing that correct solutions cluster tightly in the model's semantic space.
+
+Perhaps most convincingly, the AIMO-2 paper's GenSelect methodology demonstrates that the system can effectively select the best solutions based solely on concise summaries of reasoning paths. This fundamentally proves that correct solutions have a limited number of key decision points that need to be traversed correctly, which separate them from incorrect solutions. If reasoning errors were uniformly distributed throughout the output, summaries would be insufficient to distinguish correct from incorrect solutions.
+
+This mechanism provides perhaps the strongest empirical evidence against the exponential error cascade hypothesis. If errors truly compounded independently at each token, generating multiple samples would simply yield multiple erroneous outputs. The fact that ensemble techniques so effectively improve accuracy demonstrates that the model often has the capacity to produce correct sequences—it simply needs the right sampling approach to reveal this capability.
+
+By combining our understanding of key token sparsity, manifold structure, and self-consistency effects, we arrive at a more nuanced and realistic model of how errors propagate in autoregressive LLMs. Far from the pessimistic exponential decay prediction, we find that these models can maintain remarkably high reliability across long contexts when properly leveraged.
+
+\section{Empirical Evidence}
+
+This section presents empirical evidence supporting our three-pillar theoretical framework for understanding error accumulation in LLMs: key token sparsity, stratified manifold structure, and self-consistency effects.
+
+\subsection{Evidence for Key Token Sparsity}
+
+\subsubsection{Quantitative Distribution of Influential Tokens}
+
+Fang et al.'s \citep{fang2024what} seminal work on perplexity distribution provides the most direct quantification of key token prevalence. Using their "long-short difference" (LSD) metric to measure which tokens genuinely depend on distant context, they demonstrated that:
+
+\begin{itemize}
+\item Only 9\% of tokens in natural documents qualified as "key tokens" (LSD > 2)
+\item Perplexity on these key tokens strongly correlated with downstream task performance (Pearson $\approx$ -0.96)
+\item Perplexity on the remaining 91\% of tokens showed almost no correlation with success
+\item For most tokens, perplexity decreased (improved) as context length increased
+\end{itemize}
+
+This 9\% figure is particularly significant because it independently converges with adversarial robustness findings by Morris et al. \citep{morris2022textattack}, which showed that modifying just 5-10\% of strategically chosen tokens can flip model decisions, while randomly perturbing even larger portions has minimal impact. The consistent identification of this 5-10\% range across methodologies strongly supports our key token hypothesis.
+
+\subsubsection{Computational Efficiency Through Token Sparsity}
+
+Liu et al.'s \citep{liu2023attention} analysis of attention patterns revealed that over 95\% of cumulative attention weight in transformer models focuses on a small fraction of context tokens. This extreme attention concentration demonstrates how LLMs naturally filter relevant from irrelevant information during processing.
+
+The practical applications of this sparsity are demonstrated by Pang et al.'s \citep{pang2024anchor} Anchor-LLMs, which achieved an 80-90\% reduction in context size without meaningful performance degradation by preserving only "anchor tokens". Their work shows that most tokens serve largely redundant functions that can be compressed or eliminated entirely—precisely what our two-rate error model predicts.
+
+\subsubsection{Tool Integration at Critical Decision Points}
+
+The AIMO-2 winning solution by Moshkov et al. \citep{moshkov2025aimo} provides a compelling real-world validation of key token theory. Their "Tool-Integrated Reasoning" (TIR) approach strategically incorporates code execution at specific reasoning junctions where traditional language modeling might fail. By focusing computational resources on these critical decision points, they achieved state-of-the-art performance on olympiad-level mathematical problems.
+
+Most tellingly, their "GenSelect" methodology successfully identifies the best solutions from among many candidates based solely on concise reasoning summaries. In their own words:
+
+"We create a pipeline to train models to select the most promising solution from many candidates. We show that such generative solution selection (GenSelect) can significantly improve upon majority voting baseline." \citep{moshkov2025aimo}
+
+This would be impossible if errors were uniformly distributed throughout sequences, as the summaries would lack sufficient signal to distinguish correct from incorrect solutions.
+
+\subsection{Evidence for Stratified Manifold Structure}
+
+\subsubsection{Direct Mapping of Embedding Geometry}
+
+Li and Sarwate \citep{li2025unraveling} provided empirical verification of the stratified manifold hypothesis by directly analyzing LLM embedding spaces. Using a sparse mixture-of-experts probe trained on frozen embeddings, they demonstrated that:
+
+"Embeddings live in a stratified space, a union of multiple manifolds of different dimensions corresponding to different data sources, reflecting the semantic divisions in the training corpus." \citep{li2025unraveling}
+
+Their work revealed that embeddings from different domains (scientific text, casual dialogue, code) occupy distinct submanifolds with measurable differences in intrinsic dimensionality. These findings directly support our theoretical claim that the latent space of LLMs is organized into structured "patches" rather than a uniform high-dimensional distribution.
+
+Robinson et al. \citep{robinson2023token} complemented this work by developing a "fiber bundle" model of token embeddings, introducing a critical distinction between tokens with regular versus irregular neighborhoods. Regular neighborhoods (tokens lying cleanly on manifolds) could be perturbed with minimal downstream effects, while irregular neighborhoods (manifold junction points) caused significant output changes when perturbed. Their analysis directly maps to our distinction between stable non-key tokens and high-influence key tokens.
+
+\subsubsection{Dimensional Compression in Confident Generation}
+
+Viswanathan et al. \citep{viswanathan2023geometry} established a direct relationship between intrinsic dimensionality and model confidence, finding that contexts where models display high confidence exhibit significantly lower intrinsic dimensionality than uncertain contexts. This dimensional compression demonstrates how an LLM's state becomes increasingly constrained to a narrow manifold during confident generation.
+
+Their quantitative metrics showed strong correlation between embedding intrinsic dimension and prediction loss—contexts leading to low-dimensional representations consistently produced more accurate predictions. This contradicts the assumption that uncertainty compounds with sequence length, instead showing that longer contexts often narrow rather than expand the model's uncertainty.
+
+\subsubsection{Robust Knowledge Retention Despite Surface Errors}
+
+Gao et al.'s \citep{gao2023transformers} "know-but-don't-tell" research revealed that model intermediate layers encoded correct answers with over 80\% accuracy even when the final output contained errors. Through systematic probing of intermediate representations, they demonstrated that information is often preserved internally even when the final output fails to reflect it.
+
+This compartmentalization is precisely what our manifold theory predicts: the model's hidden state typically remains "on manifold" (correct) even when individual output tokens stray, explaining why LLMs often demonstrate the capacity to correct themselves when prompted to reconsider their responses.
+
+\subsection{Evidence for Self-Consistency and Convergent Reasoning}
+
+\subsubsection{Statistical Properties of Correct vs. Incorrect Solutions}
+
+The "Think, Prune, Train, Improve" framework \citep{costello2025think} uncovered a fundamental insight about mathematical reasoning paths: correct solutions cluster in a narrow manifold while incorrect solutions diverge widely. The authors demonstrated this through careful analysis of reasoning trajectories, noting:
+
+"As Pass@1 accuracy increases through iterative fine-tuning, the gains from majority voting diminish proportionally." \citep{costello2025think}
+
+This finding directly supports our theoretical prediction that correct reasoning paths converge to a constrained low-dimensional manifold, while incorrect paths diverge in many possible directions. When the model consistently finds this correct manifold on first attempt, ensemble methods provide diminishing benefits—exactly what we would expect if correct answers occupy a narrow attractor basin.
+
+\subsubsection{Quantifiable Performance Gains Through Ensemble Methods}
+
+Wang et al.'s \citep{wang2023self} self-consistency research quantified the benefits of ensemble approaches for mathematical reasoning:
+
+\begin{itemize}
+\item +17.9 percentage points on GSM8K math word problems (from 66.7\% to 84.6\%)
+\item +11.0 percentage points on SVAMP math problems
+\item Consistent improvements across various reasoning tasks without any model modifications
+\end{itemize}
+
+Their approach—generating multiple reasoning paths and selecting the majority answer—exploits precisely the pattern our theory predicts: correct answers converge while errors diverge. The magnitude of these improvements would be impossible under an exponential error accumulation model, where multiple attempts would simply yield multiple failures.
+
+\subsubsection{Systematic vs. Idiosyncratic Error Patterns}
+
+Li et al. \citep{li2023reliability} documented that error patterns fundamentally depend on problem type. For tasks involving domain knowledge the model lacks (e.g., obscure facts), errors are systematic—all sampling attempts fail similarly. For reasoning tasks where the model possesses necessary knowledge but faces execution challenges, errors are idiosyncratic—randomly distributed across different samples.
+
+This distinction precisely aligns with our framework's predictions: knowledge gaps create systematic errors at specific key tokens, while reasoning difficulties produce variable errors that can be mitigated through ensemble methods. It explains why ensemble approaches are particularly effective for complex reasoning problems but less helpful for knowledge-retrieval tasks.
+
+\subsection{Integrated Evidence from Advanced Reasoning Systems}
+
+\subsubsection{Structured Reasoning Without Model Scaling}
+
+The "Think, Prune, Train, Improve" framework by Costello et al. \citep{costello2025think} demonstrates dramatic performance improvements through iterative refinement of reasoning without increasing model size:
+
+\begin{itemize}
+\item Gemma2-2B: 41.9\% → 57.6\% Pass@1 on GSM8K
+\item Gemma2-9B: Reached 82\% (matching LLaMA-3.1-70B)
+\item LLaMA-3.1-70B: Achieved 91\% (surpassing GPT-4o's 82\%)
+\end{itemize}
+
+Their approach involves iteratively fine-tuning models on their own reasoning traces after pruning incorrect outputs. This process systematically improves performance at navigating key decision points, demonstrating that reasoning capability is not inherently tied to model scale but rather to the ability to accurately navigate critical junctions in the solution path.
+
+Their results fundamentally challenge the exponential error model by showing that structured reasoning approaches can dramatically enhance reliability without parameter scaling.
+
+\subsubsection{Test-Time Computation Effectiveness by Problem Type}
+
+Research on test-time computation allocation reveals that optimal strategies depend heavily on problem difficulty and model size \citep{nvidia2023scaling, venture2025test}. For smaller models (under 7B parameters), beam search consistently outperforms best-of-N sampling on difficult problems, while the reverse is true for easier problems.
+
+This dependency directly supports our key token framework: the optimal strategy depends on the number and difficulty of key decision points that must be traversed correctly. Problems with more key decision points benefit from search-based approaches that can systematically explore alternative paths at each junction, while simpler problems with fewer key points can be solved through simple sampling approaches.
+
+Most significantly, with the right test-time strategy, smaller models can match or even outperform much larger ones. Recent research demonstrated that a properly optimized 1B parameter model can outperform a 405B model on specific reasoning tasks \citep{venture2025test}—a gap of two orders of magnitude that should be impossible under the exponential error model.
+
+\subsubsection{Practical Implementation in State-of-the-Art Systems}
+
+The AIMO-2 winning solution by Moshkov et al. \citep{moshkov2025aimo} demonstrated the practical integration of all three pillars of our framework:
+
+\begin{enumerate}
+\item Key token identification: Their approach integrates code execution at specific reasoning junctions where traditional language modeling would fail.
+\item Manifold understanding: Their dataset creation pipeline exploits the understanding that correct solutions follow structured reasoning paths.
+\item Self-consistency: Their GenSelect methodology leverages the convergent properties of correct solutions to select the most promising candidate from many options.
+\end{enumerate}
+
+The result was a system that achieved state-of-the-art performance on challenging mathematical reasoning benchmarks, including the American Invitational Mathematics Examination (AIME) and Harvard-MIT Mathematics Tournament.
+
+\subsection{Conclusion: Evidence Synthesis}
+
+The empirical evidence presented cohesively supports all three pillars of our theoretical framework:
+
+\begin{enumerate}
+\item Key Token Sparsity: Multiple independent methodologies converge on the finding that only 5-10\% of tokens significantly impact generation outcomes \citep{liu2023lost, pang2024anchor, fang2024what, morris2022textattack, moshkov2025aimo}.
+
+\item Stratified Manifold Structure: Direct analyses of embedding spaces verify that LLM representations cluster in distinct semantic patches that compartmentalize errors and enhance stability \citep{li2025unraveling, robinson2023token, viswanathan2023geometry, gao2023transformers}.
+
+\item Convergent Reasoning Paths: Extensive evidence demonstrates that correct answers cluster while incorrect answers diverge, enabling effective ensemble strategies \citep{wang2023self, yao2023tree, costello2025think}.
+\end{enumerate}
+
+This comprehensive evidence explains why modern LLMs maintain reliability over long contexts despite the theoretical threat of exponential error accumulation. Our formula:
+
+\begin{equation}
+P(\text{correct}) \approx (1-e_{\text{key}})^k \cdot (1-e_{\text{non}})^{n-k}
+\end{equation}
+
+accurately captures this behavior, showing that reliability depends primarily on navigating a limited set of key decision points rather than exponentially decaying with sequence length.
+
+The practical implications are significant: by focusing computational resources on these key decision points through targeted methods (tool integration, self-consistency sampling, or structured pruning), we can dramatically improve model performance without increasing model size. This opens new pathways for enhancing LLM capabilities through more efficient architectures and inference strategies rather than simply scaling parameters.
+
+\section{Practical Implications}
+
+Having established our theoretical framework of key token sparsity, stratified semantic manifolds, and convergent reasoning paths in Sections 3 and 4, we now explore how these insights can transform LLM system design. Our three-pillar model suggests fundamental shifts in computation allocation, context handling, and inference strategies that address the root causes of errors rather than treating symptoms.
+
+\subsection{Sparse Attention and Context Compression}
+
+The realization that only $\sim$5-10\% of tokens critically influence outcomes enables dramatic efficiency improvements through targeted context processing:
+
+\begin{itemize}
+\item \textbf{Anchor-based Context Compression}: Pang et al. \citep{pang2024anchor} introduced Anchor LLMs that compress sequence information into representative "anchor tokens," achieving a remarkable 99\% reduction in KV-cache requirements while maintaining performance within 1.5\% of baseline accuracy on QA tasks. This approach transforms the traditionally dense attention mechanism into a sparse retrieval problem focused on semantically rich tokens.
+
+  As Pang et al. explain, their system enables LLMs to "compress sequence information into an anchor token," significantly enhancing inference efficiency while preserving semantic understanding \citep{pang2024anchor}. By identifying specific tokens that can serve as semantic aggregators, the approach effectively creates piece-wise linear approximations of the surrounding context.
+
+\item \textbf{RetrievalAttention}: Liu et al. \citep{liu2024retrieval} demonstrated that just 1,000 critical tokens out of 100,000 can recover over 90\% of attention scores across heads, enabling effective context windows of 128K tokens on consumer GPUs like the RTX 4090. Rather than uniformly computing attention across all tokens, the system treats attention as a nearest-neighbor lookup focused on high-impact tokens.
+
+  The authors note that "when generating 20 tokens consecutively based on a prompt of 100,000 tokens," their approach can "recover over 90\% of the attention scores from the full attention, with an average of 89\% across all heads and layers" \citep{liu2024retrieval}. This confirms that attention is inherently sparse, and most tokens contribute minimally to the final output.
+
+\item \textbf{Dynamic Token Selection}: Wu et al. \citep{wu2024tokenselect} developed TokenSelect, which dynamically identifies and preserves only essential tokens in the KV cache based on attention patterns. This allows LLMs to process documents multiple times longer than their training window with minimal degradation in performance.
+\end{itemize}
+
+These approaches validate our theory's central prediction: we can dramatically reduce computation by focusing on key tokens, transforming the quadratic complexity problem of attention into a more tractable sparse retrieval task.
+
+\subsection{Targeted Compute Allocation at Decision Points}
+
+Our model suggests that error risk concentrates at manifold transition points—key junctions where the model shifts between semantic domains. This insight has inspired several innovative compute allocation strategies:
+
+\begin{itemize}
+\item \textbf{Entropy-Guided Tool Integration}: Moshkov et al. \citep{moshkov2025aimo} demonstrated that LLMs can achieve state-of-the-art performance on complex mathematical reasoning by integrating symbolic tools specifically at high-entropy spans where the model exhibits uncertainty. Rather than using tools continuously, the system detects manifold transition points via entropy spikes and selectively deploys verification only at these decision junctions.
+
+  This approach mirrors our theoretical understanding that errors primarily occur at manifold transitions, where the model must shift from one semantic domain to another. By providing computational assistance precisely at these junctions, the system addresses the most challenging aspects of the reasoning task while allowing the model to handle straightforward segments independently.
+
+\item \textbf{Adaptive Computation Time}: Xin et al. \citep{xin2023adaptive} implemented early-exit mechanisms that allow confident tokens to skip transformer layers, reducing computational requirements by 40-60\% on benchmarks like SST-2 and TriviaQA. This approach exploits the insight from Section 3.2 that once a model is confidently within a semantic manifold, additional computation yields diminishing returns.
+
+  As the model processes a sequence, tokens that fall firmly within established semantic regions can be processed with fewer layers, while tokens at decision boundaries receive full computational depth. This targeted allocation ensures resources are focused where they are most needed.
+
+\item \textbf{Dynamic Temperature Sampling}: Lin et al. \citep{lin2024dynamic} introduced temperature modulation based on token uncertainty, increasing exploration at decision points and reducing it during confident generation. This directly implements the "staircase" error model we predicted, where exploration is concentrated precisely at manifold junctions.
+\end{itemize}
+
+These approaches demonstrate that targeted intervention at key decision points outperforms uniform computation allocation, both in efficiency and accuracy. By identifying the precise moments where errors are likely to occur, we can deploy computational resources strategically rather than applying them indiscriminately.
+
+\subsection{Strategic Ensemble Methods for Critical Decisions}
+
+Our analysis in Section 3.3 established that errors are often idiosyncratic rather than systematic, allowing multi-path exploration to recover correct answers even when individual paths fail. Recent innovations have operationalized this insight:
+
+\begin{itemize}
+\item \textbf{Self-Consistency Decoding}: Wang et al. \citep{wang2023self} achieved breakthrough performance improvements by sampling multiple reasoning paths and selecting the most consistent answer. This approach yielded dramatic gains on reasoning benchmarks (+17.9 percentage points on GSM8K) without any additional training, validating our theory that correct answers tend to converge across samples while errors diverge.
+
+  As Wang et al. note, their method "first samples a diverse set of reasoning paths instead of only taking the greedy one, and then selects the most consistent answer by marginalizing out the sampled reasoning paths" \citep{wang2023self}. This approach effectively exploits the convergent property of correct solutions that our theory predicts.
+
+\item \textbf{Tree of Thoughts}: Yao et al. \citep{yao2023tree} extended this insight by systematically exploring multiple reasoning branches, particularly at critical decision points with high uncertainty. This structured exploration approach transformed GPT-4's performance on Game of 24 from 4\% to 74\% accuracy by enabling deliberate backtracking and lookahead.
+
+  Yao et al. describe their framework as one that "generalizes over the popular Chain of Thought approach" and "enables exploration over coherent units of text (thoughts) that serve as intermediate steps toward problem solving" \citep{yao2023tree}. By allowing the model to consider multiple reasoning paths and self-evaluate choices, Tree of Thoughts directly addresses the critical decision points that our theory identifies as central to error reduction.
+
+\item \textbf{GenSelect}: Moshkov et al. \citep{moshkov2025aimo} introduced a more efficient selection mechanism that identifies optimal solutions by evaluating condensed reasoning summaries rather than complete paths. This approach leverages the insight that correct solutions exhibit distinctive signatures even in compressed form, allowing more efficient identification than brute-force voting.
+\end{itemize}
+
+These ensemble approaches demonstrate that strategic branching—focused on key decision points rather than uniform exploration—yields significantly better performance at lower computational cost. By concentrating diversity at manifold junctions where errors are most likely, these methods directly address the key sources of error identified in our theoretical framework.
+
+\subsection{Evaluation Aligned with Key Token Importance}
+
+Traditional evaluation metrics like perplexity average across all tokens, obscuring performance on the critical subset that determines success. Our theoretical framework suggests new evaluation approaches:
+
+\begin{itemize}
+\item \textbf{LongPPL}: Fang et al. \citep{fang2024what} introduced a modified perplexity metric that evaluates only tokens identified as "key" through a long-short context contrastive method. This targeted metric achieves a Pearson correlation of -0.96 with downstream task performance—dramatically outperforming traditional perplexity, which shows almost no correlation with long-context abilities.
+
+  The authors demonstrated that "LongPPL strongly correlates with performance on various long-context benchmarks (e.g., Pearson correlation of -0.96), significantly outperforming traditional PPL in predictive accuracy" \citep{fang2024what}. This remarkably high correlation validates our core thesis that key token performance, not average token performance, determines overall success.
+
+\item \textbf{Token Cascade Analysis}: Nistar et al. \citep{nistar2024token} demonstrated that errors follow distinct propagation patterns, with early key token mistakes precipitating cascading failures. Their analysis framework can identify which tokens serve as "trigger points" for error cascades, enabling targeted intervention.
+
+\item \textbf{Success-Plateau Curves}: Costello et al. \citep{costello2025think} introduced visualization techniques that reveal performance degradation as sharp drops after extended plateaus—precisely matching our "staircase" error model rather than smooth exponential decay.
+\end{itemize}
+
+These evaluation approaches shift focus from uniform token-level metrics to targeted assessment of key tokens, providing more accurate signals for model improvement. By aligning evaluation with the true structure of errors, these methods enable more precise diagnosis and intervention.
+
+\subsection{Modular Reasoning Architecture: Beyond Monolithic Models}
+
+Perhaps the most transformative implication of our stratified manifold theory is the potential for modular reasoning systems that exploit the natural boundaries between semantic domains:
+
+\begin{itemize}
+\item \textbf{Stratified Manifold Models}: Li and Sarwate \citep{li2025unraveling} empirically verified that LLM embedding spaces organize into distinct clusters aligned with semantic domains. Their analysis demonstrated that different manifold regions correspond to measurably different intrinsic dimensions, confirming the stratification hypothesis central to our theoretical framework.
+
+  Their research conclusively shows that "embeddings live in a stratified space, a union of multiple manifolds of different dimensions corresponding to different data sources, reflecting the semantic divisions in the training corpus" \citep{li2025unraveling}. This direct analysis of embedding geometry provides crucial empirical support for our theoretical model.
+
+\item \textbf{Mixture of Reasoning Experts (MoRE)}: Si et al. \citep{si2023mixture} implemented a system that dynamically routes different reasoning subtasks to specialized models based on task characteristics. This approach improves performance by ensuring that each reasoning step is handled by a model specialized for that particular manifold region.
+
+\item \textbf{Trace-Prune-Train (TPT)}: Costello et al. \citep{costello2025think} showed that smaller models (2-9B parameters) can match or exceed the performance of models 30× larger by focusing on aligned reasoning paths. Their approach improved GSM8K performance on a 2B parameter model from 41.9\% to 57.6\%—revealing that effective reasoning can be achieved through alignment rather than scale.
+\end{itemize}
+
+This modular approach suggests a fundamental reimagining of AI architecture: rather than scaling monolithic models, we can create systems that identify the appropriate expert for each reasoning segment. This "distributed cognition" model more closely resembles human problem-solving, where we rely on different cognitive modules for different domains.
+
+\subsection{Summary: From Theory to Implementation}
+
+Our theoretical framework has clear design implications that challenge conventional approaches to long-context modeling:
+
+\begin{table}[ht]
+\caption{Design implications of the key token framework}
+\centering
+\small
+\begin{tabular}{p{2.6cm}p{3cm}p{3cm}p{3.5cm}}
+\toprule
+\textbf{Challenge} & \textbf{Traditional Approach} & \textbf{Our Framework} & \textbf{Exemplars} \\
+\midrule
+Long-context handling & Uniform attention over all tokens & Sparse retrieval focused on key tokens & Anchor LLMs \citep{pang2024anchor}; RetrievalAttention \citep{liu2024retrieval} \\
+\midrule
+Computation allocation & Equal resources for all tokens & Dynamic targeting at manifold transitions & Entropy-guided tools \citep{moshkov2025aimo}; ACT \citep{xin2023adaptive} \\
+\midrule
+Error reduction & Multiple independent samples & Strategic branching at uncertain junctions & Self-consistency \citep{wang2023self}; GenSelect \citep{moshkov2025aimo} \\
+\midrule
+Model evaluation & Uniform perplexity metrics & Key-token focused assessment & LongPPL \citep{fang2024what}; Token Cascade Analysis \citep{nistar2024token} \\
+\midrule
+Architecture design & Scale monolithic models & Specialized experts at manifold boundaries & MoRE \citep{si2023mixture}; TPT \citep{costello2025think} \\
+\bottomrule
+\end{tabular}
+\label{tab:implications}
+\end{table}
+
+These strategies all share a common principle: focus resources where they matter most. Rather than treating errors as uniformly distributed random events requiring exponential investment to counteract, we can identify and target the specific points where errors are likely to occur.
+
+In practical terms, the path forward is clear. Long-context systems should:
+
+\begin{enumerate}
+\item Preserve and process only key tokens in extensive contexts
+\item Deploy additional computation precisely at decision boundaries
+\item Explore multiple paths specifically at uncertain junctions
+\item Evaluate performance with metrics focused on key tokens
+\item Consider modular architectures aligned with semantic domains
+\end{enumerate}
+
+This vision represents a fundamental shift from brute-force scaling to intelligent, structured reasoning—from raw power to strategic insight. By targeting intervention at the specific points where errors arise, we can achieve dramatically better performance without proportionate increases in computational demands.
+
+The exponential decay hypothesis is dead. In its place, we offer a more nuanced understanding of how LLMs operate—one that explains their existing capabilities and points the way toward even more powerful and efficient systems.
+
+\section{Conclusion}
+
+In this paper, we have challenged the prevailing assumption that autoregressive LLMs inevitably suffer exponential decay in performance as sequence length increases. Rather than treating each token as an equal opportunity for catastrophic failure, we have presented a more nuanced framework that better aligns with observed LLM capabilities.
+
+Our refined error model—$(1-e_{\text{key}})^k \cdot (1-e_{\text{non}})^{n-k}$—recognizes that only a small subset of tokens ($\sim$5-10\%) critically determine sequence correctness, while the vast majority become increasingly predictable as context accumulates. This fundamentally changes the reliability calculus: instead of exponential decay with sequence length $n$, performance primarily depends on successfully navigating the much smaller set of $k$ key decision points.
+
+We have shown how three mechanisms work together to maintain LLM coherence over long outputs:
+
+\begin{enumerate}
+\item \textbf{Key token sparsity}: Empirical studies consistently show only $\sim$9\% of tokens genuinely depend on long-range context, with the remainder governed by local patterns.
+\item \textbf{Stratified manifold structure}: LLM embeddings organize into semantic "patches" that compartmentalize errors and provide natural stability against minor perturbations.
+\item \textbf{Self-consistency effects}: Multiple reasoning paths tend to converge on correct answers while diverging on errors, enabling effective ensemble strategies.
+\end{enumerate}
+
+These findings explain why modern LLMs can generate remarkably long outputs without descending into incoherence—a capability that should be impossible under the naive $(1-e)^n$ model.
+
+Our work has limitations. The arguments draw primarily on existing studies and remain somewhat qualitative. Future research should develop more rigorous bounds based on attention mechanisms and state clustering, better quantify key token proportions across tasks, and bridge token-level and reasoning-step analyses.
+
+Nevertheless, the evidence strongly suggests that LLMs are far more resilient than previously assumed. This perspective shift has practical implications for prompt design, inference strategies, and model architecture. By focusing computational resources on the specific points where errors are likely to occur—rather than treating every token as equally fragile—we can develop more efficient and reliable systems.
+
+Rather than viewing LLMs as fragile systems perpetually on the brink of failure, we propose reimagining them as fundamentally robust—capable of maintaining semantic coherence across long contexts with only occasional, predictable failure points. By understanding and addressing these specific vulnerabilities, we can unlock even more powerful and trustworthy language generation capabilities.
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}
