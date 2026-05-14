@@ -37,25 +37,28 @@ arXiv renders the abstract field as plain text — strip Markdown emphasis and i
 
 ## Pre-submission checklist
 
-Build verification (already passed):
+Build verification (Phase 7 directional-honesty pass):
 
 - [x] `paper_architecture_of_errors.pdf` builds via `bash build.sh`
-- [x] PDF generated (~183 KB, 20 pages of body + references)
+- [x] PDF generated (~199 KB, 23 pages of body + references)
 - [x] Title page renders once (no duplicate title/author block)
 - [x] Authors render as: "Mikhail L. Arbuzov  Alexey A. Shvets  Sisong Bei"
 - [x] No draft disclaimers anywhere in the PDF
 - [x] No figures (synthesis paper)
 - [x] Greek letters (α, β, σ, ε, Θ) render correctly via Cambria
 - [x] All inline math `$...$` and display math `$$...$$` render correctly
-- [x] Theorem 1 statement and proof environment render cleanly
-- [x] Summary table in §4.2 renders via pandoc pipe-tables, including new "Covering axis" column
-- [x] New §4.2.0 axis × pattern table (27 GOLD citations) renders cleanly
-- [x] §6 reorganised: 6.1 By-construction boundary case, 6.2 Counter-evidence re-audit, 6.3 Limitations + irreducible-semantic residual + DebugBench falsifiability test
-- [x] References section renders (~67 entries) with consistent (Author, Year) inline citations resolving to the back matter
+- [x] **New §3.0 four-level glossary** (L1 events / L2 taxonomy / L3 latent modes / L4 capabilities) renders
+- [x] **Theorem 1 → Proposition 1** rename consistent throughout
+- [x] **New §3.6 Heaps-sensitivity table** showing polylog conclusion under four cluster-count laws
+- [x] **§4.2.0 Pattern A/B/C** retiered: only constrained-decoding and formal verifiers in Pattern A; Acurai moved to Pattern B
+- [x] **§6.2 reframed** as "relocation, not dissolution" with per-paper concession sentences
+- [x] **§6.3 expanded** with 5 named limitations (mathematical, domain narrowness, single-point calibration, β identifiability, taxonomy granularity, goalpost-relocation)
+- [x] Summary table in §4.2 renders with "Covering axis" column
+- [x] References section renders (~67 entries) with consistent (Author, Year) inline citations
 - [x] No `??` cross-reference placeholders
 - [x] Filename audit: every file matches `^[a-zA-Z0-9_./+-]+$`
 - [x] Zip uses forward-slash entries (Linux-friendly): `paper_architecture_of_errors.tex`
-- [x] Zip is ~31 KB — well under arXiv limits
+- [x] Zip is ~36 KB — well under arXiv limits
 
 Submission-time checks (do these in the arXiv UI):
 
@@ -117,6 +120,7 @@ On native PowerShell, use `[System.IO.Compression.ZipFile]::Open(...)` with expl
 
 ## Editorial notes
 
+- **Phase 7 (directional-honesty pass)**: this version is a substantive revision responding to two rounds of reviewer feedback. Headline changes: (a) §3.0 four-level glossary distinguishes L1 events / L2 taxonomy categories / L3 latent modes / L4 capability axes; (b) Theorem 1 renamed to Proposition 1 to surface its conditional nature; (c) β reframed as a latent stratification parameter (the prior calibration from category concentration confused two conditionals); (d) §3.4 sequence-level theorem now states the `e_non = o(k/n)` assumption explicitly; (e) §3.6 sensitivity table shows the polylog conclusion is stable under four cluster-count laws (logarithmic discovery, Heaps b∈{0.3, 0.5, 0.6}, saturating exponential); (f) §6.2 reframed from "we domesticate the counter-papers" to "we relocate the practical worry, we do not dissolve it"; (g) §6.3 limitations expanded to surface domain narrowness, single-point σ calibration, β identifiability, taxonomy granularity, and goalpost-relocation explicitly.
 - The Postulate 1 / Heaps' law distinction in §3.2 reflects a reviewer correction during drafting: an earlier version claimed logarithmic cluster growth followed from Zipf, which is mathematically wrong (Heaps' law is power-law). The current draft clearly labels logarithmic mode discovery as an empirical postulate, with the Heaps power-law variant included as §3.5 to demonstrate that the qualitative polylog result is robust to the choice.
 - Per-hard-token vs sequence-level reliability is now distinguished explicitly in §3.4: the "~50 patterns → ~90%" claim is per-hard-token; sequence-level targets are strictly stronger.
 - §4.2 has a two-tier structure as of the Phase 6 integration: §4.2.0 introduces the six capability axes and three structural patterns (A by-construction, B class-disappearance, C class-shift), with 27 GOLD citations from the parallel capability harvest; §4.2.1+ retains the original 12-cluster taxonomy with a "Covering axis" column linking the two views. The cluster-orthogonality argument is now anchored in both the axis-level and class-level evidence.
