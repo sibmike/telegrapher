@@ -112,11 +112,13 @@ The natural question is how $|C|$ grows with the number of observed failures. Tw
 
 **Important: Zipfian rank-frequency does not imply logarithmic growth.** Although it is tempting to derive logarithmic mode discovery from a Zipfian pattern-frequency distribution, the derivation fails: Heaps' law is the correct type–token consequence of Zipf-distributed events, and it is power-law, not logarithmic. We therefore state logarithmic mode discovery as an empirical postulate, defensible by direct measurement of error taxonomies, rather than as a theorem.
 
-**Postulate 1 (Logarithmic Mode Discovery).** *In real LLM error corpora, the count of distinct recurring failure modes grows logarithmically with the number of sampled hard-token failures:*
+**Postulate 1 (Logarithmic Mode Discovery, patch-indexed form).** *Within a fixed application domain $D$ (the "domain patch" introduced below), the count of distinct recurring failure modes observed in a corpus of size $k_{\text{hard}}$ is bounded by the smaller of a logarithmic growth term and a domain-imposed ceiling $|C_D|$:*
 
 $$
-|C|(k_{\text{hard}}) \leq A + \sigma \cdot \ln(k_{\text{hard}}), \qquad \sigma > 0, \quad A \geq 0.
+|C_{\text{observed}}(k_{\text{hard}}) \leq \min\bigl(A_D + \sigma_D \cdot \ln(k_{\text{hard}}),\ |C_D|\bigr), \qquad \sigma_D > 0,\ A_D \geq 0.
 $$
+
+*The cap $|C_D|$ is the size of the patch's reachable mode catalogue (Section 3.2 closing paragraph); without the patch indexing this postulate reduces to the original logarithmic form $|C|(k_{\text{hard}}) \leq A + \sigma \ln(k_{\text{hard}})$.*
 
 **Empirical defense.** We anchor Postulate 1 against three large-scale taxonomies:
 
@@ -129,6 +131,20 @@ We adopt $\sigma \approx 2$ as a target value with empirical range $\sigma \in [
 **Capabilities are coarser than error classes.** The σ estimate above is derived from *named error categories* in the published taxonomies, but the capability harvest of Section 4.2 reveals that a single capability often eliminates multiple categories at once. One Python interpreter erases arithmetic, unit conversion, simple counting, list manipulation, and date arithmetic together. One constrained decoder erases format violations and ErrorAtlas's largest category ("missing required element", 15.56%) jointly — because schemas with required fields cannot omit those fields. Postulate 1's σ ≈ 1.85, calibrated against the raw 17-category taxonomy, is therefore conservative for the engineering question: when interventions are coarse-grained, the practical capability library is smaller than $|C|$. The polylog conclusion of Proposition 1 holds *a fortiori*.
 
 **Robustness.** The qualitative claim that follows in Section 3.4 is robust to the choice between Heaps' law (power-law) and logarithmic discovery: as long as $|C|$ grows sublinearly in $k_{\text{hard}}$ with an exponent less than one (or strictly slower), the resulting intervention-budget bound is polylogarithmic in $n$. We discuss the Heaps variant explicitly in Section 3.5.
+
+**Domain patches cap the available catalogue.** Postulate 1 describes how the *count* of named modes grows with sampled failures, but it leaves open whether the catalogue is unbounded asymptotically. Real model deployment never visits the entire stratified manifold that token representations occupy (Arbuzov et al. 2025, §3.2; Li & Sarwate 2025). A model deployed in a fixed application domain $D$ — cardiology RAG, legal contract drafting, code review — occupies a bounded sub-region of that manifold, which we call the *domain patch* $P_D$. The patch may contain arbitrarily complex local transition geometry; it does not require the local complexity inside the patch to be small. What the patch does is restrict the *support* of reachable failure modes. A cardiology RAG agent will not produce poetry-metaphor failures or theorem-proving failures; its accessible catalogue is bounded by what its operational neighborhood actually admits.
+
+Let $C_D$ denote the set of recurring failure modes accessible within $P_D$. Then empirical mode discovery is bounded by
+
+$$
+|C_{\text{observed}}(t)| \leq \min\bigl(A_D + \sigma_D \ln t,\ |C_D|\bigr).
+$$
+
+The logarithmic term is Postulate 1 applied within the patch; the cap $|C_D|$ is the domain-imposed ceiling. We do *not* claim that the patch derives logarithmic discovery — the patch bounds the catalogue and makes logarithmic or saturating discovery dynamics plausible inside fixed domains. The cap is what changes the asymptotic behaviour of Proposition 1: once enough failures have been sampled that $A_D + \sigma_D \ln k_{\text{hard}}$ reaches $|C_D|$, further sampling does not enlarge the catalogue and the intervention budget becomes a domain-constant function of $|C_D|$ alone.
+
+This framing is consistent with the empirical heterogeneity observed across domains: MMLU-Pro reports 14-domain accuracy variance from $\sim 20\%$ to $> 70\%$ on a single base model (Wang Y. et al. 2024); Kandpal et al. (2023) find log-linear scaling between training-document count and retrieval accuracy ($R^2 \in [0.98, 0.99]$); Mallen et al. (PopQA, 2023) identify a log-popularity threshold below which scaling does not help. None of these *measures* $|C_D|$ directly; together they support the structural claim that $C_D$ is bounded and heavy-tailed per patch. The stratified-manifold construct in Park et al. (2024) and the explicit stratum decomposition in Li & Sarwate (2025) supply the differential-geometric anchor: the embedding space decomposes into local strata whose intrinsic dimensions range $\sim 5$–$15$ across domains, far below the ambient $\sim 10^3$ scale.
+
+Crucially, $\sigma_D$, $A_D$, $\beta_D$, and $|C_D|$ are all domain-indexed. Deploying the same base model in three different application domains yields three distinct mode catalogues — not because the model is different but because the patches are. Reliability engineering is therefore not global manifold mastery; it is *local patch coverage*: identify the recurring transition types available in the target patch and provision interventions against the head of that catalogue. We return to this engineering implication in Section 5 and to the patch-shift caveat in Section 6.3.
 
 ### 3.3 Coverage by a targeted intervention library
 
@@ -174,6 +190,8 @@ $$
 
 *Proof.* From the residual-error expression in Section 3.3, $e_{\text{res}}(m) \leq \varepsilon$ requires $F(m; |C|) \geq 1 - \varepsilon / e_{\text{hard}}$. Setting $\varepsilon < e_{\text{hard}}$ ensures $F$ is below the cap. Substituting the coverage form, $\ln m / \ln |C| \geq 1 - \varepsilon / e_{\text{hard}}$, hence $m \geq |C|^{1 - \varepsilon / e_{\text{hard}}}$. Substituting $|C| = O(\log\log n)$ under $k = \Theta(\log n)$ yields the polylog rate. $\square$
 
+*Cap regime.* In the patch-indexed form of Postulate 1, once the corpus is large enough that $A_D + \sigma_D \ln k_{\text{hard}} \geq |C_D|$, the bound is dominated by the cap and $|C| = |C_D|$ as a domain-constant. The library-size bound becomes $m \geq |C_D|^{1 - \varepsilon/e_{\text{hard}}}$, which is asymptotically *independent* of sequence length $n$. The polylog scaling is therefore a pre-cap regime claim; in the cap regime the budget collapses to a constant determined by the patch ceiling.
+
 We label this a *Proposition* rather than a *Theorem* to keep its conditional nature visible. The formal content is engineering math, derived from the empirical postulates of Sections 3.2 and 3.3; it does not derive a law of LLM reliability so much as formalise a directional intuition. Section 3.5 already records the standard Heaps-power-law alternative; Section 3.6 below shows that the qualitative polylog conclusion survives across a wider family of cluster-count laws. The doubly-logarithmic rate stated above is the *optimistic special case*; weaker (but still polylog) rates obtain under Heaps or saturating models.
 
 **Sequence-level versus per-hard-token bounds.** Proposition 1 bounds the *per-hard-token* residual error. Sequence-level failure probability is a strictly stronger target. Taking logs of the composed reliability and using $\log(1 - x) \approx -x$ for small $x$,
@@ -216,7 +234,7 @@ Fix the operating regime: $k = \Theta(\log n)$ (Arbuzov et al. 2025, §3.1, regi
 | Heaps $b = 0.6$ | $K \cdot k_{\text{hard}}^{0.6}$ | $\approx 60{-}100$ | $\approx 45$ |
 | Saturating exponential | $C_{\max}(1 - e^{-\lambda k_{\text{hard}}}) \to C_{\max}$ | $\approx C_{\max}$ (bounded) | $\approx C_{\max}^{0.9}$ |
 
-(Constants chosen to match ErrorAtlas at $|C| = 17$, $k_{\text{hard}} \approx 10^4$. The qualitative behaviour is robust to the choice; only the multiplicative constants shift.)
+(Constants chosen to match ErrorAtlas at $|C| = 17$, $k_{\text{hard}} \approx 10^4$. The qualitative behaviour is robust to the choice; only the multiplicative constants shift. All four laws asymptote to the patch ceiling $|C_D|$ once $k_{\text{hard}}$ is large enough; the table values describe the pre-cap regime in which the growth rate is informative.)
 
 Three observations:
 
@@ -371,7 +389,7 @@ We now compile direct evidence that LLM reliability decays sublinearly — typic
 
 ## 5. Practical Implications
 
-**Intervention libraries as the unit of reliability engineering.** Section 3.4's polylog bound on per-hard-token intervention budget implies that reliability is fundamentally a *small-catalogue* engineering problem rather than an asymptotic scaling problem. A team building a reliable LLM system in any specific domain should expect to need on the order of 50 named interventions, one per recurring failure mode in that domain. The empirical fit in Section 3.3 suggests this number covers approximately 90% of per-hard-token errors. The catalogue size grows slowly enough that the budget is finite at any sequence length of practical interest.
+**Reliability engineering is local patch coverage.** Section 3.4's polylog bound implies that, *within a fixed domain patch*, reliability is a small-catalogue engineering problem rather than an asymptotic scaling problem (Section 3.2 closing paragraph). A team building a reliable LLM system in a specific domain — cardiology RAG, legal contract drafting, code review — should expect to need on the order of tens of named interventions, one per recurring failure mode in *that* domain's patch. The same base model deployed in three different patches yields three different intervention libraries because $C_D$, $A_D$, and $\sigma_D$ all change with the deployment domain. The engineering goal is not global manifold mastery; it is identifying the recurring transition types available in the target patch and provisioning interventions against the head of that local catalogue.
 
 **Domain transfer is mild but non-trivial.** The mode-rate constant $\sigma$ shifts between domains (math $\approx 1.2$–$1.6$; code $\approx 1.0$–$1.3$; general $\approx 1.85$), and higher-$\sigma$ domains carry larger catalogues at any given corpus size — so they need proportionally more interventions for matched coverage. The dependence is linear in $\sigma$ at fixed coverage: a domain with twice the mode-discovery rate needs roughly twice the catalogue size. Across the domains measured here, $\sigma$ does not vary by orders of magnitude.
 
@@ -426,6 +444,8 @@ A complementary observation: $(1 - \varepsilon)^N = 0.04$ at $N = 25$ requires $
 **Taxonomy granularity and the L2–L3 gap.** The framework operates on L2 (taxonomy categories) as a proxy for L3 (latent modes). $|C|$ depends on the taxonomer's resolution choices: splitting "reasoning error" into 200 subtypes inflates $|C|$ without changing the underlying mode catalogue. We have no independent measurement of how faithful current taxonomies are as L3 proxies, and we treat this as a residual epistemic risk rather than a solved problem.
 
 **Goalpost-relocation caveat.** By concentrating the practical action in $k_{\text{hard}}$ and $|C|$ rather than raw $n$, the framework *relocates* the difficulty of long-context reliability rather than resolving it. Domains where $k_{\text{hard}}$ grows with task length — adversarial compositional structure, multi-hop chains, long agent horizons — remain hard. The framework's claim is to identify the axis of intervention (capability provisioning along the actual decay variable), not to dissolve the underlying engineering problem. Practical reliability work in those regimes still requires the hard interventions; the framework's value is in saying which interventions are on-axis and which are off.
+
+**Patch-shift between deployments.** When a model moves from one application domain to another — say, from general-purpose chat to clinical decision support — the four domain-indexed quantities $A_D$, $\sigma_D$, $\beta_D$, and $|C_D|$ all change. A library calibrated against one patch will under-cover the next patch's mode catalogue. The framework predicts this transfer failure structurally — heavy-tailed and bounded per patch — but it does not predict the *content* of $C_{D'}$ in advance. The operationally useful response is to re-measure inside the new patch and re-fit the head of the local distribution. The most useful follow-up evidence would be per-domain mode-discovery measurement (subsamples of size $t$ vs. distinct discovered modes, the falsifiability test of §3.6); no such curve has been published for any published taxonomy at the time of writing. The framework's prediction is that such curves should rise log/Heaps-style inside the patch and asymptote to a domain-specific $|C_D|$.
 
 **The irreducible-semantic residual.** Of the 17 ErrorAtlas categories, 13 are directly addressed by one of the six capability axes of Section 4.2.0 — under Patterns A, B, or C. The remaining four — inappropriate refusal (partially covered by preference optimisation), specification misinterpretation (Category H, addressed only weakly by clarification loops), reasoning bottlenecks at the level of problem decomposition, and a small residual of "user wanted something different" semantic failures — admit no clean capability-provisioning fix in the current literature. These are *irreducible-semantic residuals*: classes where the failure is in choosing what to do, not in executing it. Proposition 1's prediction of $O(\log)$ rather than $O(0)$ residual reliability reflects exactly this irreducible core. The framework does not claim 100% coverage of all failures; it claims polylog-bounded *capability-eliminable* failures, with the named semantic residual as the floor.
 
@@ -505,6 +525,8 @@ Jiang, H., Wu, Q., Luo, X., Li, D., Lin, C.-Y., Yang, Y., & Qiu, L. (2024). Long
 
 Karaman, O. M., et al. (2024). POROver: Improving safety and reducing over-refusal in large language models with over-refusal-aware preference optimization. *arXiv preprint arXiv:2410.12999*.
 
+Kandpal, N., Deng, H., Roberts, A., Wallace, E., & Raffel, C. (2023). Large language models struggle to learn long-tail knowledge. *Proceedings of ACL 2023*. arXiv:2211.08411.
+
 Karpinska, M., et al. (2024). One thousand and one pairs: A "novel" challenge for long-context language models. *Proceedings of EMNLP 2024*. arXiv:2406.16264.
 
 Kuratov, Y., Bulatov, A., Anokhin, P., Rodkin, I., Sorokin, D., Sorokin, A., & Burtsev, M. (2024). BABILong: Testing the limits of LLMs with long context reasoning-in-a-haystack. *NeurIPS 2024 Datasets and Benchmarks Track*. arXiv:2406.10149.
@@ -512,6 +534,8 @@ Kuratov, Y., Bulatov, A., Anokhin, P., Rodkin, I., Sorokin, D., Sorokin, A., & B
 Le, T. (2026). Schema-level and prompt-level instructions interact non-additively in structured generation. *arXiv preprint*.
 
 LeCun, Y. (2023). Why autoregressive language models are exponentially diverging and doomed. *Public commentary*.
+
+Li, X., & Sarwate, A. D. (2025). Unraveling the localized latents: Learning stratified manifold structures in LLM embedding space with sparse mixture-of-experts. *arXiv preprint arXiv:2502.13577*.
 
 Li, Y., et al. (2022). Competition-level code generation with AlphaCode. *Science*, 378(6624), 1092–1097.
 
@@ -536,6 +560,8 @@ OpenAI. (2024). Introducing structured outputs in the API. *OpenAI Engineering B
 OpenAI. (2025). GPT-5 system card. *OpenAI*. <https://openai.com/index/gpt-5-system-card/>.
 
 Pang, J., Ye, F., Wong, D. F., He, X., Chen, W., & Wang, L. (2024). Anchor-based large language models. *Findings of ACL 2024*. arXiv:2402.07616.
+
+Park, K., Choe, Y. J., & Veitch, V. (2024). The linear representation hypothesis and the geometry of large language models. *Proceedings of ICML 2024*. arXiv:2311.03658.
 
 Press, O., Zhang, M., Min, S., Schmidt, L., Smith, N. A., & Lewis, M. (2023). Measuring and narrowing the compositionality gap in language models. *Findings of EMNLP 2023*. arXiv:2210.03350.
 
@@ -572,6 +598,8 @@ Wang, M., et al. (2024). Leave no document behind: Benchmarking long-context LLM
 Wang, P., et al. (2023). Math-Shepherd: Verify and reinforce LLMs step-by-step without human annotations. *arXiv preprint arXiv:2312.08935*.
 
 Wang, X., Wei, J., Schuurmans, D., Le, Q., Chi, E., Narang, S., Chowdhery, A., & Zhou, D. (2023). Self-consistency improves chain of thought reasoning in language models. *International Conference on Learning Representations (ICLR) 2023*. arXiv:2203.11171.
+
+Wang, Y., et al. (2024). MMLU-Pro: A more robust and challenging multi-task language understanding benchmark. *arXiv preprint arXiv:2406.01574*.
 
 Wang, Z., et al. (2025). From scores to steps: Diagnosing and improving LLM performance on medical calculation tasks (MedRaC). *Proceedings of EMNLP 2025*. arXiv:2509.16584.
 
