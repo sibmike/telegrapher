@@ -1,0 +1,1695 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+  \setmainfont[]{Cambria}
+  \setmonofont[]{Consolas}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={The Architecture of Errors: Logarithmic Mode Discovery and Polylogarithmic Intervention Budgets for Long-Context LLM Reliability},
+  pdfauthor={Mikhail L. Arbuzov; Alexey A. Shvets; Sisong Bei},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{The Architecture of Errors: Logarithmic Mode Discovery and
+Polylogarithmic Intervention Budgets for Long-Context LLM Reliability}
+\author{Mikhail L. Arbuzov \and Alexey A. Shvets \and Sisong Bei}
+\date{}
+
+\begin{document}
+\maketitle
+
+\textbf{Abstract}
+
+Our previous work (Arbuzov, Shvets, \& Bei, 2025) argued that LLM
+reliability does not decay exponentially with output length because
+errors concentrate at sparse ``key tokens'' rather than spreading
+uniformly across the sequence. This paper extends that framework along
+an orthogonal axis: LLM errors are not only sparse, they are
+\emph{repetitive}. The same handful of failure patterns recur across
+models, datasets, and domains. Inside the small set of key tokens, only
+a fraction \(\beta \approx 0.2\)--\(0.5\) produce \emph{hard} failures,
+and those hard failures cluster into a finite catalogue of recurring
+modes whose count grows slowly with the number of observed failures.
+Under an empirical postulate of logarithmic mode discovery, anchored by
+the ErrorAtlas taxonomy (83 models × 35 datasets), the intervention
+budget required to bound per-hard-token residual error scales
+polylogarithmically in sequence length. Twelve intervention categories
+collected from prior work --- and 27 GOLD-tier capability-elimination
+citations across six independent capability axes --- confirm that
+approximately fifty targeted interventions per domain suffice to reduce
+per-hard-token error by an order of magnitude. Sequence-level
+reliability targets are strictly tighter and approach full-catalogue
+coverage, an asymmetry we separate explicitly. Prominent steep-decay
+counter-evidence (Dziri et al., 2023; Kuratov et al., 2024; METR, 2025),
+re-audited here, turns out to measure decay over variables distinct from
+raw token length --- compositional graph size, fact count, log-time
+horizon --- and so does not contradict the sublinear-in-\(n\) thesis.
+LLM reliability becomes a small-catalogue engineering problem: bounded
+structurally rather than tamed asymptotically.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{1. Introduction}\label{introduction}
+
+The standard worry about long-context autoregressive generation is
+exponential. If every token has independent error probability \(e\),
+then after \(n\) tokens the chance of a fully correct output is
+\((1-e)^n\), which collapses to zero for any nontrivial \(e\) and large
+enough \(n\) (LeCun, 2023; Dziri et al., 2023). In our previous paper
+(Arbuzov, Shvets, \& Bei, 2025) we argued that this worry is misplaced
+because errors are not distributed uniformly across tokens. Empirical
+work (Fang et al., 2024) shows that only 5--10\% of tokens are ``key''
+--- genuinely dependent on long-range context --- while the remaining
+majority become nearly deterministic once enough context accumulates.
+Replacing \((1-e)^n\) with the two-rate model
+
+\[
+P(\text{correct}) = (1-e_{\text{key}})^{k} \cdot (1-e_{\text{non}})^{n-k}, \qquad k \ll n,
+\]
+
+with \(k\) scaling sublinearly in \(n\), recovers the observed
+long-context coherence of modern LLMs and converts the reliability
+question from ``how does \(n\) grow?'' to ``how does \(k\) grow?''.
+
+\subsubsection{1.1 From sparse tokens to recurring
+patterns}\label{from-sparse-tokens-to-recurring-patterns}
+
+This paper takes the next step. Sparsity tells us \emph{where} errors
+live. The natural follow-up question is \emph{what} they are. Recent
+failure-mode atlases supply a striking empirical answer: errors are not
+only sparse, they are also \emph{repetitive}. The ErrorAtlas project
+(Ashury-Tahan et al., 2026), covering 83 models across 35 datasets,
+finds that the top five of seventeen named failure categories account
+for 53.6\% of all observed errors and the top ten for over 80\%. In
+code, two error types (\texttt{AssertionError} and \texttt{NameError})
+cover 86.35\% of failures on HumanEval across 14 LLMs, a result
+replicated across 23 models on HumanEval Pro and MBPP Pro (Zhang et al.,
+2024). In math, the top four categories per model capture 45--55\% of
+errors across 15 LLMs and four benchmark datasets, with the same
+hierarchy across models (Sun et al., 2025). The same picture appears in
+multi-hop QA (Weakest Link Law authors, 2026), agentic tool use (MAST
+authors, 2025), and retrieval-augmented generation (Acurai authors,
+2024).
+
+These observations suggest a third layer in the reliability
+architecture, complementing key-token sparsity (Layer 1) and the
+within-key stratified-manifold structure (Layer 2 in Arbuzov et al.,
+2025). Within the small set of key tokens, only a fraction \(\beta\)
+produce \emph{hard} failures, and those hard failures cluster into a
+finite catalogue of recurring modes whose size grows much more slowly
+than the number of observed events.
+
+\subsubsection{1.2 The intervention
+budget}\label{the-intervention-budget}
+
+If failure modes form a small, slowly-growing catalogue, then targeted
+interventions become a viable engineering strategy. Each recurring mode
+admits a specific countermeasure: arithmetic errors fall to a Python
+interpreter (Gao et al., 2022; Chen et al., 2022; Gou et al., 2023);
+format violations to constrained decoding (Suresh et al., 2025; SLOT
+authors, 2025); hallucinations to retrieval augmentation, with one paper
+reporting 100\% elimination on RAGTruth (Acurai authors, 2024);
+over-refusals to preference optimisation (Karaman et al., 2024);
+tool-call errors to structured uncertainty (Suri et al., 2025). We
+collect twelve such categories with quantitative ``one cluster, one
+intervention'' results in Section 4.2.
+
+The natural question becomes: how many interventions are enough? If new
+failure modes are discovered at a Heaps-style power-law rate (Manning et
+al., 2008), then the catalogue grows without bound and the program is
+hopeless. But the data tell a different story: error-taxonomy work
+plateaus quickly, with most domains stabilising at 10--50 recurring
+modes even at large corpus sizes. We treat this as an \emph{empirical
+postulate of logarithmic mode discovery} (Section 3.2) rather than as a
+derived consequence --- Zipfian rank-frequency does \emph{not} imply
+logarithmic cluster growth in the strict mathematical sense; Heaps' law
+is the correct type--token consequence of Zipf-distributed events, and
+it is power-law, not logarithmic. Under our postulate, the required
+intervention budget scales polylogarithmically in sequence length
+(Theorem 1, Section 3.4).
+
+\subsubsection{1.3 Contributions}\label{contributions}
+
+The paper does five things. It introduces a three-layer formal framework
+--- sparsity (\(\alpha\)), stratification (\(\beta\)), and bounded mode
+catalogue (\(|C|\)) --- that refines our previous two-rate model by
+partitioning key tokens into easy and hard subsets and adding a
+recurring-pattern catalogue. It posits, and empirically calibrates,
+logarithmic mode discovery: anchored against ErrorAtlas, HumanEval, and
+MWPES, a single mode-rate parameter \(\sigma \approx 2\) fits all three.
+It proves a polylog bound on the per-hard-token intervention library
+size, \(m \geq |C|^{1 - \varepsilon / e_{\text{hard}}}\), and shows that
+under \(k \sim \log n\) the budget grows as
+\(O\big((\log\log n)^{c}\big)\) with \(c < 1\); the
+\emph{sequence}-level analogue is strictly tighter and approaches
+full-catalogue coverage. It synthesises evidence for the three
+load-bearing claims --- clustering (Section 4.1), cluster-orthogonal
+interventions (Section 4.2), and sublinear length scaling (Section 4.3)
+--- drawing on approximately sixty prior published results, including a
+six-axis capability-elimination harvest with 27 GOLD-tier citations. And
+it re-audits the most-cited steep-decay results (Dziri et al., 2023;
+Kuratov et al., 2024; METR, 2025; Wan et al., 2025), showing that each
+decays over a variable other than raw token length and so is compatible
+with the sublinear-in-\(n\) thesis.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{2. Related Work}\label{related-work}
+
+\subsubsection{2.1 Failure-mode
+taxonomies}\label{failure-mode-taxonomies}
+
+The systematic cataloguing of LLM failures has reached maturity across
+several domains in the last two years. ErrorAtlas (Ashury-Tahan et al.,
+2026) provides the largest cross-domain taxonomy to date: 83 models
+evaluated on 35 datasets yield approximately 7,000 sampled failures
+organised into 17 named categories, with the top-5/top-10 cumulative
+coverage figures cited above. MWPES-300K (Sun et al., 2025) takes the
+math domain deeper, with 304,865 categorised errors from 15 LLMs across
+four math word-problem datasets and a strict per-model decomposition
+that shows the same top-4 categories dominating across models --- a
+striking dataset-invariance result that we use heavily in Section 4.1.
+For code, Zhang et al.~(2024) categorise 12,837 errors from 14 LLMs on
+HumanEval, then replicate the dominant-category hierarchy on 23 models
+across HumanEval Pro and MBPP Pro. The RFMDataset (RFM authors, 2025)
+explicitly tests cross-model invariance and reports ``strikingly similar
+failure mode distributions'' across 10 open-source models.
+
+Beyond general-purpose evaluations, domain-specific taxonomies exist for
+multi-hop QA (the Weakest Link Law authors (2026) show that multi-hop
+performance collapses to the least-visible-evidence bucket on MuSiQue
+and NeoQA), for multi-agent systems (MAST authors, 2025), and for
+tool-augmented agents (\(\tau\)-bench authors, 2024). The convergent
+finding across all these is the same: at any given corpus size, the
+number of distinct named modes is small (typically 8--20), and the
+cumulative coverage of the top modes is high. This is the empirical
+phenomenon our theoretical framework aims to model.
+
+\subsubsection{2.2 Targeted interventions}\label{targeted-interventions}
+
+Each named failure mode in these taxonomies has, in some cases
+independently, been the subject of focused intervention research. The
+arithmetic-error cluster is the canonical example: PAL (Gao et al.,
+2022) shows that delegating execution to a Python interpreter raises
+GSM-Hard accuracy from 20.1\% (chain-of-thought) to 61.5\% (+41.4 pp),
+with PoT (Chen et al., 2022) and ToRA (Gou et al., 2023) extending the
+technique to broader math and financial reasoning. Constrained decoding
+has effectively eliminated the format-violation cluster: DINGO (Suresh
+et al., 2025) reports up to +68 pp on JSON-generation benchmarks, and
+SLOT (SLOT authors, 2025) achieves 99.5\% schema accuracy while
+preserving 94\% content similarity. Execution feedback closes most of
+the code-error cluster: Reflexion (Shinn et al., 2023) improves
+HumanEval pass@1 from 80\% to 91\%, and AgentCoder (Huang et al., 2023)
+pushes it to 96.3\%. Process reward models substantially reduce
+step-level reasoning errors: Math-Shepherd (Wang P. et al., 2023) raises
+MATH performance from 28.6\% to 43.5\%, and Let's Verify Step by Step
+(Lightman et al., 2023) reports 78\% on the MATH test set under process
+supervision. Retrieval-augmented generation is the most studied of all:
+Acurai (Acurai authors, 2024) reports 100\% hallucination elimination on
+RAGTruth, with corroborating clinical and legal results elsewhere.
+Preference optimisation closes the over-refusal gap: POROver (Karaman et
+al., 2024) lifts the not-overrefused rate from 57.6\% to 82.1\% while
+preserving 97.9\% safety. Structured uncertainty fixes most tool-call
+failures: SAGE-Agent (Suri et al., 2025) raises When2Call accuracy from
+36.5\% to 65.2\%.
+
+Two recurring observations from this literature inform our theoretical
+framework. First, each intervention is \emph{cluster-specific}: the
+residual errors after intervention belong to a different named cluster,
+not to the targeted one. Reflexion residuals are
+specification-misinterpretation errors, not execution errors;
+constrained-decoding residuals are semantic errors within valid
+structure, not format violations. This is the empirical signature of the
+cluster-orthogonality property that anchors Section 4.2. Second,
+\emph{additivity is approximate but not perfect}. The Six Sigma Agent
+framework reports compound reliability gains of \(14{,}700\times\) when
+interventions target orthogonal failure modes (Six Sigma authors, 2026),
+but Le (2026) shows that schema-level and prompt-level instructions
+interact non-additively when they share a prompt channel. We handle this
+caveat directly in Section 5.
+
+\subsubsection{2.3 Length-decay benchmarks and their
+interpretation}\label{length-decay-benchmarks-and-their-interpretation}
+
+A parallel literature measures the \emph{shape} of the reliability decay
+curve as context length grows. Two camps exist. The first reports decay
+that is much milder than exponential. Loong (Wang M. et al., 2024) finds
+GPT-4o on Chain-of-Reasoning tasks declines from 81.6\% (10--50K tokens)
+to 32.9\% (\textgreater200K) --- a relative drop of about 60\% across
+two doublings, consistent with a log-linear fit of accuracy
+\(\approx 95 - 22\log_2(L/10\text{K})\). GSM-\(\infty\) (Zhou et al.,
+2025) fits a sigmoid (saturating) decay with \(R^2 > 0.98\) and shows
+that exponentially more inference compute yields only linear gains in
+AUC --- a direct signature of clustered, not independent, errors. RULER
+(Hsieh et al., 2024) finds threshold-like behaviour where simple
+retrieval holds to 32K while complex reasoning collapses earlier,
+inconsistent with smooth \((1-\varepsilon)^n\). Anchor-based LLMs (Pang
+et al., 2024) achieve 99\% KV-cache reduction with only ``minor accuracy
+compromise,'' directly implying that the effective decision count is
+bounded.
+
+The second camp reports ``rapid decay'' findings that are sometimes
+cited as evidence for exponential compounding. Faith and Fate (Dziri et
+al., 2023) shows multi-digit multiplication accuracy collapsing from
+59\% at 3-digit to 4\% at 4-digit (zero-shot GPT-4) and argues
+theoretically that ``the probability of incorrect predictions converges
+exponentially to \(\approx 1\) for abstract compositional tasks.''
+BABILong (Kuratov et al., 2024) reports that ``popular LLMs effectively
+utilise only 10--20\% of the context and performance declines sharply
+with increased reasoning complexity.'' METR (METR, 2025) reports that
+the 80\%-success horizon is 4--6× shorter than the 50\%-success horizon,
+suggesting a steep within-model reliability cliff. The Fano-style upper
+bound of Wan et al.~(2025) explicitly theorises super-linear
+information-demand growth and identifies an ``accuracy cliff'' at
+capacity overflow.
+
+The apparent tension between these two camps dissolves on careful
+reading: every paper in the second group decays over a variable distinct
+from raw token length \(n\). We document this in detail in Section 6.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{3. Theoretical Framework}\label{theoretical-framework}
+
+\subsubsection{\texorpdfstring{3.1 \(\beta\)-stratification of key
+tokens}{3.1 \textbackslash beta-stratification of key tokens}}\label{beta-stratification-of-key-tokens}
+
+The two-rate model of Arbuzov et al.~(2025), reproduced as Equation (1),
+distinguishes \(k\) key tokens (error rate \(e_{\text{key}}\)) from
+\(n - k\) non-key tokens (error rate
+\(e_{\text{non}} \ll e_{\text{key}}\)). The empirical failure-mode
+atlases, however, suggest that even within the key-token class errors
+are not uniformly distributed. Most key tokens correspond to
+``decisions'' for which the model has stable representations and
+produces correct outputs; only a fraction concentrate the actual
+failures.
+
+\textbf{Definition 1 (Hard fraction).} Partition the \(k\) key tokens of
+a sequence into easy and hard subsets:
+
+\[
+k_{\text{hard}} = \beta \cdot k, \qquad k_{\text{easy}} = (1 - \beta) \cdot k, \qquad \beta \in (0,1),
+\]
+
+where hard key tokens have an elevated error rate \(e_{\text{hard}}\)
+corresponding to manifold-transition decisions (in the sense of Arbuzov
+et al., 2025, §3.2), and easy key tokens have
+\(e_{\text{easy}} \approx e_{\text{non}}\).
+
+The composed reliability becomes
+
+\[
+P(\text{correct}) = (1 - e_{\text{hard}})^{\beta k} \cdot (1 - e_{\text{easy}})^{(1 - \beta) k} \cdot (1 - e_{\text{non}})^{n - k}.
+\]
+
+Because \(e_{\text{easy}} \approx e_{\text{non}}\) once context
+accumulates, the failure rate is dominated by the \(\beta k\) hard
+tokens, and the rest of this paper treats \(e_{\text{hard}}\) as the
+load-bearing quantity.
+
+\textbf{Empirical anchor.} The hard fraction \(\beta\) can be estimated
+from any failure-mode taxonomy: it is the share of key-token decisions
+whose errors fall into the failure-bearing minority of categories.
+ErrorAtlas's top-5-of-17 covering 53.6\% of errors, MWPES's top-4
+covering 45--55\%, and HumanEval's two-of-many covering 86\% all imply
+\(\beta\) in the range \([0.2, 0.5]\). We adopt \(\beta \approx 0.3\) as
+a target value, recognising that domain transfer changes this estimate.
+
+\subsubsection{3.2 Empirical postulate: logarithmic mode
+discovery}\label{empirical-postulate-logarithmic-mode-discovery}
+
+The \(\beta k\) hard-token failures across a corpus are not arbitrary:
+they cluster into a finite set of recurring failure patterns indexed
+\(c = 1, \ldots, |C|\). By the stratified-manifold argument of Arbuzov
+et al.~(2025, §3.2), each pattern corresponds to a specific
+manifold-transition mode, so the catalogue of modes is bounded in any
+fixed domain.
+
+The natural question is how \(|C|\) grows with the number of observed
+failures. Two competing predictions exist in the type--token literature:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Heaps' law (standard).}
+  \(|C|(k_{\text{hard}}) \approx K \cdot k_{\text{hard}}^{b}\) with
+  typical exponent \(b \in [0.4, 0.6]\) (Manning et al., 2008). This is
+  the canonical type--token growth law and is asymptotically compatible
+  with Zipfian rank-frequency distributions.
+\item
+  \textbf{Logarithmic discovery.}
+  \(|C|(k_{\text{hard}}) \leq A + \sigma \cdot \ln(k_{\text{hard}})\).
+\end{enumerate}
+
+\textbf{Important: Zipfian rank-frequency does not imply logarithmic
+growth.} Although it is tempting to derive logarithmic mode discovery
+from a Zipfian pattern-frequency distribution, the derivation fails:
+Heaps' law is the correct type--token consequence of Zipf-distributed
+events, and it is power-law, not logarithmic. We therefore state
+logarithmic mode discovery as an empirical postulate, defensible by
+direct measurement of error taxonomies, rather than as a theorem.
+
+\textbf{Postulate 1 (Logarithmic Mode Discovery).} \emph{In real LLM
+error corpora, the count of distinct recurring failure modes grows
+logarithmically with the number of sampled hard-token failures:}
+
+\[
+|C|(k_{\text{hard}}) \leq A + \sigma \cdot \ln(k_{\text{hard}}), \qquad \sigma > 0, \quad A \geq 0.
+\]
+
+\textbf{Empirical defense.} We anchor Postulate 1 against three
+large-scale taxonomies:
+
+\begin{itemize}
+\tightlist
+\item
+  ErrorAtlas (Ashury-Tahan et al., 2026): 83 models × 35 datasets,
+  \(k_{\text{hard}} \gtrsim 10^4\) failures, \(|C| = 17\). Taking
+  \(A = 0\) as a conservative anchor,
+  \(\sigma \approx 17 / \ln(10^4) \approx 1.85\).
+\item
+  HumanEval (Zhang et al., 2024): \(k_{\text{hard}} \approx 10^4\),
+  \(|C| \in [8, 12]\) named modes, \(\sigma \in [1.0, 1.3]\).
+\item
+  MWPES (Sun et al., 2025): \(k_{\text{hard}} \approx 3 \times 10^5\),
+  \(|C| \in [15, 20]\), \(\sigma \in [1.2, 1.6]\).
+\end{itemize}
+
+We adopt \(\sigma \approx 2\) as a target value with empirical range
+\(\sigma \in [1.5, 3.0]\).
+
+\textbf{Capabilities are coarser than error classes.} The σ estimate
+above is derived from \emph{named error categories} in the published
+taxonomies, but the capability harvest of Section 4.2 reveals that a
+single capability often eliminates multiple categories at once. One
+Python interpreter erases arithmetic, unit conversion, simple counting,
+list manipulation, and date arithmetic together. One constrained decoder
+erases format violations and ErrorAtlas's largest category (``missing
+required element'', 15.56\%) jointly --- because schemas with required
+fields cannot omit those fields. Postulate 1's σ ≈ 1.85, calibrated
+against the raw 17-category taxonomy, is therefore conservative for the
+engineering question: when interventions are coarse-grained, the
+practical capability library is smaller than \(|C|\). The polylog
+conclusion of Theorem 1 holds \emph{a fortiori}.
+
+\textbf{Robustness.} The qualitative claim that follows in Section 3.4
+is robust to the choice between Heaps' law (power-law) and logarithmic
+discovery: as long as \(|C|\) grows sublinearly in \(k_{\text{hard}}\)
+with an exponent less than one (or strictly slower), the resulting
+intervention-budget bound is polylogarithmic in \(n\). We discuss the
+Heaps variant explicitly in Section 3.5.
+
+\subsubsection{3.3 Coverage by a targeted intervention
+library}\label{coverage-by-a-targeted-intervention-library}
+
+Given a catalogue of \(|C|\) recurring modes, an \emph{intervention
+library} of size \(m\) covers the \(m\) most prevalent modes, leaving
+the remaining \(|C| - m\) uncovered. The cumulative coverage of such a
+library depends on the rank-frequency distribution of the patterns
+themselves.
+
+For Zipf-distributed pattern frequencies with exponent \(s = 1\), the
+discrete cumulative mass is \(H_m / H_{|C|}\) where
+\(H_j = \sum_{i=1}^{j} 1/i\) is the harmonic number. For our ErrorAtlas
+anchor (\(|C| = 17\), \(m = 5\)), this gives
+\(H_5 / H_{17} \approx 66.4\%\), which overestimates the observed
+coverage of 53.6\%.
+
+A closer empirical fit to the ErrorAtlas data is
+
+\[
+F(m; |C|) = \min\!\left(1,\ \frac{\ln m}{\ln |C|}\right),
+\]
+
+which yields \(F(5; 17) \approx 56.8\%\) and
+\(F(10; 17) \approx 81.3\%\), matching the observed 53.6\% and 80\%+
+within three percentage points. We adopt this form for the remainder of
+the paper while emphasising that it is an empirical best-fit rather than
+the canonical discrete-Zipf cumulative. The \(\min(1, \cdot)\) cap is
+essential: once \(m \geq |C|\), all named modes are covered and the
+residual error must be non-negative.
+
+A second caveat is that \(F(m; |C|)\) counts \emph{named error classes
+covered}, not \emph{capability axes deployed}. Because a single
+capability axis erases multiple classes on average (Section 4.2),
+real-deployment residual error is often lower than \(F(m; |C|)\)
+predicts at any given \(m\) --- the polylog Theorem 1 bound therefore
+remains valid but is loose in this regime. Empirically observed library
+sizes that achieve a given residual threshold may be a constant factor
+smaller than the bound's prediction.
+
+After deploying the top-\(m\) intervention library, the residual
+per-hard-token error rate is
+
+\[
+e_{\text{res}}(m) = \bigl(1 - F(m; |C|)\bigr) \cdot e_{\text{hard}}.
+\]
+
+\subsubsection{3.4 Main theorem: polylogarithmic intervention
+budget}\label{main-theorem-polylogarithmic-intervention-budget}
+
+We now compose the three ingredients --- \(\beta\)-stratification,
+Postulate 1, and the coverage form --- with the two-rate model from
+Arbuzov et al.~(2025).
+
+\textbf{Asymptotic regime.} The empirical sparsity anchor
+\(\alpha = k / n \in [0.05, 0.10]\) is a \emph{finite-length} statement
+at typical \(n\). Under Arbuzov et al.~(2025, §3.1)'s \(k \sim \log n\)
+regime, \(\alpha\) decays as \(O(\log n / n)\). The composition step
+substitutes \(k_{\text{hard}} = \beta k\) directly into Postulate 1,
+avoiding any reliance on a constant \(\alpha\):
+
+\[
+|C| \leq A + \sigma \ln(\beta k).
+\]
+
+If \(k = \Theta(\log n)\), then \(|C| = O(\log \log n)\). If
+\(k \leq k_{\max}\) (the bounded regime of Arbuzov et al., 2025, §3.1),
+then \(|C|\) is a constant independent of \(n\).
+
+\textbf{Theorem 1 (Per-Hard-Token Intervention Budget).} \emph{Let
+\(\varepsilon \in (0, e_{\text{hard}})\) be a target per-hard-token
+residual error rate. Under Postulate 1 and the coverage form of Section
+3.3, the smallest intervention library satisfying
+\(e_{\text{res}}(m) \leq \varepsilon\) has size}
+
+\[
+m \geq |C|^{1 - \varepsilon / e_{\text{hard}}}.
+\]
+
+\emph{If \(k = \Theta(\log n)\), then
+\(m = O\big((\log\log n)^{1 - \varepsilon/e_{\text{hard}}}\big)\), i.e.,
+the intervention budget grows doubly logarithmically with sequence
+length.}
+
+\emph{Proof.} From the residual-error expression in Section 3.3,
+\(e_{\text{res}}(m) \leq \varepsilon\) requires
+\(F(m; |C|) \geq 1 - \varepsilon / e_{\text{hard}}\). Setting
+\(\varepsilon < e_{\text{hard}}\) ensures \(F\) is below the cap.
+Substituting the coverage form,
+\(\ln m / \ln |C| \geq 1 - \varepsilon / e_{\text{hard}}\), hence
+\(m \geq |C|^{1 - \varepsilon / e_{\text{hard}}}\). Substituting
+\(|C| = O(\log\log n)\) under \(k = \Theta(\log n)\) yields the polylog
+rate. \(\square\)
+
+\textbf{Sequence-level versus per-hard-token bounds.} Theorem 1 bounds
+the \emph{per-hard-token} residual error. Sequence-level failure
+probability is a strictly stronger target. Taking logs of the composed
+reliability and using \(\log(1 - x) \approx -x\) for small \(x\),
+
+\[
+-\log P(\text{correct}) \approx \beta k \cdot e_{\text{res}}(m) + (1 - \beta) k \cdot e_{\text{easy}} + (n - k) \cdot e_{\text{non}}.
+\]
+
+The first term dominates (since
+\(e_{\text{hard}} \gg e_{\text{easy}} \approx e_{\text{non}}\)), so to
+bound sequence-level failure probability by \(\varepsilon_{\text{seq}}\)
+we need \(e_{\text{res}}(m) \leq \varepsilon_{\text{seq}} / (\beta k)\).
+Substituting into the budget formula,
+
+\[
+m \geq |C|^{1 - \varepsilon_{\text{seq}} / (\beta k \cdot e_{\text{hard}})}.
+\]
+
+This is a substantially stronger requirement than Theorem 1: as \(k\)
+grows, the per-token tolerance tightens and \(m\) approaches \(|C|\) ---
+essentially every named mode must be covered. The widely-quoted ``fix
+\(\approx 50\) patterns per domain → \(\approx 90\%\) error reduction''
+claim is best understood as a per-hard-token statement; the analogous
+sequence-level claim requires correspondingly more interventions and
+tighter coverage of the tail.
+
+\subsubsection{3.5 Alternative formulation: Heaps power-law
+variant}\label{alternative-formulation-heaps-power-law-variant}
+
+A reader who prefers to derive cluster-count growth from standard Heaps'
+law rather than from Postulate 1 obtains a qualitatively similar result.
+Let \(|C|(k_{\text{hard}}) \approx K \cdot k_{\text{hard}}^{b}\) with
+\(b \in (0, 1)\). Canonical fits give \(b \approx 0.5\) for
+natural-language vocabularies; failure-mode taxonomies plateau much more
+sharply (ErrorAtlas stabilises at \(|C| = 17\) across \(10^4{+}\)
+failures), implying a smaller effective \(b \approx 0.2\) in our
+setting. Composing with \(k = \Theta(\log n)\), we get
+\(|C| = O((\log n)^{b})\), and Theorem 1 becomes
+
+\[
+m = O\!\left((\log n)^{b \cdot (1 - \varepsilon / e_{\text{hard}})}\right).
+\]
+
+This is still polylogarithmic in \(n\) for any \(b \in (0, 1)\) and any
+\(\varepsilon < e_{\text{hard}}\). The paper's qualitative claim ---
+that the intervention budget grows polylogarithmically in sequence
+length --- survives either choice of cluster-count law.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{4. Empirical Evidence}\label{empirical-evidence}
+
+We now collect quantitative evidence for the three load-bearing claims:
+errors cluster into a small recurring set (Section 4.1); each cluster is
+independently addressable by one targeted intervention (Section 4.2);
+and reliability decays sublinearly, not exponentially, with output
+length (Section 4.3).
+
+\subsubsection{4.1 Claim A: Failure-mode
+clustering}\label{claim-a-failure-mode-clustering}
+
+\textbf{Cross-domain concentration.} The strongest single result is
+ErrorAtlas (Ashury-Tahan et al., 2026). Across 83 models and 35
+datasets, with approximately 7,000 sampled failures, just five of the
+seventeen named categories account for 53.6\% of all errors, and ten of
+seventeen for over 80\%. The category set is fixed in advance; the
+cumulative coverage curve is what models and datasets produce when
+binned into it.
+
+\textbf{Domain-specific Paretos.} The cross-domain picture is reproduced
+at finer grain within each domain:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Math.} MWPES-300K (Sun et al., 2025) categorises 304,865
+  errors from 15 LLMs across four math word-problem datasets. Per-model,
+  the top four categories capture 45--55\% of errors. Critically, the
+  \emph{same} top-four set appears across all 15 models --- a
+  dataset-invariance result.
+\item
+  \textbf{Code.} Zhang et al.~(2024) categorise 12,837 errors from 14
+  LLMs on HumanEval. \texttt{AssertionError} and \texttt{NameError}
+  alone capture 86.35\% of failures. The dominant-category hierarchy
+  replicates across 23 models on HumanEval Pro and MBPP Pro.
+\item
+  \textbf{Multi-hop QA.} The Weakest Link Law (Weakest Link authors,
+  2026) shows multi-hop performance on MuSiQue and NeoQA collapsing to
+  the least-visible-evidence bucket --- a single dominant failure mode
+  (missing evidence retrieval) accounting for most errors across
+  question types.
+\item
+  \textbf{Agentic / tool use.} MAST (MAST authors, 2025) and
+  \(\tau\)-bench (TauBench authors, 2024) document recurring failure
+  modes in tool-augmented agents (tool selection, parameter
+  disambiguation, intermediate state loss). The mode count is small
+  (under twenty in each study) and the cumulative coverage of the top
+  modes is high.
+\item
+  \textbf{Retrieval-augmented generation.} Acurai (Acurai authors, 2024)
+  on RAGTruth and follow-on clinical/legal RAG work all report that
+  hallucinations cluster into a handful of distinguishable modes
+  (citation hallucination, context-stitching errors, retrieval-context
+  mismatch), each independently addressable.
+\end{itemize}
+
+\textbf{Cross-model invariance.} The same top categories appear across
+very different models. ErrorAtlas reports a stable category hierarchy
+across 83 models. RFMDataset (RFM authors, 2025) explicitly tests
+invariance and reports ``strikingly similar failure mode distributions''
+across 10 open-source models. EDIT (Dai et al., 2025) finds an explicit
+\(\approx 4.7\%\) key-step fraction across reasoning chains and across
+models, with stable category labels.
+
+\textbf{Theoretical support.} Schaeffer et al.~(2025) prove that the
+observed aggregate power-law scaling of LLM evaluations requires the
+per-problem success-rate distribution to be heavy-tailed near \(p = 0\).
+This is not a direct theorem about cluster-count growth (which is the
+object of our Postulate 1), but it is a closely related structural
+result: the failure side of LLM behaviour is intrinsically heavy-tailed.
+
+The aggregate picture is what Postulate 1 of Section 3.2 is designed to
+capture: LLM errors are not a long uniform tail but a short, repeating
+list. The ErrorAtlas \(|C| = 17\) with 80\% top-10 coverage is the
+cleanest summary; per-domain Paretos show the same shape inside each
+domain; the cross-model invariance shows the catalogue is stable.
+
+\subsubsection{4.2 Claim B: Cluster-orthogonal
+interventions}\label{claim-b-cluster-orthogonal-interventions}
+
+The intervention literature provides at least one targeted
+countermeasure for each named cluster of Section 4.1, almost always with
+a published quantitative result. Two organising granularities exist in
+this evidence, and we report both. At the \emph{capability} level (six
+axes; Section 4.2.0) the cluster-orthogonality property is most clearly
+visible --- capability provisioning leaves a class-shift signature that
+says exactly which class was erased and which classes the residuals
+belong to. At the \emph{error-class} level (twelve named clusters;
+Sections 4.2.1--4.2.2) the evidence aligns with the taxonomies of
+Section 4.1 but is finer-grained than the underlying capability
+mechanisms. The two views are complementary: the axes are the
+engineering unit, the clusters are the bookkeeping unit.
+
+\paragraph{4.2.0 Six capability axes and three structural
+patterns}\label{six-capability-axes-and-three-structural-patterns}
+
+A dedicated harvest of capability-elimination evidence (parallel to the
+cluster-based harvest below) yields \textbf{27 GOLD-tier citations}
+across \textbf{six independent capability axes}: (i) Arithmetic
+(Python/symbolic execution), (ii) Code Execution (REPL/sandbox
+feedback), (iii) Format/Structure (constrained decoding, FSMs, grammar
+engines), (iv) Perception/Grounding (visual grounding models for GUI,
+charts, tables), (v) Knowledge/RAG (inference-time dense retrieval and
+citation grounding), and (vi) Verification (formal proof checkers,
+learned verifiers, classifier rerouting). Each axis is independently
+confirmed by 3--9 GOLD citations. The 27 citations exhibit three
+structural patterns of capability-elimination that strengthen --- and
+refine --- the cluster-orthogonality claim.
+
+\textbf{Pattern A --- By-construction elimination.} Eight of the 27 GOLD
+citations achieve residual error rate of zero \emph{mathematically}, not
+statistically. Constrained decoders set \(P(\text{invalid token}) = 0\)
+at every generation step (DINGO, ToolDec, XGrammar, OpenAI Structured
+Outputs); proof kernels reject any output that fails type-checking (Lean
+/ DeepSeek-Prover-V2). These are existence proofs that capability
+provisioning can drive the targeted class to mathematical certainty for
+an entire family of error types --- primarily structural / verifiable
+errors (format, syntax, schema, invalid proofs).
+
+\textbf{Pattern B --- Class-disappearance.} Twelve GOLD citations show
+the targeted error class \emph{vanishing entirely} from the
+post-intervention failure log, with residual failures shifting to
+structurally different classes. The cleanest example is
+Program-of-Thoughts on GSM8K (Chen et al., 2022): manual taxonomy of 50
+PoT failures shows calculation errors drop from 30\% of CoT failures to
+\textbf{0\%}, while residuals are 62\% reasoning + 36\% misunderstanding
+--- \emph{zero arithmetic}. The clinical companion result is stronger
+still: in the OpenMedCalc arm of Goodell et al.~(2025), \emph{``only
+interpretation errors were identified''} --- the calculation-error class
+disappears from the failure log entirely. This is the load-bearing
+signature of cluster orthogonality. If interventions caused proportional
+new errors elsewhere, the framework would be wrong; the observed
+class-shift is exactly what the model predicts.
+
+\textbf{Pattern C --- Class-shift orthogonality.} The remaining seven
+GOLD citations achieve 60--80\% reduction in the target class with
+residuals shifting to structurally different classes. Legal RAG
+(Dantart, 2026) reduces fabricated citations from \textgreater30\% to
+\textless0.2\% (\textgreater99\% reduction) with residuals shifting to
+reasoning errors. SimpleQA web search (OpenAI, 2025) cuts factual errors
+from 47\% to 9.6\% (80\% reduction). CRITIC toxicity (Gou et al., 2024)
+reduces toxic generation by 79.2\%. Across all six axes, residual error
+after capability X is composed of classes Y, Z, W --- \emph{not} of an
+inflated X --- confirming that the provisioned capability surgically
+removes its target.
+
+The 27 GOLD citations, organised by axis and pattern, are summarised
+below.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Axis
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Citation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Targeted class
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Pre → Post
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Pattern
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Verification & DeepSeek-Prover-V2 (2025) & Invalid Lean proof & any →
+0\% by construction & A \\
+Format & OpenAI Structured Outputs (2024) & JSON schema violation &
+\textgreater60\% → 0\% by construction & A \\
+Format & ToolDec (Zhang et al., 2023) & Tool-call syntax error &
+21--100\% → 0\% & A \\
+Format & DINGO (Suresh et al., 2025) & JSON parse failure & 13--82\% →
+0\% & A \\
+Format & XGrammar (Dong et al., 2024) & Multi-format errors & 20--38\% →
+0\% & A \\
+Format & XGrammar-2 (Dong et al., 2026) & Malformed tool calls &
+33--78\% → 0\% & A \\
+Arithmetic & Program of Thoughts (Chen et al., 2022) & Calculation
+errors on GSM8K & 30\% of failures → 0\% & B \\
+Arithmetic & OpenMedCalc (Goodell et al., 2025) & Clinical arithmetic &
+``only interpretation errors remained'' & B \\
+Knowledge/RAG & Radiology RAG (Wada et al., 2025) & RAG hallucinations &
+8\% → 0\% (p=0.012) & B \\
+Knowledge/RAG & Acurai (2024) & Context-conflict hallucinations & 100\%
+→ 0\% on conflict subset & B \\
+Knowledge/RAG & Rigorous Archivist (Dantart, 2026) & Fabricated legal
+citations & \textgreater30\% → \textless0.2\% & C \\
+Code Exec & LlmFix (Zhang et al., 2024) & SyntaxError (HumanEval) &
+5.76\% → 0.01\% & A \\
+Code Exec & AlphaCode (Li et al., 2022) & False-positive submissions &
+62\% → 4\% & B \\
+Code Exec & MGDebugger (Shi et al., 2024) & 5 code-bug classes & 100\%
+repair (5/6 classes) & B \\
+Knowledge/RAG & ALCE (Gao et al., 2023) & Citation grounding errors &
+73\% ungrounded → 15\% & C \\
+Knowledge/RAG & GPT-5 SimpleQA (OpenAI, 2025) & Factual errors (web QA)
+& 47\% → 9.6\% & C \\
+Knowledge/RAG & Almanac (NEJM AI 2024) & Clinical citation errors & 44\%
+→ 9\% & C \\
+Arithmetic & MedRaC (Liu et al., 2025) & Arithmetic in medical reasoning
+& 426 → 74 errors & B \\
+Code Exec & LlmFix NameError (Zhang et al., 2024) & NameError repair &
+22.7\% → 2.3\% & A \\
+Perception & UGround (Gou et al., 2025) & GUI grounding errors & 16.2\%
+→ 73.3\% accuracy & B \\
+Perception & Jedi / OSWorld (Xie et al., 2025) & GUI task failures & 5\%
+→ 27\% SR (5.4×) & B \\
+Perception & SeeClick (Cheng et al., 2024) & Element mis-location &
+5.2\% → 53.4\% (10.3×) & B \\
+Perception & DePlot (Liu et al., 2023) & Chart-reading errors & 38.2\% →
+67.6\% (+29.4 pp) & B \\
+Verification & CRITIC toxicity (Gou et al., 2024) & Toxic generation &
+79.2\% reduction & C \\
+Knowledge/RAG & Self-RAG (Asai et al., 2024) & Unsupported facts &
+55.5\% → 22\% error & B \\
+Perception & OmniParser (Lu et al., 2024) & Icon / element errors &
+70.5\% → 93.8\% (79\% error reduction) & B \\
+Knowledge/RAG & PopQA (Mallen et al., 2023) & Long-tail entity errors &
+\textasciitilde80\% → \textasciitilde50\% failure (\textasciitilde75\%
+on tail) & B \\
+\end{longtable}
+}
+
+\textbf{Capabilities are coarser than error classes.} Several GOLD
+citations reveal ``two-for-one'' eliminations where one capability
+erases multiple named clusters. A single Python interpreter erases not
+only arithmetic (cluster A) but also unit conversion (B), simple
+counting (C), list manipulation, and date arithmetic --- five named
+classes under one provisioning. Constrained decoding erases both format
+violations (D) and the structural component of ``missing required
+elements'' (the largest single ErrorAtlas category at 15.56\%, our
+Category I), because schemas with \texttt{required:\ {[}...{]}} fields
+cannot omit those fields. Code execution feedback erases SyntaxError,
+NameError, and most TypeError (three subclasses of cluster E) together.
+RAG erases factual hallucinations (J), fabricated citations, and
+outdated information jointly. The implication is that the practical
+capability library required to address a given fraction of failures is
+\emph{smaller} than the count of named error categories --- which is the
+empirical phenomenon we noted in Section 3.2 as a conservative-bound
+tightening of Postulate 1.
+
+A negative-control result confirms the framework's selectivity:
+DebugBench (Tian et al., 2024) finds that execution feedback works well
+for syntax/reference errors but is \emph{``unhelpful for logic
+errors\ldots{} may even cause disruptions.''} Capability provisioning
+erases what it can detect or constrain, and the prediction of where it
+fails (semantic / open-ended classes) is correct. We return to this
+point in Section 6.
+
+\paragraph{Summary of the twelve
+categories}\label{summary-of-the-twelve-categories}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Cluster
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Covering axis
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Intervention
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Before → After
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(\Delta\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Strength
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Citation
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A. Arithmetic / computation & Arithmetic & Python interpreter (PAL) &
+20.1\% → 61.5\% & +41.4 pp & Strong & Gao et al., 2022 \\
+B. Unit conversion & Arithmetic & Folded into A (Python handles units
+natively) & --- & --- & (Folded) & --- \\
+C. Counting / enumeration & Arithmetic & Explicit counter (research gap)
+& --- & --- & Gap & Mechanistic interp. work \\
+D. Format / schema violation & Format/Structure & Constrained decoding
+(DINGO, SLOT) & baseline → +68 pp; 99.5\% schema acc. & +68 pp & Strong
+& Suresh et al., 2025; SLOT authors, 2025 \\
+E. Code logic / type / null & Code Exec & REPL feedback (Reflexion,
+AgentCoder) & 80\% → 96.3\% pass@1 & +16.3 pp & Strong & Shinn et al.,
+2023 \\
+F. Multi-hop decomposition drift & Knowledge/RAG & Entity-grounded
+rewriter (ChainRAG) & consistent gains across 3 benchmarks &
+\$\sim\$5--10 pp & Medium & Zhu et al., 2025 \\
+G. Reasoning step errors & Verification & Process reward model
+(Math-Shepherd) & 28.6\% → 43.5\% & +14.9 pp & Strong & Wang P. et al.,
+2023 \\
+H. Specification misinterpretation & (semantic residual) & Clarification
+loops (AmbigNLG) & ROUGE-L +15; compliance 86\% → 94\% & +8 pp & Medium
+& Niwa \& Iso, 2024 \\
+I. Missing required elements & Format/Structure & Reframed as Category D
+for structural, G/H for semantic & (subsumed) & --- & Reframed & This
+work \\
+J. Hallucination / factual errors & Knowledge/RAG & RAG query
+reformatting (Acurai) & non-zero → 0\% & \(-100\%\) & Strong & Acurai
+authors, 2024 \\
+K. Inappropriate refusal & Verification & Preference optimisation
+(POROver) & 57.6\% → 82.1\% & +24.5 pp & Strong & Karaman et al.,
+2024 \\
+L. Tool / API usage errors & Format/Structure + Verification &
+Structured uncertainty (SAGE-Agent) & 36.5\% → 65.2\% & +28.7 pp &
+Strong & Suri et al., 2025 \\
+\end{longtable}
+}
+
+Eight of twelve categories have a strong citation with double-digit
+percentage-point improvement; three (B, C, I) lack a clean
+single-cluster ablation in the literature and are addressed below; one
+(F) has consistent medium-strength evidence.
+
+\paragraph{Detailed evidence on the strongest
+categories}\label{detailed-evidence-on-the-strongest-categories}
+
+The arithmetic category is the cleanest example of cluster
+orthogonality. Delegating execution to a Python interpreter, PAL (Gao et
+al., 2022) lifts GSM-Hard accuracy from 20.1\% to 61.5\% --- a
+41.4-point gain on the benchmark configuration where large numbers
+stress LLM tokenisation. What matters more than the gain is the
+composition of the residual: PAL's remaining failures are
+problem-comprehension errors, mis-translations from word problem to
+code. Arithmetic execution errors have left the failure log. Toolformer
+(Schick et al., 2023) self-teaches the same shift and lands a 97.9\%
+calculator-call rate on arithmetic queries; and on clinical calculations
+Goodell et al.~(2025) report a 5--13× error reduction (LLaMA: 16\% →
+88\%; GPT-4: 4.8\% → 64\%) once the appropriate domain tool is in the
+loop.
+
+Format violations admit something stronger still: a mathematical
+guarantee. DINGO (Suresh et al., 2025) reports up to +68 percentage
+points on JSON-generation tasks. SLOT (SLOT authors, 2025) reaches
+99.5\% schema accuracy with 94\% content similarity --- the cluster is
+essentially gone. A systematic evaluation of four production frameworks
+(Guidance, Outlines, Llamacpp, XGrammar) by JSONSchemaBench (Geng et
+al., 2025) reports coverage up to 0.96 on real-world schemas. The
+mechanism is uniform across the family: zero out the logits of
+grammar-violating tokens at each decoding step and the violations cannot
+occur.
+
+The hallucination result is the most striking single number in the
+harvest. Acurai (Acurai authors, 2024) --- query reformatting applied to
+RAG --- reports 100\% hallucination elimination on RAGTruth for both
+GPT-4 and GPT-3.5, with a 95\% CI of 91--100\%. Domain-specific variants
+(legal, clinical) report 60--90\% reduction; the magnitude depends on
+the baseline. The mechanism is austere: hallucinations require the model
+to generate factual claims absent from context, and citation-grounded
+retrieval removes that input space.
+
+Code generation shows a clean staircase. Reflexion (Shinn et al., 2023)
+lifts HumanEval pass@1 from 80\% to 91\% by reflecting on execution
+feedback; AgentCoder (Huang et al., 2023) extends the loop to
+multi-agent test-driven generation and reaches 96.3\% --- approaching
+ceiling. At 96.3\% the residual is dominated by spec-misinterpretation
+(Category H). The execution-feedback capability has erased what it can
+erase.
+
+\paragraph{The Category-I reframing}\label{the-category-i-reframing}
+
+Of the three apparent gaps (B, C, I), Category I --- ``missing required
+elements'' --- is the most significant because it is the largest single
+category in ErrorAtlas at 15.56\% of all errors. Originally we expected
+to find a dedicated ``checklist verifier'' intervention in the
+literature; we did not. The cleanest resolution is mechanistic
+equivalence with Category D. A ``missing required element'' error is
+structurally a schema-violation where the schema's
+\texttt{required:\ {[}...{]}} field list is not satisfied. Constrained
+decoders (DINGO, SLOT, Outlines, Guidance, XGrammar) enforce schema
+constraints during decoding; with a properly specified schema, they
+mathematically \emph{cannot} produce output that omits a required field.
+SLOT's 99.5\% schema accuracy directly includes \texttt{required}
+enforcement.
+
+We therefore split Category I into two mechanistically distinct
+sub-clusters: (I.a) structural missing elements --- omitted JSON field,
+missing function argument, missing required citation --- which are
+absorbed by Category D's constrained-decoding interventions; and (I.b)
+semantic missing elements --- incomplete reasoning step, missing edge
+case in code, omitted assumption in proof --- which fall under Category
+G (process supervision) or Category H (clarification loops). No new
+intervention category is required, and two of the highest-volume
+clusters (D format + I.a structural missing, jointly \(\approx 25\%\) of
+ErrorAtlas) share a single mechanism --- which strengthens rather than
+weakens the cluster-orthogonality argument.
+
+Categories B (unit conversion) and C (counting) remain technical gaps.
+Unit conversion is naturally folded into Category A: any Python
+interpreter handles dimensional analysis, and PAL/PoT/ToRA results
+already encompass it. Counting is the smallest residual gap; a focused
+literature pass or a one-day inference-only ablation would close it.
+
+\paragraph{Additivity and its limits}\label{additivity-and-its-limits}
+
+Six Sigma Agent results (Six Sigma authors, 2026) demonstrate that
+stacking interventions targeting orthogonal failure modes produces
+compound reliability gains: in their parallel-consensus framework,
+atomic decomposition with five-way voting yields a \(14{,}700\times\)
+system reliability improvement over single-pass baselines. AgentSquare
+(AgentSquare authors, 2024) similarly shows supra-additive gains when
+modules target distinct failure modes. These are encouraging.
+
+There is a caveat. Le (2026) reports that schema-level and prompt-level
+instructions interact \emph{non-additively} for some model families:
+stacking constrained decoding (Category D) with prompt-level
+specification clarifications (Category H) produces less than the sum of
+individual gains, sometimes substantially so. The interaction is
+concentrated in cases where both interventions share a common prompt
+channel. We treat this as evidence not against additivity in general but
+for a refinement: interventions that operate on orthogonal processing
+layers (decoding constraint vs.~retrieval vs.~training-signal
+vs.~inference-time tool call) compose near-additively, while those that
+share a channel may interfere. This refinement is itself testable and we
+leave it as future work.
+
+\subsubsection{4.3 Claim C: Sublinear length
+scaling}\label{claim-c-sublinear-length-scaling}
+
+We now compile direct evidence that LLM reliability decays sublinearly
+--- typically logarithmically, sigmoidally, or in a plateau-then-cliff
+pattern --- rather than exponentially with output or context length.
+This is the headline conclusion of Arbuzov et al.~(2025); we extend it
+here with newly available benchmark results and reconcile it with the
+steeper-decay reports re-examined in Section 6.
+
+\textbf{Log-linear decay on multi-document reasoning.} Loong (Wang M. et
+al., 2024) evaluates 4 task types on 4 context-length sets (10K--50K,
+50K--100K, 100K--200K, \textgreater200K). GPT-4o on Chain-of-Reasoning
+declines 81.6\% → 62.1\% → 45.1\% → 32.9\% across the four sets. A
+log-linear fit accuracy \(\approx 95 - 22 \log_2(L / 10\text{K})\) holds
+well; exponential per-token decay would predict near-zero by 200K and is
+decisively ruled out.
+
+\textbf{Sigmoid decay on synthetic math.} GSM-\(\infty\) (Zhou et al.,
+2025) fits a sigmoid (saturating) shape with \(R^2 > 0.98\) on the
+Medium subtask. Two further results from the same paper directly attack
+the independent-error model. First, exponentially more inference compute
+yields only \emph{linear} AUC gains (\(R^2 > 0.99\) for the linear fit)
+--- under independent per-step Bernoulli errors, more trials should give
+exponential improvement. Second, DeepSeek-R1 maintains 10\%+ accuracy at
+130 reasoning operations; \((1 - \varepsilon)^{130}\) with any
+reasonable \(\varepsilon\) would predict near-zero. Both are consistent
+with errors concentrated at semantic decision points, not distributed
+uniformly.
+
+\textbf{Compositionality gap is bounded, not growing.} Press et
+al.~(2023) measure the gap between models' ability to answer two-hop
+questions and the product of their one-hop accuracies. Under independent
+per-step compounding, the gap should grow with chain length; under
+clustered errors, it should be bounded. Press et al.~find a
+\(\sim 40\%\) gap that is approximately \emph{constant} across the
+entire GPT-3 family from 125M to 175B parameters. This is direct
+empirical evidence against per-step independent compounding.
+
+\textbf{Self-consistency gains are too large for independent errors.}
+Wang et al.~(2023) report +17.9 pp on GSM8K from majority voting over 40
+sampled chains. Under \((1 - \varepsilon)^n\)-style independent errors,
+majority voting reduces variance as \(1/\sqrt{m}\) but cannot move the
+mean far from the per-step ceiling; the +17.9 pp gain requires correct
+answers to function as a narrow attractor in solution space, with errors
+dispersed. This is the structural signature of clustered-on-manifold
+errors.
+
+\textbf{Bounded \(k\) via context compression.} Pang et al.~(2024)
+report that ``Anchor LLMs'' achieve 99\% KV-cache reduction with only
+``minor accuracy compromise.'' If long-context reliability depended on
+all \(n\) tokens, removing 99\% of them should be catastrophic. The fact
+that it is not, plus the 3.5× inference speedup the same paper achieves,
+directly implies that the effective decision count \(k\) is much smaller
+than \(n\) --- closer to 1\% of context length than to 100\%.
+LLMLingua-2 (Jiang et al., 2024) and Recurrent Context Compression
+(Huang et al., 2024) report similar bounds.
+
+\textbf{Staircase / plateau-and-cliff patterns.} Think-Prune-Train
+(Costello et al., 2025) reports that successive self-training rounds
+raise Pass@1 (Gemma-2B: 41.9\% → 57.6\%; LLaMA-70B: 78\% → 91.5\%) while
+Pass@20 \emph{plateaus} after the first round. This is the
+manifold-transition signature: the model is finding the correct cluster
+more reliably (Pass@1 rises) but is not finding new correct solutions
+(Pass@20 unchanged). RULER (Hsieh et al., 2024) reports threshold
+behaviour: simple retrieval holds to 32K; complex reasoning collapses
+earlier. Neither pattern is consistent with smooth
+\((1 - \varepsilon)^n\) decay.
+
+\textbf{METR's logistic-in-log-length.} METR (METR, 2025) fits per-model
+success as a logistic function of log(human-time):
+\(S(t) = \sigma(\beta \cdot (\log t - \log h))\). Logistic-in-log is
+mathematically sublinear in length itself. The famous METR exponential
+--- capability doubling every seven months --- is an \emph{inter-model}
+claim about how the horizon \(h\) grows over generations, not an
+intra-model claim about within-model decay shape. We address the common
+misreading in Section 6.
+
+\textbf{Counter-evidence.} Several prominent papers report what reads as
+rapid or ``exponential'' decay --- Dziri et al.~(2023), Kuratov et
+al.~(2024), METR (2025), Wan et al.~(2025). Read carefully, each decays
+over a variable other than raw token length: compositional graph size,
+number of supporting facts, log-time horizon, capacity threshold.
+Section 6 walks through each one.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{5. Practical Implications}\label{practical-implications}
+
+\textbf{Intervention libraries as the unit of reliability engineering.}
+Section 3.4's polylog bound on per-hard-token intervention budget
+implies that reliability is fundamentally a \emph{small-catalogue}
+engineering problem rather than an asymptotic scaling problem. A team
+building a reliable LLM system in any specific domain should expect to
+need on the order of 50 named interventions, one per recurring failure
+mode in that domain. The empirical fit in Section 3.3 suggests this
+number covers approximately 90\% of per-hard-token errors. The catalogue
+size grows slowly enough that the budget is finite at any sequence
+length of practical interest.
+
+\textbf{Domain transfer is mild but non-trivial.} The mode-rate constant
+\(\sigma\) shifts between domains (math \(\approx 1.2\)--\(1.6\); code
+\(\approx 1.0\)--\(1.3\); general \(\approx 1.85\)), and
+higher-\(\sigma\) domains carry larger catalogues at any given corpus
+size --- so they need proportionally more interventions for matched
+coverage. The dependence is linear in \(\sigma\) at fixed coverage: a
+domain with twice the mode-discovery rate needs roughly twice the
+catalogue size. Across the domains measured here, \(\sigma\) does not
+vary by orders of magnitude.
+
+\textbf{Per-hard-token vs.~sequence-level targets matter for SLA
+design.} The result in Section 3.4 separates two cases that are often
+conflated. Per-hard-token residual error rate --- the right metric for
+systems that surface or correct errors continuously --- has a polylog
+intervention budget. Sequence-level failure probability --- the right
+metric for systems where a single error invalidates the output --- is
+strictly stricter and requires nearly full-catalogue coverage as \(k\)
+grows. Production deployments should design their reliability SLA to
+match the actual cost structure: continuous-correction systems can lean
+on the polylog result, while one-shot systems should plan for tighter
+coverage.
+
+\textbf{Library design as engineering, not asymptotic theory.} A
+practical implication of the cluster-orthogonality finding (Section 4.2)
+is that an intervention library can be assembled module-by-module, in
+any order, as long as the modules target orthogonal failure modes. The
+Le (2026) caveat applies only to interventions sharing a prompt channel;
+layer-separated interventions (constrained decoding + retrieval +
+process supervision + tool call) compose near-additively. Library
+construction is therefore highly parallelisable: different teams can
+ship independent interventions and combine them with minimal integration
+risk, modulo the prompt-channel caveat.
+
+\textbf{Capability libraries are coarser than error-class libraries.}
+Five named error classes in the math domain (arithmetic, units,
+counting, list manipulation, date arithmetic) are all addressed by a
+single Python interpreter; three code-error classes (SyntaxError,
+NameError, most TypeError) collapse under one execution-feedback loop;
+format violations and the structural component of ``missing required
+element'' --- together more than 20\% of ErrorAtlas --- collapse under
+one constrained-decoder deployment. The practical reliability library is
+therefore smaller than the count of named error clusters. A team
+budgeting for ``\(\approx 50\) interventions per domain'' can expect to
+need fewer than 50 capability-axis interventions while still covering
+\(\approx 50\) named clusters. The six axes of Section 4.2.0 are likely
+closer to the right unit of engineering accounting than the twelve
+clusters of Section 4.2.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{6. Discussion}\label{discussion}
+
+\subsubsection{6.1 By-construction elimination as a boundary
+case}\label{by-construction-elimination-as-a-boundary-case}
+
+Eight of the 27 GOLD citations in Section 4.2.0 --- DeepSeek-Prover-V2's
+Lean proof checker, OpenAI Structured Outputs, ToolDec, DINGO, XGrammar
+(×2), LlmFix's static syntax check, and the Acurai citation-grounded RAG
+construction --- achieve residual error rate equal to zero \emph{by
+mathematical construction}, not statistically. Constrained decoders set
+\(P(\text{invalid token}) = 0\) at every generation step, so no invalid
+token can be emitted. Proof kernels reject any output that fails
+type-checking. Schema validators reject any output missing a required
+field.
+
+In this regime, the polylog bound of Theorem 1 ---
+\(m \geq |C|^{1 - \varepsilon / e_{\text{hard}}}\) --- is loose. The
+cluster covered by a by-construction intervention contributes zero to
+the residual error, not a small positive quantity. The formal statement
+is that for any cluster \(c \in \{1, \dots, m\}\) covered by a Pattern-A
+intervention, \(\Pr(\text{failure} \mid \text{cluster } c) = 0\)
+identically, regardless of how many hard-token decisions the model makes
+inside that cluster. The Theorem 1 budget formula treats coverage as a
+\([0, 1]\) fractional quantity; Pattern A pushes a subset of clusters to
+coverage exactly 1.
+
+This is a strengthening result, not a counter-example. The framework's
+qualitative claim --- that capability provisioning can erase an error
+class --- admits a sharp boundary case where the implication is
+mathematical certainty rather than statistical reduction. Crucially,
+Pattern A applies precisely to the \emph{structural / verifiable}
+classes (format, syntax, schema, invalid proofs), which are also the
+head of the heavy-tailed cluster frequency distribution. Capability
+provisioning therefore exerts its strongest effect exactly where the
+failure-mode catalogue is densest, which compounds the polylog
+conclusion of Section 3.4.
+
+\subsubsection{6.2 Re-audit of
+counter-evidence}\label{re-audit-of-counter-evidence}
+
+Four prominent papers are routinely cited as evidence that LLM
+reliability decays steeply with length, in apparent tension with our
+framework: Dziri et al.~(2023), Kuratov et al.~(2024), METR (2025), and
+Wan et al.~(2025). To these we add NoCha (Karpinska et al., 2024) for
+completeness. A careful re-reading shows that \emph{every one} of these
+papers decays over a variable distinct from raw token length \(n\).
+
+\textbf{Dziri et al.~(2023), Faith and Fate.} GPT-4 multi-digit
+multiplication accuracy drops from 59\% (3-digit) to 4\% (4-digit) in
+zero-shot. The authors theorise that ``the probability of incorrect
+predictions converges exponentially to \(\approx 1\) for abstract
+compositional tasks.'' The decay variable, however, is
+\emph{compositional graph size \(N\)}, not raw token length \(n\). The
+3×3 multiplication graph has approximately 16 nodes (partial products
+plus carries); the 4×4 graph has approximately 25. Multi-digit
+multiplication is engineered so that \(k_{\text{hard}} \approx N\) ---
+every node in the computation graph is a hard decision. For
+natural-language tasks, where the harvest evidence in Section 4.1 gives
+\(k_{\text{hard}} \ll n\), the Dziri regime is the \emph{boundary case}
+in which our framework reduces to their result. We agree with their
+empirical decay; we disagree with the interpretation that it extends to
+natural-language \(n\).
+
+A complementary observation: \((1 - \varepsilon)^N = 0.04\) at
+\(N = 25\) requires \(\varepsilon \approx 0.12\) per node, but
+\((1 - 0.12)^{16} \approx 0.13\), far below the observed 0.59 at
+\(N = 16\). Dziri's own data does not fit a clean
+\((1 - \varepsilon)^N\) exponential on their own decay axis, suggesting
+the actual decay shape is steeper than exponential locally but
+compatible with a finite catalogue of failure modes that get exhausted
+as \(N\) grows.
+
+\textbf{Kuratov et al.~(2024), BABILong.} The abstract reports
+``performance declines sharply with increased reasoning complexity'' and
+that models ``effectively utilise only 10--20\% of the context.'' Read
+in detail, BABILong varies \emph{two} axes: context length \(n\) (from
+0K to 10M tokens) and number of supporting facts \(k\) (from QA1 = 1
+fact to QA3 = 3 facts, etc.). The sharp decline is in \(k\), not in
+\(n\). For QA1 (single-fact), most models ``perform well up to 4,000
+tokens'' --- a plateau, not exponential decay. The famous
+RAG-flat-across-length result (60\% on single-fact QA \emph{independent
+of context length}) is the cleanest possible demonstration that when the
+relevant evidence is in window, length does not matter. Recurrent Memory
+Transformers maintaining performance to 50M tokens further confirms that
+effective \(k\) is determined by architecture, not by raw \(n\).
+
+\textbf{METR (2025).} Per-model success fits a logistic curve in
+\(\log(\text{human-task-duration})\):
+\(S(t) = \sigma(\beta \cdot (\log t - \log h))\). Logistic-in-log-length
+is \emph{mathematically sublinear} in length itself. The 80\%-horizon
+being 4--6× shorter than the 50\%-horizon is a steep within-model cliff
+but is by construction compatible with the polylog result of Section 3.4
+--- a cliff at a specific capacity threshold is a manifold-transition
+signature, exactly the structure of Arbuzov et al.~(2025, §3.2). The
+famous exponential --- capability doubling every seven months --- is an
+\emph{inter-model} claim about how the horizon \(h\) moves across
+generations, orthogonal to within-model decay shape. When a model
+improves, its \(h\) shifts right; the curve does not steepen.
+
+\textbf{Wan et al.~(2025), Fano-style upper bound.} This paper theorises
+super-linear information-demand growth and identifies an ``accuracy
+cliff'' at capacity overflow: ``when the task's information demand
+surpasses the model's output capacity, performance does not degrade
+gracefully but instead collapses sharply.'' The behavioural prediction
+is a \emph{threshold}, not smooth \((1 - \varepsilon)^n\). A cliff at a
+specific capacity threshold is exactly the manifold-transition behaviour
+our Section 3 framework predicts at the boundary between covered and
+uncovered modes; Wan et al.'s mechanism (capacity overflow) is one
+specific cause of the boundary, complementary to ours.
+
+\textbf{Karpinska et al.~(2024), NoCha.} GPT-4o achieves 55.8\% pair
+accuracy across 1,001 minimally-different true/false claim pairs about
+long fictional books (mean length 127K tokens). The paper reports
+performance by \emph{evidence scope}, not by context length: 59.8\% on
+sentence-level retrieval, 47.6\% on passage-level, 41.6\% on global
+reasoning. No per-context-length curve is reported. The decay axis is
+the number of evidence pieces that must be integrated --- i.e., a
+\(k\)-axis quantity, not an \(n\)-axis one. NoCha is therefore not
+counter-evidence to a sublinear-in-\(n\) claim; it is supporting
+evidence for a \(k\)-axis decay shape consistent with our framework.
+
+\textbf{Unifying observation.} Every counter-paper decays over a
+variable that is not \(n\): compositional graph size, fact count,
+log-time horizon, capacity threshold, or evidence scope. The apparent
+rapid decay is, in each case, in a quantity that our framework already
+concentrates the action in (\(k_{\text{hard}}\) and \(|C|\)), not in raw
+sequence length. We therefore do not need to refute these papers; we
+read them as consistent measurements of the same underlying phenomenon
+--- finite catalogues of hard decisions, with steep decay as those
+decisions exceed the model's coverage.
+
+\subsubsection{6.3 Limitations, residual budget, and
+falsifiability}\label{limitations-residual-budget-and-falsifiability}
+
+\textbf{Mathematical limitations.} Three are worth flagging. First,
+Postulate 1 is empirical, not derived. While it fits ErrorAtlas,
+HumanEval, and MWPES well, a domain with genuinely Heaps-power-law mode
+discovery (canonical \(b \approx 0.5\)) would invalidate the
+doubly-logarithmic claim of Theorem 1 --- though the qualitative polylog
+result of Section 3.5 would still hold. Second, the coverage form in
+Section 3.3 is an empirical best-fit to ErrorAtlas, not the canonical
+discrete-Zipf cumulative; readers should not interpret the close
+numerical match as theoretical confirmation. Third, the
+cluster-orthogonality assumption that underwrites Theorem 1's
+composition step is only approximate; the Le (2026) caveat on
+prompt-channel interference is real and would tighten the bound in
+shared-channel settings.
+
+\textbf{The irreducible-semantic residual.} Of the 17 ErrorAtlas
+categories, 13 are directly addressed by one of the six capability axes
+of Section 4.2.0 --- under Patterns A, B, or C. The remaining four ---
+inappropriate refusal (partially covered by preference optimisation),
+specification misinterpretation (Category H, addressed only weakly by
+clarification loops), reasoning bottlenecks at the level of problem
+decomposition, and a small residual of ``user wanted something
+different'' semantic failures --- admit no clean capability-provisioning
+fix in the current literature. These are \emph{irreducible-semantic
+residuals}: classes where the failure is in choosing what to do, not in
+executing it. Theorem 1's prediction of \(O(\log)\) rather than \(O(0)\)
+residual reliability reflects exactly this irreducible core. The
+framework does not claim 100\% coverage of all failures; it claims
+polylog-bounded \emph{capability-eliminable} failures, with the named
+semantic residual as the floor.
+
+\textbf{A falsifiability test the framework passes.} DebugBench (Tian et
+al., 2024) explicitly catalogues which error classes execution-feedback
+can and cannot repair. It works well for syntax and reference errors ---
+quoted: \emph{``SyntaxError can be fixed: 99.74\% on HumanEval, 100.00\%
+on MBPP.''} It does not work for logic errors --- quoted: \emph{``the
+feedback information is unhelpful for logic errors\ldots{} may even
+cause disruptions.''} This is the framework's predicted failure mode
+(execution feedback is a Pattern-A/B capability for structural-class
+errors and a Pattern-C-at-best for semantic-class errors) and a
+falsifiability test it passes. If capability provisioning bled into the
+semantic residual --- if execution feedback claimed to fix logic errors
+--- the framework's selectivity claim would be wrong. The empirical
+result is that capability provisioning correctly identifies both what it
+can erase and what it cannot.
+
+\textbf{Net assessment.} The framework correctly characterises both the
+success regime and the failure regime; the residuals are honest
+limitations, not silent failures. A future extension addressing the
+irreducible-semantic residual --- through richer process supervision,
+ensemble-based verification, or higher-order capability layers --- would
+tighten the bound but is not required for the polylog conclusion to hold
+over the capability-eliminable fraction.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{7. Conclusion}\label{conclusion}
+
+LLM reliability is often framed as an asymptotic scaling problem: as
+outputs get longer, do errors compound to inevitable failure? In our
+previous work (Arbuzov et al., 2025) we argued that this framing rests
+on a false uniformity assumption --- errors concentrate at
+\(\sim 5{-}10\%\) of tokens, not all of them. This paper takes the next
+step: within that sparse set, errors are not only concentrated but also
+\emph{repetitive}. They cluster into a finite catalogue of recurring
+failure modes whose size grows only logarithmically (under our empirical
+postulate) or as a small power (under canonical Heaps' law) with the
+number of observed failures.
+
+The mathematical consequence (Theorem 1) is that the intervention budget
+required to bound per-hard-token residual error scales
+polylogarithmically in sequence length --- doubly logarithmically under
+Postulate 1 with \(k \sim \log n\), and at most \((\log n)^b\) with
+small \(b\) under Heaps' law. The practical consequence is that
+reliability becomes a small-catalogue engineering problem. Approximately
+50 interventions per domain, each targeting one of the recurring failure
+modes documented in the empirical evidence of Section 4, cover roughly
+90\% of per-hard-token failures. Sequence-level reliability targets are
+strictly stricter and approach full-catalogue coverage as \(k\) grows;
+we encourage practitioners to distinguish these two SLA regimes
+explicitly.
+
+This reframes the long-context reliability question from ``can we bound
+the growth of \(n\)-token error?'' to ``have we catalogued enough
+failure modes?'' The latter question is finite, addressable, and
+progressing rapidly: ErrorAtlas at 17 categories, MWPES at 304K errors
+with 4-category dominance, HumanEval at 86\% two-category coverage,
+RAGTruth at 0\% hallucination under Acurai. The architecture of LLM
+errors, on the evidence, is small.
+
+Several extensions stand out. Direct empirical measurement of the
+mode-rate constant \(\sigma\) on new domains --- agentic, scientific,
+code-in-production --- would test the cross-domain generality of
+Postulate 1 and surface outlier domains where the catalogue may grow
+faster than logarithmically. A sequence-level analogue of Theorem 1,
+replacing the per-hard-token bound with a probabilistic bound on
+sequence failure, would close the gap between Section 3.4's two regimes
+and give one-shot systems a cleaner SLA target. The deepest question is
+structural: why does mode discovery look logarithmic in the first place?
+Integration with the attention-mechanism bounds and stratified-manifold
+geometry flagged as future work in Arbuzov et al.~(2025, §6) would
+replace our empirical postulate with a derived result --- closing the
+loop between the two papers.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{References}\label{references}
+
+Acurai authors. (2024). Acurai: Query reformatting for
+hallucination-free retrieval-augmented generation. \emph{arXiv preprint
+arXiv:2412.05223}.
+
+AgentSquare authors. (2024). AgentSquare: Modular composition for LLM
+agents. \emph{arXiv preprint arXiv:2410.06153}.
+
+Almanac authors. (2024). Almanac: Retrieval-augmented large language
+models for clinical question answering. \emph{NEJM AI}.
+
+Arbuzov, M. L., Shvets, A. A., \& Bei, S. (2025). Beyond exponential
+decay: Rethinking error accumulation in large language models.
+\emph{arXiv preprint arXiv:2505.24187}.
+
+Asai, A., et al.~(2024). Self-RAG: Learning to retrieve, generate, and
+critique through self-reflection. \emph{International Conference on
+Learning Representations (ICLR) 2024}. arXiv:2310.11511.
+
+Ashury-Tahan, Y., et al.~(2026). ErrorAtlas: A large-scale empirical
+atlas of LLM failure patterns across models and benchmarks. \emph{arXiv
+preprint arXiv:2601.15812}.
+
+Chen, W., Ma, X., Wang, X., \& Cohen, W. W. (2022). Program of thoughts
+prompting: Disentangling computation from reasoning for numerical
+reasoning tasks. \emph{arXiv preprint arXiv:2211.12588}.
+
+Cheng, K., et al.~(2024). SeeClick: Harnessing GUI grounding for
+advanced visual GUI agents. \emph{Proceedings of ACL 2024}.
+arXiv:2401.10935.
+
+Costello, C., Wells, C., Grefenstette, E., \& Glaese, A. (2025). Think,
+prune, train, improve: Scaling reasoning without scaling models.
+\emph{arXiv preprint arXiv:2504.18116}.
+
+Dai, X., et al.~(2025). EDIT: Identifying key reasoning steps in
+chain-of-thought. \emph{Proceedings of ACL 2025}. arXiv:2405.19737.
+
+Dantart, J. (2026). The rigorous archivist: Source-restricted retrieval
+for fabrication-free legal citation. \emph{arXiv preprint
+arXiv:2601.15476}.
+
+DeepSeek-Prover team. (2025). DeepSeek-Prover-V2: Advancing formal
+mathematical reasoning via large-scale reinforcement learning with
+verifier feedback. \emph{arXiv preprint arXiv:2504.21801}.
+
+Dong, Y., et al.~(2024). XGrammar: Efficient grammar-constrained
+decoding for large language models. \emph{arXiv preprint
+arXiv:2411.15100}.
+
+Dong, Y., et al.~(2026). XGrammar-2: Scaling schema-constrained tool
+calls. \emph{arXiv preprint arXiv:2601.04426}.
+
+Dziri, N., Lu, X., Sclar, M., Li, X. L., Jiang, L., Lin, B. Y., West,
+P., Bhagavatula, C., Le Bras, R., Hwang, J. D., et al.~(2023). Faith and
+fate: Limits of transformers on compositionality. \emph{Advances in
+Neural Information Processing Systems 36}. arXiv:2305.18654.
+
+Fang, L., Wang, Y., Liu, Z., Zhang, C., Jegelka, S., Gao, J., Ding, B.,
+\& Wang, Y. (2024). What is wrong with perplexity for long-context
+language modeling? \emph{International Conference on Learning
+Representations (ICLR) 2025}. arXiv:2410.23771.
+
+Gao, L., Madaan, A., Zhou, S., Alon, U., Liu, P., Yang, Y., Callan, J.,
+\& Neubig, G. (2022). PAL: Program-aided language models.
+\emph{Proceedings of ICML 2023}. arXiv:2211.10435.
+
+Gao, T., et al.~(2023). ALCE: Enabling large language models to generate
+text with citations. \emph{Proceedings of EMNLP 2023}. arXiv:2305.14627.
+
+Geng, S., et al.~(2025). JSONSchemaBench: Evaluating constrained
+decoding. \emph{arXiv preprint arXiv:2501.10868}.
+
+Goodell, A., et al.~(2025). Task-specific tools for clinical
+calculations: A large language model evaluation. \emph{Nature npj
+Digital Medicine}.
+
+Gou, B., et al.~(2025). UGround: Navigating the digital world as humans
+do. \emph{International Conference on Learning Representations (ICLR)
+2025}. arXiv:2410.05243.
+
+Gou, Z., et al.~(2023). ToRA: A tool-integrated reasoning agent for
+mathematical problem solving. \emph{arXiv preprint arXiv:2309.17452}.
+
+Gou, Z., et al.~(2024). CRITIC: Large language models can self-correct
+with tool-interactive critiquing. \emph{International Conference on
+Learning Representations (ICLR) 2024}. arXiv:2305.11738.
+
+Hsieh, C.-P., Sun, S., Kriman, S., Acharya, S., Rekesh, D., Jia, F.,
+Zhang, Y., \& Ginsburg, B. (2024). RULER: What's the real context size
+of your long-context language models? \emph{arXiv preprint
+arXiv:2404.06654}.
+
+Huang, C., Zhu, G., Wang, X., Luo, Y., Ge, G., Chen, H., Yi, D., \&
+Wang, J. (2024). Recurrent context compression: Efficiently expanding
+the context window of LLM. \emph{arXiv preprint arXiv:2406.06110}.
+
+Huang, D., et al.~(2023). AgentCoder: Multi-agent-based code generation
+with iterative testing and optimisation. \emph{arXiv preprint
+arXiv:2312.13010}.
+
+Jiang, H., Wu, Q., Luo, X., Li, D., Lin, C.-Y., Yang, Y., \& Qiu, L.
+(2024). LongLLMLingua: Accelerating and enhancing LLMs in long context
+scenarios via prompt compression. \emph{arXiv preprint
+arXiv:2310.06839}.
+
+Karaman, O. M., et al.~(2024). POROver: Improving safety and reducing
+over-refusal in large language models with over-refusal-aware preference
+optimization. \emph{arXiv preprint arXiv:2410.12999}.
+
+Karpinska, M., et al.~(2024). One thousand and one pairs: A ``novel''
+challenge for long-context language models. \emph{Proceedings of EMNLP
+2024}. arXiv:2406.16264.
+
+Kuratov, Y., Bulatov, A., Anokhin, P., Rodkin, I., Sorokin, D., Sorokin,
+A., \& Burtsev, M. (2024). BABILong: Testing the limits of LLMs with
+long context reasoning-in-a-haystack. \emph{NeurIPS 2024 Datasets and
+Benchmarks Track}. arXiv:2406.10149.
+
+Le, T. (2026). Schema-level and prompt-level instructions interact
+non-additively in structured generation. \emph{arXiv preprint}.
+
+LeCun, Y. (2023). Why autoregressive language models are exponentially
+diverging and doomed. \emph{Public commentary}.
+
+Li, Y., et al.~(2022). Competition-level code generation with AlphaCode.
+\emph{Science}, 378(6624), 1092--1097.
+
+Lightman, H., et al.~(2023). Let's verify step by step. \emph{arXiv
+preprint arXiv:2305.20050}.
+
+Liu, F., et al.~(2023). DePlot: One-shot visual language reasoning by
+plot-to-table translation. \emph{Findings of ACL 2023}.
+arXiv:2212.10505.
+
+Lu, Y., et al.~(2024). OmniParser for pure vision based GUI agent.
+\emph{arXiv preprint arXiv:2408.00203}.
+
+Mallen, A., et al.~(2023). When not to trust language models:
+Investigating effectiveness of parametric and non-parametric memories
+(PopQA). \emph{Proceedings of ACL 2023}. arXiv:2212.10511.
+
+Manning, C. D., Raghavan, P., \& Schütze, H. (2008). \emph{Introduction
+to information retrieval}. Cambridge University Press. (Section on
+Heaps' law:
+\url{https://nlp.stanford.edu/IR-book/html/htmledition/heaps-law-estimating-the-number-of-terms-1.html}.)
+
+MAST authors. (2025). MAST: Failure-mode analysis of multi-agent LLM
+systems. \emph{arXiv preprint arXiv:2503.13657}.
+
+METR. (2025). Measuring AI ability to complete long software tasks.
+\emph{arXiv preprint arXiv:2503.14499}.
+
+Niwa, S., \& Iso, H. (2024). AmbigNLG: Addressing task ambiguity in
+open-domain NLG. \emph{Proceedings of EMNLP 2024}. arXiv:2402.17717.
+
+OpenAI. (2024). Introducing structured outputs in the API. \emph{OpenAI
+Engineering Blog}.
+\url{https://openai.com/index/introducing-structured-outputs-in-the-api/}.
+
+OpenAI. (2025). GPT-5 system card. \emph{OpenAI}.
+\url{https://openai.com/index/gpt-5-system-card/}.
+
+Pang, J., Ye, F., Wong, D. F., He, X., Chen, W., \& Wang, L. (2024).
+Anchor-based large language models. \emph{Findings of ACL 2024}.
+arXiv:2402.07616.
+
+Press, O., Zhang, M., Min, S., Schmidt, L., Smith, N. A., \& Lewis, M.
+(2023). Measuring and narrowing the compositionality gap in language
+models. \emph{Findings of EMNLP 2023}. arXiv:2210.03350.
+
+RFM authors. (2025). RFMDataset: Recurring failure modes across
+open-source LLMs. \emph{arXiv preprint arXiv:2506.17114}.
+
+Schaeffer, R., et al.~(2025). Why are large language models' scaling
+laws power laws? \emph{International Conference on Machine Learning
+(ICML) 2025}. arXiv:2502.17578.
+
+Schick, T., et al.~(2023). Toolformer: Language models can teach
+themselves to use tools. \emph{Advances in Neural Information Processing
+Systems 36}. arXiv:2302.04761.
+
+Shi, F., et al.~(2024). MGDebugger: From syntax to semantics ---
+multi-granularity LLM-driven code debugging. \emph{arXiv preprint
+arXiv:2410.01215}.
+
+Shinn, N., Cassano, F., Berman, E., Gopinath, A., Narasimhan, K., \&
+Yao, S. (2023). Reflexion: Language agents with verbal reinforcement
+learning. \emph{Advances in Neural Information Processing Systems 36}.
+arXiv:2303.11366.
+
+Six Sigma authors. (2026). Six Sigma agent framework: Compound
+reliability through orthogonal interventions. \emph{arXiv preprint}.
+
+SLOT authors. (2025). SLOT: Schema-level output transformation for
+reliable structured generation. \emph{arXiv preprint arXiv:2505.04016}.
+
+Sun, J., et al.~(2025). MWPES-300K: A large-scale math word problem
+error set with per-category failure distributions. \emph{Findings of ACL
+2025}. arXiv:2501.15581.
+
+Suresh, S., et al.~(2025). DINGO: Constrained decoding for diffusion
+language models. \emph{arXiv preprint arXiv:2505.23061}.
+
+Suri, K., et al.~(2025). SAGE-Agent: Structured uncertainty in agentic
+AI. \emph{arXiv preprint arXiv:2511.08798}.
+
+TauBench authors. (2024). \(\tau\)-bench: A benchmark for tool-augmented
+LLM agents. \emph{arXiv preprint arXiv:2406.12045}.
+
+Tian, R., et al.~(2024). DebugBench: Evaluating debugging capability of
+large language models. \emph{arXiv preprint arXiv:2401.04621}.
+
+Wada, S., et al.~(2025). Domain retrieval-augmented generation
+eliminates radiology report hallucinations. \emph{Nature npj Digital
+Medicine}.
+
+Wan, K., et al.~(2025). A Fano-style accuracy upper bound for LLM
+single-pass reasoning in multi-hop QA. \emph{arXiv preprint
+arXiv:2509.21199}.
+
+Wang, M., et al.~(2024). Leave no document behind: Benchmarking
+long-context LLMs with extended multi-doc QA. \emph{Proceedings of EMNLP
+2024}. arXiv:2406.17419.
+
+Wang, P., et al.~(2023). Math-Shepherd: Verify and reinforce LLMs
+step-by-step without human annotations. \emph{arXiv preprint
+arXiv:2312.08935}.
+
+Wang, X., Wei, J., Schuurmans, D., Le, Q., Chi, E., Narang, S.,
+Chowdhery, A., \& Zhou, D. (2023). Self-consistency improves chain of
+thought reasoning in language models. \emph{International Conference on
+Learning Representations (ICLR) 2023}. arXiv:2203.11171.
+
+Wang, Z., et al.~(2025). From scores to steps: Diagnosing and improving
+LLM performance on medical calculation tasks (MedRaC). \emph{Proceedings
+of EMNLP 2025}. arXiv:2509.16584.
+
+Weakest Link authors. (2026). The weakest link law: Multi-hop QA
+performance collapses to the least-visible-evidence bucket. \emph{arXiv
+preprint arXiv:2601.12499}.
+
+Xie, T., et al.~(2025). Jedi: A grounding-dataset-driven approach to
+OSWorld and GUI agent tasks. \emph{NeurIPS 2025}. arXiv:2509.13644.
+
+Zhang, J., et al.~(2024). Categorizing code-generation errors of large
+language models on HumanEval (LlmFix). \emph{arXiv preprint
+arXiv:2409.00676}.
+
+Zhang, K., et al.~(2023). ToolDec: Syntax error-free and generalisable
+tool use via finite-state-machine constrained decoding. \emph{arXiv
+preprint arXiv:2310.07075}.
+
+Zhou, Y., Liu, H., Chen, Z., Tian, Y., \& Chen, B. (2025). GSM-Infinite:
+How do your LLMs behave over infinitely increasing context length and
+reasoning complexity? \emph{arXiv preprint arXiv:2502.05252}.
+
+Zhu, H., et al.~(2025). Lost-in-retrieval: Decomposition failures in
+multi-hop retrieval-augmented generation. \emph{arXiv preprint
+arXiv:2502.14245}.
+
+\end{document}

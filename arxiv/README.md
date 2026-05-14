@@ -1,6 +1,20 @@
-# arXiv Submission — Telegraph English
+# arXiv Submissions — Index
 
-This directory holds the arXiv-ready submission package for the Telegraph English preprint. Built from `paper/telegraph_english.md` via the `arxiv-paper-prep` skill (Markdown → pandoc → xelatex → PDF → zip).
+This directory holds arXiv-ready submission packages for multiple preprints from this repository. Each paper has its own subdirectory with source, build script, PDF, and upload zip.
+
+## Papers in this directory
+
+| Paper | Subdirectory | Status |
+|---|---|---|
+| Telegraph English: Semantic Prompt Compression via Structured Symbolic Rewriting | [`paper_telegraph_english/`](paper_telegraph_english/) | Ready (see metadata below) |
+| Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models | [`beyond exponential decay/`](./beyond%20exponential%20decay/) | Published as [arXiv:2505.24187](https://arxiv.org/abs/2505.24187) |
+| The Architecture of Errors (Part 2, follow-on to Beyond Exponential Decay) | [`architecture_of_errors/`](architecture_of_errors/) | Ready ([sub-README](architecture_of_errors/README.md)) |
+
+---
+
+# Telegraph English submission
+
+This section holds the arXiv-ready submission package for the Telegraph English preprint. Built from `paper/telegraph_english.md` via the `arxiv-paper-prep` skill (Markdown → pandoc → xelatex → PDF → zip).
 
 ## Quick links
 
