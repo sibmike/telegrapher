@@ -104,9 +104,9 @@ research agents, and it reveals an unfilled design corner: automated
 local scaffold evolution combined with governed, auditable,
 cross-organisation promotion --- a \emph{DP-FedAvg-style aggregator with
 an automated eval gate at the scaffold layer}. The contribution is
-conceptual and survey-based. A practitioner-facing companion
-(ScaffoldOps) handles reference architectures, maturity ladders, design
-principles, and the full failure taxonomy.
+conceptual and survey-based. A practitioner-facing companion paper will
+handle reference architectures, maturity ladders, design principles, and
+the full failure taxonomy.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -166,10 +166,8 @@ is the paper's open-question headline and a concrete Paper-4 target.
 The architectural review of how to actually build such systems --- five
 reference patterns, a five-level maturity model, a substrate-selection
 rubric, three migration paths, the full nine-category failure taxonomy,
-and eight design principles --- is the subject of a companion paper,
-\emph{ScaffoldOps: Governance Patterns for Patch-Plastic LLM Systems.}
-This paper is the survey and the framework. ScaffoldOps is the operating
-manual.
+and eight design principles --- is deferred to follow-on practitioner
+work. This paper is the survey and the framework.
 
 \subsection{2. Why patch errors must live outside the
 weights}\label{why-patch-errors-must-live-outside-the-weights}
@@ -386,8 +384,8 @@ Each operation is the locus of a separate engineering discipline that
 does not yet exist in coordinated form. Surveyed systems implement the
 operations partially and unevenly: research full-auto systems excel at
 (3) and (4), production governance leaders at (5), industry hybrids at
-most of (1)--(5) but rarely (6). ScaffoldOps (forthcoming companion)
-walks the implementation patterns; this paper's purpose is to make the
+most of (1)--(5) but rarely (6). Implementation patterns for each of the
+six are deferred to follow-on work; this paper's purpose is to make the
 discipline visible.
 
 \subsection{4. Six scaffold substrates}\label{six-scaffold-substrates}
@@ -442,8 +440,9 @@ specialisation. S6 is the gate substrate --- without it, none of the
 other five can be updated safely across deployments. \emph{The
 substrates are not a taxonomy of nice-to-haves. They are the layers of
 the scaffold parameter vector, separately addressable by Loop 1 and Loop
-2.} The maturity-rubric details, score distributions, and per-substrate
-exemplars are covered in ScaffoldOps §3.
+2.} Score distributions and per-substrate exemplars are summarised in
+§6.1; the maturity-rubric details for practitioner adoption are deferred
+to follow-on work.
 
 \subsection{5. Survey method and evidence
 tiers}\label{survey-method-and-evidence-tiers}
@@ -477,7 +476,7 @@ code, demos, or production claim).
 peer-reviewed publication, (T2) arXiv preprint, (T3) production claim
 with metrics, (T4) open-source artifact (GitHub, registry), (T5)
 industry-blog or interview-level documentation. Systems with T1 or T4
-evidence carry highest weight in the cluster analysis (§6); T3 systems
+evidence carry highest weight in the cluster analysis (§7); T3 systems
 are admissible where the claim is concrete (specific benchmark, named
 integration target); T5 systems are admissible only when corroborated by
 T1--T4 elsewhere.
@@ -505,7 +504,179 @@ the composite-two-loop audit
 (\texttt{p3\_harvest\_composite\_two\_loop.md}) are in the paper's
 repository. Reviewers can re-run the analysis from primary sources.
 
-\subsection{6. Convergent patterns}\label{convergent-patterns}
+\subsection{6. Survey findings: the scaffold is unevenly
+mature}\label{survey-findings-the-scaffold-is-unevenly-mature}
+
+The 104-system core corpus does not mature uniformly. Tools and
+integrated systems are the most mature substrates; skills and
+orchestration lag; instructions are ubiquitous but shallow; memory is
+the most paradoxical of the six. This section presents the headline
+distributions before the cluster interpretation of §7. The full
+per-system spreadsheet is in \texttt{p3\_master\_scores.csv}; Appendix A
+lists representative rows.
+
+\subsubsection{6.1 Substrate maturity is
+uneven}\label{substrate-maturity-is-uneven}
+
+Aggregating the survey by substrate gives this distribution:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1765}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2353}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2353}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1765}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1765}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Substrate
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+\(n\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Mean
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Score-5 systems
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Survey finding
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{S1 --- Instructions} & 12 & 2.83 & \emph{(none)} & Rules persist
+across IDEs and agents (Claude Code's CLAUDE.md, Cursor Rules,
+AGENTS.md, Windsurf, Continue.dev) but no surveyed instruction system
+closes both an automated inner loop and a governed two-loop promotion.
+Ceiling held at 4 by Claude Code and Replit \\
+\textbf{S2 --- Skills} & 16 & 2.62 & SAGE, COSPLAY & Research frontier
+is active (failure-triggered skill update); production governance is
+weaker. Anthropic's skills repository is one-pool with PR review but no
+automated eval gate \\
+\textbf{S3 --- Memory} & 19 & 3.16 & SSGM & Cross-session memory is
+widespread; \emph{correctable, versioned} memory is rare. Production
+memory systems (ChatGPT Memory, Claude Memory, Mem0, Zep, MemGPT) treat
+memory as append-only \\
+\textbf{S4 --- Tools} & 19 & 3.63 & MCP, Harvey, Hippocratic AI & Most
+mature production substrate. Tool bundles are the commercial unit; MCP
+is the cross-vendor standard with 9,400+ public servers and 78\%
+enterprise adoption \\
+\textbf{S5 --- Orchestration} & 19 & 2.68 & MAE, Memento-Skills &
+Multi-agent topologies exist (LangGraph, AutoGen, CrewAI) but topology
+\emph{evolution} is rare; production rarely exposes governed promotion
+paths for emerging agent graphs \\
+\textbf{S6 --- Governance} & 21 & 3.05 & Braintrust, Vellum, LangSmith
+Hub, AGENTS.md/AAIF & High production maturity for prompts-as-code ---
+immutable commits, eval-gated PR merge, sub-five-minute rollback ---
+typically without inner-loop adaptation \\
+\textbf{INTEGRATED} & 34 & 3.74 & NanoResearch, AutoAgent, SkillRL & The
+high-water mark when present, but the cluster is dominated by research
+systems lacking enterprise governance \\
+\end{longtable}
+}
+
+The unevenness is the survey's central empirical pattern. The field has
+independently converged on the six substrates, but no system matures all
+six at once. Research systems learn fast and lack enterprise governance;
+production systems govern well and learn slowly; open standards solve
+artifact portability but not adaptation; vertical-bundle vendors solve
+patch specificity but rarely expose cross-tenant promotion. The missing
+architecture is not ``agents with tools'' or ``memory with evals.'' It
+is \emph{governed scaffold adaptation} --- fast local learning paired
+with safe cross-context promotion.
+
+\subsubsection{6.2 Representative systems by
+cluster}\label{representative-systems-by-cluster}
+
+Five clusters recur across the corpus. The four-cluster grouping below
+maps each system to its gate types and to the structural lesson it
+carries. The matrix in §8 places the same systems on the 3×3 design
+space.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Cluster
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Representative systems (year, PP score)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Loop 1 / Loop 2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What the cluster proves
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Research full-auto & NanoResearch (2026, 5), SkillRL (2026, 5),
+AlphaEvolve (2025, 4), DGM (2025, 4), ADAS (2024, 4), Voyager (2023, 4)
+& Auto / Auto & Both loops can be fully automated under algorithmic
+gates; benchmark gains compound; enterprise governance is uniformly
+absent \\
+Production hybrid & SkillForge (2026, 4), CASCADE (2025, 4.5), Sierra OS
+2.0 (2025, 3), Cognition Devin (2024, 3) & Auto / Human & Algorithmic
+Loop-1 gate plus reviewer-judgment Loop-2 gate is the production-viable
+cell; SkillForge is the architectural exemplar \\
+Reviewer-judgment & OpenCore (2025, 4) & Human / Human & Automated
+extraction machinery with reviewer-judgment gates on both loops; the
+only published \(n>1\) mini-batch rule in the corpus (5-dream
+threshold); cross-organisation federation via
+fork-and-contribute-back \\
+Governance-first & Braintrust, Vellum, LangSmith Hub (all 2024, S6 = 5)
+& None / Auto & Eval-gated promotion exists; candidate generation is
+manual (engineers iterate prompts); no patch-plastic inner loop \\
+Open standards & AGENTS.md (2025), MCP (2024), Claude Skills (2025),
+Cursor Rules (2024) & Mixed / Mixed & Vendor-cross convergence on
+artifact format and tool attachment; 60k+ AGENTS.md repos; 9,400+ MCP
+servers; 78\% enterprise MCP adoption \\
+\end{longtable}
+}
+
+\subsubsection{6.3 Surprising absences}\label{surprising-absences}
+
+What is missing from the survey is as instructive as what is present.
+Five absences stand out across the 104-system core corpus:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Failure-triggered memory is rare in production.} Deployed
+  memory systems prefer recording preferences and successful facts; only
+  Reflexion, the Voyager skill library, Gemini Code Assist's
+  PR-rejection memory, and the classical SOAR chunking pattern
+  explicitly record residuals. The most obvious Loop-1 signal is the one
+  production memory systems mostly ignore.
+\item
+  \textbf{Cross-customer skill promotion is absent.} AGENTS.md is
+  cross-vendor; Anthropic's skills repository is one-pool. No surveyed
+  system has a vetted cross-organisational marketplace with eval-gated
+  promotion.
+\item
+  \textbf{Memory versioning is mostly unsolved.} Only SSGM provides
+  explicit provenance, versioning, and correction pathways. Production
+  default is append-only with implicit retrieval-based forgetting --- at
+  odds with the patch-plastic discriminator's correction requirement.
+\item
+  \textbf{Scaffold-level curriculum is absent.} No surveyed system
+  selects \emph{which} sessions inform the gradient. Every session
+  contributes equally; weighting by recency, severity, or
+  representativeness has not been published.
+\item
+  \textbf{Overfitting detection at Loop-2 promotion is absent.} No
+  surveyed system runs a held-out eval set per project to catch
+  scaffolds that over-fit one deployment before they propagate to
+  another.
+\end{enumerate}
+
+Each absence is a Paper-4 target. The conclusion echoes them; the survey
+makes them visible.
+
+\subsection{7. Convergent patterns}\label{convergent-patterns}
 
 The 142-system corpus, scored against the rubric of §4, produces four
 archetypal clusters that recur across both research and industry. We
@@ -577,7 +748,7 @@ standards} and \emph{production hybrid}: the bundle is the commercial
 unit; the underlying model is mostly the same one a competitor would
 use.
 
-\subsection{7. The two-loop design
+\subsection{8. The two-loop design
 space}\label{the-two-loop-design-space}
 
 The fourteen composite-two-loop systems sit in a 3×3 matrix indexed by
@@ -652,9 +823,8 @@ size 5. The four-layer fork (USER → PROJECT → STACK → CORE) is the only
 explicit deep-vs-surface hierarchy in the corpus, with CORE as the
 slow-moving universal layer and USER as the fast-adapting per-instance
 layer. Cross-project drift upstream-promoted to CORE is federated
-averaging across user/project shards, gated by human PR review. The full
-ML-lens walk-through is in ScaffoldOps §8. For Paper 3's purposes, the
-key observation is that OpenCore demonstrates \emph{cross-organisation}
+averaging across user/project shards, gated by human PR review. The key
+observation here is that OpenCore demonstrates \emph{cross-organisation}
 federated aggregation --- the only surveyed system to do so explicitly
 --- and that the gates are reviewer-judgment because the design is
 targeted at solo and small-team workflows where the marginal cost of a
@@ -674,7 +844,7 @@ STACK-style intermediate layer to NanoResearch or a multi-archetype
 scope to Anthropic's skills repository is a tractable engineering
 direction.
 
-\subsection{8. The empty corner}\label{the-empty-corner}
+\subsection{9. The empty corner}\label{the-empty-corner}
 
 Four properties define what we call \textbf{enterprise full-auto}:
 
@@ -738,11 +908,12 @@ across tenants with operator-tunable privacy bounds, an automated eval
 gate (held-out task suite per tenant) blocking promotion when patch loss
 does not decrease, versioned lineage with RBAC carrying tenant access
 policies forward through the promotion, and a rollback envelope on every
-promoted artifact. ScaffoldOps §10 sketches the eight safety
-requirements an implementor would need; this paper's claim is only that
-the empty corner is \emph{named}. It is no longer ``no system closes
-both loops'' --- too coarse --- but a specific four-property combination
-that the survey can audit any future system against.
+promoted artifact. Naming the corner converts a vague gap into a
+specific four-property audit criterion; the implementor's safety
+requirements are deferred to follow-on practitioner work. It is no
+longer ``no system closes both loops'' --- too coarse --- but a specific
+four-property combination that the survey can audit any future system
+against.
 
 Whether this corner \emph{should} be filled is deployment-dependent. In
 safety-critical domains --- medical decision support, legal advice,
@@ -758,12 +929,49 @@ archive, extending federation from within-DeepMind multi-target to
 cross-customer multi-tenant --- but the architectural surface, not the
 timeline, is what this paper claims.
 
-\subsection{9. A new failure surface}\label{a-new-failure-surface}
+\subsubsection{9.1 Patch-complete systems}\label{patch-complete-systems}
+
+The two-tier architecture also changes the practical meaning of
+``general'' capability. A frontier model need not be globally general
+for the deployed system to become effectively general inside a bounded
+patch. Once a localhost scaffold contains the patch's rules, tools,
+memories, workflows, evals, and promotion gates, the model--scaffold
+composite can cover the economically relevant task distribution of that
+patch with broad competence. We call this condition
+\textbf{patch-completeness}: the system is not generally intelligent
+over the world, but it is operationally general over the bounded world
+it inhabits.
+
+This is why many production systems already feel further along than
+model-only benchmarks imply. A coding agent inside one repository ---
+with project rules, tests, CI, documentation, tool access, issue
+history, and PR review --- may be patch-complete for that repository. A
+legal agent inside a firm's due-diligence workflow, with vetted document
+stores, clause libraries, playbooks, and review gates, may be
+patch-complete for that workflow. The competence is not located in the
+model alone. It is distributed across the frontier prior and the
+localhost scaffold.
+
+Patch-completeness is not global generality. It is local generality
+under boundary conditions. The distinction matters because the failure
+mode changes: a patch-complete system can appear broadly competent while
+silently depending on local conventions, hidden evaluator expectations,
+and scaffold assumptions that do not transfer. Moving it to a
+neighbouring patch without re-measuring the residual catalogue is
+therefore a patch-shift event, not ordinary deployment. The governance
+problem is not merely how to make scaffolds learn but \emph{how to know
+where their local generality ends}. If patch-complete systems exist ---
+and many deployed systems likely already are --- then scaffold
+governance matters because local competence can become powerful before
+global robustness exists. §10 catalogues the failure surface that newly
+powerful local systems exhibit.
+
+\subsection{10. A new failure surface}\label{a-new-failure-surface}
 
 Patch-plasticity introduces failure modes weight-only systems do not
 have. We name them here; the full taxonomy (nine categories A--I with
-severity ratings and counter-principles P1--P8) is in ScaffoldOps
-§§6--7.
+severity ratings and counter-principles P1--P8) is deferred to follow-on
+practitioner work.
 
 \textbf{Scaffold bloat} is the dominant near-term risk. IFScale
 (Jaroslawicz et al., 2025) reports a 35× cost increase as instruction
@@ -793,10 +1001,10 @@ al.~2024, Lyle et al.~2023). Scaffolds age; a six-month-old
 system treats pruning or expiration as a first-class operation.
 
 Taken together: the patch-plastic surface is real, quantified by
-2024--2026 work, and largely unmitigated in production. ScaffoldOps
-walks the mitigation principles in detail.
+2024--2026 work, and largely unmitigated in production. Follow-on
+practitioner work walks the mitigation principles in detail.
 
-\subsection{10. Conclusion}\label{conclusion}
+\subsection{11. Conclusion}\label{conclusion}
 
 The field did not wait for frontier weights to become perfectly
 reliable. It built a second learning system around them. That second
@@ -823,18 +1031,14 @@ eval gate at the scaffold layer. Whether it should be filled is
 deployment-dependent; that it has not been is the survey's headline
 finding.
 
-Several open questions remain. \emph{Failure-triggered memory} is rare
-in production despite being the most obvious Loop-1 signal; the surveyed
-memory systems prefer to record preferences and successful facts rather
-than residuals. \emph{Cross-customer skill promotion} is absent ---
-AGENTS.md is cross-vendor but Anthropic's skills repository is one-pool;
-no surveyed system has a vetted cross-organisational marketplace with
-eval-gated promotion. \emph{Versioning of memory} is essentially
-unsolved outside SSGM. \emph{Curriculum at the scaffold layer} ---
-selecting which sessions inform the gradient --- has no surveyed
-instance. \emph{Overfitting detection at Loop-2 promotion} --- a
-held-out eval set per tenant that catches scaffolds over-fitting one
-deployment before they propagate --- likewise. Each is a Paper-4 target.
+The five surveyed absences of §6.3 --- failure-triggered memory rare in
+production, cross-customer skill promotion absent, memory versioning
+unsolved, scaffold-level curriculum unspecified, Loop-2 overfitting
+detection missing --- are each a Paper-4 target. None of these is novel
+as a complaint; each is novel as a \emph{gap the architecture makes
+visible}. The patch-completeness observation of §9.1 sharpens the
+urgency: local competence is becoming powerful enough to require
+governance attention before global robustness has been demonstrated.
 
 The deepest connection --- back to Paper 2 --- is structural.
 Patch-plasticity is plastic because residual errors are clustered; if
@@ -855,6 +1059,135 @@ scaffold parameter vector under update. Then the clutter resolves into
 architecture: production LLMs learn locally, outside the weights,
 because that is the only place patch-specific adaptation can safely
 happen.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Appendix A. Representative survey
+rows}\label{appendix-a.-representative-survey-rows}
+
+The full per-system spreadsheet is \texttt{p3\_master\_scores.csv} in
+the repository. The 30 rows below are a representative spot-check
+covering all six substrates, both research and production, and all five
+clusters of §6.2. \emph{Loop 1} and \emph{Loop 2} columns apply to
+systems satisfying the composite-two-loop criterion; \emph{n/a} means
+the loop is absent for that system. The \emph{PP} column is the
+integrated patch-plasticity score (0--5) used in the survey; the
+\emph{Evidence} column abbreviates the strongest available source tier
+(T1 peer-reviewed; T2 arXiv preprint; T3 production claim; T4
+open-source artifact; T5 industry blog).
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1538}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1538}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 14\tabcolsep) * \real{0.1154}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+System
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Year
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Substrate
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Loop 1
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Loop 2
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+PP
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Evidence
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Why included
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+NanoResearch & 2026 & Integrated & Auto & Auto & 5 & T2
+(arXiv:2605.10813) & Tri-level Skills/Memory/Policy co-evolution;
+cleanest full-auto exemplar \\
+AutoAgent & 2026 & Integrated & Auto & Auto & 5 & T2 (arXiv:2603.09716)
+& Dual-cycle Execution+Evolution + elastic memory orchestration \\
+SkillRL & 2026 & Integrated & Auto & Auto & 5 & T2 (arXiv:2602.08234) &
+Recursive skill-augmented RL with \(\text{SR}<0.4\) threshold gate \\
+AlphaEvolve & 2025 & Integrated & Auto & Auto & 4 & T2/T3
+(arXiv:2506.13131) & Production proof-point: Borg +0.7\%, Gemini kernel
++23\%, FlashAttention +32.5\% \\
+DGM (primary) & 2025 & Integrated & Auto & Auto & 4 & T2
+(arXiv:2505.22954) & Recursive self-modifying code; SWE-bench
+20\%→50\% \\
+ADAS & 2024 & Integrated & Auto & Auto & 4 & T2 (arXiv:2408.08435) &
+Meta-agent search; Turing-complete agent representation \\
+SkillForge & 2026 & Integrated & Auto & Human & 4 & T2
+(arXiv:2604.08618) & Production hybrid exemplar; LLM-judge
+\textgreater90\% + VFS versioning \\
+CASCADE & 2025 & Integrated & Auto & Human & 4.5 & T2 (arXiv:2512.23880)
+& Largest published ablation gain in corpus: +57.9 pp on
+SciSkillBench \\
+OpenCore & 2025 & Integrated & Human & Human & 4 & T4
+(github.com/sibmike/opencore) & Only {[}Human × Human{]} system with
+explicit cross-organisation federation \\
+Voyager & 2023 & Integrated & Auto & Auto & 4 & T2 (arXiv:2305.16291) &
+Foundational skill-library result; 3.3× items, 15.3× tech-tree
+milestones \\
+AGENTS.md & 2025 & S1 Instructions & n/a & n/a & 2 & T3/T4 (agents.md) &
+Cross-vendor standard; 60k+ repos; Lulla 2026 measures −28.6\%
+runtime \\
+Claude Code CLAUDE.md & 2025 & S1 Instructions & n/a & n/a & 4 & T3/T4
+(docs.anthropic.com) & Four scoping levels including org-IT policy +
+auto-memory layer; ceiling for S1 \\
+Cursor Rules & 2024 & S1 Instructions & n/a & n/a & 3 & T3/T4
+(docs.cursor.com/rules) & \texttt{.cursor/rules/*.mdc} multi-scope + MCP
+attach; git-tracked \\
+Anthropic Agent Skills & 2025 & S2 Skills & n/a & Human & 3 & T3
+(anthropic.com/engineering) & Progressive disclosure spec; LangChain
+replication 29\%→95\% pass-rate \\
+SAGE & 2025 & S2 Skills & Auto & Auto & 5 & T2 (arXiv:2512.17102) &
++8.9\% SGC, 26\% fewer steps, 59\% fewer tokens on AppWorld \\
+COSPLAY & 2026 & S2 Skills & Auto & Auto & 5 & T2 (arXiv:2604.20987) &
+Boundary proposal + segmentation; only S2 = 5 with contracts \\
+Reflexion & 2023 & S3 Memory & Auto & n/a & 4 & T1 (NeurIPS 2023;
+arXiv:2303.11366) & Canonical failure-triggered episodic memory; +8\%
+HotpotQA \\
+Generative Agents & 2023 & S3 Memory & Auto & n/a & 4 & T1 (UIST 2023;
+arXiv:2304.03442) & Reflection + importance memory primitive \\
+Governed Collaborative Memory (SSGM) & 2026 & S3 Memory & Auto & Auto &
+5 & T2 (arXiv:2605.04264) & Only memory system with full provenance +
+versioning + correction \\
+MCP & 2024 & S4 Tools & n/a & n/a & 5 & T3 (modelcontextprotocol.io) &
+Cross-vendor; 9,400+ servers; 78\% enterprise; \textasciitilde97M SDK
+downloads/month \\
+Harvey & 2026 & S4 Tools & n/a & n/a & 5 & T3 (harvey.ai) & 400K
+queries/day; 18,000+ workflows; 200+ legal data sources \\
+Hippocratic AI & 2026 & S4 Tools & n/a & n/a & 5 & T3
+(hippocraticai.com) &
+\(3.5B valuation; 30% readmission reduction; 360% care-capacity boost |
+| Multi-Agent Evolve (MAE) | 2025 | S5 Orchestration | Auto | n/a | 5 | T2 (arXiv:2510.23595) | RL co-evolution of Proposer/Solver/Judge population |
+| Memento-Skills | 2026 | S5 Orchestration | Auto | Auto | 5 | T2 (arXiv:2604.02460) | Unit-test-gated skill promotion within multi-agent topology |
+| Cemri et al. (AG2) | 2025 | S5 Orchestration | n/a | n/a | 3 | T2 (arXiv:2503.13657) | Specialisation +4.5 pp on GSM-Plus (\)p
+= 0.03\$); MAST 14 failure modes \\
+Braintrust & 2024 & S6 Governance & n/a & Auto & 5 & T3 (braintrust.dev)
+& Prompts-as-code: immutable commits, eval-gated PR merge, sub-5 min
+rollback \\
+Vellum & 2024 & S6 Governance & n/a & Auto & 5 & T3 (vellum.ai) & Same
+governance pattern; production deployment with eval thresholds \\
+LangSmith Hub & 2024 & S6 Governance & n/a & Auto & 5 & T3
+(smith.langchain.com) & Prompt repository with environment promotion and
+eval blocking \\
+Self-Refine* & 2023 & (contrast) & n/a & n/a & 1 & T2 (arXiv:2303.17651)
+& Fails the patch-plastic discriminator: in-context iteration only \\
+Mem0* & 2024 & (contrast) & n/a & n/a & 2 & T3/T4 (mem0.ai) & Fails Loop
+2: per-user memory with no cross-context promotion path \\
+\end{longtable}
+}
+
+\emph{Asterisks mark contrast systems included for definitional
+clarity.}
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
