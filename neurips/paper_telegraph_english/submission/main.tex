@@ -60,11 +60,11 @@ Token deletion works, but it has structural limits that become visible once one 
 
 We propose Telegraph English (TE), a different kind of compression. Rather than selecting which tokens to keep, TE rewrites the passage into a compact, formally-structured dialect. The original sentence
 \begin{quote}\small
-\emph{``According to research by Johnson and colleagues (2023), the application of machine learning techniques to medical diagnostics resulted in a 27.5\% increase in early detection rates while simultaneously reducing false positives by approximately 12\% compared to traditional methods.''}
+\emph{``According to research by Author A and colleagues (2023), the application of machine learning techniques to medical diagnostics resulted in a 27.5\% increase in early detection rates while simultaneously reducing false positives by approximately 12\% compared to traditional methods.''}
 \end{quote}
 becomes, under TE:
 \begin{quote}\footnotesize\ttfamily
-ML\teArrow{}MEDICAL-DIAGNOSTICS: EARLY-DETECTION+27.5\% \teAnd{} FALSE-POSITIVE-12\% [JOHNSON:2023]
+ML\teArrow{}MEDICAL-DIAGNOSTICS: EARLY-DETECTION+27.5\% \teAnd{} FALSE-POSITIVE-12\% [AUTHOR-A:2023]
 \end{quote}
 Sixty-eight tokens become fourteen. The causal relationship, both quantitative claims, and the citation are each on record as separate, addressable units---and the phrase ``application of\dots resulted in'' has collapsed into a single symbol.
 
@@ -174,7 +174,7 @@ We design a multiple-choice protocol that isolates comprehension: can a model an
 
 Two suites probe different levels of information preservation. \textbf{key\_facts} (4{,}081 QA pairs) targets core concepts---headline findings, main claims, central arguments---with generically plausible distractors. \textbf{fine\_facts} (801 QA pairs) is adversarially designed to target information that lossy compression is most likely to destroy: precise numerical qualifiers, conditional statements, boundary conditions, secondary details. Distractors are near-miss variants---e.g.\ changing 4.8\% to 4.3\%---that can only be distinguished with access to the exact original detail.
 
-We evaluate five OpenAI models: GPT-4.1, GPT-4o, GPT-4o-mini, GPT-4.1-nano, and a fine-tuned GPT-4o variant. GPT-4.1 also generates the QA pairs and distractors. Different suites use different model subsets: key\_facts is run on GPT-4.1, GPT-4o-mini, and GPT-4.1-nano; fine\_facts on GPT-4o and GPT-4o-mini. The fine-tuned variant is reported in the cost analysis (\S\ref{sec:cost}) but is not used as a separate accuracy benchmark---it serves as a sanity check that fine-tuning on the original distribution does not change comparative behaviour at compression-decoded inputs.
+We evaluate five OpenAI models: GPT-4.1, GPT-4o, GPT-4o-mini, GPT-4.1-nano, and a fine-tuned GPT-4o variant. GPT-4.1 also generates the QA pairs and distractors. Different suites use different model subsets: key\_facts is run on GPT-4.1, GPT-4o-mini, and GPT-4.1-nano; fine\_facts on GPT-4o and GPT-4o-mini. The fine-tuned variant is not used as a separate accuracy benchmark---it serves as a sanity check that fine-tuning on the original distribution does not change comparative behaviour at compression-decoded inputs.
 
 \section{Results}
 \label{sec:results}
@@ -216,7 +216,7 @@ On headline facts (Table~\ref{tab:key-facts}), TE matches or edges out LLMLingua
   \end{tabular}
 \end{table}
 
-Fine details are harder (Table~\ref{tab:fine-facts}). Compression loss runs $3$--$4\times$ higher than on key facts, regardless of method. TE holds an advantage of 3.2 pp over LLMLingua-2 on GPT-4o and 2.3 pp on GPT-4o-mini at matched 50\% retention. Against more aggressive LLMLingua-2 at 33\% retention (full numbers in Appendix~\ref{app:tables}), TE's lead grows to roughly 11 pp on GPT-4o-mini, where LLMLingua-2 drops a full 21 pp from baseline. That configuration is where token deletion starts to break down: it is removing the very tokens the questions probe.
+Fine details are harder (Table~\ref{tab:fine-facts}). Compression loss runs $3$--$4\times$ higher than on key facts, regardless of method. TE holds an advantage of 3.2 pp over LLMLingua-2 on GPT-4o and 2.3 pp on GPT-4o-mini at matched 50\% retention. The fine-facts regime is where token deletion starts to break down: the very tokens the questions probe---numerical qualifiers, conditional caveats, secondary details---are precisely the ones an importance classifier flags as low-value.
 
 \subsection{Accuracy hierarchy and compression statistics}
 
@@ -287,7 +287,7 @@ To make \S\ref{sec:grammar} concrete, consider a multi-paragraph clinical-trial 
 \begin{quote}\small\ttfamily
 H1: CLINICAL-TRIAL OUTCOMES \\
 CTX: PHASE-III RANDOMISED CONTROLLED-TRIAL(RCT); N=2400 \\
-\hspace*{1em} PRIMARY-ENDPOINT: MORTALITY\teDown{}23\% VS PLACEBO; p<0.001 [SMITH:2024] \\
+\hspace*{1em} PRIMARY-ENDPOINT: MORTALITY\teDown{}23\% VS PLACEBO; p<0.001 [AUTHOR-B:2024] \\
 \hspace*{1em} SECONDARY-ENDPOINT: HOSPITALIZATION\teDown{}18\%; p=0.003 \\
 \hspace*{1em} ADVERSE-EVENTS: NAUSEA=12\% \teAnd{} HEADACHE=8\% \teAnd{} SERIOUS=2.1\% \\
 H1: SUBGROUP-ANALYSIS \\
