@@ -9,6 +9,7 @@ This directory holds arXiv-ready submission packages for multiple preprints from
 | Telegraph English: Semantic Prompt Compression via Structured Symbolic Rewriting | [`paper_telegraph_english/`](paper_telegraph_english/) | Ready (see metadata below) |
 | Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models | [`beyond exponential decay/`](./beyond%20exponential%20decay/) | Published as [arXiv:2505.24187](https://arxiv.org/abs/2505.24187) |
 | The Architecture of Errors (Part 2, follow-on to Beyond Exponential Decay) | [`architecture_of_errors/`](architecture_of_errors/) | Ready ([sub-README](architecture_of_errors/README.md)) |
+| Frontier and Localhost: How Production AI Learns Outside the Weights (Part 3) | [`frontier_and_localhost/`](frontier_and_localhost/) | Ready ([sub-README](frontier_and_localhost/README.md)) |
 
 ---
 

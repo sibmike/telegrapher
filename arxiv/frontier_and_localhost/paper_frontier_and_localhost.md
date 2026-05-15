@@ -89,6 +89,106 @@ The abstract update rule $S_{t+1} = S_t + G(\Delta S)$ expands into six operatio
 
 Each operation is the locus of a separate engineering discipline that does not yet exist in coordinated form. Surveyed systems implement the operations partially and unevenly: research full-auto systems excel at (3) and (4), production governance leaders at (5), industry hybrids at most of (1)–(5) but rarely (6). Implementation patterns for each of the six are deferred to follow-on work; this paper's purpose is to make the discipline visible.
 
+### 3.2 The mechanism made formal: scaffold updates as discrete stochastic descent
+
+The mechanism stack above makes artifact-layer descent operational, but the word "descent" still needs to earn its keep. A skeptical reading is available: scaffold updates are just engineering edits, not gradients; PR review is not backpropagation; an LLM-judge is not a derivative; a markdown rule is not a differentiable parameter. All true. But they do not defeat the claim. They locate the claim in the correct optimization class.
+
+Scaffold evolution is not backpropagation through continuous weights. It is discrete, gated, patch-local stochastic descent over a structured artifact space.
+
+Let the frontier model have fixed parameters $\theta_M$. Let the scaffold be a structured parameter object
+
+$$\theta_s \in \Theta_s = \Theta_1 \times \Theta_2 \times \Theta_3 \times \Theta_4 \times \Theta_5 \times \Theta_6,$$
+
+where the six coordinates correspond to the six substrates of §4: instructions, skills, memory, tools, orchestration, and governance. A coordinate may be a line in a `CLAUDE.md` file, a Cursor rule, a skill file, a memory entry, a retrieval configuration, a tool schema, an agent-routing edge, an eval threshold, or a promotion rule. The space $\Theta_s$ is not smooth. It is discrete, symbolic, and versioned. But it is still a parameter space: changing $\theta_s$ changes the behavior of the model–scaffold composite.
+
+For a deployment patch $D$, define patch loss as
+
+$$L_D(\theta_s) = \mathbb{E}_{x \sim D}\left[\ell(\pi(\theta_M, \theta_s, x))\right],$$
+
+where $\pi(\theta_M,\theta_s,x)$ is the output or action trace produced by the frozen frontier model under scaffold $\theta_s$, and $\ell$ is an operational loss. Depending on the patch, $\ell$ may be a hard-failure indicator, user-correction rate, eval-suite error, tool-call failure, retrieval miss, schema violation, reviewer disagreement, or graded task score. The important distinction is substrate: $\theta_M$ is fixed during deployment; $\theta_s$ is the object being fit.
+
+A failure observation does not directly yield an analytic gradient. It yields a candidate edit. Let
+
+$$z_t \in \mathcal{A}(\theta_s^t)$$
+
+be an admissible scaffold edit proposed at time $t$, drawn from a proposal process
+
+$$z_t \sim Q_t(z \mid H_t),$$
+
+where $H_t$ is the accumulated history of failures, corrections, rejected outputs, eval regressions, reviewer comments, tool-call traces, and prior accepted deltas. The admissible edit set $\mathcal{A}(\theta_s^t)$ is the local neighborhood of the current scaffold: the rule can be rewritten, a skill added, a memory corrected, a tool schema tightened, an orchestration edge changed, an eval case inserted, a promotion policy modified.
+
+Because the space is discrete, the relevant gradient analogue is not $\nabla_{\theta_s} L_D$. It is the finite directional loss change induced by an edit:
+
+$$\Delta_z L_D(\theta_s) = L_D(\theta_s \oplus z) - L_D(\theta_s),$$
+
+where $\theta_s \oplus z$ denotes the scaffold obtained by applying edit $z$. A useful edit is one for which
+
+$$\Delta_z L_D(\theta_s) < 0.$$
+
+The gate estimates whether this inequality holds. Let $\widehat{\Delta}_z L_D$ be the gate's noisy estimate of the directional loss change. In an eval-gated system, $\widehat{\Delta}_z L_D$ is measured on a held-out task suite. In an LLM-judge system, it is estimated by model-mediated scoring, ideally calibrated against human agreement. In a reviewer-gated system, it is estimated by human credit assignment and PR review. In an RL-threshold system, it is estimated by reward improvement. In a verifier-gated system, it is estimated by a symbolic, learned, or surrogate verifier.
+
+The update rule is therefore
+
+$$\theta_s^{t+1} = \begin{cases} \theta_s^t \oplus z_t, & \text{if } G_t(z_t)=1, \\ \theta_s^t, & \text{if } G_t(z_t)=0, \end{cases}$$
+
+where the gate $G_t$ accepts when the estimated improvement clears the deployment's threshold:
+
+$$G_t(z_t)=1 \quad \Longleftrightarrow \quad \widehat{\Delta}_{z_t} L_D(\theta_s^t) + \lambda\,\Omega(z_t) \leq -\tau_t.$$
+
+Here $\Omega(z_t)$ is an optional complexity or risk penalty — longer instructions, broader tool permissions, larger memory writes, more invasive topology rewrites, wider promotion scope — while $\lambda$ controls regularization and $\tau_t$ is the required improvement margin. Production systems often implement this without writing the equation: an eval suite blocks a merge if regression appears; a reviewer rejects a vague rule; a governance system prevents a local artifact from becoming shared until evidence accumulates.
+
+The implicit learning rate is edit scope. A narrow one-line rule patch is a small step. A full rubric rewrite is a large step. A memory correction local to one user is a small step. Promotion from USER to PROJECT to STACK to CORE is an increase in update radius. Cross-tenant promotion is the largest step and therefore requires the strongest gate. This is why governance is not administrative overhead. It is the learning-rate and regularization system for scaffold descent.
+
+The correspondence to standard optimization is therefore not decorative:
+
+| Optimization concept | Scaffold analogue |
+|----------------------|------------------------------------------------------------|
+| Parameter vector | Instructions, skills, memories, tools, routing graphs, eval gates, governance rules |
+| Forward pass | Model–scaffold composite executing on patch input |
+| Loss | Failure, user correction, eval regression, retrieval miss, tool error, schema violation |
+| Directional derivative | Finite loss change $\Delta_z L_D(\theta_s)$ induced by a candidate edit |
+| Gradient estimate | Credit assignment to the scaffold coordinate responsible for the failure |
+| Backpropagation analogue | Tracing output failure backward through prompt, retrieval, memory, tool, or workflow layer |
+| SGD step | Accepted scaffold edit |
+| Mini-batch | Multiple recurring failures aggregated before update |
+| Learning rate | Edit aggressiveness and promotion scope |
+| Validation loss | Held-out patch eval before merge |
+| Regularization | Complexity penalty, bloat control, cross-patch regression checks |
+| Overfitting | Scaffold improves on this patch and degrades elsewhere |
+| Rollback | Reverting a harmful accepted update |
+
+The backpropagation row requires care. Scaffold systems do not compute chain-rule derivatives through markdown files or tool registries. But they do perform credit assignment through a pipeline. If the final answer fails, the responsible coordinate may be a retrieval configuration three layers upstream, a missing tool schema constraint, an underspecified instruction, a stale memory, or a bad orchestration edge. Engineers do this manually. LLM-judges and surrogate verifiers do it semi-automatically. The operation is backpropagation-like in function — output error is assigned backward to an upstream parameter — but not backpropagation in the differentiable-weight sense.
+
+Several concrete cases make the mechanism visible.
+
+In a RAG system, suppose failures recur because retrieved context omits the decisive clause. The observed loss is not merely "the model hallucinated." Credit assignment traces the error to the retrieval coordinate: chunking, query rewrite, metadata filter, embedding model, reranker, citation policy, or context-packing rule. The candidate edit might tighten chunk boundaries, add a metadata constraint, change the reranker, or insert a regression eval containing the missed clause. The gate tests whether retrieval recall and answer accuracy improve on the patch eval without degrading adjacent cases. If accepted, the scaffold has moved downhill on the local loss surface.
+
+In a pitch-review workflow, suppose the system repeatedly overrates decks that claim a "huge market" without numeric evidence. The failure cluster identifies an under-specified rubric coordinate. The candidate edit changes "evaluate TAM size" into "require a numeric market estimate and source; if absent, cap TAM score at 4/10." The gate runs the revised rubric against held-out decks with human scores. If agreement improves without damaging unrelated criteria, the edit is committed. The rubric is not commentary. It is a scaffold parameter updated in response to loss.
+
+In a tool-using agent, suppose calls repeatedly fail because optional parameters are underspecified. The responsible coordinate may be the tool schema, the call policy, or the clarification rule. The candidate edit adds required fields, constrained decoding, or a pre-call uncertainty check. The gate estimates whether tool-call failure decreases without increasing refusal, latency, or unnecessary clarification. If accepted, the scaffold has fit a recurring local failure mode.
+
+In a memory system, suppose a stale customer preference is repeatedly retrieved and causes bad decisions. The failure is not a weight error. The responsible coordinate is a memory entry plus its provenance, priority, and expiry policy. The candidate edit corrects, expires, or version-tags the memory. The gate checks whether the correction improves future behavior without erasing useful history. Again: loss, credit assignment, candidate update, validation, commit.
+
+Under mild conditions, this is descent in the formal sense. Assume a stationary patch $D$, bounded loss $0 \leq L_D(\theta_s) \leq B$, and a gate with positive descent bias:
+
+$$\mathbb{E}\!\left[\Delta_{z_t} L_D(\theta_s^t) \mid G_t(z_t)=1,\theta_s^t\right] \leq -\gamma_t$$
+
+for accepted nontrivial edits, up to finite gate noise. Then
+
+$$\mathbb{E}\!\left[L_D(\theta_s^{t+1}) \mid \theta_s^t\right] \leq L_D(\theta_s^t) - p_t \gamma_t + \varepsilon_t,$$
+
+where $p_t = \Pr(G_t(z_t)=1)$ and $\varepsilon_t$ captures false accepts, finite-eval noise, evaluator bias, and distribution drift. If harmful accepts are controlled so that $\sum_t \varepsilon_t < \infty$, and if useful local edits remain reachable until no improving edit exists, the process converges to a local $G$-stable scaffold: a scaffold for which the proposal-and-gate mechanism can no longer find an accepted edit with negative expected directional loss. This is not a global optimum of all possible scaffolds. It is the ordinary target of local stochastic optimization: no reachable accepted step improves the current loss estimate.
+
+In non-stationary patches, $D = D_t$, the same mechanism tracks a moving optimum rather than converging once. This is why recency weighting, replay, pruning, expiry, and rollback are not optional hygiene. They are the scaffold-level analogues of continual-learning machinery. Without them, accumulated edits create scaffold bloat, stale rules, memory pollution, and patch-level plasticity loss.
+
+This formalization also clarifies the role of overfitting. In weight training, overfitting is usually a defect: the model becomes too specialized to the training distribution and loses transfer. In scaffold adaptation, local overfitting is partly the point. Frontier weights are trained to preserve cross-patch generality; they must smooth over local conventions, rare workflow-specific failures, contradictory tenant preferences, and hidden evaluator expectations. A deployment patch needs the opposite: selective specialization to local residuals. The scaffold is therefore an intentionally overfittable layer, but one whose overfitting is scoped, inspectable, versioned, gated, and reversible. A scaffold that improves one repository, hospital workflow, legal diligence process, or support desk may degrade performance elsewhere. That is not a contradiction. It is patch adaptation. The mistake is promoting that edit beyond its evidence radius.
+
+Loop 1 and Loop 2 are now mathematically interpretable. Loop 1 proposes and validates local descent steps. Loop 2 controls the radius over which an accepted local step is allowed to generalize. USER-level acceptance is a small-radius update. PROJECT-level promotion is wider. STACK-level promotion is wider still. CORE or cross-tenant promotion is the largest and riskiest step. The two-loop design space is therefore not just a taxonomy of engineering patterns. It is a taxonomy of how systems estimate, accept, regularize, and generalize scaffold descent.
+
+The artifact-layer descent framing is mechanism when five conditions hold: measurable patch loss, residual capture, failure-to-coordinate credit assignment, candidate delta synthesis, and a gate that estimates directional loss change before persistence or promotion. It is merely metaphor when those conditions are absent. This distinction explains the survey split. Research full-auto systems automate delta synthesis and validation but often lack governance. Production governance systems validate and promote but often lack failure-triggered candidate generation. Hybrid systems close more of the loop. The empty enterprise corner is the case where all pieces must hold across tenants.
+
+The conclusion is simple: the frontier model is trained to avoid overfitting across patches. The scaffold exists to overfit safely inside one.
+
 ## 4. Six scaffold substrates
 
 A patch-plastic scaffold composes six substrates. They are the coordinates of $S_t$.
@@ -219,6 +319,12 @@ Whether this corner *should* be filled is deployment-dependent. In safety-critic
 
 The two-tier architecture also changes the practical meaning of "general" capability. A frontier model need not be globally general for the deployed system to become effectively general inside a bounded patch. Once a localhost scaffold contains the patch's rules, tools, memories, workflows, evals, and promotion gates, the model–scaffold composite can cover the economically relevant task distribution of that patch with broad competence. We call this condition **patch-completeness**: the system is not generally intelligent over the world, but it is operationally general over the bounded world it inhabits.
 
+Patch-completeness also reframes what many deployments experience as "general intelligence." In practice, the deployed system is often closer to a language-mediated local learner than to a universal reasoner. The frontier model supplies the broad linguistic interface and cross-domain prior; the scaffold supplies the patch-specific feature engineering, memory, tools, rules, eval criteria, workflow state, and loss surface. Once those local coordinates are rich enough, the model–scaffold composite behaves less like a naked foundation model and more like a fitted decision system over the bounded world of the patch.
+
+This is the old lesson of supervised learning returning through a language interface. A workflow-specific agent resembles a local function approximator: it maps recurring situations in the patch to acceptable actions under a locally defined loss. The difference is that the features are no longer hand-built columns in a tabular model; they are retrieved documents, project rules, tool states, memory entries, tests, schemas, reviewer expectations, and governance gates. The intelligence appears general because the patch itself supplies the missing structure.
+
+The consequence is that "AGI" is the wrong first unit for many production systems. The operational question is not whether one model has mastered the world, but whether a model–scaffold system has become patch-complete: broad enough to cover the economically relevant task distribution inside one bounded world, and governed enough not to mistake that local fit for global competence.
+
 This is why many production systems already feel further along than model-only benchmarks imply. A coding agent inside one repository — with project rules, tests, CI, documentation, tool access, issue history, and PR review — may be patch-complete for that repository. A legal agent inside a firm's due-diligence workflow, with vetted document stores, clause libraries, playbooks, and review gates, may be patch-complete for that workflow. The competence is not located in the model alone. It is distributed across the frontier prior and the localhost scaffold.
 
 Patch-completeness is not global generality. It is local generality under boundary conditions. The distinction matters because the failure mode changes: a patch-complete system can appear broadly competent while silently depending on local conventions, hidden evaluator expectations, and scaffold assumptions that do not transfer. Moving it to a neighbouring patch without re-measuring the residual catalogue is therefore a patch-shift event, not ordinary deployment. The governance problem is not merely how to make scaffolds learn but *how to know where their local generality ends*. If patch-complete systems exist — and many deployed systems likely already are — then scaffold governance matters because local competence can become powerful before global robustness exists. §10 catalogues the failure surface that newly powerful local systems exhibit.
@@ -241,7 +347,7 @@ The five surveyed absences of §6.3 — failure-triggered memory rare in product
 
 The deepest connection — back to Paper 2 — is structural. Patch-plasticity is plastic because residual errors are clustered; if mode discovery were not slow (Postulate 1 in *Architecture of Errors*), patches would not generalise across deployments and the architecture would collapse. The survey is consistent with the postulate at the system level: deployments do generalise enough of the patch to make scaffold investment pay off. Whether this remains true at agentic, scientific, and long-horizon scales is the empirical test the next paper should design.
 
-The frontier model generalises. The localhost scaffold specialises. Reliability comes from governing that specialisation. The mechanisms were already there — markdown files, skills, memories, tools, orchestration graphs, eval suites, PRs, version histories, rollback buttons — but they read as engineering clutter until viewed as a scaffold parameter vector under update. Then the clutter resolves into architecture: production LLMs learn locally, outside the weights, because that is the only place patch-specific adaptation can safely happen.
+Practical generality therefore arrives locally first: not as a universal mind, but as patch-complete model–scaffold systems whose competence is fitted to bounded worlds. The frontier model generalises. The localhost scaffold specialises. Reliability comes from governing that specialisation. The mechanisms were already there — markdown files, skills, memories, tools, orchestration graphs, eval suites, PRs, version histories, rollback buttons — but they read as engineering clutter until viewed as a scaffold parameter vector under update. Then the clutter resolves into architecture: production LLMs learn locally, outside the weights, because that is the only place patch-specific adaptation can safely happen.
 
 ---
 
