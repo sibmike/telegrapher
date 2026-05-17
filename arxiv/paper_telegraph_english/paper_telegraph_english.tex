@@ -156,7 +156,7 @@ a compact, formally-structured dialect. Before naming the mechanism,
 consider what the rewrite looks like. The original sentence
 
 \begin{quote}
-\emph{``According to research by Johnson and colleagues (2023), the
+\emph{``According to research by Author A and colleagues (2023), the
 application of machine learning techniques to medical diagnostics
 resulted in a 27.5\% increase in early detection rates while
 simultaneously reducing false positives by approximately 12\% compared
@@ -166,7 +166,7 @@ to traditional methods.''}
 becomes, under TE:
 
 \begin{verbatim}
-ML→MEDICAL-DIAGNOSTICS: EARLY-DETECTION+27.5% ∧ FALSE-POSITIVE-12% [JOHNSON:2023]
+ML→MEDICAL-DIAGNOSTICS: EARLY-DETECTION+27.5% ∧ FALSE-POSITIVE-12% [AUTHOR-A:2023]
 \end{verbatim}
 
 Sixty-eight tokens become fourteen. More importantly, the causal
@@ -250,27 +250,24 @@ budget-constrained prompt compression using perplexity-based token
 selection. LLMLingua-2 (Pan et al., 2024) improved on this with a
 data-distillation approach: GPT-4 labels token importance on the
 MeetingBank corpus, and an XLM-RoBERTa-large classifier learns to
-predict which tokens to delete. The compressor is domain-agnostic in
-principle, though Pan et al.~note that ``effectiveness decreases on
-domains with different token importance distributions'' from the
-training data. The key architectural constraint is that the output
-remains a degraded subset of the input tokens---no new structure is
-introduced.
+predict which tokens to delete. The key architectural constraint is that
+the output remains a degraded subset of the input tokens---no new
+structure is introduced.
 
 \textbf{Abstractive compression.} Two lines of work fit here.
 AutoCompressors (Chevalier et al., 2023) train summary tokens that
-substitute for long contexts; RECOMP (Xu et al., 2023) generates
-abstractive summaries tailored to retrieval queries. Both are effective
-but lossy by design --- they discard information that cannot be
-recovered, and neither produces a structured output that supports
-selective manipulation.
+substitute for long contexts; RECOMP (Xu et al., 2023) compresses
+retrieved documents into extractive or abstractive summaries tailored to
+the downstream task. Both are effective but lossy by design --- they
+discard information that cannot be recovered, and neither produces a
+structured output that supports selective manipulation.
 
 \textbf{Structured representations for LLMs.} Chain-of-thought prompting
-(Wei et al., 2022) and structured prompting (Hao et al., 2023)
-demonstrate that imposing structure on LLM inputs improves reasoning. TE
-extends this insight to compression: the hypothesis is that explicit
-logical and relational operators help downstream models reconstruct the
-intended meaning more reliably than degraded natural language.
+(Wei et al., 2022) demonstrates that imposing structure on LLM inputs
+improves reasoning. TE extends this insight to compression: the
+hypothesis is that explicit logical and relational operators help
+downstream models reconstruct the intended meaning more reliably than
+degraded natural language.
 
 \textbf{Context management in agent systems.} Long-running agents face
 the problem of context window growth. As exchanges accumulate, the
@@ -293,8 +290,8 @@ structural by-product, so no separate chunking stage is needed.
 \textbf{Controlled natural languages.} TE shares some conceptual ground
 with Attempto Controlled English (Fuchs et al., 2008) and similar
 formal-reasoning dialects. The difference is purpose: TE is designed for
-compression rather than verification, and its consumer is an LLM rather
-than a theorem prover.
+compression rather than knowledge representation, and its consumer is an
+LLM rather than a formal reasoner.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -417,7 +414,7 @@ redundant often differ in their relational connectives.
 
 A single sentence, expanded and compressed:
 
-\textbf{Original (68 tokens):} \emph{``According to research by Johnson
+\textbf{Original (68 tokens):} \emph{``According to research by Author A
 and colleagues (2023), the application of machine learning techniques to
 medical diagnostics resulted in a 27.5\% increase in early detection
 rates while simultaneously reducing false positives by approximately
@@ -426,7 +423,7 @@ rates while simultaneously reducing false positives by approximately
 \textbf{TE (14 tokens):}
 
 \begin{verbatim}
-MACHINE-LEARNING→MEDICAL-DIAGNOSTICS: EARLY-DETECTION+27.5% ∧ FALSE-POSITIVE-12% [JOHNSON:2023]
+MACHINE-LEARNING→MEDICAL-DIAGNOSTICS: EARLY-DETECTION+27.5% ∧ FALSE-POSITIVE-12% [AUTHOR-A:2023]
 \end{verbatim}
 
 Compression ratio: 4.9x. The causal relationship, both quantitative
@@ -447,7 +444,7 @@ Consider a multi-paragraph clinical trial summary compressed into TE:
 \begin{verbatim}
 H1: CLINICAL-TRIAL OUTCOMES
 CTX: PHASE-III RANDOMISED CONTROLLED-TRIAL(RCT); N=2400
-  PRIMARY-ENDPOINT: MORTALITY↓23% VS PLACEBO; p<0.001 [SMITH:2024]
+  PRIMARY-ENDPOINT: MORTALITY↓23% VS PLACEBO; p<0.001 [AUTHOR-B:2024]
   SECONDARY-ENDPOINT: HOSPITALIZATION↓18%; p=0.003
   ADVERSE-EVENTS: NAUSEA=12% ∧ HEADACHE=8% ∧ SERIOUS=2.1%
 H1: SUBGROUP-ANALYSIS
@@ -503,12 +500,14 @@ LLM calls.
 
 \subsubsection{4.1 Dataset}\label{dataset}
 
-LongBench-v2 (Bai et al., 2024) supplies the source corpus: 503
-long-context documents. We filter to three categories suitable for
-factual QA---Single-Document QA, Multi-Document QA, and Long-Dialogue
-History Understanding---which leaves 339 documents. NLTK sentence
-tokenisation chunks each one into segments of at most 1,000 words,
-producing 4,081 chunk-level evaluation units.
+LongBench-v2 (Bai et al., 2025) contributes 503 long-context
+multiple-choice items; we use their source documents as our corpus,
+generating our own QA pairs per chunk (§4.3) rather than reusing the
+bundled questions. We filter to three categories suitable for factual
+QA---Single-Document QA, Multi-Document QA, and Long-Dialogue History
+Understanding---which leaves 339 documents. NLTK sentence tokenisation
+chunks each one into segments of at most 1,000 words, producing 4,081
+chunk-level evaluation units.
 
 LongBench-v2 was chosen for two reasons. The first is genre coverage:
 the three categories we use span technical reports, multi-source
@@ -628,10 +627,9 @@ Fine-tuned GPT-4o & MC evaluation \\
 Different suites use different model subsets. GPT-4.1, GPT-4o-mini, and
 GPT-4.1-nano carry the key\_facts evaluation; GPT-4o and GPT-4o-mini
 handle the adversarial fine\_facts suite. The fine-tuned GPT-4o variant
-is reported in the cost analysis (§6.4) but is not used as a separate
-accuracy benchmark --- it serves as a sanity check that fine-tuning on
-the original distribution does not change comparative behaviour at
-compression-decoded inputs.
+is not used as a separate accuracy benchmark --- it serves as a sanity
+check that fine-tuning on the original distribution does not change
+comparative behaviour at compression-decoded inputs.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -671,8 +669,7 @@ configurations.
 
 Table 2 reports accuracy on the adversarial fine\_facts suite.
 
-\textbf{Table 2.} Fine facts accuracy (801 QA pairs). LLML2-33 =
-LLMLingua-2 at 33\% retention.
+\textbf{Table 2.} Fine facts accuracy (801 QA pairs).
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}llllll@{}}
@@ -690,11 +687,10 @@ GPT-4o-mini & 0.938 & \textbf{0.843} & 0.820 & -9.5 pp & -11.8 pp \\
 Fine details are harder. Compression loss runs 3-4x higher than on key
 facts, regardless of method. But TE holds an advantage: 3.2 pp over
 LLMLingua-2 on GPT-4o, 2.3 pp on GPT-4o-mini at matched 50\% retention.
-Against the more aggressive LLMLingua-2 at 33\% retention, the story is
-starker---TE's lead grows to roughly 11 pp on GPT-4o-mini, where
-LLMLingua-2 drops a full 21 pp from baseline. That configuration is
-where token deletion starts to break down: it's removing tokens that
-carry the very details the questions probe.
+The fine-facts regime is where token deletion starts to break down: the
+very tokens the questions probe---numerical qualifiers, conditional
+caveats, secondary details---are precisely the ones an importance
+classifier flags as low-value.
 
 \subsubsection{5.3 Accuracy Hierarchy}\label{accuracy-hierarchy}
 
@@ -710,9 +706,6 @@ Across all models and tasks, the ranking holds without exception:
   key facts; 3-11 pp on fine facts
 \item
   \textbf{LLMLingua-2 at 50\%} --- consistently behind TE
-\item
-  \textbf{LLMLingua-2 at 33\%} --- significant accuracy loss, up to 21
-  pp on fine facts with smaller models
 \end{enumerate}
 
 \subsubsection{5.4 Compression Statistics}\label{compression-statistics}
@@ -1126,9 +1119,10 @@ question this paper is designed to provoke.
 
 \subsection{References}\label{references}
 
-Bai, Y., et al.~(2024). LongBench v2: Towards Deeper Understanding and
-Reasoning on Realistic Long-context Multitasks. \emph{arXiv preprint
-arXiv:2412.15204}.
+Bai, Y., et al.~(2025). LongBench v2: Towards Deeper Understanding and
+Reasoning on Realistic Long-context Multitasks. \emph{Proceedings of the
+63rd Annual Meeting of the Association for Computational Linguistics
+(ACL)}, 3639--3664.
 
 Chevalier, A., Wettig, A., Ajith, A., \& Chen, D. (2023). Adapting
 Language Models to Compress Contexts. \emph{Proceedings of EMNLP 2023}.
@@ -1139,9 +1133,6 @@ English for Knowledge Representation. \emph{Reasoning Web}, LNCS 5224,
 
 Gao, Y., et al.~(2023). Retrieval-Augmented Generation for Large
 Language Models: A Survey. \emph{arXiv preprint arXiv:2312.10997}.
-
-Hao, S., et al.~(2023). Structured Prompting: Scaling In-Context
-Learning to 1,000 Examples. \emph{arXiv preprint arXiv:2212.06713}.
 
 Jiang, H., Wu, Q., Lin, C.-Y., Yang, Y., \& Qiu, L. (2023). LLMLingua:
 Compressing Prompts for Accelerated Inference of Large Language Models.
@@ -1155,22 +1146,23 @@ Packer, C., Wooders, S., Lin, K., Fang, V., Patil, S. G., Stoica, I., \&
 Gonzalez, J. E. (2023). MemGPT: Towards LLMs as Operating Systems.
 \emph{arXiv preprint arXiv:2310.08560}.
 
-Pan, Z., Wu, Q., Jiang, H., Xia, M., Luo, X., Zhang, J., Lin, Q., Ruhle,
-V., Yang, Y., Lin, C.-Y., Zhao, H. S., Qiu, L., \& Wang, C. (2024).
+Pan, Z., Wu, Q., Jiang, H., Xia, M., Luo, X., Zhang, J., Lin, Q., Rühle,
+V., Yang, Y., Lin, C.-Y., Zhao, H. V., Qiu, L., \& Zhang, D. (2024).
 LLMLingua-2: Data Distillation for Efficient and Faithful Task-Agnostic
 Prompt Compression. \emph{Findings of ACL 2024}.
 
-Shinn, N., Cassano, F., Gopinath, A., Narasimhan, K., \& Yao, S. (2023).
-Reflexion: Language Agents with Verbal Reinforcement Learning.
-\emph{Advances in Neural Information Processing Systems 36}.
+Shinn, N., Cassano, F., Berman, E., Gopinath, A., Narasimhan, K., \&
+Yao, S. (2023). Reflexion: Language Agents with Verbal Reinforcement
+Learning. \emph{Advances in Neural Information Processing Systems 36}.
 
 Wei, J., et al.~(2022). Chain-of-Thought Prompting Elicits Reasoning in
 Large Language Models. \emph{Advances in Neural Information Processing
 Systems 35}.
 
-Xu, F., Shi, W., \& Choi, E. (2023). RECOMP: Improving
-Retrieval-Augmented LMs with Compression and Selective Augmentation.
-\emph{arXiv preprint arXiv:2310.04408}.
+Xu, F., Shi, W., \& Choi, E. (2024). RECOMP: Improving
+Retrieval-Augmented LMs with Context Compression and Selective
+Augmentation. \emph{International Conference on Learning Representations
+(ICLR)}.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
