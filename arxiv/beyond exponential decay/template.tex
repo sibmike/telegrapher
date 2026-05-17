@@ -89,7 +89,7 @@ The challenge of compounding errors in sequence models has been studied since ea
 
 LeCun \citep{lecun2023why} reignited this concern for autoregressive LLMs, arguing that because these models condition on their own outputs, they inevitably "drift out of distribution" with each token generation. In formal terms, if each token has error probability $e$, then after $n$ tokens, the probability of an entirely correct sequence decays as $(1-e)^n$—approaching zero for sufficiently large $n$. This theoretical argument suggests fundamental limitations for autoregressive generation on complex tasks.
 
-However, this view overlooks several critical advances in modern transformer architectures. Unlike RNNs, which compress history into a single state vector, transformers with attention mechanisms can directly access any part of their previously generated context. This allows for what Lu et al. \citep{lu2022self} call "retrospective error correction"—the ability to implicitly or explicitly revise interpretations based on later context. Empirical demonstrations of this include Gwern's \citep{gwern2023inner} "inner monologue" experiments, where models initially err but later self-correct, directly contradicting monotonic error accumulation.
+However, this view overlooks several critical advances in modern transformer architectures. Unlike RNNs, which compress history into a single state vector, transformers with attention mechanisms can directly access any part of their previously generated context, supporting implicit revision of interpretations as later context accumulates. Empirical demonstrations of this include the "inner monologue" literature curated in \citet{gwern2023inner}, in which models initially err but later self-correct---directly contradicting monotonic error accumulation.
 
 The debate between monotonic error accumulation versus structured reasoning has practical implications. If errors truly compound inescapably, then scaling parameters might offer limited improvement beyond a certain point. Conversely, if errors are sparse and concentrated at key decision points, targeted approaches might yield outsized performance gains.
 
@@ -122,8 +122,6 @@ Beyond structured representations, ensemble methods have emerged as powerful tec
 Wang et al. \citep{wang2023self} introduced self-consistency decoding, which samples multiple reasoning paths and selects the most consistent answer through majority voting. This approach yielded remarkable improvements: +17.9 percentage points on GSM8K and +11.0 percentage points on SVAMP math problems, without any model modifications. Such dramatic gains would be impossible if errors accumulated independently in each chain—some property of the model's knowledge distribution must make correct answers more consistent across samples than incorrect ones.
 
 Yao et al. \citep{yao2023tree} extended this insight with Tree of Thoughts, systematically exploring multiple reasoning branches at decision points with high uncertainty. This approach transformed GPT-4's performance on the Game of 24 from 4\% to 74\% by enabling structured exploration of alternate paths. Their work demonstrated that reasoning errors are not randomly distributed throughout the generation process but concentrate at specific branch points where explicit deliberation yields outsized benefits.
-
-Li et al. \citep{li2023reliability} documented that error patterns fundamentally depend on problem type, with some errors being systematic (knowledge gaps affecting all samples similarly) while others are idiosyncratic (randomly distributed across samples). This distinction explains why ensemble methods work better for some tasks than others—they excel at averaging out random errors but cannot compensate for systematic knowledge deficiencies.
 
 The success of ensemble methods directly challenges the exponential error accumulation hypothesis. If every token had independent probability $e$ of error, generating multiple samples would simply yield multiple erroneous outputs. The fact that aggregating multiple paths dramatically improves performance suggests that the model often "knows" the correct answer implicitly, and ensembling merely helps extract this knowledge more reliably.
 
@@ -245,9 +243,7 @@ This 9\% figure is particularly significant because it independently converges w
 
 \subsubsection{Computational Efficiency Through Token Sparsity}
 
-Liu et al.'s \citep{liu2023attention} analysis of attention patterns revealed that over 95\% of cumulative attention weight in transformer models focuses on a small fraction of context tokens. This extreme attention concentration demonstrates how LLMs naturally filter relevant from irrelevant information during processing.
-
-The practical applications of this sparsity are demonstrated by Pang et al.'s \citep{pang2024anchor} Anchor-LLMs, which achieved an 80-90\% reduction in context size without meaningful performance degradation by preserving only "anchor tokens". Their work shows that most tokens serve largely redundant functions that can be compressed or eliminated entirely—precisely what our two-rate error model predicts.
+The practical applications of this sparsity are demonstrated by Pang et al.'s \citep{pang2024anchor} Anchor-LLMs, which achieved a 99\% reduction in KV-cache size with $<$1.5\% accuracy loss by compressing sequence information into a single anchor token. Their work shows that most tokens serve largely redundant functions that can be compressed or eliminated entirely---precisely what our two-rate error model predicts.
 
 \subsubsection{Tool Integration at Critical Decision Points}
 
@@ -269,11 +265,11 @@ Li and Sarwate \citep{li2025unraveling} provided empirical verification of the s
 
 Their work revealed that embeddings from different domains (scientific text, casual dialogue, code) occupy distinct submanifolds with measurable differences in intrinsic dimensionality. These findings directly support our theoretical claim that the latent space of LLMs is organized into structured "patches" rather than a uniform high-dimensional distribution.
 
-Robinson et al. \citep{robinson2023token} complemented this work by developing a "fiber bundle" model of token embeddings, introducing a critical distinction between tokens with regular versus irregular neighborhoods. Regular neighborhoods (tokens lying cleanly on manifolds) could be perturbed with minimal downstream effects, while irregular neighborhoods (manifold junction points) caused significant output changes when perturbed. Their analysis directly maps to our distinction between stable non-key tokens and high-influence key tokens.
+Robinson et al. \citep{robinson2025token} complemented this work by developing a "fiber bundle" model of token embeddings, introducing a critical distinction between tokens with regular versus irregular neighborhoods. Regular neighborhoods (tokens lying cleanly on manifolds) could be perturbed with minimal downstream effects, while irregular neighborhoods (manifold junction points) caused significant output changes when perturbed. Their analysis directly maps to our distinction between stable non-key tokens and high-influence key tokens.
 
 \subsubsection{Dimensional Compression in Confident Generation}
 
-Viswanathan et al. \citep{viswanathan2023geometry} established a direct relationship between intrinsic dimensionality and model confidence, finding that contexts where models display high confidence exhibit significantly lower intrinsic dimensionality than uncertain contexts. This dimensional compression demonstrates how an LLM's state becomes increasingly constrained to a narrow manifold during confident generation.
+Viswanathan et al. \citep{viswanathan2024geometry} established a direct relationship between intrinsic dimensionality and model confidence, finding that contexts where models display high confidence exhibit significantly lower intrinsic dimensionality than uncertain contexts. This dimensional compression demonstrates how an LLM's state becomes increasingly constrained to a narrow manifold during confident generation.
 
 Their quantitative metrics showed strong correlation between embedding intrinsic dimension and prediction loss—contexts leading to low-dimensional representations consistently produced more accurate predictions. This contradicts the assumption that uncertainty compounds with sequence length, instead showing that longer contexts often narrow rather than expand the model's uncertainty.
 
@@ -305,12 +301,6 @@ Wang et al.'s \citep{wang2023self} self-consistency research quantified the bene
 
 Their approach—generating multiple reasoning paths and selecting the majority answer—exploits precisely the pattern our theory predicts: correct answers converge while errors diverge. The magnitude of these improvements would be impossible under an exponential error accumulation model, where multiple attempts would simply yield multiple failures.
 
-\subsubsection{Systematic vs. Idiosyncratic Error Patterns}
-
-Li et al. \citep{li2023reliability} documented that error patterns fundamentally depend on problem type. For tasks involving domain knowledge the model lacks (e.g., obscure facts), errors are systematic—all sampling attempts fail similarly. For reasoning tasks where the model possesses necessary knowledge but faces execution challenges, errors are idiosyncratic—randomly distributed across different samples.
-
-This distinction precisely aligns with our framework's predictions: knowledge gaps create systematic errors at specific key tokens, while reasoning difficulties produce variable errors that can be mitigated through ensemble methods. It explains why ensemble approaches are particularly effective for complex reasoning problems but less helpful for knowledge-retrieval tasks.
-
 \subsection{Integrated Evidence from Advanced Reasoning Systems}
 
 \subsubsection{Structured Reasoning Without Model Scaling}
@@ -326,14 +316,6 @@ The "Think, Prune, Train, Improve" framework by Costello et al. \citep{costello2
 Their approach involves iteratively fine-tuning models on their own reasoning traces after pruning incorrect outputs. This process systematically improves performance at navigating key decision points, demonstrating that reasoning capability is not inherently tied to model scale but rather to the ability to accurately navigate critical junctions in the solution path.
 
 Their results fundamentally challenge the exponential error model by showing that structured reasoning approaches can dramatically enhance reliability without parameter scaling.
-
-\subsubsection{Test-Time Computation Effectiveness by Problem Type}
-
-Research on test-time computation allocation reveals that optimal strategies depend heavily on problem difficulty and model size \citep{nvidia2023scaling, venture2025test}. For smaller models (under 7B parameters), beam search consistently outperforms best-of-N sampling on difficult problems, while the reverse is true for easier problems.
-
-This dependency directly supports our key token framework: the optimal strategy depends on the number and difficulty of key decision points that must be traversed correctly. Problems with more key decision points benefit from search-based approaches that can systematically explore alternative paths at each junction, while simpler problems with fewer key points can be solved through simple sampling approaches.
-
-Most significantly, with the right test-time strategy, smaller models can match or even outperform much larger ones. Recent research demonstrated that a properly optimized 1B parameter model can outperform a 405B model on specific reasoning tasks \citep{venture2025test}—a gap of two orders of magnitude that should be impossible under the exponential error model.
 
 \subsubsection{Practical Implementation in State-of-the-Art Systems}
 
@@ -354,7 +336,7 @@ The empirical evidence presented cohesively supports all three pillars of our th
 \begin{enumerate}
 \item Key Token Sparsity: Multiple independent methodologies converge on the finding that only 5-10\% of tokens significantly impact generation outcomes \citep{liu2023lost, pang2024anchor, fang2024what, jin2020textfooler, moshkov2025aimo}.
 
-\item Stratified Manifold Structure: Direct analyses of embedding spaces verify that LLM representations cluster in distinct semantic patches that compartmentalize errors and enhance stability \citep{li2025unraveling, robinson2023token, viswanathan2023geometry, gao2024insights}.
+\item Stratified Manifold Structure: Direct analyses of embedding spaces verify that LLM representations cluster in distinct semantic patches that compartmentalize errors and enhance stability \citep{li2025unraveling, robinson2025token, viswanathan2024geometry, gao2024insights}.
 
 \item Convergent Reasoning Paths: Extensive evidence demonstrates that correct answers cluster while incorrect answers diverge, enabling effective ensemble strategies \citep{wang2023self, yao2023tree, costello2025think}.
 \end{enumerate}
@@ -400,11 +382,6 @@ Our model suggests that error risk concentrates at manifold transition points—
 
   This approach mirrors our theoretical understanding that errors primarily occur at manifold transitions, where the model must shift from one semantic domain to another. By providing computational assistance precisely at these junctions, the system addresses the most challenging aspects of the reasoning task while allowing the model to handle straightforward segments independently.
 
-\item \textbf{Adaptive Computation Time}: Xin et al. \citep{xin2023adaptive} implemented early-exit mechanisms that allow confident tokens to skip transformer layers, reducing computational requirements by 40-60\% on benchmarks like SST-2 and TriviaQA. This approach exploits the insight from Section 3.2 that once a model is confidently within a semantic manifold, additional computation yields diminishing returns.
-
-  As the model processes a sequence, tokens that fall firmly within established semantic regions can be processed with fewer layers, while tokens at decision boundaries receive full computational depth. This targeted allocation ensures resources are focused where they are most needed.
-
-\item \textbf{Dynamic Temperature Sampling}: Lin et al. \citep{lin2024dynamic} introduced temperature modulation based on token uncertainty, increasing exploration at decision points and reducing it during confident generation. This directly implements the "staircase" error model we predicted, where exploration is concentrated precisely at manifold junctions.
 \end{itemize}
 
 These approaches demonstrate that targeted intervention at key decision points outperforms uniform computation allocation, both in efficiency and accuracy. By identifying the precise moments where errors are likely to occur, we can deploy computational resources strategically rather than applying them indiscriminately.
@@ -436,8 +413,6 @@ Traditional evaluation metrics like perplexity average across all tokens, obscur
 
   The authors demonstrated that "LongPPL strongly correlates with performance on various long-context benchmarks (e.g., Pearson correlation of -0.96), significantly outperforming traditional PPL in predictive accuracy" \citep{fang2024what}. This remarkably high correlation validates our core thesis that key token performance, not average token performance, determines overall success.
 
-\item \textbf{Token Cascade Analysis}: Nistar et al. \citep{nistar2024token} demonstrated that errors follow distinct propagation patterns, with early key token mistakes precipitating cascading failures. Their analysis framework can identify which tokens serve as "trigger points" for error cascades, enabling targeted intervention.
-
 \item \textbf{Success-Plateau Curves}: Costello et al. \citep{costello2025think}'s self-improvement curves---Pass@1 rising round by round while Pass@$k$ holds---are, on our reading, the staircase pattern our model predicts at finer resolution, rather than the smooth exponential decay of the alternative.
 \end{itemize}
 
@@ -451,8 +426,6 @@ Perhaps the most transformative implication of our stratified manifold theory is
 \item \textbf{Stratified Manifold Models}: Li and Sarwate \citep{li2025unraveling} empirically verified that LLM embedding spaces organize into distinct clusters aligned with semantic domains. Their analysis demonstrated that different manifold regions correspond to measurably different intrinsic dimensions, confirming the stratification hypothesis central to our theoretical framework.
 
   Their research conclusively shows that "embeddings live in a stratified space, a union of multiple manifolds of different dimensions corresponding to different data sources, reflecting the semantic divisions in the training corpus" \citep{li2025unraveling}. This direct analysis of embedding geometry provides crucial empirical support for our theoretical model.
-
-\item \textbf{Mixture of Reasoning Experts (MoRE)}: Si et al. \citep{si2023mixture} implemented a system that dynamically routes different reasoning subtasks to specialized models based on task characteristics. This approach improves performance by ensuring that each reasoning step is handled by a model specialized for that particular manifold region.
 
 \item \textbf{Trace-Prune-Train (TPT)}: Costello et al. \citep{costello2025think} showed that smaller models (2-9B parameters) can match or exceed the performance of models 30× larger by focusing on aligned reasoning paths. Their approach improved GSM8K performance on a 2B parameter model from 41.9\% to 57.6\%—revealing that effective reasoning can be achieved through alignment rather than scale.
 \end{itemize}
@@ -473,13 +446,13 @@ Our theoretical framework has clear design implications that challenge conventio
 \midrule
 Long-context handling & Uniform attention over all tokens & Sparse retrieval focused on key tokens & Anchor LLMs \citep{pang2024anchor}; RetrievalAttention \citep{liu2024retrieval} \\
 \midrule
-Computation allocation & Equal resources for all tokens & Dynamic targeting at manifold transitions & Entropy-guided tools \citep{moshkov2025aimo}; ACT \citep{xin2023adaptive} \\
+Computation allocation & Equal resources for all tokens & Dynamic targeting at manifold transitions & Entropy-guided tools \citep{moshkov2025aimo} \\
 \midrule
 Error reduction & Multiple independent samples & Strategic branching at uncertain junctions & Self-consistency \citep{wang2023self}; GenSelect \citep{moshkov2025aimo} \\
 \midrule
-Model evaluation & Uniform perplexity metrics & Key-token focused assessment & LongPPL \citep{fang2024what}; Token Cascade Analysis \citep{nistar2024token} \\
+Model evaluation & Uniform perplexity metrics & Key-token focused assessment & LongPPL \citep{fang2024what} \\
 \midrule
-Architecture design & Scale monolithic models & Specialized experts at manifold boundaries & MoRE \citep{si2023mixture}; TPT \citep{costello2025think} \\
+Architecture design & Scale monolithic models & Specialized experts at manifold boundaries & TPT \citep{costello2025think} \\
 \bottomrule
 \end{tabular}
 \label{tab:implications}
