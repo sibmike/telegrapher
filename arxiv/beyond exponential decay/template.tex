@@ -99,7 +99,7 @@ As LLM context windows have expanded beyond 100,000 tokens, researchers have gai
 
 Liu et al. \citep{liu2023lost} identified the "Lost in the Middle" phenomenon, where models disproportionately attend to information at the beginning and end of inputs while underutilizing middle sections. This asymmetric attention suggests that not all context tokens contribute equally to outputs—a direct challenge to the uniform error model. Fang et al. \citep{fang2024what} quantified this by measuring which tokens genuinely benefit from long-range context, finding that only approximately 9\% qualified as "key tokens" whose prediction significantly improved with additional context.
 
-Analysis of attention patterns provides further evidence for the sparsity of critical information. Liu et al. \citep{liu2024retrieval} demonstrated that over 96\% of cumulative attention weight in Llama-3 models concentrates on just 1,000 tokens out of 100,000. Their RetrievalAttention mechanism exploits this by caching only high-impact tokens, recovering 90\% of attention scores while processing contexts 100× longer than the nominal window size.
+Analysis of attention patterns provides further evidence for the sparsity of critical information. Liu et al. \citep{liu2024retrieval} demonstrated that scanning only the top 1,000 critical tokens out of 100,000 in Llama-3 recovers about 89\% of full-attention scores on average across heads and layers (over 90\% for most heads). Their RetrievalAttention mechanism exploits this by retrieving only high-impact tokens via ANNS, enabling 128K-token effective context on a single RTX 4090 with a 4.9$\times$ decoding-latency reduction over exact KNN.
 
 These findings directly support our framework's central claim that $k \ll n$: only a small fraction of tokens truly matter for overall correctness. The practical implications are significant—as demonstrated by Pang et al. \citep{pang2024anchor}, whose Anchor-LLM approach achieved 99\% reduction in context tokens with negligible performance loss by identifying and preserving only those tokens serving as semantic anchors for the broader context.
 
@@ -109,11 +109,11 @@ Recent advances in interpretability research have revealed the geometry of LLM e
 
 The classical manifold hypothesis posits that natural data lies on low-dimensional manifolds within high-dimensional space. Li and Sarwate \citep{li2025unraveling} extended this to LLMs, discovering that token embeddings form a stratified space—a union of multiple manifolds corresponding to different semantic domains. Using sparse mixture-of-experts to probe embedding structure, they demonstrated that representations naturally cluster by domain (scientific text, casual dialogue, code) and even by sub-topics within domains.
 
-This stratified structure has profound implications for error dynamics. Robinson et al. \citep{robinson2025token} showed that token embeddings often split into distinct "signal" and "noise" dimensions; perturbing signal dimensions significantly alters outputs while noise dimension changes have minimal effect. The existence of these orthogonal subspaces explains why some token errors cause semantic shifts while others remain inconsequential.
+This stratified structure has profound implications for error dynamics. Robinson et al. \citep{robinson2025token} proposed a fiber-bundle hypothesis test that flags tokens whose embedding neighborhoods violate the local-smoothness assumption: semantically equivalent prompts containing such irregular-neighborhood tokens produce less stable continuations than those containing only regular-neighborhood tokens. This distinction between regular (manifold-interior) and irregular (manifold-junction) tokens explains why some token errors cause semantic shifts while others remain inconsequential.
 
 Viswanathan et al. \citep{viswanathan2024geometry} established a quantitative link between representation geometry and performance by measuring intrinsic dimensionality of embeddings across various contexts. They found that prompts eliciting low-dimensional representations consistently produced more accurate predictions than those with high-dimensional, diffuse representations. This suggests that as a model becomes confident in a particular semantic domain, its internal state becomes more constrained—more resistant to random perturbations and errors.
 
-Gao et al. \citep{gao2023transformers} provided further evidence for the compartmentalization of errors through their "know-but-don't-tell" experiments. They demonstrated that model intermediate layers could encode correct answers with over 80\% accuracy even when the final output contained errors. This indicates that information is often preserved in the model's internal state even when surface form contains mistakes—exactly what our stratified manifold theory predicts.
+Gao et al. \citep{gao2024insights} provided further evidence for the compartmentalization of errors through their "know-but-don't-tell" experiments. They demonstrated that layer-wise probes achieve near-perfect accuracy at locating target information in intermediate representations even when the LLM's surface generation gives the wrong answer. This indicates that information is often preserved in the model's internal state even when surface form contains mistakes—exactly what our stratified manifold theory predicts.
 
 \subsection{Self-Consistency and Ensemble Reasoning}
 
@@ -216,7 +216,7 @@ Even with moderate correlation, this effective error rate can be substantially l
 
 The success of majority voting validates our central claim: LLM errors are not uniformly distributed independent events that inevitably compound, but rather structured phenomena concentrated at key decision points. When the model "knows" the correct answer (even implicitly), different reasoning paths tend to converge on it despite potentially taking different routes.
 
-The Trace, Correct, and Transfer (TCT) paper \citep{costello2025think} provides compelling evidence that accurate reasoning comes at the expense of diversity, highlighting that correct reasoning paths occupy semantically narrower or lower-dimensional manifolds compared to erroneous paths, which provide diversity at the expense of accuracy. This directly supports our manifold hypothesis, showing that correct solutions cluster tightly in the model's semantic space.
+The Think-Prune-Train-Improve paper \citep{costello2025think} observes that as iterative self-training raises Pass@1, the gains from majority voting diminish proportionally. On our reading, this is consistent with accurate reasoning paths occupying semantically narrower or lower-dimensional manifolds compared to erroneous paths, which provide diversity at the expense of accuracy---supporting our manifold hypothesis that correct solutions cluster tightly in the model's semantic space.
 
 Perhaps most convincingly, the AIMO-2 paper's GenSelect methodology demonstrates that the system can effectively select the best solutions based solely on concise summaries of reasoning paths. This fundamentally proves that correct solutions have a limited number of key decision points that need to be traversed correctly, which separate them from incorrect solutions. If reasoning errors were uniformly distributed throughout the output, summaries would be insufficient to distinguish correct from incorrect solutions.
 
@@ -241,7 +241,7 @@ Fang et al.'s \citep{fang2024what} seminal work on perplexity distribution provi
 \item For most tokens, perplexity decreased (improved) as context length increased
 \end{itemize}
 
-This 9\% figure is particularly significant because it independently converges with adversarial robustness findings by Morris et al. \citep{morris2022textattack}, which showed that modifying just 5-10\% of strategically chosen tokens can flip model decisions, while randomly perturbing even larger portions has minimal impact. The consistent identification of this 5-10\% range across methodologies strongly supports our key token hypothesis.
+This 9\% figure is particularly significant because it independently converges with adversarial robustness findings exemplified by Jin et al. \citep{jin2020textfooler} and catalogued in frameworks like TextAttack \citep{morris2022textattack}, which together show that modifying just 5-10\% of strategically chosen tokens can flip model decisions, while randomly perturbing even larger portions has minimal impact. The consistent identification of this 5-10\% range across methodologies strongly supports our key token hypothesis.
 
 \subsubsection{Computational Efficiency Through Token Sparsity}
 
@@ -279,7 +279,7 @@ Their quantitative metrics showed strong correlation between embedding intrinsic
 
 \subsubsection{Robust Knowledge Retention Despite Surface Errors}
 
-Gao et al.'s \citep{gao2023transformers} "know-but-don't-tell" research revealed that model intermediate layers encoded correct answers with over 80\% accuracy even when the final output contained errors. Through systematic probing of intermediate representations, they demonstrated that information is often preserved internally even when the final output fails to reflect it.
+Gao et al.'s \citep{gao2024insights} "know-but-don't-tell" research revealed that layer-wise probes achieve near-perfect accuracy at locating target information in intermediate representations even when the LLM's final generation is incorrect. Through systematic probing across positions and models, they demonstrated that information is often preserved internally even when the final output fails to reflect it.
 
 This compartmentalization is precisely what our manifold theory predicts: the model's hidden state typically remains "on manifold" (correct) even when individual output tokens stray, explaining why LLMs often demonstrate the capacity to correct themselves when prompted to reconsider their responses.
 
@@ -352,9 +352,9 @@ The result was a system that achieved state-of-the-art performance on challengin
 The empirical evidence presented cohesively supports all three pillars of our theoretical framework:
 
 \begin{enumerate}
-\item Key Token Sparsity: Multiple independent methodologies converge on the finding that only 5-10\% of tokens significantly impact generation outcomes \citep{liu2023lost, pang2024anchor, fang2024what, morris2022textattack, moshkov2025aimo}.
+\item Key Token Sparsity: Multiple independent methodologies converge on the finding that only 5-10\% of tokens significantly impact generation outcomes \citep{liu2023lost, pang2024anchor, fang2024what, jin2020textfooler, moshkov2025aimo}.
 
-\item Stratified Manifold Structure: Direct analyses of embedding spaces verify that LLM representations cluster in distinct semantic patches that compartmentalize errors and enhance stability \citep{li2025unraveling, robinson2023token, viswanathan2023geometry, gao2023transformers}.
+\item Stratified Manifold Structure: Direct analyses of embedding spaces verify that LLM representations cluster in distinct semantic patches that compartmentalize errors and enhance stability \citep{li2025unraveling, robinson2023token, viswanathan2023geometry, gao2024insights}.
 
 \item Convergent Reasoning Paths: Extensive evidence demonstrates that correct answers cluster while incorrect answers diverge, enabling effective ensemble strategies \citep{wang2023self, yao2023tree, costello2025think}.
 \end{enumerate}
@@ -438,7 +438,7 @@ Traditional evaluation metrics like perplexity average across all tokens, obscur
 
 \item \textbf{Token Cascade Analysis}: Nistar et al. \citep{nistar2024token} demonstrated that errors follow distinct propagation patterns, with early key token mistakes precipitating cascading failures. Their analysis framework can identify which tokens serve as "trigger points" for error cascades, enabling targeted intervention.
 
-\item \textbf{Success-Plateau Curves}: Costello et al. \citep{costello2025think} introduced visualization techniques that reveal performance degradation as sharp drops after extended plateaus—precisely matching our "staircase" error model rather than smooth exponential decay.
+\item \textbf{Success-Plateau Curves}: Costello et al. \citep{costello2025think}'s self-improvement curves---Pass@1 rising round by round while Pass@$k$ holds---are, on our reading, the staircase pattern our model predicts at finer resolution, rather than the smooth exponential decay of the alternative.
 \end{itemize}
 
 These evaluation approaches shift focus from uniform token-level metrics to targeted assessment of key tokens, providing more accurate signals for model improvement. By aligning evaluation with the true structure of errors, these methods enable more precise diagnosis and intervention.
