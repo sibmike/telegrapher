@@ -14,10 +14,26 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{enumitem}
 \usepackage{nicefrac}
 \usepackage{microtype}
 \usepackage{xcolor}
 \usepackage{graphicx}
+
+% Theorem-like environments for formal statements. Each is independently
+% numbered so cross-references read naturally ("Proposition 1") regardless
+% of which section the statement lives in.
+\newtheoremstyle{taeplain}{1ex plus .25ex}{1ex plus .25ex}{\itshape}{}{\bfseries}{.}{ }{}
+\newtheoremstyle{taedefn}{1ex plus .25ex}{1ex plus .25ex}{}{}{\bfseries}{.}{ }{}
+\theoremstyle{taeplain}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{taedefn}
+\newtheorem{definition}{Definition}
+\newtheorem{postulate}{Postulate}
+% Assumption shares Definition's counter so the paper preserves the
+% existing numbering convention (Definition 1, then Assumption 2).
+\newtheorem{assumption}[definition]{Assumption}
 
 % Compact symbol shortcuts; the source uses Unicode operators inline
 % (\teArrow, \teImplies, etc.) which pdflatex needs as macros.
@@ -83,10 +99,18 @@ LLM error analysis routinely conflates four distinct objects, which we keep sepa
 
 The two-rate model of~\citet{arbuzov2025beyond} distinguishes $k$ key tokens (error rate $e_{\text{key}}$) from $n - k$ non-key tokens ($e_{\text{non}} \ll e_{\text{key}}$). Empirical atlases suggest that even within the key-token class errors are not uniformly distributed: most key tokens are ``decisions'' for which the model has stable representations; only a fraction concentrate the actual failures.
 
-\textbf{Definition 1 (Hard fraction).} Partition the $k$ key tokens of a sequence into easy and hard subsets, $k_{\text{hard}} = \beta k$, $k_{\text{easy}} = (1-\beta) k$, with $\beta \in (0,1)$. Hard key tokens have an elevated error rate $e_{\text{hard}}$ corresponding to manifold-transition decisions in the sense of~\citet[\S3.2]{arbuzov2025beyond}; easy key tokens have $e_{\text{easy}} \teApprox e_{\text{non}}$. The composed reliability becomes
+\begin{definition}[Hard fraction]\label{def:hard}
+Partition the $k$ key tokens of a sequence into easy and hard subsets,
 \[
-P(\text{correct}) = (1 - e_{\text{hard}})^{\beta k} (1 - e_{\text{easy}})^{(1 - \beta) k} (1 - e_{\text{non}})^{n - k}.
+k_{\text{hard}} = \beta k, \qquad k_{\text{easy}} = (1-\beta) k, \qquad \beta \in (0,1),
 \]
+where hard key tokens have an elevated error rate $e_{\text{hard}}$ corresponding to manifold-transition decisions in the sense of~\citet[\S3.2]{arbuzov2025beyond}, and easy key tokens have $e_{\text{easy}} \teApprox e_{\text{non}}$.
+\end{definition}
+
+Under Definition~\ref{def:hard}, the composed sequence-level reliability becomes
+\begin{equation}\label{eq:three-rate}
+P(\text{correct}) \;=\; (1 - e_{\text{hard}})^{\beta k}\,(1 - e_{\text{easy}})^{(1 - \beta) k}\,(1 - e_{\text{non}})^{n - k}.
+\end{equation}
 We do not assume iid token errors: the three rates summarise \emph{conditional per-decision failure hazards} after conditioning on prior decisions being correct, and grouping by stratum yields the multiplicative survival expression. Because $e_{\text{easy}} \teApprox e_{\text{non}}$ once context accumulates, the failure rate is dominated by the $\beta k$ hard tokens, and we treat $e_{\text{hard}}$ as the load-bearing quantity. The parameter $\beta$ is \emph{latent}: failure-mode atlases report $\Pr(\text{category} \mid \text{error occurred})$, which does not identify $\Pr(\text{hard} \mid \text{key-token decision})$. We carry $\beta$ symbolically.
 
 \subsection{Empirical postulate: logarithmic mode discovery}
@@ -96,17 +120,23 @@ The $\beta k$ hard-token failures cluster into a finite set of recurring pattern
 
 Two sample-size variables matter and conflating them is the seam that lets reviewers in. Let $h(n) = \beta k(n)$ denote the number of hard-token decisions in a single sequence of length $n$; let $T$ denote observed hard-failure events in a corpus used to discover the domain catalogue. We write $C_D$ for the full reachable catalogue inside domain patch $D$, $C_{\text{seen},D}(T)$ for the subset discovered after $T$ failures, and $C_{\text{active},D}(n)$ for the subset a single sequence of length $n$ can activate.
 
-\textbf{Postulate 1 (Patch-indexed catalogue discovery).}\label{post:logmode} \emph{Within a fixed application domain $D$, the number of named recurring failure modes discovered after $T$ sampled hard-failure events is bounded by}
+\begin{postulate}[Patch-indexed catalogue discovery]\label{post:logmode}
+Within a fixed application domain $D$, the number of named recurring failure modes discovered after $T$ sampled hard-failure events is bounded by
 \[
-|C_{\text{seen},D}(T)| \leq \min\bigl(A_D + \sigma_D \ln T,\ |C_D|\bigr), \qquad \sigma_D > 0,\ A_D \geq 0.
+|C_{\text{seen},D}(T)| \;\leq\; \min\bigl(A_D + \sigma_D \ln T,\ |C_D|\bigr), \qquad \sigma_D > 0,\ A_D \geq 0.
 \]
-\emph{The cap $|C_D|$ is the domain-imposed ceiling. The postulate concerns catalogue discovery, not the number of hard decisions inside a single sequence.}
+The cap $|C_D|$ is the domain-imposed ceiling. The postulate concerns catalogue \emph{discovery}, not the number of hard decisions inside a single sequence.
+\end{postulate}
 
-\textbf{Assumption 2 (Per-sequence active-mode exposure).} \emph{For a single sequence of length $n$ in domain $D$,}
+\begin{assumption}[Per-sequence active-mode exposure]\label{ass:active}
+For a single sequence of length $n$ in domain $D$,
 \[
-|C_{\text{active},D}(n)| \leq \min\bigl(A'_D + \sigma'_D \ln h(n),\ |C_D|\bigr).
+|C_{\text{active},D}(n)| \;\leq\; \min\bigl(A'_D + \sigma'_D \ln h(n),\ |C_D|\bigr).
 \]
-\emph{Primed constants are distinct from those of Postulate 1; corpus discovery and per-sequence activation need not share the same rate. Proposition~1's sequence-length scaling uses $C_{\text{active},D}(n)$; domain-library budgeting uses $C_D$.}
+Primed constants are distinct from those of Postulate~\ref{post:logmode}: corpus discovery and per-sequence activation need not share the same rate.
+\end{assumption}
+
+Proposition~1's sequence-length scaling uses $C_{\text{active},D}(n)$; full domain-library budgeting uses $C_D$.
 
 \textbf{Empirical defense.} ErrorAtlas: $k_{\text{hard}} \gtrsim 10^4$, $|C| = 17$, giving $\sigma \teApprox 17 / \ln(10^4) \teApprox 1.85$ with $A=0$. HumanEval~\citep{wen2024fixing}: $|C| \in [8, 12]$, $\sigma \in [0.87, 1.30]$. MWPES: $|C| \in [15, 20]$, $\sigma \in [1.2, 1.6]$. Across the three anchors, $\sigma \in [0.87, 1.85]$; we carry $\sigma \teApprox 1.85$ as the conservative target. Endpoint counts at a single corpus scale are not discovery curves; the subsample-discovery measurement remains an explicit empirical test we flag (\S\ref{sec:limitations}, Appendix~\ref{app:heaps}).
 
@@ -128,19 +158,55 @@ as a \emph{postulated} closed expression respecting the $\min(1,\cdot)$ cap. For
 
 We compose the three ingredients with the two-rate model. For sequence-length scaling we use Assumption~2, not Postulate~1: the empirical sparsity $\alpha = k/n \in [0.05, 0.10]$ is a \emph{finite-length} statement, and under~\citet[\S3.1]{arbuzov2025beyond}'s $k \sim \log n$ regime, $\alpha$ decays as $O(\log n / n)$.
 
-\textbf{Conditionality.} The bound below is engineering math, not a theorem about LLMs. It holds conditional on (i)~the log-coverage form of \S\ref{sec:coverage} on its declared domain $m \geq 2$, $|C_{\text{eff}}| \geq 2$; (ii)~the residual target $\varepsilon \in (0, e_{\text{hard}})$; (iii)~Assumption~2 for any sequence-length rate claim. A different cumulative fitted to the same anchors preserves the qualitative polylog conclusion (Appendix~\ref{app:heaps}) but changes the exponent.
+\textbf{Conditionality.} The bound below is engineering math, not a theorem about LLMs. It holds conditional on (i)~the log-coverage form of \S\ref{sec:coverage} on its declared domain $m \geq 2$, $|C_{\text{eff}}| \geq 2$; (ii)~the residual target $\varepsilon \in (0, e_{\text{hard}})$; (iii)~Assumption~\ref{ass:active} for any sequence-length rate claim. A different cumulative fitted to the same anchors preserves the qualitative polylog conclusion (Appendix~\ref{app:heaps}) but changes the exponent.
 
-\textbf{Proposition 1 (Per-Hard-Token Intervention Budget).}\label{prop:budget} \emph{Let $\varepsilon \in (0, e_{\text{hard}})$ be a target per-hard-token residual error rate for sequences in domain $D$, with $|C_{\text{eff}}| \geq 2$, where $C_{\text{eff}} = C_{\text{active},D}(n)$ for per-sequence scaling or $C_{\text{eff}} = C_D$ for full domain-library deployment. Under the coverage form of \S\ref{sec:coverage}, the smallest intervention library satisfying $e_{\text{res}}(m) \leq \varepsilon$ has size}
+\begin{proposition}[Per-Hard-Token Intervention Budget]\label{prop:budget}
+Let $\varepsilon \in (0, e_{\text{hard}})$ be a target per-hard-token residual error rate for sequences in domain $D$, with $|C_{\text{eff}}| \geq 2$, where
 \[
-m \geq \left\lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \right\rceil.
+C_{\text{eff}} \;=\; \begin{cases}
+  C_{\text{active},D}(n) & \text{(per-sequence scaling),} \\
+  C_D & \text{(full domain-library deployment).}
+\end{cases}
 \]
-\emph{If $C_{\text{eff}} = C_{\text{active},D}(n)$ and $k(n) = \Theta(\log n)$, then in the pre-cap regime $m = O\bigl((\log\log n)^{1 - \varepsilon / e_{\text{hard}}}\bigr)$, i.e., the intervention budget grows doubly logarithmically with sequence length. In the cap regime, or for full domain-library deployment, $m \geq \lceil |C_D|^{1 - \varepsilon / e_{\text{hard}}} \rceil$, independent of $n$.}
+Under the coverage form of \S\ref{sec:coverage}, the smallest intervention library satisfying $e_{\text{res}}(m) \leq \varepsilon$ has size
+\begin{equation}\label{eq:budget}
+m \;\geq\; \left\lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \right\rceil.
+\end{equation}
+If $C_{\text{eff}} = C_{\text{active},D}(n)$ and $k(n) = \Theta(\log n)$, then in the pre-cap regime
+\[
+m \;=\; O\!\bigl((\log\log n)^{1 - \varepsilon / e_{\text{hard}}}\bigr),
+\]
+i.e., the intervention budget grows doubly logarithmically with sequence length. In the cap regime, or for full domain-library deployment, $m \geq \lceil |C_D|^{1 - \varepsilon / e_{\text{hard}}} \rceil$ independent of $n$.
+\end{proposition}
 
-\emph{Proof.} From \S\ref{sec:coverage}, $e_{\text{res}}(m) = (1 - F(m; |C_{\text{eff}}|))\,e_{\text{hard}}$. Requiring $e_{\text{res}}(m) \leq \varepsilon$ gives $F(m; |C_{\text{eff}}|) \geq 1 - \varepsilon / e_{\text{hard}}$. Since $\varepsilon < e_{\text{hard}}$, the required coverage lies below one, so the cap in $F$ is inactive; with $F = \ln m / \ln |C_{\text{eff}}|$, we obtain $m \geq |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}}$, and taking the ceiling gives the stated form. Assumption~2 gives $|C_{\text{active},D}(n)| = O(\log\log n)$ when $k(n) = \Theta(\log n)$, before the cap. After the cap, $|C_{\text{eff}}| = |C_D|$ and the bound is independent of $n$. $\square$
+\begin{proof}
+From \S\ref{sec:coverage}, $e_{\text{res}}(m) = (1 - F(m; |C_{\text{eff}}|))\,e_{\text{hard}}$. Requiring $e_{\text{res}}(m) \leq \varepsilon$ gives $F(m; |C_{\text{eff}}|) \geq 1 - \varepsilon / e_{\text{hard}}$. Since $\varepsilon < e_{\text{hard}}$, the required coverage lies below one and the cap in $F$ is inactive; with $F = \ln m / \ln |C_{\text{eff}}|$, we obtain $m \geq |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}}$, and taking the ceiling gives~\eqref{eq:budget}. Assumption~\ref{ass:active} gives $|C_{\text{active},D}(n)| = O(\log\log n)$ when $k(n) = \Theta(\log n)$, before the cap. After the cap, $|C_{\text{eff}}| = |C_D|$ and the bound is independent of $n$.
+\end{proof}
 
-We label this a \emph{Proposition} rather than a \emph{Theorem} to keep its conditional nature visible. The doubly-logarithmic rate is the \emph{optimistic special case}: per-sequence, pre-cap, under logarithmic mode discovery. Weaker (but still polylog) rates obtain under Heaps (Appendix~\ref{app:heaps}); cap regime is a domain-constant.
+We label this a \emph{Proposition} rather than a \emph{Theorem} to keep its conditional nature visible. The doubly-logarithmic rate is the \emph{optimistic special case}: per-sequence, pre-cap, under logarithmic mode discovery. Weaker (but still polylog) rates obtain under Heaps (Appendix~\ref{app:heaps}); the cap regime is a domain-constant.
 
-\textbf{Sequence-level versus per-hard-token bounds.} Proposition~1 bounds the \emph{per-hard-token} residual error. Sequence-level failure probability is strictly stronger. With non-hard-token survival factor $S_{\text{base}} = (1 - e_{\text{easy}})^{(1 - \beta) k}(1 - e_{\text{non}})^{n - k}$, requiring $(1 - e_{\text{res}})^{\beta k}\, S_{\text{base}} \geq 1 - \varepsilon_{\text{seq}}$ yields three regimes: (i)~if $S_{\text{base}} < 1 - \varepsilon_{\text{seq}}$, the binding constraint is non-key noise and hard-token interventions alone cannot meet the target---this is the back-door route by which the exponential-in-$n$ concern re-enters; (ii)~if $S_{\text{base}} \geq 1 - \varepsilon_{\text{seq}}$, the required library size is $m \geq \lceil |C_{\text{eff}}|^{1 - \tau_{\text{seq}} / e_{\text{hard}}} \rceil$ with $\tau_{\text{seq}} = 1 - ((1-\varepsilon_{\text{seq}})/S_{\text{base}})^{1/(\beta k)}$, and as the target tightens toward feasibility, $\tau_{\text{seq}} \to 0$ and $m \to |C_{\text{eff}}|$---essentially every named mode must be covered; (iii)~if $\tau_{\text{seq}} \geq e_{\text{hard}}$, the target is met without intervention. The widely-quoted ``$\teApprox 50$ patterns $\teArrow \teApprox 90\%$ reduction'' claim is a per-hard-token statement; the sequence-level analogue requires correspondingly more interventions. Production systems with one-shot reliability targets should plan for the stricter regime---and check whether they are in Regime (i), where catalogue-budgeting cannot help at all.
+\paragraph{Sequence-level versus per-hard-token bounds.}
+Proposition~\ref{prop:budget} bounds the \emph{per-hard-token} residual error. Sequence-level failure probability is strictly stronger. Define the non-hard-token survival factor
+\begin{equation}\label{eq:Sbase}
+S_{\text{base}} \;=\; (1 - e_{\text{easy}})^{(1 - \beta) k}\,(1 - e_{\text{non}})^{n - k},
+\end{equation}
+so that the composed survival from~\eqref{eq:three-rate} can be written $P(\text{correct}) = (1 - e_{\text{res}})^{\beta k}\, S_{\text{base}}$. The sequence-level target $P(\text{correct}) \geq 1 - \varepsilon_{\text{seq}}$ then yields three regimes:
+
+\begin{description}[leftmargin=2em,itemsep=0.25ex]
+  \item[Regime (i): $S_{\text{base}} < 1 - \varepsilon_{\text{seq}}$.] Even at $e_{\text{res}} = 0$ the surviving non-hard-token failure mass exceeds the sequence-level budget. Hard-token interventions alone cannot meet the target; this is the back-door route by which the exponential-in-$n$ concern re-enters, and it should be diagnosed before any catalogue-budgeting exercise.
+  \item[Regime (ii): $S_{\text{base}} \geq 1 - \varepsilon_{\text{seq}}$.] Define
+  \begin{equation}\label{eq:tauseq}
+  \tau_{\text{seq}} \;=\; 1 - \left(\frac{1 - \varepsilon_{\text{seq}}}{S_{\text{base}}}\right)^{1 / (\beta k)}.
+  \end{equation}
+  For $0 < \tau_{\text{seq}} < e_{\text{hard}}$, the sequence target is met whenever $e_{\text{res}}(m) \leq \tau_{\text{seq}}$, so the required library size is
+  \[
+  m \;\geq\; \left\lceil |C_{\text{eff}}|^{1 - \tau_{\text{seq}} / e_{\text{hard}}} \right\rceil.
+  \]
+  As the target tightens toward the feasibility boundary, $\tau_{\text{seq}} \to 0$ and $m \to |C_{\text{eff}}|$---essentially every named mode must be covered.
+  \item[Regime (iii): $\tau_{\text{seq}} \geq e_{\text{hard}}$.] The sequence target is already met at the baseline hard-token rate; no intervention is required.
+\end{description}
+
+The widely-quoted ``$\teApprox 50$ patterns $\teArrow \teApprox 90\%$ reduction'' claim is a per-hard-token statement; the sequence-level analogue requires correspondingly more interventions. Production systems with one-shot reliability targets should plan for the stricter regime---and check whether they are in Regime~(i), where catalogue-budgeting cannot help at all.
 
 \section{Empirical Evidence}
 \label{sec:evidence}
