@@ -1,41 +1,51 @@
 % Bibliography for "The Architecture of Errors: Logarithmic Mode Discovery
 % and Polylogarithmic Intervention Budgets for Long-Context LLM Reliability"
-% Arbuzov, Shvets, Bei (2026).
+% Arbuzov, Bei, Dong, Kalaev, Shvets (2026).
 %
 % Citation keys are author-year-firstword for legibility. The paper itself
 % currently uses inline parenthetical citations rendered directly from the
 % Markdown References section; this .bib mirrors those entries one-to-one
 % so the manuscript can be converted to a BibTeX-driven workflow without
 % information loss.
+%
+% This file was repaired in May 2026 after a pre-submission audit identified
+% multiple wrong titles, swapped first authors, anonymised author placeholders,
+% and one hallucinated arXiv ID. Every entry below has been independently
+% verified against the arXiv abstract page or the publisher's DOI page.
 
-@article{acurai2024,
-  author       = {{Acurai authors}},
-  title        = {Acurai: Query reformatting for hallucination-free retrieval-augmented generation},
+@article{wood2024acurai,
+  author       = {Wood, Michael C. and Forbes, Adam A.},
+  title        = {100\% Elimination of Hallucinations on {RAGTruth} for {GPT-4} and {GPT-3.5} {Turbo}},
   journal      = {arXiv preprint},
   year         = {2024},
   eprint       = {2412.05223},
   archivePrefix = {arXiv},
+  note         = {Introduces the Acurai method.},
 }
 
-@article{agentsquare2024,
-  author       = {{AgentSquare authors}},
-  title        = {AgentSquare: Modular composition for {LLM} agents},
+@article{shang2024agentsquare,
+  author       = {Shang, Yu and Li, Yu and Zhao, Keyu and Ma, Likai and Liu, Jiahe and Xu, Fengli and Li, Yong},
+  title        = {{AgentSquare}: Automatic {LLM} Agent Search in Modular Design Space},
   journal      = {arXiv preprint},
   year         = {2024},
   eprint       = {2410.06153},
   archivePrefix = {arXiv},
 }
 
-@article{almanac2024,
-  author       = {{Almanac authors}},
-  title        = {Almanac: Retrieval-augmented large language models for clinical question answering},
+@article{zakka2024almanac,
+  author       = {Zakka, Cyril and Shad, Rohan and Chaurasia, Akash and Dalal, Alex R. and Kim, Jennifer L. and Moor, Michael and Fong, Robyn and Phillips, Curran and Alexander, Kevin and Ashley, Euan and Boyd, Jack and Boyd, Kathleen and Hirsch, Karen and Langlotz, Curtis and Lee, Rita and Melia, Joanna and Nelson, Joanna and Sallam, Karim and Tullis, Stacey and Vogelsong, Melissa Ann and Cunningham, John Patrick and Hiesinger, William},
+  title        = {Almanac --- Retrieval-Augmented Language Models for Clinical Medicine},
   journal      = {NEJM AI},
+  volume       = {1},
+  number       = {2},
+  pages        = {AIoa2300068},
   year         = {2024},
+  doi          = {10.1056/AIoa2300068},
 }
 
 @article{arbuzov2025beyond,
-  author       = {Arbuzov, Mikhail L. and Shvets, Alexey A. and Bei, Sisong},
-  title        = {Beyond exponential decay: Rethinking error accumulation in large language models},
+  author       = {Arbuzov, Mikhail L. and Bei, Sisong and Dong, Ziwei and Kalaev, Dmitri and Shvets, Alexey A.},
+  title        = {Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2505.24187},
@@ -43,8 +53,8 @@
 }
 
 @inproceedings{asai2024selfrag,
-  author       = {Asai, Akari and others},
-  title        = {Self-{RAG}: Learning to retrieve, generate, and critique through self-reflection},
+  author       = {Asai, Akari and Wu, Zeqiu and Wang, Yizhong and Sil, Avirup and Hajishirzi, Hannaneh},
+  title        = {{Self-RAG}: Learning to Retrieve, Generate, and Critique through Self-Reflection},
   booktitle    = {International Conference on Learning Representations (ICLR)},
   year         = {2024},
   eprint       = {2310.11511},
@@ -52,8 +62,8 @@
 }
 
 @article{ashurytahan2026erroratlas,
-  author       = {Ashury-Tahan, Yotam and others},
-  title        = {{ErrorAtlas}: A large-scale empirical atlas of {LLM} failure patterns across models and benchmarks},
+  author       = {Ashury-Tahan, Shir and Mai, Yifan and Bandel, Elron and Shmueli-Scheuer, Michal and Choshen, Leshem},
+  title        = {{ErrorMap} and {ErrorAtlas}: Charting the Failure Landscape of Large Language Models},
   journal      = {arXiv preprint},
   year         = {2026},
   eprint       = {2601.15812},
@@ -62,16 +72,17 @@
 
 @article{chen2022pot,
   author       = {Chen, Wenhu and Ma, Xueguang and Wang, Xinyi and Cohen, William W.},
-  title        = {Program of thoughts prompting: Disentangling computation from reasoning for numerical reasoning tasks},
-  journal      = {arXiv preprint},
-  year         = {2022},
+  title        = {Program of Thoughts Prompting: Disentangling Computation from Reasoning for Numerical Reasoning Tasks},
+  journal      = {Transactions on Machine Learning Research (TMLR)},
+  year         = {2023},
   eprint       = {2211.12588},
   archivePrefix = {arXiv},
+  note         = {Cited as 2022 in body.},
 }
 
 @inproceedings{cheng2024seeclick,
-  author       = {Cheng, Kanzhi and others},
-  title        = {{SeeClick}: Harnessing {GUI} grounding for advanced visual {GUI} agents},
+  author       = {Cheng, Kanzhi and Sun, Qiushi and Chu, Yougang and Xu, Fangzhi and Li, Yantao and Zhang, Jianbing and Wu, Zhiyong},
+  title        = {{SeeClick}: Harnessing {GUI} Grounding for Advanced Visual {GUI} Agents},
   booktitle    = {Proceedings of ACL},
   year         = {2024},
   eprint       = {2401.10935},
@@ -80,7 +91,7 @@
 
 @article{costello2025think,
   author       = {Costello, Cassidy and Wells, Caleb and Grefenstette, Edward and Glaese, Amelia},
-  title        = {Think, prune, train, improve: Scaling reasoning without scaling models},
+  title        = {Think, Prune, Train, Improve: Scaling Reasoning without Scaling Models},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2504.18116},
@@ -88,44 +99,45 @@
 }
 
 @inproceedings{dai2025edit,
-  author       = {Dai, Xiaoyang and others},
-  title        = {{EDIT}: Identifying key reasoning steps in chain-of-thought},
+  author       = {Dai, Chengwei and others},
+  title        = {Capture the Key in Reasoning to Enhance {CoT} Distillation Generalization},
   booktitle    = {Proceedings of ACL},
   year         = {2025},
   eprint       = {2405.19737},
   archivePrefix = {arXiv},
+  note         = {Earlier arXiv version titled ``Beyond Imitation: Learning Key Reasoning Steps from Dual Chain-of-Thoughts in Reasoning Distillation''.},
 }
 
-@article{dantart2026archivist,
-  author       = {Dantart, J.},
-  title        = {The rigorous archivist: Source-restricted retrieval for fabrication-free legal citation},
+@article{dantart2026fabrication,
+  author       = {Dantart, Alex},
+  title        = {Reliability by Design: Quantifying and Eliminating Fabrication Risk in {LLMs}. From Generative to Consultative {AI}: A Comparative Analysis in the Legal Domain and Lessons for High-Stakes Knowledge Bases},
   journal      = {arXiv preprint},
   year         = {2026},
   eprint       = {2601.15476},
   archivePrefix = {arXiv},
 }
 
-@article{deepseekprover2025v2,
-  author       = {{DeepSeek-Prover team}},
-  title        = {{DeepSeek-Prover-V2}: Advancing formal mathematical reasoning via large-scale reinforcement learning with verifier feedback},
+@article{ren2025deepseekprover,
+  author       = {Ren, Z. Z. and others},
+  title        = {{DeepSeek-Prover-V2}: Advancing Formal Mathematical Reasoning via Reinforcement Learning for Subgoal Decomposition},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2504.21801},
   archivePrefix = {arXiv},
 }
 
-@article{dong2024xgrammar,
-  author       = {Dong, Yixin and others},
-  title        = {{XGrammar}: Efficient grammar-constrained decoding for large language models},
-  journal      = {arXiv preprint},
-  year         = {2024},
+@inproceedings{dong2024xgrammar,
+  author       = {Dong, Yixin and Ruan, Charlie F. and Cai, Yaxing and Lai, Ruihang and Xu, Ziyi and Zhao, Yilong and Chen, Tianqi},
+  title        = {{XGrammar}: Flexible and Efficient Structured Generation Engine for Large Language Models},
+  booktitle    = {Proceedings of MLSys},
+  year         = {2025},
   eprint       = {2411.15100},
   archivePrefix = {arXiv},
 }
 
 @article{dong2026xgrammar2,
   author       = {Dong, Yixin and others},
-  title        = {{XGrammar}-2: Scaling schema-constrained tool calls},
+  title        = {{XGrammar} 2: Efficient Dynamic Structured Generation Engine for Agentic {LLMs}},
   journal      = {arXiv preprint},
   year         = {2026},
   eprint       = {2601.04426},
@@ -134,7 +146,7 @@
 
 @inproceedings{dziri2023faith,
   author       = {Dziri, Nouha and Lu, Ximing and Sclar, Melanie and Li, Xiang Lorraine and Jiang, Liwei and Lin, Bill Yuchen and West, Peter and Bhagavatula, Chandra and Le Bras, Ronan and Hwang, Jena D. and others},
-  title        = {Faith and fate: Limits of transformers on compositionality},
+  title        = {Faith and Fate: Limits of Transformers on Compositionality},
   booktitle    = {Advances in Neural Information Processing Systems},
   volume       = {36},
   year         = {2023},
@@ -144,17 +156,16 @@
 
 @inproceedings{fang2025perplexity,
   author       = {Fang, Lizhe and Wang, Yifei and Liu, Zhaoyang and Zhang, Chenyang and Jegelka, Stefanie and Gao, Jianfeng and Ding, Bolin and Wang, Yisen},
-  title        = {What is wrong with perplexity for long-context language modeling?},
+  title        = {What Is Wrong with Perplexity for Long-Context Language Modeling?},
   booktitle    = {International Conference on Learning Representations (ICLR)},
   year         = {2025},
   eprint       = {2410.23771},
   archivePrefix = {arXiv},
-  note         = {Cited as 2024 in body.},
 }
 
 @inproceedings{gao2022pal,
   author       = {Gao, Luyu and Madaan, Aman and Zhou, Shuyan and Alon, Uri and Liu, Pengfei and Yang, Yiming and Callan, Jamie and Neubig, Graham},
-  title        = {{PAL}: Program-aided language models},
+  title        = {{PAL}: Program-Aided Language Models},
   booktitle    = {Proceedings of ICML},
   year         = {2023},
   eprint       = {2211.10435},
@@ -162,18 +173,19 @@
   note         = {Cited as 2022 in body.},
 }
 
-@inproceedings{gao2023alce,
-  author       = {Gao, Tianyu and others},
-  title        = {{ALCE}: Enabling large language models to generate text with citations},
+@inproceedings{gao2023citations,
+  author       = {Gao, Tianyu and Yen, Howard and Yu, Jiatong and Chen, Danqi},
+  title        = {Enabling Large Language Models to Generate Text with Citations},
   booktitle    = {Proceedings of EMNLP},
   year         = {2023},
   eprint       = {2305.14627},
   archivePrefix = {arXiv},
+  note         = {Introduces the ALCE benchmark.},
 }
 
 @article{geng2025jsonschemabench,
   author       = {Geng, Saibo and others},
-  title        = {{JSONSchemaBench}: Evaluating constrained decoding},
+  title        = {{JSONSchemaBench}: A Rigorous Benchmark of Structured Outputs for Language Models},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2501.10868},
@@ -181,43 +193,59 @@
 }
 
 @article{goodell2025clinical,
-  author       = {Goodell, A. and others},
-  title        = {Task-specific tools for clinical calculations: A large language model evaluation},
-  journal      = {Nature npj Digital Medicine},
+  author       = {Goodell, Alex J. and Chu, Simon N. and Rouholiman, Dara and Chu, Larry F.},
+  title        = {Large Language Model Agents Can Use Tools to Perform Clinical Calculations},
+  journal      = {npj Digital Medicine},
+  volume       = {8},
+  number       = {1},
+  pages        = {163},
   year         = {2025},
+  doi          = {10.1038/s41746-025-01475-8},
 }
 
 @inproceedings{gou2025uground,
-  author       = {Gou, Boyu and others},
-  title        = {{UGround}: Navigating the digital world as humans do},
+  author       = {Gou, Boyu and Wang, Ruohan and Zheng, Boyuan and Xie, Yanan and Chang, Cheng and Shu, Yiheng and Sun, Huan and Su, Yu},
+  title        = {Navigating the Digital World as Humans Do: Universal Visual Grounding for {GUI} Agents},
   booktitle    = {International Conference on Learning Representations (ICLR)},
   year         = {2025},
   eprint       = {2410.05243},
   archivePrefix = {arXiv},
+  note         = {ICLR 2025 Oral. Introduces the UGround model.},
 }
 
-@article{gou2023tora,
-  author       = {Gou, Zhibin and others},
-  title        = {{ToRA}: A tool-integrated reasoning agent for mathematical problem solving},
-  journal      = {arXiv preprint},
-  year         = {2023},
+@inproceedings{gou2024tora,
+  author       = {Gou, Zhibin and Shao, Zhihong and Gong, Yeyun and Shen, Yelong and Yang, Yujiu and Huang, Minlie and Duan, Nan and Chen, Weizhu},
+  title        = {{ToRA}: A Tool-Integrated Reasoning Agent for Mathematical Problem Solving},
+  booktitle    = {International Conference on Learning Representations (ICLR)},
+  year         = {2024},
   eprint       = {2309.17452},
   archivePrefix = {arXiv},
+  note         = {Cited as 2023 in body.},
 }
 
 @inproceedings{gou2024critic,
-  author       = {Gou, Zhibin and others},
-  title        = {{CRITIC}: Large language models can self-correct with tool-interactive critiquing},
+  author       = {Gou, Zhibin and Shao, Zhihong and Gong, Yeyun and Shen, Yelong and Yang, Yujiu and Duan, Nan and Chen, Weizhu},
+  title        = {{CRITIC}: Large Language Models Can Self-Correct with Tool-Interactive Critiquing},
   booktitle    = {International Conference on Learning Representations (ICLR)},
   year         = {2024},
   eprint       = {2305.11738},
   archivePrefix = {arXiv},
 }
 
-@article{hsieh2024ruler,
-  author       = {Hsieh, Cheng-Ping and Sun, Simeng and Kriman, Samuel and Acharya, Shantanu and Rekesh, Dima and Jia, Fei and Zhang, Yang and Ginsburg, Boris},
-  title        = {{RULER}: What's the real context size of your long-context language models?},
+@article{guo2025rfmdataset,
+  author       = {Guo, Dadi and Liu, Jiayu and Fan, Zhiyuan and He, Zhitao and Li, Haoran and Li, Yuxin and Wang, Yumeng and Fung, Yi R.},
+  title        = {Mathematical Proof as a Litmus Test: Revealing Failure Modes of Advanced Large Reasoning Models},
   journal      = {arXiv preprint},
+  year         = {2025},
+  eprint       = {2506.17114},
+  archivePrefix = {arXiv},
+  note         = {Introduces the RFMDataset (Reveal Failure Modes).},
+}
+
+@inproceedings{hsieh2024ruler,
+  author       = {Hsieh, Cheng-Ping and Sun, Simeng and Kriman, Samuel and Acharya, Shantanu and Rekesh, Dima and Jia, Fei and Zhang, Yang and Ginsburg, Boris},
+  title        = {{RULER}: What's the Real Context Size of Your Long-Context Language Models?},
+  booktitle    = {Conference on Language Modeling (COLM)},
   year         = {2024},
   eprint       = {2404.06654},
   archivePrefix = {arXiv},
@@ -225,7 +253,7 @@
 
 @article{huang2024rcc,
   author       = {Huang, Chensen and Zhu, Guibin and Wang, Xin and Luo, Ying and Ge, Guang and Chen, Haomin and Yi, Dongrui and Wang, Junjie},
-  title        = {Recurrent context compression: Efficiently expanding the context window of {LLM}},
+  title        = {Recurrent Context Compression: Efficiently Expanding the Context Window of {LLM}},
   journal      = {arXiv preprint},
   year         = {2024},
   eprint       = {2406.06110},
@@ -233,18 +261,18 @@
 }
 
 @article{huang2023agentcoder,
-  author       = {Huang, Dong and others},
-  title        = {{AgentCoder}: Multi-agent-based code generation with iterative testing and optimisation},
+  author       = {Huang, Dong and Bu, Qingwen and Zhang, Jie M. and Luck, Michael and Cui, Heming},
+  title        = {{AgentCoder}: Multi-Agent-Based Code Generation with Iterative Testing and Optimisation},
   journal      = {arXiv preprint},
   year         = {2023},
   eprint       = {2312.13010},
   archivePrefix = {arXiv},
 }
 
-@article{jiang2024longllmlingua,
+@inproceedings{jiang2024longllmlingua,
   author       = {Jiang, Huiqiang and Wu, Qianhui and Luo, Xufang and Li, Dongsheng and Lin, Chin-Yew and Yang, Yuqing and Qiu, Lili},
-  title        = {{LongLLMLingua}: Accelerating and enhancing {LLMs} in long context scenarios via prompt compression},
-  journal      = {arXiv preprint},
+  title        = {{LongLLMLingua}: Accelerating and Enhancing {LLMs} in Long Context Scenarios via Prompt Compression},
+  booktitle    = {Proceedings of ACL},
   year         = {2024},
   eprint       = {2310.06839},
   archivePrefix = {arXiv},
@@ -252,16 +280,16 @@
 
 @inproceedings{kandpal2023longtail,
   author       = {Kandpal, Nikhil and Deng, Haikang and Roberts, Adam and Wallace, Eric and Raffel, Colin},
-  title        = {Large language models struggle to learn long-tail knowledge},
-  booktitle    = {Proceedings of ACL},
+  title        = {Large Language Models Struggle to Learn Long-Tail Knowledge},
+  booktitle    = {Proceedings of ICML},
   year         = {2023},
   eprint       = {2211.08411},
   archivePrefix = {arXiv},
 }
 
 @article{karaman2024porover,
-  author       = {Karaman, Omer M. and others},
-  title        = {{POROver}: Improving safety and reducing over-refusal in large language models with over-refusal-aware preference optimization},
+  author       = {Karaman, Batuhan K. and Zabih, Ramin and Sabuncu, Mert R.},
+  title        = {{POROver}: Improving Safety and Reducing Overrefusal in Large Language Models with Overgeneration and Preference Optimization},
   journal      = {arXiv preprint},
   year         = {2024},
   eprint       = {2410.12999},
@@ -269,8 +297,8 @@
 }
 
 @inproceedings{karpinska2024nocha,
-  author       = {Karpinska, Marzena and others},
-  title        = {One thousand and one pairs: A ``novel'' challenge for long-context language models},
+  author       = {Karpinska, Marzena and Thai, Katherine and Lo, Kyle and Goyal, Tanya and Iyyer, Mohit},
+  title        = {One Thousand and One Pairs: A ``Novel'' Challenge for Long-Context Language Models},
   booktitle    = {Proceedings of EMNLP},
   year         = {2024},
   eprint       = {2406.16264},
@@ -279,30 +307,42 @@
 
 @inproceedings{kuratov2024babilong,
   author       = {Kuratov, Yuri and Bulatov, Aydar and Anokhin, Pavel and Rodkin, Ivan and Sorokin, Dmitry and Sorokin, Artyom and Burtsev, Mikhail},
-  title        = {{BABILong}: Testing the limits of {LLMs} with long context reasoning-in-a-haystack},
+  title        = {{BABILong}: Testing the Limits of {LLMs} with Long Context Reasoning-in-a-Haystack},
   booktitle    = {NeurIPS Datasets and Benchmarks Track},
   year         = {2024},
   eprint       = {2406.10149},
   archivePrefix = {arXiv},
 }
 
-@article{le2026interaction,
-  author       = {Le, T.},
-  title        = {Schema-level and prompt-level instructions interact non-additively in structured generation},
-  journal      = {arXiv preprint},
-  year         = {2026},
+@inproceedings{kwa2025horizon,
+  author       = {Kwa, Thomas and others},
+  title        = {Measuring {AI} Ability to Complete Long Software Tasks},
+  booktitle    = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year         = {2025},
+  eprint       = {2503.14499},
+  archivePrefix = {arXiv},
+  note         = {METR technical report.},
 }
 
-@misc{lecun2023diverging,
+@article{le2026interaction,
+  author       = {Le, Yifan},
+  title        = {Schema Key Wording as an Instruction Channel in Structured Generation under Constrained Decoding},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2604.14862},
+  archivePrefix = {arXiv},
+}
+
+@misc{lecun2023doomed,
   author       = {LeCun, Yann},
-  title        = {Why autoregressive language models are exponentially diverging and doomed},
-  howpublished = {Public commentary},
+  title        = {Auto-Regressive {LLMs} Are Doomed},
+  howpublished = {Tweet, March 26, 2023. \url{https://x.com/ylecun/status/1640122342570336267}},
   year         = {2023},
 }
 
 @article{li2025stratified,
   author       = {Li, Xuyang and Sarwate, Anand D.},
-  title        = {Unraveling the localized latents: Learning stratified manifold structures in {LLM} embedding space with sparse mixture-of-experts},
+  title        = {Unraveling the Localized Latents: Learning Stratified Manifold Structures in {LLM} Embedding Space with Sparse Mixture-of-Experts},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2502.13577},
@@ -311,26 +351,28 @@
 
 @article{li2022alphacode,
   author       = {Li, Yujia and others},
-  title        = {Competition-level code generation with {AlphaCode}},
+  title        = {Competition-Level Code Generation with {AlphaCode}},
   journal      = {Science},
   volume       = {378},
   number       = {6624},
   pages        = {1092--1097},
   year         = {2022},
+  doi          = {10.1126/science.abq1158},
 }
 
-@article{lightman2023verify,
-  author       = {Lightman, Hunter and others},
-  title        = {Let's verify step by step},
-  journal      = {arXiv preprint},
-  year         = {2023},
+@inproceedings{lightman2024verify,
+  author       = {Lightman, Hunter and Kosaraju, Vineet and Burda, Yura and Edwards, Harri and Baker, Bowen and Lee, Teddy and Leike, Jan and Schulman, John and Sutskever, Ilya and Cobbe, Karl},
+  title        = {Let's Verify Step by Step},
+  booktitle    = {International Conference on Learning Representations (ICLR)},
+  year         = {2024},
   eprint       = {2305.20050},
   archivePrefix = {arXiv},
+  note         = {Cited as 2023 in body.},
 }
 
 @inproceedings{liu2023deplot,
-  author       = {Liu, Fangyu and others},
-  title        = {{DePlot}: One-shot visual language reasoning by plot-to-table translation},
+  author       = {Liu, Fangyu and Eisenschlos, Julian Martin and Piccinno, Francesco and Krichene, Syrine and Pang, Chenxi and Lee, Kenton and Joshi, Mandar and Chen, Wenhu and Collier, Nigel and Altun, Yasemin},
+  title        = {{DePlot}: One-Shot Visual Language Reasoning by Plot-to-Table Translation},
   booktitle    = {Findings of ACL},
   year         = {2023},
   eprint       = {2212.10505},
@@ -338,8 +380,8 @@
 }
 
 @article{lu2024omniparser,
-  author       = {Lu, Yadong and others},
-  title        = {{OmniParser} for pure vision based {GUI} agent},
+  author       = {Lu, Yadong and Yang, Jianwei and Shen, Yelong and Awadallah, Ahmed},
+  title        = {{OmniParser} for Pure Vision Based {GUI} Agent},
   journal      = {arXiv preprint},
   year         = {2024},
   eprint       = {2408.00203},
@@ -347,43 +389,36 @@
 }
 
 @inproceedings{mallen2023popqa,
-  author       = {Mallen, Alex and others},
-  title        = {When not to trust language models: Investigating effectiveness of parametric and non-parametric memories ({PopQA})},
+  author       = {Mallen, Alex and Asai, Akari and Zhong, Victor and Das, Rajarshi and Khashabi, Daniel and Hajishirzi, Hannaneh},
+  title        = {When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories},
   booktitle    = {Proceedings of ACL},
   year         = {2023},
   eprint       = {2212.10511},
   archivePrefix = {arXiv},
+  note         = {Introduces the PopQA benchmark.},
 }
 
 @book{manning2008ir,
   author       = {Manning, Christopher D. and Raghavan, Prabhakar and Sch{\"u}tze, Hinrich},
-  title        = {Introduction to information retrieval},
+  title        = {Introduction to Information Retrieval},
   publisher    = {Cambridge University Press},
   year         = {2008},
   note         = {Section on Heaps' law: \url{https://nlp.stanford.edu/IR-book/html/htmledition/heaps-law-estimating-the-number-of-terms-1.html}},
 }
 
-@article{mast2025,
-  author       = {{MAST authors}},
-  title        = {{MAST}: Failure-mode analysis of multi-agent {LLM} systems},
+@article{cemri2025mast,
+  author       = {Cemri, Mert and Pan, Melissa Z. and Yang, Shuyi and Agrawal, Lakshya A. and Chopra, Bhavya and Tiwari, Rishabh and Keutzer, Kurt and Parameswaran, Aditya and Klein, Dan and Ramchandran, Kannan and Zaharia, Matei and Gonzalez, Joseph E. and Stoica, Ion},
+  title        = {Why Do Multi-Agent {LLM} Systems Fail?},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2503.13657},
   archivePrefix = {arXiv},
-}
-
-@article{metr2025horizon,
-  author       = {{METR}},
-  title        = {Measuring {AI} ability to complete long software tasks},
-  journal      = {arXiv preprint},
-  year         = {2025},
-  eprint       = {2503.14499},
-  archivePrefix = {arXiv},
+  note         = {Introduces the MAST taxonomy (Multi-Agent System Failure Taxonomy).},
 }
 
 @inproceedings{niwa2024ambignlg,
-  author       = {Niwa, Shuya and Iso, Hayate},
-  title        = {{AmbigNLG}: Addressing task ambiguity in open-domain {NLG}},
+  author       = {Niwa, Ayana and Iso, Hayate},
+  title        = {{AmbigNLG}: Addressing Task Ambiguity in Instruction for {NLG}},
   booktitle    = {Proceedings of EMNLP},
   year         = {2024},
   eprint       = {2402.17717},
@@ -392,21 +427,23 @@
 
 @misc{openai2024structured,
   author       = {{OpenAI}},
-  title        = {Introducing structured outputs in the {API}},
+  title        = {Introducing Structured Outputs in the {API}},
   howpublished = {OpenAI Engineering Blog. \url{https://openai.com/index/introducing-structured-outputs-in-the-api/}},
   year         = {2024},
+  note         = {Published August 6, 2024.},
 }
 
 @misc{openai2025gpt5,
   author       = {{OpenAI}},
-  title        = {{GPT-5} system card},
-  howpublished = {\url{https://openai.com/index/gpt-5-system-card/}},
+  title        = {{GPT-5} System Card},
+  howpublished = {\url{https://cdn.openai.com/gpt-5-system-card.pdf}},
   year         = {2025},
+  note         = {Published August 7, 2025.},
 }
 
 @inproceedings{pang2024anchor,
   author       = {Pang, Jianhui and Ye, Fanghua and Wong, Derek F. and He, Xun and Chen, Wenxiang and Wang, Longyue},
-  title        = {Anchor-based large language models},
+  title        = {Anchor-Based Large Language Models},
   booktitle    = {Findings of ACL},
   year         = {2024},
   eprint       = {2402.07616},
@@ -415,7 +452,7 @@
 
 @inproceedings{park2024linear,
   author       = {Park, Kiho and Choe, Yo Joong and Veitch, Victor},
-  title        = {The linear representation hypothesis and the geometry of large language models},
+  title        = {The Linear Representation Hypothesis and the Geometry of Large Language Models},
   booktitle    = {Proceedings of ICML},
   year         = {2024},
   eprint       = {2311.03658},
@@ -424,25 +461,16 @@
 
 @inproceedings{press2023compositionality,
   author       = {Press, Ofir and Zhang, Muru and Min, Sewon and Schmidt, Ludwig and Smith, Noah A. and Lewis, Mike},
-  title        = {Measuring and narrowing the compositionality gap in language models},
+  title        = {Measuring and Narrowing the Compositionality Gap in Language Models},
   booktitle    = {Findings of EMNLP},
   year         = {2023},
   eprint       = {2210.03350},
   archivePrefix = {arXiv},
 }
 
-@article{rfm2025dataset,
-  author       = {{RFM authors}},
-  title        = {{RFMDataset}: Recurring failure modes across open-source {LLMs}},
-  journal      = {arXiv preprint},
-  year         = {2025},
-  eprint       = {2506.17114},
-  archivePrefix = {arXiv},
-}
-
-@inproceedings{schaeffer2025scaling,
+@inproceedings{schaeffer2025monkeys,
   author       = {Schaeffer, Rylan and others},
-  title        = {Why are large language models' scaling laws power laws?},
+  title        = {How Do Large Language Monkeys Get Their Power (Laws)?},
   booktitle    = {International Conference on Machine Learning (ICML)},
   year         = {2025},
   eprint       = {2502.17578},
@@ -450,8 +478,8 @@
 }
 
 @inproceedings{schick2023toolformer,
-  author       = {Schick, Timo and others},
-  title        = {Toolformer: Language models can teach themselves to use tools},
+  author       = {Schick, Timo and Dwivedi-Yu, Jane and Dess{\`i}, Roberto and Raileanu, Roberta and Lomeli, Maria and Hambro, Eric and Zettlemoyer, Luke and Cancedda, Nicola and Scialom, Thomas},
+  title        = {Toolformer: Language Models Can Teach Themselves to Use Tools},
   booktitle    = {Advances in Neural Information Processing Systems},
   volume       = {36},
   year         = {2023},
@@ -459,18 +487,19 @@
   archivePrefix = {arXiv},
 }
 
-@article{shi2024mgdebugger,
-  author       = {Shi, Feng and others},
-  title        = {{MGDebugger}: From syntax to semantics --- multi-granularity {LLM}-driven code debugging},
+@article{shi2024code,
+  author       = {Shi, Yuling and Wang, Songsong and Wan, Chengcheng and Wang, Min and Gu, Xiaodong},
+  title        = {From Code to Correctness: Closing the Last Mile of Code Generation with Hierarchical Debugging},
   journal      = {arXiv preprint},
   year         = {2024},
   eprint       = {2410.01215},
   archivePrefix = {arXiv},
+  note         = {Introduces the MGDebugger method.},
 }
 
 @inproceedings{shinn2023reflexion,
   author       = {Shinn, Noah and Cassano, Federico and Berman, Edward and Gopinath, Ashwin and Narasimhan, Karthik and Yao, Shunyu},
-  title        = {Reflexion: Language agents with verbal reinforcement learning},
+  title        = {Reflexion: Language Agents with Verbal Reinforcement Learning},
   booktitle    = {Advances in Neural Information Processing Systems},
   volume       = {36},
   year         = {2023},
@@ -478,131 +507,143 @@
   archivePrefix = {arXiv},
 }
 
-@article{sixsigma2026,
-  author       = {{Six Sigma authors}},
-  title        = {Six Sigma agent framework: Compound reliability through orthogonal interventions},
+@article{patel2026sixsigma,
+  author       = {Patel, Khush and Surendira, Siva and George, Jithin and Kapale, Shreyas},
+  title        = {The Six Sigma Agent: Achieving Enterprise-Grade Reliability in {LLM} Systems through Consensus-Driven Decomposed Execution},
   journal      = {arXiv preprint},
   year         = {2026},
+  eprint       = {2601.22290},
+  archivePrefix = {arXiv},
 }
 
-@article{slot2025,
-  author       = {{SLOT authors}},
-  title        = {{SLOT}: Schema-level output transformation for reliable structured generation},
+@article{wang2025slot,
+  author       = {Wang, Darren Yow-Bang and Shen, Zhengyuan and Mishra, Soumya Smruti and Xu, Zhichao and Teng, Yifei and Ding, Haibo},
+  title        = {{SLOT}: Structuring the Output of Large Language Models},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2505.04016},
   archivePrefix = {arXiv},
+  note         = {SLOT = Structured LLM Output Transformer.},
 }
 
 @inproceedings{sun2025mwpes,
-  author       = {Sun, Jiawei and others},
-  title        = {{MWPES-300K}: A large-scale math word problem error set with per-category failure distributions},
-  booktitle    = {Findings of ACL},
+  author       = {Sun, Yuhong and Yin, Zhangyue and Huang, Xuanjing and Qiu, Xipeng and Zhao, Hui},
+  title        = {Error Classification of Large Language Models on Math Word Problems: A Dynamically Adaptive Framework},
+  booktitle    = {arXiv preprint},
   year         = {2025},
   eprint       = {2501.15581},
   archivePrefix = {arXiv},
+  note         = {Introduces the MWPES-300K dataset (304,865 error samples from 15 LLMs across four MWP datasets).},
 }
 
 @article{suresh2025dingo,
-  author       = {Suresh, Sanjana and others},
-  title        = {{DINGO}: Constrained decoding for diffusion language models},
+  author       = {Suresh, Tarun and others},
+  title        = {{DINGO}: Constrained Inference for Diffusion {LLMs}},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2505.23061},
   archivePrefix = {arXiv},
 }
 
-@article{suri2025sage,
-  author       = {Suri, Karan and others},
-  title        = {{SAGE-Agent}: Structured uncertainty in agentic {AI}},
+@article{suri2025clarification,
+  author       = {Suri, Manan and Mathur, Puneet and Lipka, Nedim and Dernoncourt, Franck and Rossi, Ryan A. and Manocha, Dinesh},
+  title        = {Structured Uncertainty Guided Clarification for {LLM} Agents},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2511.08798},
   archivePrefix = {arXiv},
+  note         = {Introduces the SAGE-Agent method.},
 }
 
-@article{taubench2024,
-  author       = {{$\tau$-bench authors}},
-  title        = {{$\tau$-bench}: A benchmark for tool-augmented {LLM} agents},
+@article{yao2024taubench,
+  author       = {Yao, Shunyu and Shinn, Noah and Razavi, Pedram and Narasimhan, Karthik},
+  title        = {{$\tau$-bench}: A Benchmark for Tool-Agent-User Interaction in Real-World Domains},
   journal      = {arXiv preprint},
   year         = {2024},
   eprint       = {2406.12045},
   archivePrefix = {arXiv},
 }
 
-@article{tian2024debugbench,
-  author       = {Tian, Runchu and others},
-  title        = {{DebugBench}: Evaluating debugging capability of large language models},
-  journal      = {arXiv preprint},
+@inproceedings{tian2024debugbench,
+  author       = {Tian, Runchu and Ye, Yining and Qin, Yujia and Cong, Xin and Lin, Yankai and Liu, Zhiyuan and Sun, Maosong},
+  title        = {{DebugBench}: Evaluating Debugging Capability of Large Language Models},
+  booktitle    = {Findings of ACL},
   year         = {2024},
   eprint       = {2401.04621},
   archivePrefix = {arXiv},
 }
 
 @article{wada2025radiology,
-  author       = {Wada, Shoma and others},
-  title        = {Domain retrieval-augmented generation eliminates radiology report hallucinations},
-  journal      = {Nature npj Digital Medicine},
+  author       = {Wada, Akihiko and others},
+  title        = {Retrieval-Augmented Generation Elevates Local {LLM} Quality in Radiology Contrast Media Consultation},
+  journal      = {npj Digital Medicine},
+  volume       = {8},
+  number       = {1},
+  pages        = {395},
   year         = {2025},
+  doi          = {10.1038/s41746-025-01802-z},
 }
 
-@article{wan2025fano,
+@inproceedings{wan2026fano,
   author       = {Wan, Kai and others},
-  title        = {A {Fano}-style accuracy upper bound for {LLM} single-pass reasoning in multi-hop {QA}},
-  journal      = {arXiv preprint},
-  year         = {2025},
+  title        = {A {Fano}-Style Accuracy Upper Bound for {LLM} Single-Pass Reasoning in Multi-Hop {QA}},
+  booktitle    = {International Conference on Learning Representations (ICLR)},
+  year         = {2026},
   eprint       = {2509.21199},
   archivePrefix = {arXiv},
+  note         = {Cited as 2025 in body.},
 }
 
 @inproceedings{wangm2024loong,
   author       = {Wang, Minzheng and others},
-  title        = {Leave no document behind: Benchmarking long-context {LLMs} with extended multi-doc {QA}},
+  title        = {Leave No Document Behind: Benchmarking Long-Context {LLMs} with Extended Multi-Doc {QA}},
   booktitle    = {Proceedings of EMNLP},
   year         = {2024},
   eprint       = {2406.17419},
   archivePrefix = {arXiv},
 }
 
-@article{wangp2023mathshepherd,
-  author       = {Wang, Peiyi and others},
-  title        = {{Math-Shepherd}: Verify and reinforce {LLMs} step-by-step without human annotations},
-  journal      = {arXiv preprint},
-  year         = {2023},
+@inproceedings{wangp2024mathshepherd,
+  author       = {Wang, Peiyi and Li, Lei and Shao, Zhihong and Xu, R. X. and Dai, Damai and Li, Yifei and Chen, Deli and Wu, Y. and Sui, Zhifang},
+  title        = {{Math-Shepherd}: Verify and Reinforce {LLMs} Step-by-Step without Human Annotations},
+  booktitle    = {Proceedings of ACL},
+  year         = {2024},
   eprint       = {2312.08935},
   archivePrefix = {arXiv},
+  note         = {Cited as 2023 in body.},
 }
 
 @inproceedings{wangx2023selfconsistency,
   author       = {Wang, Xuezhi and Wei, Jason and Schuurmans, Dale and Le, Quoc and Chi, Ed and Narang, Sharan and Chowdhery, Aakanksha and Zhou, Denny},
-  title        = {Self-consistency improves chain of thought reasoning in language models},
+  title        = {Self-Consistency Improves Chain of Thought Reasoning in Language Models},
   booktitle    = {International Conference on Learning Representations (ICLR)},
   year         = {2023},
   eprint       = {2203.11171},
   archivePrefix = {arXiv},
 }
 
-@article{wangy2024mmlupro,
+@inproceedings{wangy2024mmlupro,
   author       = {Wang, Yubo and others},
-  title        = {{MMLU-Pro}: A more robust and challenging multi-task language understanding benchmark},
-  journal      = {arXiv preprint},
+  title        = {{MMLU-Pro}: A More Robust and Challenging Multi-Task Language Understanding Benchmark},
+  booktitle    = {NeurIPS Datasets and Benchmarks Track (Spotlight)},
   year         = {2024},
   eprint       = {2406.01574},
   archivePrefix = {arXiv},
 }
 
-@inproceedings{wangz2025medrac,
-  author       = {Wang, Zhuoxuan and others},
-  title        = {From scores to steps: Diagnosing and improving {LLM} performance on medical calculation tasks ({MedRaC})},
+@inproceedings{wangb2025medrac,
+  author       = {Wang, Benlu and others},
+  title        = {From Scores to Steps: Diagnosing and Improving {LLM} Performance in Evidence-Based Medical Calculations},
   booktitle    = {Proceedings of EMNLP},
   year         = {2025},
   eprint       = {2509.16584},
   archivePrefix = {arXiv},
+  note         = {Introduces the MedRaC benchmark.},
 }
 
-@article{weakestlink2026,
-  author       = {{Weakest Link authors}},
-  title        = {The weakest link law: Multi-hop {QA} performance collapses to the least-visible-evidence bucket},
+@article{zhang2026weakestlink,
+  author       = {Zhang, Meiru and Meng, Zaiqiao and Collier, Nigel},
+  title        = {Failure Modes in Multi-Hop {QA}: The Weakest Link Effect and the Recognition Bottleneck},
   journal      = {arXiv preprint},
   year         = {2026},
   eprint       = {2601.12499},
@@ -611,44 +652,47 @@
 
 @inproceedings{xie2025jedi,
   author       = {Xie, Tianbao and others},
-  title        = {{Jedi}: A grounding-dataset-driven approach to {OSWorld} and {GUI} agent tasks},
-  booktitle    = {NeurIPS},
+  title        = {Scaling Computer-Use Grounding via User Interface Decomposition and Synthesis},
+  booktitle    = {Advances in Neural Information Processing Systems (NeurIPS)},
   year         = {2025},
-  eprint       = {2509.13644},
+  eprint       = {2505.13227},
   archivePrefix = {arXiv},
+  note         = {NeurIPS 2025 Spotlight. Introduces the Jedi grounding dataset and OSWorld-G benchmark.},
 }
 
-@article{zhangj2024llmfix,
-  author       = {Zhang, Jiacheng and others},
-  title        = {Categorizing code-generation errors of large language models on {HumanEval} ({LlmFix})},
+@article{wen2024fixing,
+  author       = {Wen, Hao and others},
+  title        = {Fixing Function-Level Code Generation Errors for Foundation Large Language Models},
   journal      = {arXiv preprint},
   year         = {2024},
   eprint       = {2409.00676},
   archivePrefix = {arXiv},
+  note         = {Introduces the LlmFix method. Reports AssertionError 63.64\% + NameError 22.71\% = 86.35\% of HumanEval failures across 14 LLMs.},
 }
 
-@article{zhangk2023tooldec,
+@article{zhang2023tooldec,
   author       = {Zhang, Kexun and others},
-  title        = {{ToolDec}: Syntax error-free and generalisable tool use via finite-state-machine constrained decoding},
+  title        = {Don't Fine-Tune, Decode: Syntax Error-Free Tool Use via Constrained Decoding},
   journal      = {arXiv preprint},
   year         = {2023},
   eprint       = {2310.07075},
   archivePrefix = {arXiv},
+  note         = {Introduces the ToolDec method.},
 }
 
 @article{zhou2025gsminfinite,
   author       = {Zhou, Yang and Liu, Hongyi and Chen, Zhuoyan and Tian, Yuandong and Chen, Beidi},
-  title        = {{GSM-Infinite}: How do your {LLMs} behave over infinitely increasing context length and reasoning complexity?},
+  title        = {{GSM-Infinite}: How Do Your {LLMs} Behave over Infinitely Increasing Context Length and Reasoning Complexity?},
   journal      = {arXiv preprint},
   year         = {2025},
   eprint       = {2502.05252},
   archivePrefix = {arXiv},
 }
 
-@article{zhu2025lostinretrieval,
-  author       = {Zhu, Hai and others},
-  title        = {Lost-in-retrieval: Decomposition failures in multi-hop retrieval-augmented generation},
-  journal      = {arXiv preprint},
+@inproceedings{zhu2025lostinretrieval,
+  author       = {Zhu, Rongzhi and Liu, Xiangyu and Sun, Zequn and Wang, Yiwei and Hu, Wei},
+  title        = {Mitigating Lost-in-Retrieval Problems in Retrieval Augmented Multi-Hop Question Answering},
+  booktitle    = {Proceedings of ACL},
   year         = {2025},
   eprint       = {2502.14245},
   archivePrefix = {arXiv},

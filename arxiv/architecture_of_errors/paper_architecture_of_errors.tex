@@ -87,11 +87,11 @@ Polylogarithmic Intervention Budgets for Long-Context LLM Reliability}
 
 \textbf{Abstract}
 
-Our previous work (Arbuzov, Shvets, \& Bei, 2025) argued that LLM
-reliability does not decay exponentially with output length because
-errors concentrate at sparse ``key tokens'' rather than spreading
-uniformly across the sequence. This paper extends that framework along
-an orthogonal axis: LLM errors are not only sparse, they are
+Our previous work (Arbuzov et al., 2025) argued that LLM reliability
+does not decay exponentially with output length because errors
+concentrate at sparse ``key tokens'' rather than spreading uniformly
+across the sequence. This paper extends that framework along an
+orthogonal axis: LLM errors are not only sparse, they are
 \emph{repetitive}. The same handful of failure patterns recur across
 models, datasets, and domains. Inside the small set of key tokens, a
 latent fraction \(\beta\) produce \emph{hard} failures; those hard
@@ -108,18 +108,18 @@ grows --- an asymmetry we surface explicitly rather than burying. Twelve
 intervention categories from prior work, plus 28 GOLD-tier
 capability-elimination citations across six axes, are consistent with a
 small library on the order of tens of interventions covering the head of
-the failure distribution in the per-hard-token regime. We test the
-polylog conclusion under four cluster-count laws (logarithmic discovery,
-Heaps at \(b \in \{0.3, 0.5, 0.6\}\), saturating exponential) and find
-it robust across the family, though the specific doubly-logarithmic rate
-is the optimistic special case. Prominent steep-decay counter-evidence
-(Dziri et al., 2023; Kuratov et al., 2024; METR, 2025), re-audited here,
-decays over variables other than raw token length --- compositional
-graph size, fact count, log-time horizon. This relocates rather than
-dissolves the practical worry: the framework identifies which
-interventions help (capability provisioning along the actual decay axis)
-and which do not, but does not claim the regimes where
-\(k_{\text{hard}}\) grows fast are thereby made easy.
+the failure distribution in the per-hard-token regime. We analyze the
+polylog conclusion symbolically under several cluster-count laws
+(logarithmic discovery, Heaps, saturating) and find it robust across the
+family, though the specific doubly-logarithmic rate is the optimistic
+special case. Prominent steep-decay counter-evidence (Dziri et al.,
+2023; Kuratov et al., 2024; Kwa et al., 2025), re-audited here, decays
+over variables other than raw token length --- compositional graph size,
+fact count, log-time horizon. This relocates rather than dissolves the
+practical worry: the framework identifies which interventions help
+(capability provisioning along the actual decay axis) and which do not,
+but does not claim the regimes where \(k_{\text{hard}}\) grows fast are
+thereby made easy.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -130,10 +130,10 @@ exponential. If every token has independent error probability \(e\),
 then after \(n\) tokens the chance of a fully correct output is
 \((1-e)^n\), which collapses to zero for any nontrivial \(e\) and large
 enough \(n\) (LeCun, 2023; Dziri et al., 2023). In our previous paper
-(Arbuzov, Shvets, \& Bei, 2025) we argued that this worry is misplaced
-because errors are not distributed uniformly across tokens. Empirical
-work (Fang et al., 2024) shows that only 5--10\% of tokens are ``key''
---- genuinely dependent on long-range context --- while the remaining
+(Arbuzov et al., 2025) we argued that this worry is misplaced because
+errors are not distributed uniformly across tokens. Empirical work (Fang
+et al., 2025) shows that only 5--10\% of tokens are ``key'' ---
+genuinely dependent on long-range context --- while the remaining
 majority become nearly deterministic once enough context accumulates.
 Replacing \((1-e)^n\) with the two-rate model
 
@@ -153,17 +153,18 @@ live. The natural follow-up question is \emph{what} they are. Recent
 failure-mode atlases supply a striking empirical answer: errors are not
 only sparse, they are also \emph{repetitive}. The ErrorAtlas project
 (Ashury-Tahan et al., 2026), covering 83 models across 35 datasets,
-finds that the top five of seventeen named failure categories account
-for 53.6\% of all observed errors and the top ten for over 80\%. In
-code, two error types (\texttt{AssertionError} and \texttt{NameError})
-cover 86.35\% of failures on HumanEval across 14 LLMs, a result
-replicated across 23 models on HumanEval Pro and MBPP Pro (Zhang et al.,
-2024). In math, the top four categories per model capture 45--55\% of
-errors across 15 LLMs and four benchmark datasets, with the same
-hierarchy across models (Sun et al., 2025). The same picture appears in
-multi-hop QA (Weakest Link Law authors, 2026), agentic tool use (MAST
-authors, 2025), and retrieval-augmented generation (Acurai authors,
-2024).
+organises observed failures into 17 named categories sorted by
+prevalence, with a long-tailed distribution heavily concentrated in the
+head. In code, two error types (\texttt{AssertionError} and
+\texttt{NameError}) cover 86.35\% of failures on HumanEval across 14
+LLMs, a result replicated across 23 models on HumanEval Pro and MBPP Pro
+(Wen et al., 2024). In math, MWPES-300K (Sun et al., 2025) categorises
+304,865 errors from 15 LLMs across four math word-problem datasets and
+reports that dataset characteristics shape error patterns
+systematically, with a small number of dominant categories per model.
+The same picture appears in multi-hop QA (Zhang et al., 2026), agentic
+tool use (Cemri et al., 2025), and retrieval-augmented generation (Wood
+\& Forbes, 2024).
 
 These observations suggest a third layer in the reliability
 architecture, complementing key-token sparsity (Layer 1) and the
@@ -180,13 +181,13 @@ If failure modes form a small, slowly-growing catalogue, then targeted
 interventions become a viable engineering strategy. Each recurring mode
 admits a specific countermeasure: arithmetic errors fall to a Python
 interpreter (Gao et al., 2022; Chen et al., 2022; Gou et al., 2023);
-format violations to constrained decoding (Suresh et al., 2025; SLOT
-authors, 2025); hallucinations to retrieval augmentation, with one paper
-reporting 100\% elimination on RAGTruth (Acurai authors, 2024; 95\% CI
-91--100\%, benchmark-conditional --- not a by-construction guarantee for
-RAG in general); over-refusals to preference optimisation (Karaman et
-al., 2024); tool-call errors to structured uncertainty (Suri et al.,
-2025). We collect twelve such categories with quantitative ``one
+format violations to constrained decoding (Suresh et al., 2025; Wang D.
+Y.-B. et al., 2025); hallucinations to retrieval augmentation, with one
+paper reporting 100\% elimination on RAGTruth (Wood \& Forbes, 2024;
+95\% CI 91--100\%, benchmark-conditional --- not a by-construction
+guarantee for RAG in general); over-refusals to preference optimisation
+(Karaman et al., 2024); tool-call errors to structured uncertainty (Suri
+et al., 2025). We collect twelve such categories with quantitative ``one
 cluster, one intervention'' results in Section 4.2.
 
 The natural question becomes: how many interventions are enough? If new
@@ -228,8 +229,8 @@ cluster-selective capability interventions (Section 4.2), and sublinear
 length scaling (Section 4.3) --- drawing on approximately sixty prior
 published results, including a six-axis capability-elimination harvest
 with 28 GOLD-tier citations. And it re-audits the most-cited steep-decay
-results (Dziri et al., 2023; Kuratov et al., 2024; METR, 2025; Wan et
-al., 2025), showing that each decays over a variable other than raw
+results (Dziri et al., 2023; Kuratov et al., 2024; Kwa et al., 2025; Wan
+et al., 2025), showing that each decays over a variable other than raw
 token length and so is compatible with the sublinear-in-\(n\) thesis.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
@@ -243,27 +244,29 @@ The systematic cataloguing of LLM failures has reached maturity across
 several domains in the last two years. ErrorAtlas (Ashury-Tahan et al.,
 2026) provides the largest cross-domain taxonomy to date: 83 models
 evaluated on 35 datasets yield approximately 7,000 sampled failures
-organised into 17 named categories, with the top-5/top-10 cumulative
-coverage figures cited above. MWPES-300K (Sun et al., 2025) takes the
-math domain deeper, with 304,865 categorised errors from 15 LLMs across
-four math word-problem datasets and a strict per-model decomposition
-that shows the same top-4 categories dominating across models --- a
-striking dataset-invariance result that we use heavily in Section 4.1.
-For code, Zhang et al.~(2024) categorise 12,837 errors from 14 LLMs on
-HumanEval, then replicate the dominant-category hierarchy on 23 models
-across HumanEval Pro and MBPP Pro. The RFMDataset (RFM authors, 2025)
-explicitly tests cross-model invariance and reports ``strikingly similar
-failure mode distributions'' across 10 open-source models.
+organised into 17 named categories sorted by prevalence (the source's
+Table 1), with a long-tailed, head-concentrated distribution. MWPES-300K
+(Sun et al., 2025) takes the math domain deeper, with 304,865
+categorised errors from 15 LLMs across four math word-problem datasets
+and a strict per-model decomposition that shows the same top-4
+categories dominating across models --- a striking dataset-invariance
+result that we use heavily in Section 4.1. For code, Wen et al.~(2024)
+categorise 12,837 errors from 14 LLMs on HumanEval, then replicate the
+dominant-category hierarchy on 23 models across HumanEval Pro and MBPP
+Pro. The RFMDataset (Guo et al., 2025) explicitly tests cross-model
+invariance and reports ``strikingly similar failure mode distributions''
+across 10 advanced reasoning models (three open-source and seven
+proprietary).
 
 Beyond general-purpose evaluations, domain-specific taxonomies exist for
 multi-hop QA (the Weakest Link Law authors (2026) show that multi-hop
 performance collapses to the least-visible-evidence bucket on MuSiQue
-and NeoQA), for multi-agent systems (MAST authors, 2025), and for
-tool-augmented agents (\(\tau\)-bench authors, 2024). The convergent
-finding across all these is the same: at any given corpus size, the
-number of distinct named modes is small (typically 8--20), and the
-cumulative coverage of the top modes is high. This is the empirical
-phenomenon our theoretical framework aims to model.
+and NeoQA), for multi-agent systems (Cemri et al., 2025), and for
+tool-augmented agents (Yao et al., 2024). The convergent finding across
+all these is the same: at any given corpus size, the number of distinct
+named modes is small (typically 8--20), and the cumulative coverage of
+the top modes is high. This is the empirical phenomenon our theoretical
+framework aims to model.
 
 \subsubsection{2.2 Targeted interventions}\label{targeted-interventions}
 
@@ -275,23 +278,25 @@ GSM-Hard accuracy from 20.1\% (chain-of-thought) to 61.5\% (+41.4 pp),
 with PoT (Chen et al., 2022) and ToRA (Gou et al., 2023) extending the
 technique to broader math and financial reasoning. Constrained decoding
 has effectively eliminated the format-violation cluster: DINGO (Suresh
-et al., 2025) reports up to +68 pp on JSON-generation benchmarks, and
-SLOT (SLOT authors, 2025) achieves 99.5\% schema accuracy while
-preserving 94\% content similarity. Execution feedback closes most of
-the code-error cluster: Reflexion (Shinn et al., 2023) improves
-HumanEval pass@1 from 80\% to 91\%, and AgentCoder (Huang et al., 2023)
-pushes it to 96.3\%. Process reward models substantially reduce
-step-level reasoning errors: Math-Shepherd (Wang P. et al., 2023) raises
-MATH performance from 28.6\% to 43.5\%, and Let's Verify Step by Step
-(Lightman et al., 2023) reports 78\% on the MATH test set under process
-supervision. Retrieval-augmented generation is the most studied of all:
-Acurai (Acurai authors, 2024) reports 100\% hallucination elimination on
-RAGTruth, with corroborating clinical and legal results elsewhere.
-Preference optimisation closes the over-refusal gap: POROver (Karaman et
-al., 2024) lifts the not-overrefused rate from 57.6\% to 82.1\% while
-preserving 97.9\% safety. Structured uncertainty fixes most tool-call
-failures: SAGE-Agent (Suri et al., 2025) raises When2Call accuracy from
-36.5\% to 65.2\%.
+et al., 2025) reports up to +68 percentage points on combined
+symbolic-math and JSON-generation benchmarks, and SLOT (Wang D. Y.-B. et
+al., 2025) achieves 99.5\% schema accuracy while preserving 94\% content
+similarity. Execution feedback closes most of the code-error cluster:
+Reflexion (Shinn et al., 2023) improves HumanEval pass@1 from 80\% to
+91\%, and AgentCoder (Huang et al., 2023) pushes it to 96.3\%. Process
+reward models substantially reduce step-level reasoning errors:
+Math-Shepherd (Wang P. et al., 2023) raises Mistral-7B MATH accuracy
+from 28.6\% to 33.0\% under step-by-step PPO and to 43.5\% when the same
+reward model is used for verification reranking on top, and Let's Verify
+Step by Step (Lightman et al., 2023) reports 78\% on the MATH test set
+under process supervision. Retrieval-augmented generation is the most
+studied of all: Acurai (Wood \& Forbes, 2024) reports 100\%
+hallucination elimination on RAGTruth, with corroborating clinical and
+legal results elsewhere. Preference optimisation closes the over-refusal
+gap: POROver (Karaman et al., 2024) lifts the not-overrefused rate from
+57.6\% to 82.1\% while preserving 97.9\% safety. Structured uncertainty
+fixes most tool-call failures: SAGE-Agent (Suri et al., 2025) raises
+When2Call accuracy from 36.5\% to 65.2\%.
 
 Two recurring observations from this literature inform our theoretical
 framework. First, each intervention is \emph{cluster-specific}: the
@@ -300,13 +305,17 @@ not to the targeted one. Reflexion residuals are
 specification-misinterpretation errors, not execution errors;
 constrained-decoding residuals are semantic errors within valid
 structure, not format violations. This is the empirical signature of the
-cluster-orthogonality property that anchors Section 4.2. Second,
-\emph{additivity is approximate but not perfect}. The Six Sigma Agent
-framework reports compound reliability gains of \(14{,}700\times\) when
-interventions target orthogonal failure modes (Six Sigma authors, 2026),
-but Le (2026) shows that schema-level and prompt-level instructions
-interact non-additively when they share a prompt channel. We handle this
-caveat directly in Section 5.
+cluster-orthogonality property that anchors Section 4.2 --- though, more
+precisely, the empirical evidence supports \emph{selectivity}
+(post-intervention residuals shift outside the targeted class) rather
+than literal orthogonality (perfect independence of failure classes);
+the framework only requires the former. Second, \emph{additivity is
+approximate but not perfect}. The Six Sigma Agent framework reports
+compound reliability gains of \(14{,}700\times\) when interventions
+target orthogonal failure modes (Patel et al., 2026), but Le (2026)
+shows that schema-level and prompt-level instructions interact
+non-additively when they share a prompt channel. We handle this caveat
+directly in Section 5.
 
 \subsubsection{2.3 Length-decay benchmarks and their
 interpretation}\label{length-decay-benchmarks-and-their-interpretation}
@@ -341,12 +350,12 @@ theoretically that ``the probability of incorrect predictions converges
 exponentially to \(\approx 1\) for abstract compositional tasks.''
 BABILong (Kuratov et al., 2024) reports that ``popular LLMs effectively
 utilise only 10--20\% of the context and performance declines sharply
-with increased reasoning complexity.'' METR (METR, 2025) reports that
-the 80\%-success horizon is 4--6× shorter than the 50\%-success horizon,
-suggesting a steep within-model reliability cliff. The Fano-style upper
-bound of Wan et al.~(2025) explicitly theorises super-linear
-information-demand growth and identifies an ``accuracy cliff'' at
-capacity overflow.
+with increased reasoning complexity.'' METR (Kwa et al., 2025) reports
+that the 80\%-success horizon is 4--6× shorter than the 50\%-success
+horizon, suggesting a steep within-model reliability cliff. The
+Fano-style upper bound of Wan et al.~(2025) explicitly theorises
+super-linear information-demand growth and identifies an ``accuracy
+cliff'' at capacity overflow.
 
 The apparent tension between these two camps dissolves on careful
 reading: every paper in the second group decays over a variable distinct
@@ -448,15 +457,16 @@ key-token \emph{decisions} are hard, not what fraction of \emph{observed
 errors} fall into the most common named categories. Failure-mode atlases
 report \(\Pr(\text{category} \mid \text{error occurred})\), which is a
 different conditional from
-\(\Pr(\text{hard} \mid \text{key-token decision})\). The ErrorAtlas
-top-5-of-17 figure (53.6\%), the MWPES top-4 dominance (45--55\%), and
-the HumanEval two-class coverage (86\%) are all consistent with
-\(\beta\) being non-trivial --- they show failures are concentrated when
-failures occur --- but they do not pin down \(\beta\). A more
-identifying measurement would require ablating model confidence at
-predicted decision boundaries, which the literature has not done at
-scale. We therefore carry \(\beta\) symbolically through the rest of the
-framework and report all downstream conclusions parametrically.
+\(\Pr(\text{hard} \mid \text{key-token decision})\). The qualitative
+head-concentration reported by ErrorAtlas (17 categories sorted by
+prevalence) and MWPES (dominant categories per model) and the HumanEval
+two-class coverage (86.35\%) are all consistent with \(\beta\) being
+non-trivial --- they show failures are concentrated when failures occur
+--- but they do not pin down \(\beta\). A more identifying measurement
+would require ablating model confidence at predicted decision
+boundaries, which the literature has not done at scale. We therefore
+carry \(\beta\) symbolically through the rest of the framework and
+report all downstream conclusions parametrically.
 
 \subsubsection{3.2 Empirical postulate: logarithmic mode
 discovery}\label{empirical-postulate-logarithmic-mode-discovery}
@@ -546,7 +556,7 @@ large-scale taxonomies:
   \(A = 0\) as a conservative anchor,
   \(\sigma \approx 17 / \ln(10^4) \approx 1.85\).
 \item
-  HumanEval (Zhang et al., 2024): \(k_{\text{hard}} \approx 10^4\),
+  HumanEval (Wen et al., 2024): \(k_{\text{hard}} \approx 10^4\),
   \(|C| \in [8, 12]\) named modes, \(\sigma \in [0.87, 1.30]\).
 \item
   MWPES (Sun et al., 2025): \(k_{\text{hard}} \approx 3 \times 10^5\),
@@ -569,27 +579,32 @@ unit conversion, simple counting, list manipulation, and date
 arithmetic, while leaving residual failures in problem representation
 and code synthesis. A single constrained decoder eliminates by
 construction the format-violation cluster and the structural component
-of ``missing required element'' (ErrorAtlas's largest category at
-15.56\%), because schemas with required fields cannot omit those fields.
-Postulate 1's \(\sigma \approx 1.85\), calibrated against the raw
-17-category taxonomy, is therefore a conservative input for the
-engineering question. When interventions cover \emph{sets} of L2
-categories, the formal coverage problem becomes weighted set cover (with
-weights given by category mass); Proposition 1's ranked-category form is
-a tractable proxy for that problem, and the practical capability library
-required to hit a given coverage target is generally smaller than the
-formula's \(m\). We do not claim the polylog conclusion holds \emph{a
-fortiori} in a formal-optimality sense --- that would require a
-set-cover argument we do not develop here. We claim only that the
-ranked-category bound is a conservative approximation to the set-cover
-quantity that matters in practice.
+of ``missing required element'' --- one of the most prevalent categories
+in ErrorAtlas's published prevalence ordering --- because schemas with
+required fields cannot omit those fields. Postulate 1's
+\(\sigma \approx 1.85\), calibrated against the raw 17-category
+taxonomy, is therefore a conservative input for the engineering
+question. When interventions cover \emph{sets} of L2 categories, the
+formal coverage problem becomes weighted set cover (with weights given
+by category mass); Proposition 1's ranked-category form is a tractable
+proxy for that problem, and the practical capability library required to
+hit a given coverage target is generally smaller than the formula's
+\(m\). We do not claim the polylog conclusion holds \emph{a fortiori} in
+a formal-optimality sense --- that would require a set-cover argument we
+do not develop here. We claim only that the ranked-category bound is a
+conservative approximation to the set-cover quantity that matters in
+practice.
 
 \textbf{Robustness.} The qualitative claim that follows in Section 3.4
 is robust to the choice between Heaps' law (power-law) and logarithmic
 discovery: as long as \(|C|\) grows sublinearly in \(k_{\text{hard}}\)
-with an exponent less than one (or strictly slower), the resulting
-intervention-budget bound is polylogarithmic in \(n\). We discuss the
-Heaps variant explicitly in Section 3.5.
+\textbf{and \(k_{\text{hard}}\) is itself polylogarithmic in \(n\)} (the
+\(k = \Theta(\log n)\) regime of Arbuzov et al., 2025, §3.1), the
+resulting intervention-budget bound is polylogarithmic in \(n\). If
+\(k_{\text{hard}}\) grows as a positive power of \(n\), the Heaps
+variant inherits that power and the polylog conclusion fails along the
+corresponding axis. We discuss the Heaps variant explicitly in Section
+3.5.
 
 \textbf{Domain patches cap the available catalogue.} Postulate 1
 describes how the \emph{count} of named modes grows with sampled
@@ -670,30 +685,35 @@ themselves.
 For Zipf-distributed pattern frequencies with exponent \(s = 1\), the
 discrete cumulative mass is \(H_m / H_{|C|}\) where
 \(H_j = \sum_{i=1}^{j} 1/i\) is the harmonic number. For our ErrorAtlas
-anchor (\(|C| = 17\), \(m = 5\)), this gives
-\(H_5 / H_{17} \approx 66.4\%\), which overestimates the observed
-coverage of 53.6\%.
-
-A closer empirical fit to the ErrorAtlas data is
+anchor (\(|C| = 17\), \(m = 5\)), the Zipf cumulative gives
+\(H_5 / H_{17} \approx 66.4\%\). A more conservative, slower-rising
+closed form is the log-coverage curve
 
 \[
 F(m; |C|) = \min\!\left(1,\ \frac{\ln m}{\ln |C|}\right),
 \]
 
 which yields \(F(5; 17) \approx 56.8\%\) and
-\(F(10; 17) \approx 81.3\%\), matching the observed 53.6\% and 80\%+
-within three percentage points. This is a convenient empirical-fit form
-among several plausible candidates --- not a derived consequence of Zipf
-and not a privileged choice on theoretical grounds. Alternative
+\(F(10; 17) \approx 81.3\%\) --- concentrating less mass in the
+top-\(m\) head than the Zipf cumulative at the same \(m\). We adopt this
+log-coverage form as a \emph{postulated} functional family rather than
+as an empirically-anchored fit. Although the published ErrorAtlas paper
+sorts its 17 categories by prevalence (Table 1) and reports per-category
+percentages in benchmark-specific analyses, it does not publish a single
+cross-domain cumulative top-\(m\) coverage curve at the time of writing;
+the qualitative shape (a long-tailed distribution with heavy
+concentration in the head) is what the published taxonomy reports, and
+the log-coverage form is the simplest closed expression respecting the
+\(\min(1, \cdot)\) cap, with no free parameters once \(|C|\) is fixed,
+that yields the polylog conclusion of Section 3.4. Alternative
 cumulatives (Zipf--Mandelbrot with offset, truncated power law,
-saturating exponential) can be fit to the same two anchor points with
-comparable error, and a structural preference among them is not
-available at current evidence levels. We adopt the \(\ln(m)/\ln(|C|)\)
-form for the rest of the paper because it is the simplest functional
-form that respects the \(\min(1, \cdot)\) cap and reproduces the
-ErrorAtlas anchors. Section 3.6 shows that the qualitative polylog
+saturating exponential) match the same qualitative shape with comparable
+freedom; a structural preference among them is not available at current
+evidence levels. Section 3.6 shows that the qualitative polylog
 conclusion of Proposition 1 survives across all four candidate
-cumulatives we consider.
+cumulatives we consider. Empirical anchoring of \(F(m; |C|)\) to a
+measured cumulative-coverage curve remains an explicit falsifiability
+test --- see §3.6 and §6.3.
 
 A second caveat is that \(F(m; |C|)\) counts \emph{named L2 categories
 covered}, not \emph{L4 capability axes deployed}. A single capability
@@ -705,8 +725,7 @@ a given residual threshold may be a constant factor smaller than the
 formula's prediction.
 
 \textbf{Domain of \(F\).} The log-coverage form is intended for
-\(m \geq 2\) and \(|C| \geq 2\), the range where the ErrorAtlas top-5 /
-top-10 anchors sit. We adopt the empirical conventions
+\(m \geq 2\) and \(|C| \geq 2\). We adopt the empirical conventions
 \(F(0; |C|) := 0\) (no interventions cover no mass) and
 \(F(1; |C|) := p_1\), where \(p_1\) is the observed mass of the single
 most prevalent mode. The latter convention avoids the artificial
@@ -723,8 +742,9 @@ per-hard-token error rate is
 e_{\text{res}}(m) = \bigl(1 - F(m; |C|)\bigr) \cdot e_{\text{hard}}.
 \]
 
-\subsubsection{3.4 Main theorem: polylogarithmic intervention
-budget}\label{main-theorem-polylogarithmic-intervention-budget}
+\subsubsection{3.4 Main proposition: conditional polylogarithmic
+intervention
+budget}\label{main-proposition-conditional-polylogarithmic-intervention-budget}
 
 We now compose the three ingredients --- \(\beta\)-stratification, the
 patch framework of Section 3.2, and the coverage form --- with the
@@ -865,10 +885,13 @@ undertaken.
 is met whenever \(e_{\text{res}}(m) \leq \tau_{\text{seq}}\), so the
 required library size is \[
 m \;\geq\; \left\lceil |C_{\text{eff}}|^{1 - \tau_{\text{seq}} / e_{\text{hard}}} \right\rceil.
-\] As \(\varepsilon_{\text{seq}}\) shrinks toward zero,
-\(\tau_{\text{seq}} \to 0\) and the exponent approaches one, so \(m\)
-approaches \(|C_{\text{eff}}|\) --- essentially every named mode must be
-covered.
+\] As the sequence-level target tightens toward the feasibility boundary
+\(\varepsilon_{\text{seq}} \to 1 - S_{\text{base}}\) (the minimum target
+attainable inside Regime (ii)), \(\tau_{\text{seq}} \to 0\) and the
+exponent approaches one, so \(m\) approaches \(|C_{\text{eff}}|\) ---
+essentially every named mode must be covered. When
+\(S_{\text{base}} \approx 1\) this reduces to the familiar
+\(\varepsilon_{\text{seq}} \to 0\) limit.
 
 \emph{Regime (iii): \(\tau_{\text{seq}} \geq e_{\text{hard}}\).} The
 sequence-level target is already met at the baseline hard-token rate
@@ -949,13 +972,18 @@ sequence. The candidate active-catalogue laws then imply:
   constant in \(n\) once the patch ceiling is reached.
 \end{itemize}
 
-The qualitative conclusion is robust: under every candidate law, \(m\)
-grows more slowly than any positive power of \(n\), and the directional
-claim (``a small library covers the head of the failure distribution in
-the per-hard-token regime'') survives. Only the exponent shifts:
-doubly-logarithmic under logarithmic discovery, \((\log n)^b\) with
-small \(b\) under Heaps, constant in the cap regime. The
-doubly-logarithmic rate is the optimistic special case.
+The qualitative conclusion is robust \textbf{under the
+\(k(n) = \Theta(\log n)\) regime adopted throughout}: \(m\) then grows
+more slowly than any positive power of \(n\) under every candidate law
+above, and the directional claim (``a small library covers the head of
+the failure distribution in the per-hard-token regime'') survives. Only
+the exponent shifts: doubly-logarithmic under logarithmic discovery,
+\((\log n)^b\) with small \(b\) under Heaps, constant in the cap regime.
+The doubly-logarithmic rate is the optimistic special case. If \(k(n)\)
+grows as a positive power of \(n\), the Heaps variant inherits that
+power and the polylog-in-\(n\) language fails along that axis --- the
+framework's intervention prescription still applies, but its
+asymptotic-rate framing does not.
 
 Numerical constants require a measured discovery curve
 \(C_{\text{seen},D}(T)\) or \(C_{\text{active},D}(n)\). Existing
@@ -985,11 +1013,16 @@ clustering}\label{claim-a-failure-mode-clustering}
 
 \textbf{Cross-domain concentration.} The strongest single result is
 ErrorAtlas (Ashury-Tahan et al., 2026). Across 83 models and 35
-datasets, with approximately 7,000 sampled failures, just five of the
-seventeen named categories account for 53.6\% of all errors, and ten of
-seventeen for over 80\%. The category set is fixed in advance; the
-cumulative coverage curve is what models and datasets produce when
-binned into it.
+datasets, with approximately 7,000 sampled failures, the taxonomy
+resolves to 17 named categories sorted by prevalence (Table 1 of the
+source). The published category set is fixed in advance, and the
+empirical prevalence distribution is heavily long-tailed: a handful of
+categories --- including ``Missing Required Element'', ``Logical
+Reasoning Error'', and ``Computation Error'' --- dominate the failure
+mass, while the remaining categories account for progressively smaller
+residuals. A measured cross-domain cumulative top-\(m\) coverage curve
+has not yet been published by the source; this is the explicit empirical
+test we flag for the log-coverage form of §3.3.
 
 \textbf{Domain-specific Paretos.} The cross-domain picture is reproduced
 at finer grain within each domain:
@@ -998,30 +1031,36 @@ at finer grain within each domain:
 \tightlist
 \item
   \textbf{Math.} MWPES-300K (Sun et al., 2025) categorises 304,865
-  errors from 15 LLMs across four math word-problem datasets. Per-model,
-  the top four categories capture 45--55\% of errors. Critically, the
-  \emph{same} top-four set appears across all 15 models --- a
-  dataset-invariance result.
+  errors from 15 LLMs across four math word-problem datasets. The
+  published per-model error breakdowns place per-category prevalence in
+  single-digit-to-mid-teens-percent ranges (e.g., ``Misunderstanding of
+  problem requirements'' at 4.83--14.60\% across models;
+  ``Miscalculation during algebraic manipulation'' at 5.03--13.18\%); a
+  small set of dominant categories accounts for the bulk of mass on each
+  model, and ``dataset characteristics significantly shape error
+  patterns'' (Sun et al., 2025). Whether the \emph{identical} top-\(k\)
+  category set recurs across all 15 models, and the exact cross-model
+  cumulative coverage of that top-\(k\) set, are claims we leave to the
+  source paper's tables rather than re-state.
 \item
-  \textbf{Code.} Zhang et al.~(2024) categorise 12,837 errors from 14
-  LLMs on HumanEval. \texttt{AssertionError} and \texttt{NameError}
-  alone capture 86.35\% of failures. The dominant-category hierarchy
+  \textbf{Code.} Wen et al.~(2024) categorise 12,837 errors from 14 LLMs
+  on HumanEval. \texttt{AssertionError} and \texttt{NameError} alone
+  capture 86.35\% of failures. The dominant-category hierarchy
   replicates across 23 models on HumanEval Pro and MBPP Pro.
 \item
-  \textbf{Multi-hop QA.} The Weakest Link Law (Weakest Link authors,
-  2026) shows multi-hop performance on MuSiQue and NeoQA collapsing to
-  the least-visible-evidence bucket --- a single dominant failure mode
+  \textbf{Multi-hop QA.} The Weakest Link Law (Zhang et al., 2026) shows
+  multi-hop performance on MuSiQue and NeoQA collapsing to the
+  least-visible-evidence bucket --- a single dominant failure mode
   (missing evidence retrieval) accounting for most errors across
   question types.
 \item
-  \textbf{Agentic / tool use.} MAST (MAST authors, 2025) and
-  \(\tau\)-bench (TauBench authors, 2024) document recurring failure
-  modes in tool-augmented agents (tool selection, parameter
-  disambiguation, intermediate state loss). The mode count is small
-  (under twenty in each study) and the cumulative coverage of the top
-  modes is high.
+  \textbf{Agentic / tool use.} MAST (Cemri et al., 2025) and
+  \(\tau\)-bench (Yao et al., 2024) document recurring failure modes in
+  tool-augmented agents (tool selection, parameter disambiguation,
+  intermediate state loss). The mode count is small (under twenty in
+  each study) and the cumulative coverage of the top modes is high.
 \item
-  \textbf{Retrieval-augmented generation.} Acurai (Acurai authors, 2024)
+  \textbf{Retrieval-augmented generation.} Acurai (Wood \& Forbes, 2024)
   on RAGTruth and follow-on clinical/legal RAG work all report that
   hallucinations cluster into a handful of distinguishable modes
   (citation hallucination, context-stitching errors, retrieval-context
@@ -1030,9 +1069,10 @@ at finer grain within each domain:
 
 \textbf{Cross-model invariance.} The same top categories appear across
 very different models. ErrorAtlas reports a stable category hierarchy
-across 83 models. RFMDataset (RFM authors, 2025) explicitly tests
+across 83 models. RFMDataset (Guo et al., 2025) explicitly tests
 invariance and reports ``strikingly similar failure mode distributions''
-across 10 open-source models. EDIT (Dai et al., 2025) finds an explicit
+across 10 advanced reasoning models (three open-source and seven
+proprietary). EDIT (Dai et al., 2025) finds an explicit
 \(\approx 4.7\%\) key-step fraction across reasoning chains and across
 models, with stable category labels.
 
@@ -1045,12 +1085,13 @@ result: the failure side of LLM behaviour is intrinsically heavy-tailed.
 
 The aggregate picture is what Postulate 1 of Section 3.2 is designed to
 capture: LLM errors are not a long uniform tail but a short, repeating
-list. The ErrorAtlas \(|C| = 17\) with 80\% top-10 coverage is the
-cleanest summary; per-domain Paretos show the same shape inside each
-domain; the cross-model invariance shows the catalogue is stable.
+list. The ErrorAtlas \(|C| = 17\) with a long-tailed, head-concentrated
+prevalence ordering is the cleanest summary; per-domain Paretos show the
+same shape inside each domain; the cross-model invariance shows the
+catalogue is stable.
 
-\subsubsection{4.2 Claim B: Cluster-orthogonal
-interventions}\label{claim-b-cluster-orthogonal-interventions}
+\subsubsection{4.2 Claim B: Cluster-selective capability
+interventions}\label{claim-b-cluster-selective-capability-interventions}
 
 The intervention literature provides at least one targeted
 countermeasure for each named cluster of Section 4.1, almost always with
@@ -1121,12 +1162,13 @@ expectation rather than identically.
 \textbf{Pattern C --- Moderate reductions (60--80\%) with residuals
 shifting outside the target class.} Several citations: Legal RAG
 (Dantart, 2026) reduces fabricated citations from \textgreater30\% to
-\textless0.2\%; SimpleQA web search (OpenAI, 2025) cuts factual errors
-from 47\% to 9.6\%; CRITIC toxicity (Gou et al., 2024) reduces toxic
-generation by 79.2\%. Residuals shift toward reasoning / planning errors
-rather than inflating the targeted class. This is the regime where the
-framework's ``selectivity'' claim is supported but does not rise to
-elimination.
+\textless0.2\%; enabling web search on GPT-5 reduces SimpleQA factual
+errors from 47\% (offline) to 9.6\% (with web access enabled) --- an
+inter-condition comparison, not a within-condition before/after (OpenAI,
+2025); CRITIC toxicity (Gou et al., 2024) reduces toxic generation by
+79.2\%. Residuals shift toward reasoning / planning errors rather than
+inflating the targeted class. This is the regime where the framework's
+``selectivity'' claim is supported but does not rise to elimination.
 
 The tier boundaries matter for what the paper claims. Pattern A admits
 the strongest rhetoric (``by construction'', ``mathematically empty'').
@@ -1163,8 +1205,8 @@ Pattern
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Verification & DeepSeek-Prover-V2 (2025) & Invalid Lean proof & any →
-0\% by construction & A \\
+Verification & DeepSeek-Prover-V2 (Ren et al., 2025) & Invalid Lean
+proof & any → 0\% by construction & A \\
 Format & OpenAI Structured Outputs (2024) & JSON schema violation &
 \textgreater60\% → 0\% by construction & A \\
 Format & ToolDec (Zhang et al., 2023) & Tool-call syntax error &
@@ -1185,21 +1227,22 @@ Knowledge/RAG & Acurai (2024) & Context-conflict hallucinations & 100\%
 → 0\% on conflict subset & B \\
 Knowledge/RAG & Rigorous Archivist (Dantart, 2026) & Fabricated legal
 citations & \textgreater30\% → \textless0.2\% & C \\
-Code Exec & LlmFix (Zhang et al., 2024) & SyntaxError (HumanEval) &
-5.76\% → 0.01\% & A \\
+Code Exec & LlmFix (Wen et al., 2024) & SyntaxError (HumanEval) & 5.76\%
+→ 0.01\% & A \\
 Code Exec & AlphaCode (Li et al., 2022) & False-positive submissions &
 62\% → 4\% & B \\
 Code Exec & MGDebugger (Shi et al., 2024) & 5 code-bug classes & 100\%
 repair (5/6 classes) & B \\
-Knowledge/RAG & ALCE (Gao et al., 2023) & Citation grounding errors &
-73\% ungrounded → 15\% & C \\
-Knowledge/RAG & GPT-5 SimpleQA (OpenAI, 2025) & Factual errors (web QA)
-& 47\% → 9.6\% & C \\
+Knowledge/RAG & ALCE (Gao et al., 2023) & Citation grounding (ELI5) &
+best models leave \textasciitilde50\% of statements without complete
+citation support & C \\
+Knowledge/RAG & GPT-5 SimpleQA (OpenAI, 2025) & Factual errors & 47\%
+offline → 9.6\% with web access enabled & C \\
 Knowledge/RAG & Almanac (NEJM AI 2024) & Clinical citation errors & 44\%
 → 9\% & C \\
-Arithmetic & MedRaC (Wang Z. et al., 2025) & Arithmetic in medical
+Arithmetic & MedRaC (Wang B. et al., 2025) & Arithmetic in medical
 reasoning & 426 → 74 errors & B \\
-Code Exec & LlmFix NameError (Zhang et al., 2024) & NameError repair &
+Code Exec & LlmFix NameError (Wen et al., 2024) & NameError repair &
 22.7\% → 2.3\% & C \\
 Perception & UGround (Gou et al., 2025) & GUI grounding errors & 16.2\%
 → 73.3\% accuracy & B \\
@@ -1212,7 +1255,8 @@ Perception & DePlot (Liu et al., 2023) & Chart-reading errors & 38.2\% →
 Verification & CRITIC toxicity (Gou et al., 2024) & Toxic generation &
 79.2\% reduction & C \\
 Verification & Math-Shepherd (Wang P. et al., 2023) & Reasoning step
-errors on MATH & 28.6\% → 43.5\% & B \\
+errors on MATH (Mistral-7B) & 28.6\% → 33.0\% (PPO); 43.5\% with
+verification reranking & B \\
 Knowledge/RAG & Self-RAG (Asai et al., 2024) & Unsupported facts &
 55.5\% → 22\% error & B \\
 Perception & OmniParser (Lu et al., 2024) & Icon / element errors &
@@ -1231,9 +1275,9 @@ the execution-error component of arithmetic (cluster A), unit conversion
 five named classes under one provisioning, with residual failures
 shifting to problem representation and code synthesis. Constrained
 decoding eliminates by construction both format violations (D) and the
-structural component of ``missing required elements'' (the largest
-single ErrorAtlas category at 15.56\%, our Category I), because schemas
-with \texttt{required:\ {[}...{]}} fields cannot omit those fields. Code
+structural component of ``missing required elements'' (one of the most
+prevalent ErrorAtlas categories, our Category I), because schemas with
+\texttt{required:\ {[}...{]}} fields cannot omit those fields. Code
 execution feedback strongly reduces SyntaxError, NameError, and most
 TypeError (three subclasses of cluster E) together. RAG strongly reduces
 factual hallucinations (J), fabricated citations, and outdated
@@ -1292,8 +1336,8 @@ natively) & --- & --- & (Folded) & --- \\
 C. Counting / enumeration & Arithmetic & Explicit counter (research gap)
 & --- & --- & Gap & Mechanistic interp. work \\
 D. Format / schema violation & Format/Structure & Constrained decoding
-(DINGO, SLOT) & baseline → +68 pp; 99.5\% schema acc. & +68 pp & Strong
-& Suresh et al., 2025; SLOT authors, 2025 \\
+(DINGO, SLOT) & up to +68 pp (math+JSON benchmarks); 99.5\% schema acc.
+& +68 pp & Strong & Suresh et al., 2025; Wang D. Y.-B. et al., 2025 \\
 E. Code logic / type / null & Code Exec & REPL feedback (Reflexion,
 AgentCoder) & 80\% → 96.3\% pass@1 & +16.3 pp & Strong & Shinn et al.,
 2023 \\
@@ -1301,7 +1345,8 @@ F. Multi-hop decomposition drift & Knowledge/RAG & Entity-grounded
 rewriter (ChainRAG) & consistent gains across 3 benchmarks &
 \$\sim\$5--10 pp & Medium & Zhu et al., 2025 \\
 G. Reasoning step errors & Verification & Process reward model
-(Math-Shepherd) & 28.6\% → 43.5\% & +14.9 pp & Strong & Wang P. et al.,
+(Math-Shepherd) & Mistral-7B MATH: 28.6\% → 33.0\% (PPO); → 43.5\% with
+verification reranking & +4.4 / +14.9 pp & Strong & Wang P. et al.,
 2023 \\
 H. Specification misinterpretation & (semantic residual) & Clarification
 loops (AmbigNLG) & ROUGE-L +15; compliance 86\% → 94\% & +8 pp & Medium
@@ -1310,8 +1355,8 @@ I. Missing required elements & Format/Structure & Reframed as Category D
 for structural, G/H for semantic & (subsumed) & --- & Reframed & This
 work \\
 J. Hallucination / factual errors & Knowledge/RAG & RAG query
-reformatting (Acurai) & non-zero → 0\% & \(-100\%\) & Strong & Acurai
-authors, 2024 \\
+reformatting (Acurai) & non-zero → 0\% & \(-100\%\) & Strong & Wood \&
+Forbes, 2024 \\
 K. Inappropriate refusal & Verification & Preference optimisation
 (POROver) & 57.6\% → 82.1\% & +24.5 pp & Strong & Karaman et al.,
 2024 \\
@@ -1345,17 +1390,17 @@ loop.
 
 Format violations admit something stronger still: a mathematical
 guarantee. DINGO (Suresh et al., 2025) reports up to +68 percentage
-points on JSON-generation tasks. SLOT (SLOT authors, 2025) reaches
-99.5\% schema accuracy with 94\% content similarity --- the cluster is
-essentially gone. A systematic evaluation of four production frameworks
-(Guidance, Outlines, Llamacpp, XGrammar) by JSONSchemaBench (Geng et
-al., 2025) reports coverage up to 0.96 on real-world schemas. The
-mechanism is uniform across the family: zero out the logits of
-grammar-violating tokens at each decoding step and the violations cannot
-occur.
+points on combined symbolic-math and JSON-generation benchmarks. SLOT
+(Wang D. Y.-B. et al., 2025) reaches 99.5\% schema accuracy with 94\%
+content similarity --- the cluster is essentially gone. A systematic
+evaluation of four production frameworks (Guidance, Outlines, Llamacpp,
+XGrammar) by JSONSchemaBench (Geng et al., 2025) reports coverage up to
+0.96 on real-world schemas. The mechanism is uniform across the family:
+zero out the logits of grammar-violating tokens at each decoding step
+and the violations cannot occur.
 
 The hallucination result is the most striking single number in the
-harvest. Acurai (Acurai authors, 2024) --- query reformatting applied to
+harvest. Acurai (Wood \& Forbes, 2024) --- query reformatting applied to
 RAG --- reports 100\% hallucination elimination on RAGTruth for both
 GPT-4 and GPT-3.5, with a 95\% CI of 91--100\%. This is a
 benchmark-specific empirical result, not a general by-construction
@@ -1379,18 +1424,17 @@ erase.
 \paragraph{The Category-I reframing}\label{the-category-i-reframing}
 
 Of the three apparent gaps (B, C, I), Category I --- ``missing required
-elements'' --- is the most significant because it is the largest single
-category in ErrorAtlas at 15.56\% of all errors. Originally we expected
-to find a dedicated ``checklist verifier'' intervention in the
-literature; we did not. The cleanest resolution is mechanistic
-equivalence with Category D. A ``missing required element'' error is
-structurally a schema-violation where the schema's
-\texttt{required:\ {[}...{]}} field list is not satisfied. Constrained
-decoders (DINGO, SLOT, Outlines, Guidance, XGrammar) enforce schema
-constraints during decoding; with a properly specified schema, they
-mathematically \emph{cannot} produce output that omits a required field.
-SLOT's 99.5\% schema accuracy directly includes \texttt{required}
-enforcement.
+elements'' --- is the most significant because it is one of the most
+prevalent named categories in ErrorAtlas. Originally we expected to find
+a dedicated ``checklist verifier'' intervention in the literature; we
+did not. The cleanest resolution is mechanistic equivalence with
+Category D. A ``missing required element'' error is structurally a
+schema-violation where the schema's \texttt{required:\ {[}...{]}} field
+list is not satisfied. Constrained decoders (DINGO, SLOT, Outlines,
+Guidance, XGrammar) enforce schema constraints during decoding; with a
+properly specified schema, they mathematically \emph{cannot} produce
+output that omits a required field. SLOT's 99.5\% schema accuracy
+directly includes \texttt{required} enforcement.
 
 We therefore split Category I into two mechanistically distinct
 sub-clusters: (I.a) structural missing elements --- omitted JSON field,
@@ -1412,18 +1456,18 @@ literature pass or a one-day inference-only ablation would close it.
 
 \paragraph{Additivity and its limits}\label{additivity-and-its-limits}
 
-Six Sigma Agent results (Six Sigma authors, 2026) demonstrate that
-stacking interventions targeting orthogonal failure modes can produce
-large compound reliability gains. In their parallel-consensus framework,
+Six Sigma Agent results (Patel et al., 2026) demonstrate that stacking
+interventions targeting orthogonal failure modes can produce large
+compound reliability gains. In their parallel-consensus framework,
 atomic task decomposition combined with five-way majority voting yields
 a \(14{,}700\times\) improvement over a single-pass baseline on the
 authors' internal benchmark --- we read this as evidence for compound
 gains from decomposition plus consensus aggregation under their specific
 parallel-voting regime, not as a direct demonstration that heterogeneous
 cluster-targeted interventions compose additively in the absence of
-voting. AgentSquare (AgentSquare authors, 2024) similarly shows
-supra-additive gains when modules target distinct failure modes. These
-are encouraging but benchmark- and aggregation-specific.
+voting. AgentSquare (Shang et al., 2024) similarly shows supra-additive
+gains when modules target distinct failure modes. These are encouraging
+but benchmark- and aggregation-specific.
 
 There is a caveat. Le (2026) reports that schema-level and prompt-level
 instructions interact \emph{non-additively} for some model families:
@@ -1520,8 +1564,8 @@ behaviour: simple retrieval holds to 32K; complex reasoning collapses
 earlier. Neither pattern is consistent with smooth
 \((1 - \varepsilon)^n\) decay.
 
-\textbf{METR's logistic-in-log-length.} METR (METR, 2025) fits per-model
-success as a logistic function of log(human-time):
+\textbf{METR's logistic-in-log-length.} METR (Kwa et al., 2025) fits
+per-model success as a logistic function of log(human-time):
 \(S(t) = \sigma(\beta \cdot (\log t - \log h))\). Logistic-in-log is
 mathematically sublinear in length itself. The famous METR exponential
 --- capability doubling every seven months --- is an \emph{inter-model}
@@ -2005,71 +2049,71 @@ Several extensions stand out. Direct empirical measurement of the
 mode-rate constant \(\sigma\) on new domains --- agentic, scientific,
 code-in-production --- would test the cross-domain generality of
 Postulate 1 and surface outlier domains where the catalogue may grow
-faster than logarithmically. A sequence-level analogue of Proposition 1,
-replacing the per-hard-token bound with a probabilistic bound on
-sequence failure, would close the gap between Section 3.4's two regimes
-and give one-shot systems a cleaner SLA target. The deepest question is
-structural: why does mode discovery look logarithmic in the first place?
-Integration with the attention-mechanism bounds and stratified-manifold
-geometry flagged as future work in Arbuzov et al.~(2025, §6) would
-replace our empirical postulate with a derived result --- closing the
-loop between the two papers.
+faster than logarithmically. A fuller empirical sequence-level
+validation --- measuring \(S_{\text{base}}\), \(\beta\), and active-mode
+exposure directly in deployed systems --- would turn the sequence-level
+analogue of §3.4 from a formal bound into an operational SLA estimator.
+The deepest question is structural: why does mode discovery look
+logarithmic in the first place? Integration with the attention-mechanism
+bounds and stratified-manifold geometry flagged as future work in
+Arbuzov et al.~(2025, §6) would replace our empirical postulate with a
+derived result --- closing the loop between the two papers.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \subsection{References}\label{references}
 
-Acurai authors. (2024). Acurai: Query reformatting for
-hallucination-free retrieval-augmented generation. \emph{arXiv preprint
-arXiv:2412.05223}.
+Arbuzov, M. L., Bei, S., Dong, Z., Kalaev, D., \& Shvets, A. A. (2025).
+Beyond exponential decay: Rethinking error accumulation in large
+language models. \emph{arXiv preprint arXiv:2505.24187}.
 
-AgentSquare authors. (2024). AgentSquare: Modular composition for LLM
-agents. \emph{arXiv preprint arXiv:2410.06153}.
+Asai, A., Wu, Z., Wang, Y., Sil, A., \& Hajishirzi, H. (2024). Self-RAG:
+Learning to retrieve, generate, and critique through self-reflection.
+\emph{International Conference on Learning Representations (ICLR) 2024}.
+arXiv:2310.11511.
 
-Almanac authors. (2024). Almanac: Retrieval-augmented large language
-models for clinical question answering. \emph{NEJM AI}.
+Ashury-Tahan, S., Mai, Y., Bandel, E., Shmueli-Scheuer, M., \& Choshen,
+L. (2026). ErrorMap and ErrorAtlas: Charting the failure landscape of
+large language models. \emph{arXiv preprint arXiv:2601.15812}.
 
-Arbuzov, M. L., Shvets, A. A., \& Bei, S. (2025). Beyond exponential
-decay: Rethinking error accumulation in large language models.
-\emph{arXiv preprint arXiv:2505.24187}.
+Cemri, M., Pan, M. Z., Yang, S., Agrawal, L. A., Chopra, B., Tiwari, R.,
+Keutzer, K., Parameswaran, A., Klein, D., Ramchandran, K., Zaharia, M.,
+Gonzalez, J. E., \& Stoica, I. (2025). Why do multi-agent LLM systems
+fail? \emph{arXiv preprint arXiv:2503.13657}. (Introduces the MAST
+taxonomy.)
 
-Asai, A., et al.~(2024). Self-RAG: Learning to retrieve, generate, and
-critique through self-reflection. \emph{International Conference on
-Learning Representations (ICLR) 2024}. arXiv:2310.11511.
-
-Ashury-Tahan, Y., et al.~(2026). ErrorAtlas: A large-scale empirical
-atlas of LLM failure patterns across models and benchmarks. \emph{arXiv
-preprint arXiv:2601.15812}.
-
-Chen, W., Ma, X., Wang, X., \& Cohen, W. W. (2022). Program of thoughts
+Chen, W., Ma, X., Wang, X., \& Cohen, W. W. (2023). Program of thoughts
 prompting: Disentangling computation from reasoning for numerical
-reasoning tasks. \emph{arXiv preprint arXiv:2211.12588}.
+reasoning tasks. \emph{Transactions on Machine Learning Research (TMLR)
+2023}. arXiv:2211.12588.
 
-Cheng, K., et al.~(2024). SeeClick: Harnessing GUI grounding for
-advanced visual GUI agents. \emph{Proceedings of ACL 2024}.
-arXiv:2401.10935.
+Cheng, K., Sun, Q., Chu, Y., Xu, F., Li, Y., Zhang, J., \& Wu, Z.
+(2024). SeeClick: Harnessing GUI grounding for advanced visual GUI
+agents. \emph{Proceedings of ACL 2024}. arXiv:2401.10935.
 
 Costello, C., Wells, C., Grefenstette, E., \& Glaese, A. (2025). Think,
 prune, train, improve: Scaling reasoning without scaling models.
 \emph{arXiv preprint arXiv:2504.18116}.
 
-Dai, X., et al.~(2025). EDIT: Identifying key reasoning steps in
-chain-of-thought. \emph{Proceedings of ACL 2025}. arXiv:2405.19737.
+Dai, C., et al.~(2025). Capture the key in reasoning to enhance CoT
+distillation generalization. \emph{Proceedings of ACL 2025}.
+arXiv:2405.19737. (Earlier arXiv title: ``Beyond Imitation: Learning Key
+Reasoning Steps from Dual Chain-of-Thoughts in Reasoning Distillation''.
+Referred to in body as EDIT.)
 
-Dantart, J. (2026). The rigorous archivist: Source-restricted retrieval
-for fabrication-free legal citation. \emph{arXiv preprint
-arXiv:2601.15476}.
+Dantart, A. (2026). Reliability by design: Quantifying and eliminating
+fabrication risk in LLMs. From generative to consultative AI: A
+comparative analysis in the legal domain and lessons for high-stakes
+knowledge bases. \emph{arXiv preprint arXiv:2601.15476}.
 
-DeepSeek-Prover team. (2025). DeepSeek-Prover-V2: Advancing formal
-mathematical reasoning via large-scale reinforcement learning with
-verifier feedback. \emph{arXiv preprint arXiv:2504.21801}.
+Dong, Y., Ruan, C. F., Cai, Y., Lai, R., Xu, Z., Zhao, Y., \& Chen, T.
+(2025). XGrammar: Flexible and efficient structured generation engine
+for large language models. \emph{Proceedings of MLSys 2025}.
+arXiv:2411.15100. (Cited as 2024 in body.)
 
-Dong, Y., et al.~(2024). XGrammar: Efficient grammar-constrained
-decoding for large language models. \emph{arXiv preprint
-arXiv:2411.15100}.
-
-Dong, Y., et al.~(2026). XGrammar-2: Scaling schema-constrained tool
-calls. \emph{arXiv preprint arXiv:2601.04426}.
+Dong, Y., et al.~(2026). XGrammar 2: Efficient dynamic structured
+generation engine for agentic LLMs. \emph{arXiv preprint
+arXiv:2601.04426}.
 
 Dziri, N., Lu, X., Sclar, M., Li, X. L., Jiang, L., Lin, B. Y., West,
 P., Bhagavatula, C., Le Bras, R., Hwang, J. D., et al.~(2023). Faith and
@@ -2077,117 +2121,136 @@ fate: Limits of transformers on compositionality. \emph{Advances in
 Neural Information Processing Systems 36}. arXiv:2305.18654.
 
 Fang, L., Wang, Y., Liu, Z., Zhang, C., Jegelka, S., Gao, J., Ding, B.,
-\& Wang, Y. (2024). What is wrong with perplexity for long-context
+\& Wang, Y. (2025). What is wrong with perplexity for long-context
 language modeling? \emph{International Conference on Learning
-Representations (ICLR) 2025}. arXiv:2410.23771.
+Representations (ICLR) 2025}. arXiv:2410.23771. (Cited as 2024 in some
+earlier drafts; 2025 is the ICLR publication year.)
 
 Gao, L., Madaan, A., Zhou, S., Alon, U., Liu, P., Yang, Y., Callan, J.,
-\& Neubig, G. (2022). PAL: Program-aided language models.
-\emph{Proceedings of ICML 2023}. arXiv:2211.10435.
+\& Neubig, G. (2023). PAL: Program-aided language models.
+\emph{Proceedings of ICML 2023}. arXiv:2211.10435. (Cited as 2022 in
+body.)
 
-Gao, T., et al.~(2023). ALCE: Enabling large language models to generate
-text with citations. \emph{Proceedings of EMNLP 2023}. arXiv:2305.14627.
+Gao, T., Yen, H., Yu, J., \& Chen, D. (2023). Enabling large language
+models to generate text with citations. \emph{Proceedings of EMNLP
+2023}. arXiv:2305.14627. (Introduces the ALCE benchmark.)
 
-Geng, S., et al.~(2025). JSONSchemaBench: Evaluating constrained
-decoding. \emph{arXiv preprint arXiv:2501.10868}.
+Geng, S., et al.~(2025). JSONSchemaBench: A rigorous benchmark of
+structured outputs for language models. \emph{arXiv preprint
+arXiv:2501.10868}.
 
-Goodell, A., et al.~(2025). Task-specific tools for clinical
-calculations: A large language model evaluation. \emph{Nature npj
-Digital Medicine}.
+Goodell, A. J., Chu, S. N., Rouholiman, D., \& Chu, L. F. (2025). Large
+language model agents can use tools to perform clinical calculations.
+\emph{npj Digital Medicine}, 8(1), 163. DOI: 10.1038/s41746-025-01475-8.
 
-Gou, B., et al.~(2025). UGround: Navigating the digital world as humans
-do. \emph{International Conference on Learning Representations (ICLR)
-2025}. arXiv:2410.05243.
+Gou, B., Wang, R., Zheng, B., Xie, Y., Chang, C., Shu, Y., Sun, H., \&
+Su, Y. (2025). Navigating the digital world as humans do: Universal
+visual grounding for GUI agents. \emph{International Conference on
+Learning Representations (ICLR) 2025}. arXiv:2410.05243. (Introduces the
+UGround model; ICLR 2025 Oral.)
 
-Gou, Z., et al.~(2023). ToRA: A tool-integrated reasoning agent for
-mathematical problem solving. \emph{arXiv preprint arXiv:2309.17452}.
+Gou, Z., Shao, Z., Gong, Y., Shen, Y., Yang, Y., Huang, M., Duan, N., \&
+Chen, W. (2024). ToRA: A tool-integrated reasoning agent for
+mathematical problem solving. \emph{International Conference on Learning
+Representations (ICLR) 2024}. arXiv:2309.17452. (Cited as 2023 in body.)
 
-Gou, Z., et al.~(2024). CRITIC: Large language models can self-correct
-with tool-interactive critiquing. \emph{International Conference on
-Learning Representations (ICLR) 2024}. arXiv:2305.11738.
+Gou, Z., Shao, Z., Gong, Y., Shen, Y., Yang, Y., Duan, N., \& Chen, W.
+(2024). CRITIC: Large language models can self-correct with
+tool-interactive critiquing. \emph{International Conference on Learning
+Representations (ICLR) 2024}. arXiv:2305.11738.
+
+Guo, D., Liu, J., Fan, Z., He, Z., Li, H., Li, Y., Wang, Y., \& Fung, Y.
+R. (2025). Mathematical proof as a litmus test: Revealing failure modes
+of advanced large reasoning models. \emph{arXiv preprint
+arXiv:2506.17114}. (Introduces the RFMDataset.)
 
 Hsieh, C.-P., Sun, S., Kriman, S., Acharya, S., Rekesh, D., Jia, F.,
 Zhang, Y., \& Ginsburg, B. (2024). RULER: What's the real context size
-of your long-context language models? \emph{arXiv preprint
-arXiv:2404.06654}.
+of your long-context language models? \emph{Conference on Language
+Modeling (COLM) 2024}. arXiv:2404.06654.
 
 Huang, C., Zhu, G., Wang, X., Luo, Y., Ge, G., Chen, H., Yi, D., \&
 Wang, J. (2024). Recurrent context compression: Efficiently expanding
 the context window of LLM. \emph{arXiv preprint arXiv:2406.06110}.
 
-Huang, D., et al.~(2023). AgentCoder: Multi-agent-based code generation
-with iterative testing and optimisation. \emph{arXiv preprint
-arXiv:2312.13010}.
+Huang, D., Bu, Q., Zhang, J. M., Luck, M., \& Cui, H. (2023).
+AgentCoder: Multi-agent-based code generation with iterative testing and
+optimisation. \emph{arXiv preprint arXiv:2312.13010}.
 
 Jiang, H., Wu, Q., Luo, X., Li, D., Lin, C.-Y., Yang, Y., \& Qiu, L.
 (2024). LongLLMLingua: Accelerating and enhancing LLMs in long context
-scenarios via prompt compression. \emph{arXiv preprint
-arXiv:2310.06839}.
-
-Karaman, O. M., et al.~(2024). POROver: Improving safety and reducing
-over-refusal in large language models with over-refusal-aware preference
-optimization. \emph{arXiv preprint arXiv:2410.12999}.
+scenarios via prompt compression. \emph{Proceedings of ACL 2024}.
+arXiv:2310.06839.
 
 Kandpal, N., Deng, H., Roberts, A., Wallace, E., \& Raffel, C. (2023).
 Large language models struggle to learn long-tail knowledge.
-\emph{Proceedings of ACL 2023}. arXiv:2211.08411.
+\emph{Proceedings of ICML 2023}. arXiv:2211.08411.
 
-Karpinska, M., et al.~(2024). One thousand and one pairs: A ``novel''
-challenge for long-context language models. \emph{Proceedings of EMNLP
-2024}. arXiv:2406.16264.
+Karaman, B. K., Zabih, R., \& Sabuncu, M. R. (2024). POROver: Improving
+safety and reducing overrefusal in large language models with
+overgeneration and preference optimization. \emph{arXiv preprint
+arXiv:2410.12999}.
+
+Karpinska, M., Thai, K., Lo, K., Goyal, T., \& Iyyer, M. (2024). One
+thousand and one pairs: A ``novel'' challenge for long-context language
+models. \emph{Proceedings of EMNLP 2024}. arXiv:2406.16264.
 
 Kuratov, Y., Bulatov, A., Anokhin, P., Rodkin, I., Sorokin, D., Sorokin,
 A., \& Burtsev, M. (2024). BABILong: Testing the limits of LLMs with
 long context reasoning-in-a-haystack. \emph{NeurIPS 2024 Datasets and
 Benchmarks Track}. arXiv:2406.10149.
 
-Le, T. (2026). Schema-level and prompt-level instructions interact
-non-additively in structured generation. \emph{arXiv preprint}.
+Kwa, T., et al.~(2025). Measuring AI ability to complete long software
+tasks. \emph{Advances in Neural Information Processing Systems (NeurIPS)
+2025}. arXiv:2503.14499. (METR technical report.)
 
-LeCun, Y. (2023). Why autoregressive language models are exponentially
-diverging and doomed. \emph{Public commentary}.
+Le, Y. (2026). Schema key wording as an instruction channel in
+structured generation under constrained decoding. \emph{arXiv preprint
+arXiv:2604.14862}.
+
+LeCun, Y. (2023). Auto-regressive LLMs are doomed. \emph{Tweet, March
+26, 2023.} \url{https://x.com/ylecun/status/1640122342570336267}.
 
 Li, X., \& Sarwate, A. D. (2025). Unraveling the localized latents:
 Learning stratified manifold structures in LLM embedding space with
 sparse mixture-of-experts. \emph{arXiv preprint arXiv:2502.13577}.
 
 Li, Y., et al.~(2022). Competition-level code generation with AlphaCode.
-\emph{Science}, 378(6624), 1092--1097.
+\emph{Science}, 378(6624), 1092--1097. DOI: 10.1126/science.abq1158.
 
-Lightman, H., et al.~(2023). Let's verify step by step. \emph{arXiv
-preprint arXiv:2305.20050}.
+Lightman, H., Kosaraju, V., Burda, Y., Edwards, H., Baker, B., Lee, T.,
+Leike, J., Schulman, J., Sutskever, I., \& Cobbe, K. (2024). Let's
+verify step by step. \emph{International Conference on Learning
+Representations (ICLR) 2024}. arXiv:2305.20050. (Cited as 2023 in body.)
 
-Liu, F., et al.~(2023). DePlot: One-shot visual language reasoning by
-plot-to-table translation. \emph{Findings of ACL 2023}.
-arXiv:2212.10505.
+Liu, F., Eisenschlos, J. M., Piccinno, F., Krichene, S., Pang, C., Lee,
+K., Joshi, M., Chen, W., Collier, N., \& Altun, Y. (2023). DePlot:
+One-shot visual language reasoning by plot-to-table translation.
+\emph{Findings of ACL 2023}. arXiv:2212.10505.
 
-Lu, Y., et al.~(2024). OmniParser for pure vision based GUI agent.
-\emph{arXiv preprint arXiv:2408.00203}.
+Lu, Y., Yang, J., Shen, Y., \& Awadallah, A. (2024). OmniParser for pure
+vision based GUI agent. \emph{arXiv preprint arXiv:2408.00203}.
 
-Mallen, A., et al.~(2023). When not to trust language models:
-Investigating effectiveness of parametric and non-parametric memories
-(PopQA). \emph{Proceedings of ACL 2023}. arXiv:2212.10511.
+Mallen, A., Asai, A., Zhong, V., Das, R., Khashabi, D., \& Hajishirzi,
+H. (2023). When not to trust language models: Investigating
+effectiveness of parametric and non-parametric memories.
+\emph{Proceedings of ACL 2023}. arXiv:2212.10511. (Introduces the PopQA
+benchmark.)
 
 Manning, C. D., Raghavan, P., \& Schütze, H. (2008). \emph{Introduction
 to information retrieval}. Cambridge University Press. (Section on
 Heaps' law:
 \url{https://nlp.stanford.edu/IR-book/html/htmledition/heaps-law-estimating-the-number-of-terms-1.html}.)
 
-MAST authors. (2025). MAST: Failure-mode analysis of multi-agent LLM
-systems. \emph{arXiv preprint arXiv:2503.13657}.
-
-METR. (2025). Measuring AI ability to complete long software tasks.
-\emph{arXiv preprint arXiv:2503.14499}.
-
-Niwa, S., \& Iso, H. (2024). AmbigNLG: Addressing task ambiguity in
-open-domain NLG. \emph{Proceedings of EMNLP 2024}. arXiv:2402.17717.
+Niwa, A., \& Iso, H. (2024). AmbigNLG: Addressing task ambiguity in
+instruction for NLG. \emph{Proceedings of EMNLP 2024}. arXiv:2402.17717.
 
 OpenAI. (2024). Introducing structured outputs in the API. \emph{OpenAI
-Engineering Blog}.
+Engineering Blog, August 6, 2024.}
 \url{https://openai.com/index/introducing-structured-outputs-in-the-api/}.
 
-OpenAI. (2025). GPT-5 system card. \emph{OpenAI}.
-\url{https://openai.com/index/gpt-5-system-card/}.
+OpenAI. (2025). GPT-5 system card. \emph{Published August 7, 2025.}
+\url{https://cdn.openai.com/gpt-5-system-card.pdf}.
 
 Pang, J., Ye, F., Wong, D. F., He, X., Chen, W., \& Wang, L. (2024).
 Anchor-based large language models. \emph{Findings of ACL 2024}.
@@ -2197,67 +2260,86 @@ Park, K., Choe, Y. J., \& Veitch, V. (2024). The linear representation
 hypothesis and the geometry of large language models. \emph{Proceedings
 of ICML 2024}. arXiv:2311.03658.
 
+Patel, K., Surendira, S., George, J., \& Kapale, S. (2026). The Six
+Sigma Agent: Achieving enterprise-grade reliability in LLM systems
+through consensus-driven decomposed execution. \emph{arXiv preprint
+arXiv:2601.22290}.
+
 Press, O., Zhang, M., Min, S., Schmidt, L., Smith, N. A., \& Lewis, M.
 (2023). Measuring and narrowing the compositionality gap in language
 models. \emph{Findings of EMNLP 2023}. arXiv:2210.03350.
 
-RFM authors. (2025). RFMDataset: Recurring failure modes across
-open-source LLMs. \emph{arXiv preprint arXiv:2506.17114}.
+Ren, Z. Z., et al.~(2025). DeepSeek-Prover-V2: Advancing formal
+mathematical reasoning via reinforcement learning for subgoal
+decomposition. \emph{arXiv preprint arXiv:2504.21801}.
 
-Schaeffer, R., et al.~(2025). Why are large language models' scaling
-laws power laws? \emph{International Conference on Machine Learning
-(ICML) 2025}. arXiv:2502.17578.
+Schaeffer, R., et al.~(2025). How do large language monkeys get their
+power (laws)? \emph{International Conference on Machine Learning (ICML)
+2025}. arXiv:2502.17578.
 
-Schick, T., et al.~(2023). Toolformer: Language models can teach
-themselves to use tools. \emph{Advances in Neural Information Processing
-Systems 36}. arXiv:2302.04761.
+Schick, T., Dwivedi-Yu, J., Dessì, R., Raileanu, R., Lomeli, M., Hambro,
+E., Zettlemoyer, L., Cancedda, N., \& Scialom, T. (2023). Toolformer:
+Language models can teach themselves to use tools. \emph{Advances in
+Neural Information Processing Systems 36}. arXiv:2302.04761.
 
-Shi, F., et al.~(2024). MGDebugger: From syntax to semantics ---
-multi-granularity LLM-driven code debugging. \emph{arXiv preprint
-arXiv:2410.01215}.
+Shang, Y., Li, Y., Zhao, K., Ma, L., Liu, J., Xu, F., \& Li, Y. (2024).
+AgentSquare: Automatic LLM agent search in modular design space.
+\emph{arXiv preprint arXiv:2410.06153}.
+
+Shi, Y., Wang, S., Wan, C., Wang, M., \& Gu, X. (2024). From code to
+correctness: Closing the last mile of code generation with hierarchical
+debugging. \emph{arXiv preprint arXiv:2410.01215}. (Introduces the
+MGDebugger method.)
 
 Shinn, N., Cassano, F., Berman, E., Gopinath, A., Narasimhan, K., \&
 Yao, S. (2023). Reflexion: Language agents with verbal reinforcement
 learning. \emph{Advances in Neural Information Processing Systems 36}.
 arXiv:2303.11366.
 
-Six Sigma authors. (2026). Six Sigma agent framework: Compound
-reliability through orthogonal interventions. \emph{arXiv preprint}.
+Sun, Y., Yin, Z., Huang, X., Qiu, X., \& Zhao, H. (2025). Error
+classification of large language models on math word problems: A
+dynamically adaptive framework. \emph{arXiv preprint arXiv:2501.15581}.
+(Introduces the MWPES-300K dataset.)
 
-SLOT authors. (2025). SLOT: Schema-level output transformation for
-reliable structured generation. \emph{arXiv preprint arXiv:2505.04016}.
+Suresh, T., et al.~(2025). DINGO: Constrained inference for diffusion
+LLMs. \emph{arXiv preprint arXiv:2505.23061}.
 
-Sun, J., et al.~(2025). MWPES-300K: A large-scale math word problem
-error set with per-category failure distributions. \emph{Findings of ACL
-2025}. arXiv:2501.15581.
+Suri, M., Mathur, P., Lipka, N., Dernoncourt, F., Rossi, R. A., \&
+Manocha, D. (2025). Structured uncertainty guided clarification for LLM
+agents. \emph{arXiv preprint arXiv:2511.08798}. (Introduces the
+SAGE-Agent method.)
 
-Suresh, S., et al.~(2025). DINGO: Constrained decoding for diffusion
-language models. \emph{arXiv preprint arXiv:2505.23061}.
+Tian, R., Ye, Y., Qin, Y., Cong, X., Lin, Y., Liu, Z., \& Sun, M.
+(2024). DebugBench: Evaluating debugging capability of large language
+models. \emph{Findings of ACL 2024}. arXiv:2401.04621.
 
-Suri, K., et al.~(2025). SAGE-Agent: Structured uncertainty in agentic
-AI. \emph{arXiv preprint arXiv:2511.08798}.
+Wada, A., et al.~(2025). Retrieval-augmented generation elevates local
+LLM quality in radiology contrast media consultation. \emph{npj Digital
+Medicine}, 8(1), 395. DOI: 10.1038/s41746-025-01802-z.
 
-TauBench authors. (2024). \(\tau\)-bench: A benchmark for tool-augmented
-LLM agents. \emph{arXiv preprint arXiv:2406.12045}.
+Wan, K., et al.~(2026). A Fano-style accuracy upper bound for LLM
+single-pass reasoning in multi-hop QA. \emph{International Conference on
+Learning Representations (ICLR) 2026}. arXiv:2509.21199. (Cited as 2025
+in body.)
 
-Tian, R., et al.~(2024). DebugBench: Evaluating debugging capability of
-large language models. \emph{arXiv preprint arXiv:2401.04621}.
+Wang, B., et al.~(2025). From scores to steps: Diagnosing and improving
+LLM performance in evidence-based medical calculations.
+\emph{Proceedings of EMNLP 2025}. arXiv:2509.16584. (Introduces the
+MedRaC benchmark.)
 
-Wada, S., et al.~(2025). Domain retrieval-augmented generation
-eliminates radiology report hallucinations. \emph{Nature npj Digital
-Medicine}.
-
-Wan, K., et al.~(2025). A Fano-style accuracy upper bound for LLM
-single-pass reasoning in multi-hop QA. \emph{arXiv preprint
-arXiv:2509.21199}.
+Wang, D. Y.-B., Shen, Z., Mishra, S. S., Xu, Z., Teng, Y., \& Ding, H.
+(2025). SLOT: Structuring the output of large language models.
+\emph{arXiv preprint arXiv:2505.04016}. (SLOT = Structured LLM Output
+Transformer.)
 
 Wang, M., et al.~(2024). Leave no document behind: Benchmarking
 long-context LLMs with extended multi-doc QA. \emph{Proceedings of EMNLP
 2024}. arXiv:2406.17419.
 
-Wang, P., et al.~(2023). Math-Shepherd: Verify and reinforce LLMs
-step-by-step without human annotations. \emph{arXiv preprint
-arXiv:2312.08935}.
+Wang, P., Li, L., Shao, Z., Xu, R. X., Dai, D., Li, Y., Chen, D., Wu,
+Y., \& Sui, Z. (2024). Math-Shepherd: Verify and reinforce LLMs
+step-by-step without human annotations. \emph{Proceedings of ACL 2024}.
+arXiv:2312.08935. (Cited as 2023 in body.)
 
 Wang, X., Wei, J., Schuurmans, D., Le, Q., Chi, E., Narang, S.,
 Chowdhery, A., \& Zhou, D. (2023). Self-consistency improves chain of
@@ -2265,34 +2347,49 @@ thought reasoning in language models. \emph{International Conference on
 Learning Representations (ICLR) 2023}. arXiv:2203.11171.
 
 Wang, Y., et al.~(2024). MMLU-Pro: A more robust and challenging
-multi-task language understanding benchmark. \emph{arXiv preprint
-arXiv:2406.01574}.
+multi-task language understanding benchmark. \emph{NeurIPS 2024 Datasets
+and Benchmarks Track (Spotlight)}. arXiv:2406.01574.
 
-Wang, Z., et al.~(2025). From scores to steps: Diagnosing and improving
-LLM performance on medical calculation tasks (MedRaC). \emph{Proceedings
-of EMNLP 2025}. arXiv:2509.16584.
+Wen, H., et al.~(2024). Fixing function-level code generation errors for
+foundation large language models. \emph{arXiv preprint
+arXiv:2409.00676}. (Introduces the LlmFix method. Body cites as Wen et
+al.; an earlier draft mis-attributed to ``Zhang et al.'')
 
-Weakest Link authors. (2026). The weakest link law: Multi-hop QA
-performance collapses to the least-visible-evidence bucket. \emph{arXiv
+Wood, M. C., \& Forbes, A. A. (2024). 100\% elimination of
+hallucinations on RAGTruth for GPT-4 and GPT-3.5 Turbo. \emph{arXiv
+preprint arXiv:2412.05223}. (Introduces the Acurai method.)
+
+Xie, T., et al.~(2025). Scaling computer-use grounding via user
+interface decomposition and synthesis. \emph{Advances in Neural
+Information Processing Systems (NeurIPS) 2025}. arXiv:2505.13227.
+(NeurIPS 2025 Spotlight. Introduces the Jedi grounding dataset and
+OSWorld-G benchmark.)
+
+Yao, S., Shinn, N., Razavi, P., \& Narasimhan, K. (2024).
+\(\tau\)-bench: A benchmark for tool-agent-user interaction in
+real-world domains. \emph{arXiv preprint arXiv:2406.12045}.
+
+Zakka, C., Shad, R., Chaurasia, A., Dalal, A. R., Kim, J. L., Moor, M.,
+Fong, R., Phillips, C., Alexander, K., Ashley, E., Boyd, J., Boyd, K.,
+Hirsch, K., Langlotz, C., Lee, R., Melia, J., Nelson, J., Sallam, K.,
+Tullis, S., Vogelsong, M. A., Cunningham, J. P., \& Hiesinger, W.
+(2024). Almanac --- Retrieval-augmented language models for clinical
+medicine. \emph{NEJM AI}, 1(2), AIoa2300068. DOI: 10.1056/AIoa2300068.
+
+Zhang, K., et al.~(2023). Don't fine-tune, decode: Syntax error-free
+tool use via constrained decoding. \emph{arXiv preprint
+arXiv:2310.07075}. (Introduces the ToolDec method.)
+
+Zhang, M., Meng, Z., \& Collier, N. (2026). Failure modes in multi-hop
+QA: The weakest link effect and the recognition bottleneck. \emph{arXiv
 preprint arXiv:2601.12499}.
-
-Xie, T., et al.~(2025). Jedi: A grounding-dataset-driven approach to
-OSWorld and GUI agent tasks. \emph{NeurIPS 2025}. arXiv:2509.13644.
-
-Zhang, J., et al.~(2024). Categorizing code-generation errors of large
-language models on HumanEval (LlmFix). \emph{arXiv preprint
-arXiv:2409.00676}.
-
-Zhang, K., et al.~(2023). ToolDec: Syntax error-free and generalisable
-tool use via finite-state-machine constrained decoding. \emph{arXiv
-preprint arXiv:2310.07075}.
 
 Zhou, Y., Liu, H., Chen, Z., Tian, Y., \& Chen, B. (2025). GSM-Infinite:
 How do your LLMs behave over infinitely increasing context length and
 reasoning complexity? \emph{arXiv preprint arXiv:2502.05252}.
 
-Zhu, H., et al.~(2025). Lost-in-retrieval: Decomposition failures in
-multi-hop retrieval-augmented generation. \emph{arXiv preprint
-arXiv:2502.14245}.
+Zhu, R., Liu, X., Sun, Z., Wang, Y., \& Hu, W. (2025). Mitigating
+lost-in-retrieval problems in retrieval-augmented multi-hop question
+answering. \emph{Proceedings of ACL 2025}. arXiv:2502.14245.
 
 \end{document}

@@ -82,7 +82,7 @@ Post-announcement:
 4. Wait for arXiv's auto-compilation; download the preview PDF.
 5. Diff the preview against the local PDF (`paper_architecture_of_errors.pdf`). Pay particular attention to:
    - Greek letters — if arXiv falls back to a font without Greek coverage you may see `□` boxes; remediate by switching the YAML or build script to `mainfont="DejaVu Serif"` and rebuilding.
-   - Math rendering for Theorem 1's polylog bound expression $m \geq |C|^{1 - \varepsilon / e_{\text{hard}}}$.
+   - Math rendering for Proposition 1's polylog bound expression $m \geq |C|^{1 - \varepsilon / e_{\text{hard}}}$.
    - The summary table in §4.2 — long tables may break across pages differently than locally.
 6. Fill in the metadata fields from the table above.
 7. Pick license: **CC-BY-4.0**.
@@ -95,7 +95,7 @@ Submissions made before 14:00 US Eastern (Mon–Fri) announce at 20:00 the same 
 
 This is **Part 2** of a planned series following *Beyond Exponential Decay* ([arXiv:2505.24187](https://arxiv.org/abs/2505.24187)). Anticipated future papers in the series:
 
-- Part 3 (planned): empirical measurement of σ on new domains; sequence-level extension of Theorem 1.
+- Part 3 (planned): empirical measurement of σ on new domains; empirical sequence-level validation of Proposition 1's $S_{\text{base}}$ / $\tau_{\text{seq}}$ regimes.
 - Part 4 (planned): attention-mechanism / stratified-manifold geometric underpinnings of Postulate 1.
 
 arXiv has no formal series metadata; series linkage is maintained via the `comments` field and in-paper references.
@@ -128,4 +128,3 @@ On native PowerShell, use `[System.IO.Compression.ZipFile]::Open(...)` with expl
 - §4.2 has a two-tier structure as of the Phase 6 integration: §4.2.0 introduces the six capability axes and three structural patterns (A by-construction, B class-disappearance, C class-shift), with 27 GOLD citations from the parallel capability harvest; §4.2.1+ retains the original 12-cluster taxonomy with a "Covering axis" column linking the two views. The cluster-orthogonality argument is now anchored in both the axis-level and class-level evidence.
 - §6 was reorganised in Phase 6 to lead with by-construction elimination (Pattern A from the capability harvest) as a strengthening boundary case of Theorem 1, followed by the counter-evidence re-audit, and closing with the irreducible-semantic residual and the DebugBench falsifiability test (capability provisioning correctly predicts both what it can and cannot erase).
 - Counter-evidence (Dziri, BABILong, METR, Wan, NoCha) is re-audited in §6.2 with the unifying observation that every counter-paper decays over a variable other than raw token length.
-- The internal working files used to compile this paper live in `internal/error_architecture/` of the source repo: `harvest_clustering.md`, `harvest_interventions.md`, `harvest_scaling.md`, `harvest_counter_evidence.md`, `theorem_zipf_log_reliability.md`, `N16_fusion_plan (1).md`, plus the Phase 6 capability harvest under `internal/error_architecture/capabilities/` (master `N16_capability_elimination_report.md` + six axis-specific files).
