@@ -105,21 +105,21 @@ still outstanding --- the intervention budget required to bound
 sequence length. Sequence-level reliability targets are strictly tighter
 and approach full-catalogue coverage as the number of hard decisions
 grows --- an asymmetry we surface explicitly rather than burying. Twelve
-intervention categories from prior work, plus 28 GOLD-tier
-capability-elimination citations across six axes, are consistent with a
-small library on the order of tens of interventions covering the head of
-the failure distribution in the per-hard-token regime. We analyze the
-polylog conclusion symbolically under several cluster-count laws
-(logarithmic discovery, Heaps, saturating) and find it robust across the
-family, though the specific doubly-logarithmic rate is the optimistic
-special case. Prominent steep-decay counter-evidence (Dziri et al.,
-2023; Kuratov et al., 2024; Kwa et al., 2025), re-audited here, decays
-over variables other than raw token length --- compositional graph size,
-fact count, log-time horizon. This relocates rather than dissolves the
-practical worry: the framework identifies which interventions help
-(capability provisioning along the actual decay axis) and which do not,
-but does not claim the regimes where \(k_{\text{hard}}\) grows fast are
-thereby made easy.
+intervention categories from prior work, plus 28 capability-elimination
+citations across six axes (stratified into Patterns A/B/C below), are
+consistent with a small library on the order of tens of interventions
+covering the head of the failure distribution in the per-hard-token
+regime. We analyze the polylog conclusion symbolically under several
+cluster-count laws (logarithmic discovery, Heaps, saturating) and find
+it robust across the family, though the specific doubly-logarithmic rate
+is the optimistic special case. Prominent steep-decay counter-evidence
+(Dziri et al., 2023; Kuratov et al., 2024; Kwa et al., 2025), re-audited
+here, decays over variables other than raw token length ---
+compositional graph size, fact count, log-time horizon. This relocates
+rather than dissolves the practical worry: the framework identifies
+which interventions help (capability provisioning along the actual decay
+axis) and which do not, but does not claim the regimes where
+\(k_{\text{hard}}\) grows fast are thereby made easy.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -209,26 +209,28 @@ intervention budget scales polylogarithmically in sequence length
 
 \subsubsection{1.3 Contributions}\label{contributions}
 
-The paper does five things. It introduces a three-layer formal framework
---- sparsity (\(\alpha\)), stratification (\(\beta\)), and bounded mode
-catalogue (\(|C|\)) --- that refines our previous two-rate model by
-partitioning key tokens into easy and hard subsets and adding a
-recurring-pattern catalogue. It posits, and empirically calibrates,
-logarithmic mode discovery: anchored against ErrorAtlas, HumanEval, and
-MWPES, the mode-rate parameter falls in the range
-\(\sigma \in [0.87, 1.85]\), with \(\sigma \approx 1.85\) adopted from
-the ErrorAtlas anchor as a conservative target. It proves a polylog
-bound on the per-hard-token intervention library size,
-\(m \geq \lceil |C|^{1 - \varepsilon / e_{\text{hard}}} \rceil\), and
-shows that under \(k \sim \log n\) the budget grows as
-\(O\big((\log\log n)^{c}\big)\) with \(c < 1\); the
+The central result is a conditional polylog bound on the per-hard-token
+intervention library size,
+\(m \geq \lceil |C|^{1 - \varepsilon / e_{\text{hard}}} \rceil\). Under
+the optimistic case of \(k \sim \log n\) and the postulate above, the
+budget grows as \(O\big((\log\log n)^{c}\big)\) with \(c < 1\); the
 \emph{sequence}-level analogue is strictly tighter and approaches
-full-catalogue coverage as \(k\) grows. It synthesises evidence for the
-three load-bearing claims --- clustering (Section 4.1),
-cluster-selective capability interventions (Section 4.2), and sublinear
-length scaling (Section 4.3) --- drawing on approximately sixty prior
-published results, including a six-axis capability-elimination harvest
-with 28 GOLD-tier citations. And it re-audits the most-cited steep-decay
+full-catalogue coverage as \(k\) grows. Around this central claim the
+paper does four supporting things. The three-layer formal framework ---
+sparsity (\(\alpha\)), stratification (\(\beta\)), and bounded mode
+catalogue (\(|C|\)) --- refines our previous two-rate model by
+partitioning key tokens into easy and hard subsets, then adding the
+recurring-pattern catalogue. The empirical postulate of logarithmic mode
+discovery is calibrated against ErrorAtlas, HumanEval, and MWPES, with
+the mode-rate parameter falling in the range \(\sigma \in [0.87, 1.85]\)
+--- we adopt \(\sigma \approx 1.85\) from the ErrorAtlas anchor as a
+conservative target. Section 4 synthesises evidence for the three
+load-bearing claims (clustering, cluster-selective capability
+interventions, sublinear length scaling), drawing on approximately sixty
+prior published results, including the six-axis capability-elimination
+harvest of 28 quantitatively-anchored citations stratified into Patterns
+A/B/C (by-construction, strong empirical with class-shift, moderate with
+residual shift). And Section 6 re-audits the most-cited steep-decay
 results (Dziri et al., 2023; Kuratov et al., 2024; Kwa et al., 2025; Wan
 et al., 2025), showing that each decays over a variable other than raw
 token length and so is compatible with the sublinear-in-\(n\) thesis.
@@ -271,32 +273,34 @@ framework aims to model.
 \subsubsection{2.2 Targeted interventions}\label{targeted-interventions}
 
 Each named failure mode in these taxonomies has, in some cases
-independently, been the subject of focused intervention research. The
-arithmetic-error cluster is the canonical example: PAL (Gao et al.,
-2022) shows that delegating execution to a Python interpreter raises
-GSM-Hard accuracy from 20.1\% (chain-of-thought) to 61.5\% (+41.4 pp),
-with PoT (Chen et al., 2022) and ToRA (Gou et al., 2023) extending the
-technique to broader math and financial reasoning. Constrained decoding
-has effectively eliminated the format-violation cluster: DINGO (Suresh
-et al., 2025) reports up to +68 percentage points on combined
-symbolic-math and JSON-generation benchmarks, and SLOT (Wang D. Y.-B. et
-al., 2025) achieves 99.5\% schema accuracy while preserving 94\% content
-similarity. Execution feedback closes most of the code-error cluster:
-Reflexion (Shinn et al., 2023) improves HumanEval pass@1 from 80\% to
-91\%, and AgentCoder (Huang et al., 2023) pushes it to 96.3\%. Process
-reward models substantially reduce step-level reasoning errors:
-Math-Shepherd (Wang P. et al., 2023) raises Mistral-7B MATH accuracy
-from 28.6\% to 33.0\% under step-by-step PPO and to 43.5\% when the same
-reward model is used for verification reranking on top, and Let's Verify
-Step by Step (Lightman et al., 2023) reports 78\% on the MATH test set
-under process supervision. Retrieval-augmented generation is the most
-studied of all: Acurai (Wood \& Forbes, 2024) reports 100\%
-hallucination elimination on RAGTruth, with corroborating clinical and
-legal results elsewhere. Preference optimisation closes the over-refusal
-gap: POROver (Karaman et al., 2024) lifts the not-overrefused rate from
-57.6\% to 82.1\% while preserving 97.9\% safety. Structured uncertainty
-fixes most tool-call failures: SAGE-Agent (Suri et al., 2025) raises
-When2Call accuracy from 36.5\% to 65.2\%.
+independently, become the subject of focused intervention research.
+Arithmetic is the canonical example. PAL (Gao et al., 2022) delegates
+execution to a Python interpreter and lifts GSM-Hard accuracy from
+20.1\% (chain-of-thought) to 61.5\% --- a 41.4-point gain whose
+residuals are problem-comprehension errors rather than arithmetic ones.
+PoT (Chen et al., 2022) and ToRA (Gou et al., 2023) extend the same
+delegation to broader math and financial reasoning. Format violations
+admit something stronger: constrained decoding zeroes out invalid-token
+probability at every decoding step, which is mathematically rather than
+statistically a fix --- DINGO (Suresh et al., 2025) reports up to +68
+percentage points on combined symbolic-math and JSON-generation
+benchmarks, and SLOT (Wang D. Y.-B. et al., 2025) achieves 99.5\% schema
+accuracy while preserving 94\% content similarity. Code-logic errors
+yield to execution feedback (Reflexion: 80\% → 91\% HumanEval pass@1;
+AgentCoder pushing the same benchmark to 96.3\%). Step-level reasoning
+errors yield to process reward models: Math-Shepherd (Wang P. et al.,
+2023) raises Mistral-7B MATH accuracy from 28.6\% to 33.0\% under
+step-by-step PPO, then to 43.5\% when the same reward model is used for
+verification reranking on top; Let's Verify Step by Step (Lightman et
+al., 2023) reaches 78\% on the MATH test set under process supervision.
+Retrieval-augmented generation is the most studied of all, with Acurai
+(Wood \& Forbes, 2024) reporting 100\% hallucination elimination on
+RAGTruth --- a benchmark-conditional empirical observation, not a
+property of RAG in general --- and corroborating clinical and legal
+results elsewhere. Two more clusters round out the picture. POROver
+(Karaman et al., 2024) lifts the not-overrefused rate from 57.6\% to
+82.1\% while preserving 97.9\% safety; SAGE-Agent (Suri et al., 2025)
+raises When2Call accuracy from 36.5\% to 65.2\%.
 
 Two recurring observations from this literature inform our theoretical
 framework. First, each intervention is \emph{cluster-specific}: the
@@ -1110,17 +1114,18 @@ engineering unit, the clusters are the bookkeeping unit.
 patterns}\label{six-capability-axes-and-three-structural-patterns}
 
 A dedicated harvest of capability-elimination evidence (parallel to the
-cluster-based harvest below) yields \textbf{28 GOLD-tier citations}
-across \textbf{six independent capability axes}: (i) Arithmetic
-(Python/symbolic execution), (ii) Code Execution (REPL/sandbox
-feedback), (iii) Format/Structure (constrained decoding, FSMs, grammar
-engines), (iv) Perception/Grounding (visual grounding models for GUI,
-charts, tables), (v) Knowledge/RAG (inference-time dense retrieval and
-citation grounding), and (vi) Verification (formal proof checkers,
-learned verifiers, classifier rerouting, process supervision). Each axis
-is independently confirmed by 3--9 GOLD citations. The 28 citations
-exhibit three structural patterns of capability-elimination that
-strengthen --- and refine --- the cluster-orthogonality claim.
+cluster-based harvest below) yields \textbf{28 quantitatively-anchored
+citations} across \textbf{six independent capability axes}: Arithmetic
+(Python/symbolic execution), Code Execution (REPL/sandbox feedback),
+Format/Structure (constrained decoding, FSMs, grammar engines),
+Perception/Grounding (visual grounding models for GUI, charts, tables),
+Knowledge/RAG (inference-time dense retrieval and citation grounding),
+and Verification (formal proof checkers, learned verifiers, classifier
+rerouting, process supervision). Each axis is independently confirmed by
+between three and nine citations. The 28 results exhibit three
+structural patterns --- by-construction,
+strong-empirical-with-class-shift, and moderate-with-residual-shift ---
+that strengthen and refine the cluster-orthogonality claim.
 
 We stratify these into three tiers by the \emph{kind} of evidence each
 provides, taking care not to inflate empirical reductions into
@@ -1171,16 +1176,15 @@ inflating the targeted class. This is the regime where the framework's
 ``selectivity'' claim is supported but does not rise to elimination.
 
 The tier boundaries matter for what the paper claims. Pattern A admits
-the strongest rhetoric (``by construction'', ``mathematically empty'').
+the strongest rhetoric: ``by construction,'' ``mathematically empty.''
 Pattern B admits ``strong empirical reduction'' and ``class-shift
-signature'' but not ``by construction'' --- Acurai's 100\% on RAGTruth
+signature'' --- but not ``by construction''; Acurai's 100\% on RAGTruth
 is a benchmark-conditional empirical fact, not a mathematical guarantee.
 Pattern C supports ``selective reduction'' without claiming class
-elimination. The earlier framing in this section's first draft blurred
-these boundaries; the revised version keeps them sharp.
+elimination. Keeping these tiers crisp is what saves the paper from
+drifting into product-brochure language about capability provisioning.
 
-The 28 GOLD citations, organised by axis and pattern, are summarised
-below.
+The 28 citations, organised by axis and pattern, appear below.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -1267,8 +1271,8 @@ on tail) & B \\
 \end{longtable}
 }
 
-\textbf{Capabilities are coarser than error classes.} Several GOLD
-citations reveal ``two-for-one'' reductions where one capability
+\textbf{Capabilities are coarser than error classes.} Several entries in
+the harvest reveal ``two-for-one'' reductions where one capability
 addresses multiple named clusters. A single Python interpreter removes
 the execution-error component of arithmetic (cluster A), unit conversion
 (B), simple counting (C), list manipulation, and date arithmetic ---
@@ -1504,27 +1508,24 @@ convention (lower bound, midpoint, mean) materially shifts the slope;
 the qualitative claim --- mild, much-slower-than-exponential decay over
 \(\log L\) --- is robust to that choice.
 
-\textbf{Sigmoid decay on synthetic math.} GSM-\(\infty\) (Zhou et al.,
-2025) fits a sigmoid (saturating) shape with \(R^2 > 0.98\) on the
-Medium subtask. Two further results from the same paper directly attack
-the independent-error model. First, exponentially more inference compute
-yields only \emph{linear} AUC gains (\(R^2 > 0.99\) for the linear fit)
---- under independent per-step Bernoulli errors, more trials should give
-exponential improvement. Second, DeepSeek-R1 maintains 10\%+ accuracy at
-130 reasoning operations; \((1 - \varepsilon)^{130}\) with any
-reasonable \(\varepsilon\) would predict near-zero. Both are consistent
-with errors concentrated at semantic decision points, not distributed
-uniformly.
+\textbf{Sigmoid decay on synthetic math.} Exponentially more inference
+compute, on GSM-\(\infty\), yields only \emph{linear} AUC gains
+(\(R^2 > 0.99\) for the linear fit) --- under independent per-step
+Bernoulli errors, more trials should give exponential improvement. The
+same benchmark fits a sigmoid (saturating) decay with \(R^2 > 0.98\) on
+the Medium subtask, and DeepSeek-R1 maintains 10\%+ accuracy at 130
+reasoning operations where \((1 - \varepsilon)^{130}\) with any
+reasonable \(\varepsilon\) would predict near-zero (Zhou et al., 2025).
+Errors concentrate at semantic decision points; the data refuse to
+behave like uniformly-distributed token-level noise.
 
-\textbf{Compositionality gap is bounded, not growing.} Press et
-al.~(2023) measure the gap between models' ability to answer two-hop
-questions and the product of their one-hop accuracies. Under independent
-per-step compounding, the gap should grow with chain length; under
-clustered errors, it should be bounded. Press et al.~find a
+\textbf{Compositionality gap is bounded, not growing.} The gap between
+two-hop accuracy and the product of one-hop accuracies should, under
+independent per-step compounding, grow with chain length; under
+clustered errors, it should not. Press et al.~(2023) find a
 \(\sim 40\%\) gap that is approximately \emph{constant} across the GPT-3
-family of models they evaluate (spanning sub-billion to 175B-parameter
-variants). This is direct empirical evidence against per-step
-independent compounding.
+family (sub-billion to 175B parameters). Independent compounding is
+directly ruled out.
 
 \textbf{Self-consistency is consistent with --- but does not prove ---
 clustered structure.} Wang X. et al.~(2023) report +17.9 pp on GSM8K
@@ -1658,19 +1659,20 @@ clusters of Section 4.2.
 \subsubsection{6.1 By-construction elimination as a boundary
 case}\label{by-construction-elimination-as-a-boundary-case}
 
-Seven of the 28 GOLD citations in Section 4.2.0 --- DeepSeek-Prover-V2's
-Lean proof checker, OpenAI Structured Outputs, ToolDec, DINGO, XGrammar,
-XGrammar-2, and LlmFix's static syntax check --- achieve residual error
-rate equal to zero \emph{by mathematical construction}, not
-statistically. Constrained decoders set \(P(\text{invalid token}) = 0\)
-at every generation step, so no invalid token can be emitted. Proof
-kernels reject any output that fails type-checking. Schema validators
-reject any output missing a required field. (Acurai's RAG result is
-excluded from Pattern A here, despite its 100\% RAGTruth number; it is a
-benchmark-conditional empirical observation, not a by-construction
-property of citation-grounded retrieval in general --- see Section 4.2.0
-Pattern B. LlmFix's \texttt{NameError} repair is also excluded, since
-its residual is 2.3\% rather than zero --- Pattern C.)
+Seven of the 28 capability-elimination citations in Section 4.2.0 ---
+DeepSeek-Prover-V2's Lean proof checker, OpenAI Structured Outputs,
+ToolDec, DINGO, XGrammar, XGrammar-2, and LlmFix's static syntax check
+--- achieve residual error rate equal to zero \emph{by mathematical
+construction}, not statistically. Constrained decoders set
+\(P(\text{invalid token}) = 0\) at every generation step, so no invalid
+token can be emitted. Proof kernels reject any output that fails
+type-checking. Schema validators reject any output missing a required
+field. (Acurai's RAG result is excluded from Pattern A here, despite its
+100\% RAGTruth number; it is a benchmark-conditional empirical
+observation, not a by-construction property of citation-grounded
+retrieval in general --- see Section 4.2.0 Pattern B. LlmFix's
+\texttt{NameError} repair is also excluded, since its residual is 2.3\%
+rather than zero --- Pattern C.)
 
 In this regime, the polylog bound of Proposition 1 ---
 \(m \geq \lceil |C|^{1 - \varepsilon / e_{\text{hard}}} \rceil\) --- is
@@ -1758,10 +1760,10 @@ RAG-flat-across-length result (60\% on single-fact QA \emph{independent
 of context length}) is the cleanest possible demonstration that when the
 relevant evidence is in window, length does not matter. Recurrent Memory
 Transformers maintaining performance to 50M tokens further confirms that
-effective \(k\) is determined by architecture, not by raw \(n\).
-\textbf{Where the framework concedes}: for multi-hop tasks whose
+effective \(k\) is determined by architecture, not by raw \(n\). The
+framework's concession is narrow but real: for multi-hop tasks whose
 required fact count grows with task complexity, BABILong's sharp
-\(k\)-axis decay is the framework's \emph{predicted} trouble, not a
+\(k\)-axis decay is exactly what we predict happens, not a
 counter-example to it.
 
 \textbf{METR (2025).} Per-model success fits a logistic curve in
@@ -1775,11 +1777,11 @@ signature, exactly the structure of Arbuzov et al.~(2025, §3.2). The
 famous exponential --- capability doubling every seven months --- is an
 \emph{inter-model} claim about how the horizon \(h\) moves across
 generations, orthogonal to within-model decay shape. When a model
-improves, its \(h\) shifts right; the curve does not steepen.
-\textbf{Where the framework concedes}: the within-model logistic-in-log
-cliff is steep on a practical scale; calling it ``sublinear in length''
-is technically correct but engineering-useful only for systems that can
-be designed to operate well below the 50\% horizon.
+improves, its \(h\) shifts right; the curve does not steepen. An honest
+qualifier: the within-model logistic-in-log cliff is steep on a
+practical scale. Calling it ``sublinear in length'' is technically
+correct but engineering-useful only for systems that can be designed to
+operate well below the 50\% horizon.
 
 \textbf{Wan et al.~(2025), Fano-style upper bound.} This paper theorises
 super-linear information-demand growth and identifies an ``accuracy
@@ -1805,11 +1807,11 @@ sentence-level retrieval, 47.6\% on passage-level, 41.6\% on global
 reasoning. No per-context-length curve is reported. The decay axis is
 the number of evidence pieces that must be integrated --- i.e., a
 \(k\)-axis quantity, not an \(n\)-axis one. NoCha is therefore not
-counter-evidence to a sublinear-in-\(n\) claim. \textbf{Where the
-framework concedes}: evidence-scope decay is a \(k\)-axis observation
-that the framework predicts cannot be addressed by scaling raw context
-length; it requires retrieval or process supervision along the actual
-decay axis.
+counter-evidence to a sublinear-in-\(n\) claim. Evidence-scope decay is
+exactly the \(k\)-axis observation the framework predicts cannot be
+addressed by scaling raw context length --- it requires retrieval or
+process supervision along the actual decay axis. The relocation is
+informational, not magical.
 
 \textbf{Unifying observation.} Every counter-paper decays over a
 variable that is not \(n\): compositional graph size, fact count,

@@ -97,7 +97,7 @@ When preparing a camera-ready (after acceptance to some venue), switch `\usepack
 | **Main body total** | **~7.5 / 9 max** |
 | References (73 entries, `plainnat`) | 4.5 |
 | Appendix A: Heaps Power-Law Variant and Cluster-Count Sensitivity | 1.0 |
-| Appendix B: Full Failure-Mode Taxonomy (incl. 28-citation GOLD table + 12-cluster table) | 3.0 |
+| Appendix B: Full Failure-Mode Taxonomy (incl. 28-citation capability-elimination table + 12-cluster table) | 3.0 |
 | Appendix C: Counter-Evidence Re-Audits (5 papers) | 1.0 |
 | Mandatory paper checklist | 8.0 |
 | **Document total** | 25 |
@@ -122,7 +122,7 @@ The arXiv version of this paper is ~23 pages. The NeurIPS 9-page main-body cap r
 What moved to appendices is *supporting* material that a reader can defer without losing the thread:
 
 - **Appendix A** (Heaps variant + sensitivity): alternative cluster-count laws and a symbolic-form robustness check. The qualitative polylog conclusion survives across the candidate-law family; the doubly-logarithmic rate of Proposition 1 is the optimistic special case.
-- **Appendix B** (full taxonomy): the 28 GOLD-tier capability-elimination citations across six axes, with the table; the 12 named clusters with their interventions; the additivity caveats; the irreducible-semantic residual analysis.
+- **Appendix B** (full taxonomy): the 28 capability-elimination citations across six axes (stratified into Patterns A/B/C), with the table; the 12 named clusters with their interventions; the additivity caveats; the irreducible-semantic residual analysis.
 - **Appendix C** (counter-evidence re-audits): per-paper walk-throughs of Dziri, BABILong, METR, Wan, NoCha showing the relocation-not-dissolution pattern.
 
 ## Math-claims discipline (preserved during compression)
