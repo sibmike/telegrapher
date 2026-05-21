@@ -97,28 +97,29 @@ models, datasets, and domains. Inside the small set of key tokens, a
 latent fraction \(\beta\) produce \emph{hard} failures; those hard
 failures cluster into a finite catalogue of recurring modes whose count
 grows slowly with the number of observed failures. Under an empirical
-postulate of logarithmic mode discovery, anchored by three published
-taxonomies (ErrorAtlas, MWPES, HumanEval-error-categorisation), the
-intervention budget required to bound \emph{per-hard-token} residual
-error scales polylogarithmically in sequence length. Sequence-level
-reliability targets are strictly tighter and approach full-catalogue
-coverage as the number of hard decisions grows --- an asymmetry we
-surface explicitly rather than burying. Twelve intervention categories
-from prior work, plus 27 GOLD-tier capability-elimination citations
-across six axes, are consistent with a small library on the order of
-tens of interventions covering the head of the failure distribution in
-the per-hard-token regime. We test the polylog conclusion under four
-cluster-count laws (logarithmic discovery, Heaps at
-\(b \in \{0.3, 0.5, 0.6\}\), saturating exponential) and find it robust
-across the family, though the specific doubly-logarithmic rate is the
-optimistic special case. Prominent steep-decay counter-evidence (Dziri
-et al., 2023; Kuratov et al., 2024; METR, 2025), re-audited here, decays
-over variables other than raw token length --- compositional graph size,
-fact count, log-time horizon. This relocates rather than dissolves the
-practical worry: the framework identifies which interventions help
-(capability provisioning along the actual decay axis) and which do not,
-but does not claim the regimes where \(k_{\text{hard}}\) grows fast are
-thereby made easy.
+postulate of logarithmic mode discovery --- calibrated against endpoint
+counts from three published taxonomies (ErrorAtlas, MWPES,
+HumanEval-error-categorisation), with a direct subsample-discovery curve
+still outstanding --- the intervention budget required to bound
+\emph{per-hard-token} residual error scales polylogarithmically in
+sequence length. Sequence-level reliability targets are strictly tighter
+and approach full-catalogue coverage as the number of hard decisions
+grows --- an asymmetry we surface explicitly rather than burying. Twelve
+intervention categories from prior work, plus 28 GOLD-tier
+capability-elimination citations across six axes, are consistent with a
+small library on the order of tens of interventions covering the head of
+the failure distribution in the per-hard-token regime. We test the
+polylog conclusion under four cluster-count laws (logarithmic discovery,
+Heaps at \(b \in \{0.3, 0.5, 0.6\}\), saturating exponential) and find
+it robust across the family, though the specific doubly-logarithmic rate
+is the optimistic special case. Prominent steep-decay counter-evidence
+(Dziri et al., 2023; Kuratov et al., 2024; METR, 2025), re-audited here,
+decays over variables other than raw token length --- compositional
+graph size, fact count, log-time horizon. This relocates rather than
+dissolves the practical worry: the framework identifies which
+interventions help (capability provisioning along the actual decay axis)
+and which do not, but does not claim the regimes where
+\(k_{\text{hard}}\) grows fast are thereby made easy.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -181,11 +182,12 @@ admits a specific countermeasure: arithmetic errors fall to a Python
 interpreter (Gao et al., 2022; Chen et al., 2022; Gou et al., 2023);
 format violations to constrained decoding (Suresh et al., 2025; SLOT
 authors, 2025); hallucinations to retrieval augmentation, with one paper
-reporting 100\% elimination on RAGTruth (Acurai authors, 2024);
-over-refusals to preference optimisation (Karaman et al., 2024);
-tool-call errors to structured uncertainty (Suri et al., 2025). We
-collect twelve such categories with quantitative ``one cluster, one
-intervention'' results in Section 4.2.
+reporting 100\% elimination on RAGTruth (Acurai authors, 2024; 95\% CI
+91--100\%, benchmark-conditional --- not a by-construction guarantee for
+RAG in general); over-refusals to preference optimisation (Karaman et
+al., 2024); tool-call errors to structured uncertainty (Suri et al.,
+2025). We collect twelve such categories with quantitative ``one
+cluster, one intervention'' results in Section 4.2.
 
 The natural question becomes: how many interventions are enough? If new
 failure modes follow canonical Heaps-style growth (Manning et al.,
@@ -212,21 +214,23 @@ catalogue (\(|C|\)) --- that refines our previous two-rate model by
 partitioning key tokens into easy and hard subsets and adding a
 recurring-pattern catalogue. It posits, and empirically calibrates,
 logarithmic mode discovery: anchored against ErrorAtlas, HumanEval, and
-MWPES, a single mode-rate parameter \(\sigma \approx 2\) fits all three.
-It proves a polylog bound on the per-hard-token intervention library
-size, \(m \geq |C|^{1 - \varepsilon / e_{\text{hard}}}\), and shows that
-under \(k \sim \log n\) the budget grows as
+MWPES, the mode-rate parameter falls in the range
+\(\sigma \in [0.87, 1.85]\), with \(\sigma \approx 1.85\) adopted from
+the ErrorAtlas anchor as a conservative target. It proves a polylog
+bound on the per-hard-token intervention library size,
+\(m \geq \lceil |C|^{1 - \varepsilon / e_{\text{hard}}} \rceil\), and
+shows that under \(k \sim \log n\) the budget grows as
 \(O\big((\log\log n)^{c}\big)\) with \(c < 1\); the
 \emph{sequence}-level analogue is strictly tighter and approaches
-full-catalogue coverage. It synthesises evidence for the three
-load-bearing claims --- clustering (Section 4.1), cluster-orthogonal
-interventions (Section 4.2), and sublinear length scaling (Section 4.3)
---- drawing on approximately sixty prior published results, including a
-six-axis capability-elimination harvest with 27 GOLD-tier citations. And
-it re-audits the most-cited steep-decay results (Dziri et al., 2023;
-Kuratov et al., 2024; METR, 2025; Wan et al., 2025), showing that each
-decays over a variable other than raw token length and so is compatible
-with the sublinear-in-\(n\) thesis.
+full-catalogue coverage as \(k\) grows. It synthesises evidence for the
+three load-bearing claims --- clustering (Section 4.1),
+cluster-selective capability interventions (Section 4.2), and sublinear
+length scaling (Section 4.3) --- drawing on approximately sixty prior
+published results, including a six-axis capability-elimination harvest
+with 28 GOLD-tier citations. And it re-audits the most-cited steep-decay
+results (Dziri et al., 2023; Kuratov et al., 2024; METR, 2025; Wan et
+al., 2025), showing that each decays over a variable other than raw
+token length and so is compatible with the sublinear-in-\(n\) thesis.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -312,17 +316,22 @@ curve as context length grows. Two camps exist. The first reports decay
 that is much milder than exponential. Loong (Wang M. et al., 2024) finds
 GPT-4o on Chain-of-Reasoning tasks declines from 81.6\% (10--50K tokens)
 to 32.9\% (\textgreater200K) --- a relative drop of about 60\% across
-two doublings, consistent with a log-linear fit of accuracy
-\(\approx 95 - 22\log_2(L/10\text{K})\). GSM-\(\infty\) (Zhou et al.,
-2025) fits a sigmoid (saturating) decay with \(R^2 > 0.98\) and shows
-that exponentially more inference compute yields only linear gains in
-AUC --- a direct signature of clustered, not independent, errors. RULER
-(Hsieh et al., 2024) finds threshold-like behaviour where simple
-retrieval holds to 32K while complex reasoning collapses earlier,
-inconsistent with smooth \((1-\varepsilon)^n\). Anchor-based LLMs (Pang
-et al., 2024) achieve 99\% KV-cache reduction with only ``minor accuracy
-compromise,'' directly implying that the effective decision count is
-bounded.
+two doublings, consistent with log-linear decay over \(\log L\) across
+the measured bins. We report the decay shape qualitatively rather than
+committing to fitted coefficients; the bin-representative convention
+materially shifts the slope, while the qualitative claim is unaffected.
+GSM-\(\infty\) (Zhou et al., 2025) fits a sigmoid (saturating) decay
+with \(R^2 > 0.98\) and shows that exponentially more inference compute
+yields only linear gains in AUC --- a direct signature of clustered, not
+independent, errors. RULER (Hsieh et al., 2024) finds threshold-like
+behaviour where simple retrieval holds to 32K while complex reasoning
+collapses earlier, inconsistent with smooth \((1-\varepsilon)^n\).
+Anchor-based LLMs (Pang et al., 2024) achieve 99\% reduction in cached
+K/V state with only ``minor accuracy compromise,'' which implies that
+the effective number of distinct attention-key vectors the model needs
+to retain is far smaller than \(n\) --- an architectural correlate of
+the sparse-decision claim, though K/V compression is not literal token
+removal.
 
 The second camp reports ``rapid decay'' findings that are sometimes
 cited as evidence for exponential compounding. Faith and Fate (Dziri et
@@ -417,6 +426,16 @@ The composed reliability becomes
 \[
 P(\text{correct}) = (1 - e_{\text{hard}})^{\beta k} \cdot (1 - e_{\text{easy}})^{(1 - \beta) k} \cdot (1 - e_{\text{non}})^{n - k}.
 \]
+
+\emph{Reading the product form.} We do not assume iid token errors. The
+three rates \(e_{\text{hard}}\), \(e_{\text{easy}}\), \(e_{\text{non}}\)
+summarise \emph{conditional per-decision failure hazards} after
+conditioning on prior relevant decisions being correct; grouping these
+hazards by stratum yields the multiplicative survival expression above.
+Where within-stratum hazards vary substantially across positions, or
+where error cascades dominate, the expression should be read as a
+stylised reliability approximation rather than as an exact generative
+model.
 
 Because \(e_{\text{easy}} \approx e_{\text{non}}\) once context
 accumulates, the failure rate is dominated by the \(\beta k\) hard
@@ -528,14 +547,18 @@ large-scale taxonomies:
   \(\sigma \approx 17 / \ln(10^4) \approx 1.85\).
 \item
   HumanEval (Zhang et al., 2024): \(k_{\text{hard}} \approx 10^4\),
-  \(|C| \in [8, 12]\) named modes, \(\sigma \in [1.0, 1.3]\).
+  \(|C| \in [8, 12]\) named modes, \(\sigma \in [0.87, 1.30]\).
 \item
   MWPES (Sun et al., 2025): \(k_{\text{hard}} \approx 3 \times 10^5\),
   \(|C| \in [15, 20]\), \(\sigma \in [1.2, 1.6]\).
 \end{itemize}
 
-We adopt \(\sigma \approx 2\) as a target value with empirical range
-\(\sigma \in [1.5, 3.0]\).
+Across the three anchors, \(\sigma\) falls in the range
+\(\sigma \in [0.87, 1.85]\). We carry \(\sigma \approx 1.85\) --- the
+ErrorAtlas anchor, the largest single-domain value --- as the target for
+downstream estimates, and report all rate conclusions parametrically in
+\(\sigma\). (An earlier draft adopted \(\sigma \approx 2\) with range
+\([1.5, 3.0]\); that overstated what the three anchors support.)
 
 \textbf{Capabilities are coarser than error classes.} The σ estimate
 above is derived from \emph{named error categories} in the published
@@ -549,10 +572,17 @@ construction the format-violation cluster and the structural component
 of ``missing required element'' (ErrorAtlas's largest category at
 15.56\%), because schemas with required fields cannot omit those fields.
 Postulate 1's \(\sigma \approx 1.85\), calibrated against the raw
-17-category taxonomy, is therefore conservative for the engineering
-question: when interventions are coarse-grained, the practical
-capability library is smaller than \(|C|\). The polylog conclusion of
-Proposition 1 holds \emph{a fortiori}.
+17-category taxonomy, is therefore a conservative input for the
+engineering question. When interventions cover \emph{sets} of L2
+categories, the formal coverage problem becomes weighted set cover (with
+weights given by category mass); Proposition 1's ranked-category form is
+a tractable proxy for that problem, and the practical capability library
+required to hit a given coverage target is generally smaller than the
+formula's \(m\). We do not claim the polylog conclusion holds \emph{a
+fortiori} in a formal-optimality sense --- that would require a
+set-cover argument we do not develop here. We claim only that the
+ranked-category bound is a conservative approximation to the set-cover
+quantity that matters in practice.
 
 \textbf{Robustness.} The qualitative claim that follows in Section 3.4
 is robust to the choice between Heaps' law (power-law) and logarithmic
@@ -674,6 +704,18 @@ is loose in this regime. Empirically observed library sizes that achieve
 a given residual threshold may be a constant factor smaller than the
 formula's prediction.
 
+\textbf{Domain of \(F\).} The log-coverage form is intended for
+\(m \geq 2\) and \(|C| \geq 2\), the range where the ErrorAtlas top-5 /
+top-10 anchors sit. We adopt the empirical conventions
+\(F(0; |C|) := 0\) (no interventions cover no mass) and
+\(F(1; |C|) := p_1\), where \(p_1\) is the observed mass of the single
+most prevalent mode. The latter convention avoids the artificial
+\(\ln 1 / \ln |C| = 0\) output of the closed form at \(m = 1\); the log
+approximation is not anchored at the single-intervention edge case. For
+\(|C| = 1\), residual error is fully covered (if the single mode is
+intervened on) or fully uncovered (otherwise) by definition, and the
+formula is not invoked.
+
 After deploying the top-\(m\) intervention library, the residual
 per-hard-token error rate is
 
@@ -707,10 +749,22 @@ becomes a domain-constant independent of \(n\). If \(k \leq k_{\max}\)
 (the bounded regime of Arbuzov et al., 2025, §3.1),
 \(|C_{\text{active},D}|\) is constant in \(n\) throughout.
 
+\textbf{Conditionality of Proposition 1.} The bound below is engineering
+math, not a theorem about LLMs. It holds \emph{conditional on} (i) the
+log coverage form of §3.3 --- an empirical best-fit, not a derived
+consequence of Zipf --- applied on its declared domain \(m \geq 2\),
+\(|C_{\text{eff}}| \geq 2\); (ii) the residual target
+\(\varepsilon \in (0, e_{\text{hard}})\) (otherwise the target is
+trivial or unattainable); (iii) the patch-indexed Assumption 2 of §3.2
+for any sequence-length rate claim. A different cumulative fitted to the
+same ErrorAtlas anchors would preserve the qualitative polylog
+conclusion (see §3.6) but change the exponent.
+
 \textbf{Proposition 1 (Per-Hard-Token Intervention Budget).} \emph{Let
 \(\varepsilon \in (0, e_{\text{hard}})\) be a target per-hard-token
-residual error rate for sequences in domain \(D\). Let
-\(C_{\text{eff}}\) denote the relevant covered catalogue:}
+residual error rate for sequences in domain \(D\), with
+\(|C_{\text{eff}}| \geq 2\). Let \(C_{\text{eff}}\) denote the relevant
+covered catalogue:}
 
 \begin{itemize}
 \tightlist
@@ -725,7 +779,7 @@ residual error rate for sequences in domain \(D\). Let
 library satisfying \(e_{\text{res}}(m) \leq \varepsilon\) has size}
 
 \[
-m \geq |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}}.
+m \geq \left\lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \right\rceil.
 \]
 
 \emph{If \(C_{\text{eff}} = C_{\text{active},D}(n)\) and
@@ -737,7 +791,8 @@ m = O\!\bigl((\log\log n)^{1 - \varepsilon / e_{\text{hard}}}\bigr),
 
 \emph{i.e., the intervention budget grows doubly logarithmically with
 sequence length. In the cap regime, or for full domain-library
-deployment, \(m \geq |C_D|^{1 - \varepsilon / e_{\text{hard}}}\),
+deployment,
+\(m \geq \lceil |C_D|^{1 - \varepsilon / e_{\text{hard}}} \rceil\),
 independent of \(n\).}
 
 \emph{Proof.} From Section 3.3,
@@ -746,10 +801,12 @@ Requiring \(e_{\text{res}}(m) \leq \varepsilon\) gives
 \(F(m; |C_{\text{eff}}|) \geq 1 - \varepsilon / e_{\text{hard}}\). Since
 \(\varepsilon < e_{\text{hard}}\), the required coverage lies below one,
 so the cap in \(F\) is inactive. With
-\(F(m; |C_{\text{eff}}|) = \ln m / \ln |C_{\text{eff}}|\), we obtain
+\(F(m; |C_{\text{eff}}|) = \ln m / \ln |C_{\text{eff}}|\) on the
+declared domain \(m \geq 2\), \(|C_{\text{eff}}| \geq 2\), we obtain
 \(\ln m / \ln |C_{\text{eff}}| \geq 1 - \varepsilon / e_{\text{hard}}\),
 hence \(m \geq |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}}\).
-For per-sequence scaling, Assumption 2 gives
+Taking the ceiling because \(m\) is integer-valued gives the stated
+form. For per-sequence scaling, Assumption 2 gives
 \(|C_{\text{eff}}| = |C_{\text{active},D}(n)| = O(\log\log n)\) when
 \(k(n) = \Theta(\log n)\), before the patch cap is reached. After the
 cap is reached, \(|C_{\text{eff}}| = |C_D|\) and the bound is
@@ -769,46 +826,79 @@ regime is a domain-constant.
 
 \textbf{Sequence-level versus per-hard-token bounds.} Proposition 1
 bounds the \emph{per-hard-token} residual error. Sequence-level failure
-probability is a strictly stronger target. Taking logs of the composed
-reliability and using \(\log(1 - x) \approx -x\) for small \(x\),
+probability is a strictly stronger target. We derive the sequence-level
+requirement \emph{multiplicatively} from the composed reliability of
+§3.1, without invoking the additive log-expansion first; the
+multiplicative form makes the role of non-key error explicit and avoids
+a side-condition the literature has not measured.
+
+Define the non-hard-token survival factor
 
 \[
--\log P(\text{correct}) \approx \beta k \cdot e_{\text{res}}(m) + (1 - \beta) k \cdot e_{\text{easy}} + (n - k) \cdot e_{\text{non}}.
+S_{\text{base}} = (1 - e_{\text{easy}})^{(1 - \beta) k}\,(1 - e_{\text{non}})^{n - k}.
 \]
 
-The first term dominates \textbf{only under the assumption that
-\(e_{\text{non}} = o(k/n)\) asymptotically} --- i.e., that non-key
-tokens have vanishing per-token error rate fast enough that their
-aggregate \((n-k) \cdot e_{\text{non}}\) stays below
-\(\beta k \cdot e_{\text{res}}(m)\). Without this assumption, the
-non-key term can re-introduce the original exponential-in-\(n\) concern
-through the back door. We adopt this assumption --- it is the natural
-reading of Arbuzov et al.~(2025)'s observation that non-key tokens
-become ``nearly deterministic'' once context accumulates --- but we name
-it explicitly because the literature has not measured
-\(e_{\text{non}}(n)\) directly. Where this assumption is unsafe (e.g.,
-domains with persistent baseline noise on routine tokens), Proposition 1
-should be read as a bound on \emph{key-token failure risk} only, not on
-literal sequence-level correctness.
-
-Granted that assumption, bounding sequence-level failure probability by
-\(\varepsilon_{\text{seq}}\) requires
-\(e_{\text{res}}(m) \leq \varepsilon_{\text{seq}} / (\beta k)\).
-Substituting into the budget formula,
+Then
+\(P(\text{correct}) = (1 - e_{\text{res}})^{\beta k}\, S_{\text{base}}\),
+and requiring \(P(\text{correct}) \geq 1 - \varepsilon_{\text{seq}}\)
+becomes
 
 \[
-m \geq |C|^{1 - \varepsilon_{\text{seq}} / (\beta k \cdot e_{\text{hard}})}.
+(1 - e_{\text{res}})^{\beta k}\, S_{\text{base}} \;\geq\; 1 - \varepsilon_{\text{seq}}.
 \]
 
-This is a substantially stronger requirement than Proposition 1: as
-\(k\) grows, the per-token tolerance tightens and \(m\) approaches
-\(|C|\) --- essentially every named mode must be covered. The
-widely-quoted ``fix \(\approx 50\) patterns per domain →
-\(\approx 90\%\) error reduction'' claim is best understood as a
-per-hard-token statement; the analogous sequence-level claim requires
-correspondingly more interventions and tighter coverage of the tail.
-Production systems with one-shot reliability targets should plan for the
-stricter regime.
+This yields three regimes.
+
+\emph{Regime (i): \(S_{\text{base}} < 1 - \varepsilon_{\text{seq}}\).}
+Hard-token interventions alone cannot meet the sequence target: even at
+\(e_{\text{res}} = 0\), the surviving non-hard-token failure mass
+exceeds the sequence-level budget. The binding constraint is non-key
+noise accumulation, not the catalogue. This regime is the back-door
+route by which the original exponential-in-\(n\) concern can re-enter,
+and it should be diagnosed before any catalogue-budgeting exercise is
+undertaken.
+
+\emph{Regime (ii):
+\(S_{\text{base}} \geq 1 - \varepsilon_{\text{seq}}\).} Define \[
+\tau_{\text{seq}} \;=\; 1 - \left(\frac{1 - \varepsilon_{\text{seq}}}{S_{\text{base}}}\right)^{1 / (\beta k)}.
+\] For \(0 < \tau_{\text{seq}} < e_{\text{hard}}\), the sequence target
+is met whenever \(e_{\text{res}}(m) \leq \tau_{\text{seq}}\), so the
+required library size is \[
+m \;\geq\; \left\lceil |C_{\text{eff}}|^{1 - \tau_{\text{seq}} / e_{\text{hard}}} \right\rceil.
+\] As \(\varepsilon_{\text{seq}}\) shrinks toward zero,
+\(\tau_{\text{seq}} \to 0\) and the exponent approaches one, so \(m\)
+approaches \(|C_{\text{eff}}|\) --- essentially every named mode must be
+covered.
+
+\emph{Regime (iii): \(\tau_{\text{seq}} \geq e_{\text{hard}}\).} The
+sequence-level target is already met at the baseline hard-token rate
+without intervention; the budget is trivial.
+
+\textbf{The additive shortcut as a heuristic.} Taking logs and using
+\(\log(1-x)\approx -x\) for small \(x\) gives the familiar \[
+-\log P(\text{correct}) \;\approx\; \beta k\, e_{\text{res}}(m) + (1 - \beta) k\, e_{\text{easy}} + (n - k)\, e_{\text{non}},
+\] and the hard-token term dominates \emph{only} when
+\((n-k)\, e_{\text{non}} = o(\beta k\, e_{\text{res}}(m))\) ---
+equivalently \(e_{\text{non}} = o(\beta \alpha\, e_{\text{res}}(m))\)
+with \(\alpha = k/n\). Under that shortcut,
+\(e_{\text{res}}(m) \lesssim \varepsilon_{\text{seq}}/(\beta k)\) and
+the budget reduces to
+\(m \geq \lceil |C|^{1 - \varepsilon_{\text{seq}}/(\beta k\, e_{\text{hard}})} \rceil\).
+We retain this as a production heuristic, noting that the multiplicative
+S\_base / τ\_seq treatment above is the literal statement: the shortcut
+is valid only inside Regime (ii) and only when the non-key aggregate is
+genuinely small relative to \(\beta k\, e_{\text{res}}(m)\), which the
+literature has not measured directly.
+
+In all of Regime (ii), this is a substantially stronger requirement than
+Proposition 1: as \(k\) grows, the per-token tolerance tightens and
+\(m\) approaches \(|C|\). The widely-quoted ``fix \(\approx 50\)
+patterns per domain → \(\approx 90\%\) error reduction'' claim is best
+understood as a per-hard-token statement; the analogous sequence-level
+claim requires correspondingly more interventions and tighter coverage
+of the tail. Production systems with one-shot reliability targets should
+plan for the stricter regime --- and check whether they are in Regime
+(i), where catalogue-budgeting cannot help at all.
 
 \subsubsection{3.5 Alternative formulation: Heaps power-law
 variant}\label{alternative-formulation-heaps-power-law-variant}
@@ -979,31 +1069,36 @@ engineering unit, the clusters are the bookkeeping unit.
 patterns}\label{six-capability-axes-and-three-structural-patterns}
 
 A dedicated harvest of capability-elimination evidence (parallel to the
-cluster-based harvest below) yields \textbf{27 GOLD-tier citations}
+cluster-based harvest below) yields \textbf{28 GOLD-tier citations}
 across \textbf{six independent capability axes}: (i) Arithmetic
 (Python/symbolic execution), (ii) Code Execution (REPL/sandbox
 feedback), (iii) Format/Structure (constrained decoding, FSMs, grammar
 engines), (iv) Perception/Grounding (visual grounding models for GUI,
 charts, tables), (v) Knowledge/RAG (inference-time dense retrieval and
 citation grounding), and (vi) Verification (formal proof checkers,
-learned verifiers, classifier rerouting). Each axis is independently
-confirmed by 3--9 GOLD citations. The 27 citations exhibit three
-structural patterns of capability-elimination that strengthen --- and
-refine --- the cluster-orthogonality claim.
+learned verifiers, classifier rerouting, process supervision). Each axis
+is independently confirmed by 3--9 GOLD citations. The 28 citations
+exhibit three structural patterns of capability-elimination that
+strengthen --- and refine --- the cluster-orthogonality claim.
 
 We stratify these into three tiers by the \emph{kind} of evidence each
 provides, taking care not to inflate empirical reductions into
 mathematical guarantees.
 
-\textbf{Pattern A --- Hard guarantees (by-construction).} Six citations
-achieve residual error rate equal to zero \emph{by construction},
-restricted strictly to structural / verifiable error classes:
-constrained decoders set \(P(\text{invalid token}) = 0\) at every
-generation step (DINGO, ToolDec, XGrammar, OpenAI Structured Outputs);
-proof kernels reject any output that fails type-checking (Lean /
-DeepSeek-Prover-V2). The class of ``outputs that violate the grammar''
-is mathematically empty under these mechanisms. We restrict Pattern A to
-this narrow sense: format, syntax, schema, formal-proof validity.
+\textbf{Pattern A --- Hard guarantees (by-construction).} Seven
+citations achieve residual error rate equal to zero \emph{by
+construction}, restricted strictly to structural / verifiable error
+classes: constrained decoders set \(P(\text{invalid token}) = 0\) at
+every generation step (DINGO, ToolDec, XGrammar, XGrammar-2, OpenAI
+Structured Outputs); a static syntax check rejects any program with a
+\texttt{SyntaxError} before execution (LlmFix's \texttt{SyntaxError}
+repair, 5.76\% → 0.01\%); proof kernels reject any output that fails
+type-checking (Lean / DeepSeek-Prover-V2). The class of ``outputs that
+violate the grammar'' is mathematically empty under these mechanisms. We
+restrict Pattern A to this narrow sense: format, syntax, schema,
+formal-proof validity. (LlmFix's \texttt{NameError} row, by contrast, is
+a Pattern-C statistical reduction --- 22.7\% → 2.3\%, not zero --- and
+is tabulated as such.)
 
 \textbf{Pattern B --- Strong empirical reductions with class-shift
 signature.} Roughly fourteen citations report empirical reductions of
@@ -1042,7 +1137,7 @@ Pattern C supports ``selective reduction'' without claiming class
 elimination. The earlier framing in this section's first draft blurred
 these boundaries; the revised version keeps them sharp.
 
-The 27 GOLD citations, organised by axis and pattern, are summarised
+The 28 GOLD citations, organised by axis and pattern, are summarised
 below.
 
 {\def\LTcaptype{none} % do not increment counter
@@ -1102,10 +1197,10 @@ Knowledge/RAG & GPT-5 SimpleQA (OpenAI, 2025) & Factual errors (web QA)
 & 47\% → 9.6\% & C \\
 Knowledge/RAG & Almanac (NEJM AI 2024) & Clinical citation errors & 44\%
 → 9\% & C \\
-Arithmetic & MedRaC (Liu et al., 2025) & Arithmetic in medical reasoning
-& 426 → 74 errors & B \\
+Arithmetic & MedRaC (Wang Z. et al., 2025) & Arithmetic in medical
+reasoning & 426 → 74 errors & B \\
 Code Exec & LlmFix NameError (Zhang et al., 2024) & NameError repair &
-22.7\% → 2.3\% & A \\
+22.7\% → 2.3\% & C \\
 Perception & UGround (Gou et al., 2025) & GUI grounding errors & 16.2\%
 → 73.3\% accuracy & B \\
 Perception & Jedi / OSWorld (Xie et al., 2025) & GUI task failures & 5\%
@@ -1116,6 +1211,8 @@ Perception & DePlot (Liu et al., 2023) & Chart-reading errors & 38.2\% →
 67.6\% (+29.4 pp) & B \\
 Verification & CRITIC toxicity (Gou et al., 2024) & Toxic generation &
 79.2\% reduction & C \\
+Verification & Math-Shepherd (Wang P. et al., 2023) & Reasoning step
+errors on MATH & 28.6\% → 43.5\% & B \\
 Knowledge/RAG & Self-RAG (Asai et al., 2024) & Unsupported facts &
 55.5\% → 22\% error & B \\
 Perception & OmniParser (Lu et al., 2024) & Icon / element errors &
@@ -1316,12 +1413,17 @@ literature pass or a one-day inference-only ablation would close it.
 \paragraph{Additivity and its limits}\label{additivity-and-its-limits}
 
 Six Sigma Agent results (Six Sigma authors, 2026) demonstrate that
-stacking interventions targeting orthogonal failure modes produces
-compound reliability gains: in their parallel-consensus framework,
-atomic decomposition with five-way voting yields a \(14{,}700\times\)
-system reliability improvement over single-pass baselines. AgentSquare
-(AgentSquare authors, 2024) similarly shows supra-additive gains when
-modules target distinct failure modes. These are encouraging.
+stacking interventions targeting orthogonal failure modes can produce
+large compound reliability gains. In their parallel-consensus framework,
+atomic task decomposition combined with five-way majority voting yields
+a \(14{,}700\times\) improvement over a single-pass baseline on the
+authors' internal benchmark --- we read this as evidence for compound
+gains from decomposition plus consensus aggregation under their specific
+parallel-voting regime, not as a direct demonstration that heterogeneous
+cluster-targeted interventions compose additively in the absence of
+voting. AgentSquare (AgentSquare authors, 2024) similarly shows
+supra-additive gains when modules target distinct failure modes. These
+are encouraging but benchmark- and aggregation-specific.
 
 There is a caveat. Le (2026) reports that schema-level and prompt-level
 instructions interact \emph{non-additively} for some model families:
@@ -1349,10 +1451,14 @@ steeper-decay reports re-examined in Section 6.
 \textbf{Log-linear decay on multi-document reasoning.} Loong (Wang M. et
 al., 2024) evaluates 4 task types on 4 context-length sets (10K--50K,
 50K--100K, 100K--200K, \textgreater200K). GPT-4o on Chain-of-Reasoning
-declines 81.6\% → 62.1\% → 45.1\% → 32.9\% across the four sets. A
-log-linear fit accuracy \(\approx 95 - 22 \log_2(L / 10\text{K})\) holds
-well; exponential per-token decay would predict near-zero by 200K and is
-decisively ruled out.
+declines 81.6\% → 62.1\% → 45.1\% → 32.9\% across the four sets ---
+consistent with log-linear decay across the measured bins. Exponential
+per-token decay would predict near-zero accuracy by 200K and is
+decisively ruled out by the 32.9\% endpoint. We do not commit to a
+specific log-linear fit constant because the bin-representative
+convention (lower bound, midpoint, mean) materially shifts the slope;
+the qualitative claim --- mild, much-slower-than-exponential decay over
+\(\log L\) --- is robust to that choice.
 
 \textbf{Sigmoid decay on synthetic math.} GSM-\(\infty\) (Zhou et al.,
 2025) fits a sigmoid (saturating) shape with \(R^2 > 0.98\) on the
@@ -1371,28 +1477,37 @@ al.~(2023) measure the gap between models' ability to answer two-hop
 questions and the product of their one-hop accuracies. Under independent
 per-step compounding, the gap should grow with chain length; under
 clustered errors, it should be bounded. Press et al.~find a
-\(\sim 40\%\) gap that is approximately \emph{constant} across the
-entire GPT-3 family from 125M to 175B parameters. This is direct
-empirical evidence against per-step independent compounding.
+\(\sim 40\%\) gap that is approximately \emph{constant} across the GPT-3
+family of models they evaluate (spanning sub-billion to 175B-parameter
+variants). This is direct empirical evidence against per-step
+independent compounding.
 
-\textbf{Self-consistency gains are too large for independent errors.}
-Wang et al.~(2023) report +17.9 pp on GSM8K from majority voting over 40
-sampled chains. Under \((1 - \varepsilon)^n\)-style independent errors,
-majority voting reduces variance as \(1/\sqrt{m}\) but cannot move the
-mean far from the per-step ceiling; the +17.9 pp gain requires correct
-answers to function as a narrow attractor in solution space, with errors
-dispersed. This is the structural signature of clustered-on-manifold
-errors.
+\textbf{Self-consistency is consistent with --- but does not prove ---
+clustered structure.} Wang X. et al.~(2023) report +17.9 pp on GSM8K
+from majority voting over 40 sampled chains. A common reading interprets
+the magnitude as incompatible with independent sampled paths, but this
+is not quite right: Condorcet aggregation of iid Bernoulli(\(p\)) chains
+with \(p > 0.5\) can move accuracy substantially as the sample count
+grows, so gain magnitude alone is not diagnostic. The
+clustered-attractor interpretation remains \emph{consistent} with the
+observed gain --- sampled chains converge on a small number of recurring
+reasoning paths, exactly the structural prediction of Section 3 --- but
+is not established by it. We therefore retain self-consistency as
+suggestive evidence pointing in the same direction as Section 4.1's
+concentration result, not as an independent proof of cluster structure.
 
-\textbf{Bounded \(k\) via context compression.} Pang et al.~(2024)
-report that ``Anchor LLMs'' achieve 99\% KV-cache reduction with only
-``minor accuracy compromise.'' If long-context reliability depended on
-all \(n\) tokens, removing 99\% of them should be catastrophic. The fact
-that it is not, plus the 3.5× inference speedup the same paper achieves,
-directly implies that the effective decision count \(k\) is much smaller
-than \(n\) --- closer to 1\% of context length than to 100\%.
-LLMLingua-2 (Jiang et al., 2024) and Recurrent Context Compression
-(Huang et al., 2024) report similar bounds.
+\textbf{Bounded effective decision count via K/V compression.} Pang et
+al.~(2024)'s Anchor LLMs achieve \(\approx 99\%\) reduction in cached
+K/V state per layer with only minor accuracy compromise, plus a 3.5×
+inference speedup. The mechanism operates on internal K/V vectors, not
+on the input token stream --- so the observation does not directly imply
+input-token redundancy. What it does imply is that the \emph{effective
+number of distinct attention-key vectors} a long-context model needs to
+retain to produce coherent output is far smaller than \(n\) --- exactly
+the architectural form of the sparse-decision claim. LongLLMLingua
+(Jiang et al., 2024) and Recurrent Context Compression (Huang et al.,
+2024) report similar prompt- and context-compression bounds along the
+same theme.
 
 \textbf{Staircase / plateau-and-cliff patterns.} Think-Prune-Train
 (Costello et al., 2025) reports that successive self-training rounds
@@ -1445,7 +1560,7 @@ interventions against the head of that local catalogue.
 
 \textbf{Domain transfer is mild but non-trivial.} The mode-rate constant
 \(\sigma\) shifts between domains (math \(\approx 1.2\)--\(1.6\); code
-\(\approx 1.0\)--\(1.3\); general \(\approx 1.85\)), and
+\(\approx 0.87\)--\(1.30\); general \(\approx 1.85\)), and
 higher-\(\sigma\) domains carry larger catalogues at any given corpus
 size --- so they need proportionally more interventions for matched
 coverage. The dependence is linear in \(\sigma\) at fixed coverage: a
@@ -1466,12 +1581,13 @@ on the polylog result, while one-shot systems should plan for tighter
 coverage.
 
 \textbf{Library design as engineering, not asymptotic theory.} A
-practical implication of the cluster-orthogonality finding (Section 4.2)
+practical implication of the cluster-selectivity finding (Section 4.2)
 is that an intervention library can be assembled module-by-module, in
-any order, as long as the modules target orthogonal failure modes. The
+any order, as long as the modules target distinct failure classes. The
 Le (2026) caveat applies only to interventions sharing a prompt channel;
 layer-separated interventions (constrained decoding + retrieval +
-process supervision + tool call) compose near-additively. Library
+process supervision + tool call) compose approximately additively in our
+data, though the additivity is empirical rather than derived. Library
 construction is therefore highly parallelisable: different teams can
 ship independent interventions and combine them with minimal integration
 risk, modulo the prompt-channel caveat.
@@ -1498,29 +1614,31 @@ clusters of Section 4.2.
 \subsubsection{6.1 By-construction elimination as a boundary
 case}\label{by-construction-elimination-as-a-boundary-case}
 
-Six of the 27 GOLD citations in Section 4.2.0 --- DeepSeek-Prover-V2's
-Lean proof checker, OpenAI Structured Outputs, ToolDec, DINGO, XGrammar
-(×2), and LlmFix's static syntax check --- achieve residual error rate
-equal to zero \emph{by mathematical construction}, not statistically.
-Constrained decoders set \(P(\text{invalid token}) = 0\) at every
-generation step, so no invalid token can be emitted. Proof kernels
-reject any output that fails type-checking. Schema validators reject any
-output missing a required field. (Acurai's RAG result is excluded from
-Pattern A here, despite its 100\% RAGTruth number; it is a
+Seven of the 28 GOLD citations in Section 4.2.0 --- DeepSeek-Prover-V2's
+Lean proof checker, OpenAI Structured Outputs, ToolDec, DINGO, XGrammar,
+XGrammar-2, and LlmFix's static syntax check --- achieve residual error
+rate equal to zero \emph{by mathematical construction}, not
+statistically. Constrained decoders set \(P(\text{invalid token}) = 0\)
+at every generation step, so no invalid token can be emitted. Proof
+kernels reject any output that fails type-checking. Schema validators
+reject any output missing a required field. (Acurai's RAG result is
+excluded from Pattern A here, despite its 100\% RAGTruth number; it is a
 benchmark-conditional empirical observation, not a by-construction
 property of citation-grounded retrieval in general --- see Section 4.2.0
-Pattern B.)
+Pattern B. LlmFix's \texttt{NameError} repair is also excluded, since
+its residual is 2.3\% rather than zero --- Pattern C.)
 
 In this regime, the polylog bound of Proposition 1 ---
-\(m \geq |C|^{1 - \varepsilon / e_{\text{hard}}}\) --- is loose. The
-cluster covered by a by-construction intervention contributes zero to
-the residual error, not a small positive quantity. The formal statement
-is that for any cluster \(c \in \{1, \dots, m\}\) covered by a Pattern-A
-intervention, \(\Pr(\text{failure} \mid \text{cluster } c) = 0\)
-identically, regardless of how many hard-token decisions the model makes
-inside that cluster. The Proposition 1 budget formula treats coverage as
-a \([0, 1]\) fractional quantity; Pattern A pushes a subset of clusters
-to coverage exactly 1.
+\(m \geq \lceil |C|^{1 - \varepsilon / e_{\text{hard}}} \rceil\) --- is
+loose. The cluster covered by a by-construction intervention contributes
+zero to the residual error, not a small positive quantity. The formal
+statement is that for any cluster \(c \in \{1, \dots, m\}\) covered by a
+Pattern-A intervention,
+\(\Pr(\text{failure} \mid \text{cluster } c) = 0\) identically,
+regardless of how many hard-token decisions the model makes inside that
+cluster. The Proposition 1 budget formula treats coverage as a
+\([0, 1]\) fractional quantity; Pattern A pushes a subset of clusters to
+coverage exactly 1.
 
 This is a strengthening result, not a counter-example. The framework's
 qualitative claim --- that capability provisioning can erase an error
@@ -1560,27 +1678,29 @@ zero-shot. The authors theorise that ``the probability of incorrect
 predictions converges exponentially to \(\approx 1\) for abstract
 compositional tasks.'' The decay variable, however, is
 \emph{compositional graph size \(N\)}, not raw token length \(n\). The
-3×3 multiplication graph has approximately 16 nodes (partial products
-plus carries); the 4×4 graph has approximately 25. Multi-digit
-multiplication is engineered so that \(k_{\text{hard}} \approx N\) ---
-every node in the computation graph is a hard decision. For
-natural-language tasks, where the harvest evidence in Section 4.1 gives
-\(k_{\text{hard}} \ll n\), the Dziri regime is the \emph{boundary case}
-in which our framework reduces to their result. We agree with their
-empirical decay; we disagree with the interpretation that it extends to
-natural-language \(n\).
+3×3 multiplication graph has on the order of \(d^2\) partial products
+plus carries --- call the resulting node count \(N_3\); the 4×4 graph
+similarly has node count \(N_4\), with \(N_4 > N_3\) (Dziri et
+al.~report the graph-size grouping but exact node counts depend on the
+carry convention, so we read off the order-of-magnitude rather than
+commit to specific integers). Multi-digit multiplication is engineered
+so that \(k_{\text{hard}} \approx N\) --- every node in the computation
+graph is a hard decision. For natural-language tasks, where the harvest
+evidence in Section 4.1 gives \(k_{\text{hard}} \ll n\), the Dziri
+regime is the \emph{boundary case} in which our framework reduces to
+their result. We agree with their empirical decay; we disagree with the
+interpretation that it extends to natural-language \(n\).
 
-A complementary observation: \((1 - \varepsilon)^N = 0.04\) at
-\(N = 25\) requires \(\varepsilon \approx 0.12\) per node, but
-\((1 - 0.12)^{16} \approx 0.13\), far below the observed 0.59 at
-\(N = 16\). Dziri's own data does not fit a clean
-\((1 - \varepsilon)^N\) exponential on their own decay axis, suggesting
-the actual decay shape is steeper than exponential locally but
-compatible with a finite catalogue of failure modes that get exhausted
-as \(N\) grows. \textbf{Where the framework concedes}: in adversarial
-compositional tasks engineered so that \(k_{\text{hard}} \approx N\),
-the framework reduces to Dziri's exponential regime and does not relieve
-it; the relocation is informational, not magical.
+A complementary observation: a clean \((1 - \varepsilon)^N\) exponential
+cannot simultaneously reproduce 59\% at the 3-digit graph size and 4\%
+at the 4-digit graph size for any single per-node \(\varepsilon\) ---
+the observed drop is locally steeper than per-node-iid exponential. This
+is consistent with a finite catalogue of failure modes that gets
+exhausted as \(N\) grows, not a smooth uniform per-node failure rate.
+\textbf{Where the framework concedes}: in adversarial compositional
+tasks engineered so that \(k_{\text{hard}} \approx N\), the framework
+reduces to Dziri's regime and does not relieve it; the relocation is
+informational, not magical.
 
 \textbf{Kuratov et al.~(2024), BABILong.} The abstract reports
 ``performance declines sharply with increased reasoning complexity'' and
@@ -1748,20 +1868,72 @@ Heaps-style inside the patch and asymptote to a domain-specific
 \(|C_D|\).
 
 \textbf{The irreducible-semantic residual.} Of the 17 ErrorAtlas
-categories, 13 are directly addressed by one of the six capability axes
-of Section 4.2.0 --- under Patterns A, B, or C. The remaining four ---
-inappropriate refusal (partially covered by preference optimisation),
-specification misinterpretation (Category H, addressed only weakly by
-clarification loops), reasoning bottlenecks at the level of problem
-decomposition, and a small residual of ``user wanted something
-different'' semantic failures --- admit no clean capability-provisioning
-fix in the current literature. These are \emph{irreducible-semantic
-residuals}: classes where the failure is in choosing what to do, not in
-executing it. Proposition 1's prediction of \(O(\log)\) rather than
-\(O(0)\) residual reliability reflects exactly this irreducible core.
-The framework does not claim 100\% coverage of all failures; it claims
-polylog-bounded \emph{capability-eliminable} failures, with the named
-semantic residual as the floor.
+categories, 13 are addressed under Patterns A, B, or C by one of the six
+capability axes of Section 4.2.0; four are not. The mapping below makes
+this audit-able through the paper's own 12-cluster scheme of Section 4.2
+(with Category I split into its structural and semantic sub-clusters per
+§4.2's reframing, yielding 13 distinct addressable sub-classes):
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Cluster (this paper)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Covering axis
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Pattern
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Notes
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A. Arithmetic / computation & Arithmetic & B & PAL, PoT, ToRA \\
+B. Unit conversion & Arithmetic & B & folded into A --- Python handles
+units \\
+C. Counting / enumeration & Arithmetic & (gap → C) & smallest residual
+gap \\
+D. Format / schema violation & Format/Structure & A & constrained
+decoding \\
+E. Code logic / type / null & Code Exec & A/B & REPL feedback;
+SyntaxError is Pattern A \\
+F. Multi-hop decomposition drift & Knowledge/RAG & C & entity-grounded
+rewriter \\
+G. Reasoning step errors & Verification & B & process reward \\
+H. Specification misinterpretation & Verification (weak) & C &
+clarification loops; weakest fit \\
+I.a Structural missing element & Format/Structure & A & subsumed by D's
+constrained decoders \\
+I.b Semantic missing element & Verification + clarification & C &
+subsumed by G/H \\
+J. Hallucination / factual & Knowledge/RAG & B/C & RAG, citation
+grounding \\
+K. Inappropriate refusal & Verification & C & preference optimisation \\
+L. Tool / API usage & Format/Structure + Verification & B & structured
+uncertainty \\
+\end{longtable}
+}
+
+That accounts for 13 sub-classes mapped to one of the six axes. The
+remaining four ErrorAtlas categories --- \emph{(1)} a residual of
+inappropriate refusal beyond what preference optimisation reaches,
+\emph{(2)} specification misinterpretation not closed by clarification
+loops, \emph{(3)} reasoning bottlenecks at the level of problem
+decomposition, and \emph{(4)} a small ``user wanted something
+different'' semantic remainder --- admit no clean
+capability-provisioning fix in the current literature. These are
+\emph{irreducible-semantic residuals}: classes where the failure is in
+choosing what to do, not in executing it. Proposition 1's prediction of
+\(O(\log)\) rather than \(O(0)\) residual reliability reflects exactly
+this irreducible core. The framework does not claim 100\% coverage of
+all failures; it claims polylog-bounded \emph{capability-eliminable}
+failures, with the named semantic residual as the floor.
 
 \textbf{A falsifiability test the framework passes.} DebugBench (Tian et
 al., 2024) explicitly catalogues which error classes execution-feedback
