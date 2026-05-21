@@ -226,7 +226,7 @@ so that the composed survival from~\eqref{eq:three-rate} can be written $P(\text
   \item[Regime (iii): $\tau_{\text{seq}} \geq e_{\text{hard}}$.] The sequence target is already met at the baseline hard-token rate; no intervention is required.
 \end{description}
 
-The widely-quoted ``$\teApprox 50$ patterns $\teArrow \teApprox 90\%$ reduction'' claim is a per-hard-token statement; the sequence-level analogue requires correspondingly more interventions. Production systems with one-shot reliability targets should plan for the stricter regime---and check whether they are in Regime~(i), where catalogue-budgeting cannot help at all.
+A common engineering rule of thumb---``fix $\teApprox 50$ patterns per domain $\teArrow \teApprox 90\%$ error reduction''---is best understood as a per-hard-token statement; the analogous sequence-level claim requires correspondingly more interventions and tighter coverage of the tail. Production systems with one-shot reliability targets should plan for the stricter regime---and check whether they are in Regime~(i), where catalogue-budgeting cannot help at all.
 
 \section{Empirical Evidence}
 \label{sec:evidence}
@@ -254,7 +254,7 @@ Self-consistency~\citep{wangx2023selfconsistency} is consistent with but does no
 \label{sec:implications}
 
 \paragraph{Reliability engineering is local patch coverage.}
-Within a fixed domain patch, Proposition~1 makes reliability a small-catalogue engineering problem rather than an asymptotic scaling problem. A team should initially budget for a library on the order of tens of interventions, then refine from the local mode-discovery curve $C_{\text{seen},D}(T)$ and the empirical rank-frequency distribution. Available evidence is consistent with $\teApprox 50$ named interventions covering the head of the per-hard-token failure distribution in many measured domains, but this number is a planning prior, not a universal constant: the same base model in cardiology RAG, legal contract drafting, and code review yields three different libraries because $C_D$, $A_D$, $\sigma_D$ all change with the deployment domain.
+Within a fixed domain patch, Proposition~\ref{prop:budget} makes reliability a small-catalogue engineering problem rather than an asymptotic scaling problem. A team should initially budget for a library on the order of tens of interventions, then refine from the local mode-discovery curve $C_{\text{seen},D}(T)$ and the empirical rank-frequency distribution. As a rule of thumb consistent with the head-mass figures in ErrorAtlas, HumanEval, and MWPES, $\teApprox 50$ named interventions cover the bulk of the per-hard-token failure distribution in many measured domains. This is a planning prior calibrated to current taxonomies, not a universal constant; the local mode-discovery curve sets the actual library size for any given deployment---the same base model in cardiology RAG, legal contract drafting, and code review yields three different libraries because $C_D$, $A_D$, $\sigma_D$ all change with the deployment domain.
 
 \paragraph{Per-hard-token vs.\ sequence-level targets matter for SLA design.}
 Per-hard-token residual error---the right metric for continuous-correction systems---has a polylog budget. Sequence-level failure probability---the right metric for one-shot systems---is strictly stricter and approaches full-catalogue coverage as $k$ grows. Production deployments should design SLAs to match the actual cost structure, not read the per-token result as the production SLA.

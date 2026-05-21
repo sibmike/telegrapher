@@ -919,13 +919,14 @@ literature has not measured directly.
 
 In all of Regime (ii), this is a substantially stronger requirement than
 Proposition 1: as \(k\) grows, the per-token tolerance tightens and
-\(m\) approaches \(|C|\). The widely-quoted ``fix \(\approx 50\)
-patterns per domain → \(\approx 90\%\) error reduction'' claim is best
-understood as a per-hard-token statement; the analogous sequence-level
-claim requires correspondingly more interventions and tighter coverage
-of the tail. Production systems with one-shot reliability targets should
-plan for the stricter regime --- and check whether they are in Regime
-(i), where catalogue-budgeting cannot help at all.
+\(m\) approaches \(|C|\). A common engineering rule of thumb --- ``fix
+\(\approx 50\) patterns per domain → \(\approx 90\%\) error reduction''
+--- is best understood as a per-hard-token statement; the analogous
+sequence-level claim requires correspondingly more interventions and
+tighter coverage of the tail. Production systems with one-shot
+reliability targets should plan for the stricter regime --- and check
+whether they are in Regime (i), where catalogue-budgeting cannot help at
+all.
 
 \subsubsection{3.5 Alternative formulation: Heaps power-law
 variant}\label{alternative-formulation-heaps-power-law-variant}
@@ -1592,16 +1593,18 @@ problem. A team building a reliable LLM system in a measured domain
 should initially budget for a library on the order of tens of
 interventions, then refine that estimate from the local mode-discovery
 curve \(C_{\text{seen},D}(T)\) and the empirical rank-frequency
-distribution. Current evidence is consistent with \(\approx 50\) named
-interventions covering the head of the per-hard-token failure
-distribution in many measured domains --- but this number is a planning
-prior, not a universal constant. The same base model in three different
-patches (cardiology RAG, legal contract drafting, code review) yields
-three different intervention libraries: \(C_D\), \(A_D\), and
-\(\sigma_D\) all change with the deployment domain. The engineering goal
-is not global manifold mastery; it is identifying the recurring
-transition types available in the target patch and provisioning
-interventions against the head of that local catalogue.
+distribution. As a rule of thumb consistent with the head-mass figures
+in ErrorAtlas, HumanEval, and MWPES, \(\approx 50\) named interventions
+cover the bulk of the per-hard-token failure distribution in many
+measured domains. This is a planning prior calibrated to current
+taxonomies, not a universal constant; the local mode-discovery curve
+sets the actual library size for any given deployment. The same base
+model in three different patches (cardiology RAG, legal contract
+drafting, code review) yields three different intervention libraries:
+\(C_D\), \(A_D\), and \(\sigma_D\) all change with the deployment
+domain. The engineering goal is not global manifold mastery; it is
+identifying the recurring transition types available in the target patch
+and provisioning interventions against the head of that local catalogue.
 
 \textbf{Domain transfer is mild but non-trivial.} The mode-rate constant
 \(\sigma\) shifts between domains (math \(\approx 1.2\)--\(1.6\); code
