@@ -330,7 +330,7 @@ The 28 GOLD citations, organised by axis and pattern, are summarised below.
 | Format | ToolDec (Zhang et al., 2023) | Tool-call syntax error | 21–100% → 0% | A |
 | Format | DINGO (Suresh et al., 2025) | JSON parse failure | 13–82% → 0% | A |
 | Format | XGrammar (Dong et al., 2024) | Multi-format errors | 20–38% → 0% | A |
-| Format | XGrammar-2 (Dong et al., 2026) | Malformed tool calls | 33–78% → 0% | A |
+| Format | XGrammar-2 (Li et al., 2026) | Malformed tool calls | 33–78% → 0% | A |
 | Arithmetic | Program of Thoughts (Chen et al., 2022) | Calculation errors on GSM8K | 30% of failures → 0% | B |
 | Arithmetic | OpenMedCalc (Goodell et al., 2025) | Clinical arithmetic | "only interpretation errors remained" | B |
 | Knowledge/RAG | Radiology RAG (Wada et al., 2025) | RAG hallucinations | 8% → 0% (p=0.012) | B |
@@ -535,7 +535,7 @@ Chen, W., Ma, X., Wang, X., & Cohen, W. W. (2023). Program of thoughts prompting
 
 Cheng, K., Sun, Q., Chu, Y., Xu, F., Li, Y., Zhang, J., & Wu, Z. (2024). SeeClick: Harnessing GUI grounding for advanced visual GUI agents. *Proceedings of ACL 2024*. arXiv:2401.10935.
 
-Costello, C., Wells, C., Grefenstette, E., & Glaese, A. (2025). Think, prune, train, improve: Scaling reasoning without scaling models. *arXiv preprint arXiv:2504.18116*.
+Costello, C., Guo, S., Goldie, A., & Mirhoseini, A. (2025). Think, prune, train, improve: Scaling reasoning without scaling models. *arXiv preprint arXiv:2504.18116*.
 
 Dai, C., et al. (2025). Capture the key in reasoning to enhance CoT distillation generalization. *Proceedings of ACL 2025*. arXiv:2405.19737. (Earlier arXiv title: "Beyond Imitation: Learning Key Reasoning Steps from Dual Chain-of-Thoughts in Reasoning Distillation". Referred to in body as EDIT.)
 
@@ -543,7 +543,7 @@ Dantart, A. (2026). Reliability by design: Quantifying and eliminating fabricati
 
 Dong, Y., Ruan, C. F., Cai, Y., Lai, R., Xu, Z., Zhao, Y., & Chen, T. (2025). XGrammar: Flexible and efficient structured generation engine for large language models. *Proceedings of MLSys 2025*. arXiv:2411.15100. (Cited as 2024 in body.)
 
-Dong, Y., et al. (2026). XGrammar 2: Efficient dynamic structured generation engine for agentic LLMs. *arXiv preprint arXiv:2601.04426*.
+Li, L., Dong, Y., Wang, G., Xu, Z., Jiang, A., & Chen, T. (2026). XGrammar-2: Efficient dynamic structured generation engine for agentic LLMs. *arXiv preprint arXiv:2601.04426*.
 
 Dziri, N., Lu, X., Sclar, M., Li, X. L., Jiang, L., Lin, B. Y., West, P., Bhagavatula, C., Le Bras, R., Hwang, J. D., et al. (2023). Faith and fate: Limits of transformers on compositionality. *Advances in Neural Information Processing Systems 36*. arXiv:2305.18654.
 
@@ -575,7 +575,7 @@ Jiang, H., Wu, Q., Luo, X., Li, D., Lin, C.-Y., Yang, Y., & Qiu, L. (2024). Long
 
 Kandpal, N., Deng, H., Roberts, A., Wallace, E., & Raffel, C. (2023). Large language models struggle to learn long-tail knowledge. *Proceedings of ICML 2023*. arXiv:2211.08411.
 
-Karaman, B. K., Zabih, R., & Sabuncu, M. R. (2024). POROver: Improving safety and reducing overrefusal in large language models with overgeneration and preference optimization. *arXiv preprint arXiv:2410.12999*.
+Karaman, B. K., Zabir, I., Benhaim, A., Chaudhary, V., Sabuncu, M. R., & Song, X. (2024). POROver: Improving safety and reducing overrefusal in large language models with overgeneration and preference optimization. *arXiv preprint arXiv:2410.12999*.
 
 Karpinska, M., Thai, K., Lo, K., Goyal, T., & Iyyer, M. (2024). One thousand and one pairs: A "novel" challenge for long-context language models. *Proceedings of EMNLP 2024*. arXiv:2406.16264.
 
