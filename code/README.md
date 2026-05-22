@@ -1,7 +1,8 @@
-# Telegrapher AI — Code
+# Telegraph English — Reference Implementation
 
-Structured codebase for the Telegraph English compression and benchmarking pipeline.
-Extracted and refactored from the original Jupyter notebooks.
+The compression and benchmarking pipeline for the Telegraph English (TE) paper. Takes natural-language documents, rewrites them under the TE grammar via an LLM, and evaluates the compressed output against multiple-choice QA pairs to measure fact preservation.
+
+For the project overview, headline results, and how this fits into the broader benchmark and paper, see the [main repository README](../README.md).
 
 ## Quick Start
 
@@ -126,26 +127,6 @@ All settings are in `config.py`. Key values:
 | `N_WRONG` | `3` | Number of distractor answers |
 | `MAX_RETRIES` | `3` | API retry attempts |
 
-## Deduplication from Notebooks
+## License
 
-| Function | Notebook copies | Now in |
-|----------|----------------|--------|
-| `ask_mc` | 4 (key, fine, llml2, errors) | `benchmark/mc_evaluation.py` |
-| `chunk_text` | 2 (batch_1, batch_batch_1) | `chunking.py` |
-| `api_call_with_retry` | 4 | `api_utils.py` |
-| JSON parsing | 6+ | `api_utils.py` (2 functions) |
-| `calculate_token_compression` | 3 (batch_1, review×2) | `tokens.py` |
-| `aggregate_error_files` | 3 (key, fine, errors) | `benchmark/error_analysis.py` |
-
-## Source Notebooks → Modules Mapping
-
-| Notebook | Module(s) |
-|----------|-----------|
-| `batch_1.ipynb` | `compression/sync.py`, `tokens.py`, `chunking.py` |
-| `batch_batch_1.ipynb` | `compression/batch.py` |
-| `review_batch_1.ipynb` | `review/reviewer.py` |
-| `analysis_batch_1.ipynb` | `review/reviewer.py` (aggregate_scores) |
-| `qa_bench_key.ipynb` | `benchmark/qa_bench.py`, `qa_generation.py`, `distractors.py`, `mc_evaluation.py` |
-| `qa_bench_fine.ipynb` | Same modules with `variant="fine"` |
-| `qa_llml2.ipynb` | `benchmark/llml2_eval.py` |
-| `qa_errors.ipynb` / `errors.ipynb` | `benchmark/error_analysis.py` |
+MIT. See [`../LICENSE`](../LICENSE).

@@ -66,7 +66,6 @@ benchmark/
 │   ├── llmlingua2_33.csv
 │   └── leaderboard.md
 ├── dataset_card.md             # Provenance, biases, licensing
-├── PAPER_OUTLINE.md            # Draft outline for a future standalone paper
 └── README.md                   # this file
 ```
 
@@ -108,7 +107,7 @@ See [`results/leaderboard.md`](results/leaderboard.md) for the full table. Highl
 
 ## Citation
 
-If you use CKPB in your work, please cite the preprint in [`../paper/telegraph_english.md`](../paper/telegraph_english.md) and this repository (`github.com/sibmike/telegrapher`). A standalone benchmark paper is planned — see [`PAPER_OUTLINE.md`](PAPER_OUTLINE.md).
+If you use CKPB in your work, please cite the preprint in [`../paper/telegraph_english.md`](../paper/telegraph_english.md) and this repository (`github.com/sibmike/telegrapher`).
 
 ## License
 
