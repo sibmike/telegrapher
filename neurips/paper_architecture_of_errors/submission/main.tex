@@ -178,75 +178,44 @@ e_{\text{res}}(m) \;=\; \bigl(1 - F(m; |C|)\bigr)\, e_{\text{hard}}.
 \subsection{From universal impossibility to patch-local reliability}
 \label{sec:proposition}
 
-The finite-catalogue claim is not universal. Before deriving the local intervention budget, we first state the corresponding negative result: if a domain keeps generating intervention-distinguishable failure modes, no finite dictionary can cover it. The positive result of this paper begins only after a deployment patch $D$ has been fixed.
+The finite-catalogue claim is patch-local. It does not say that all possible LLM failures can be covered by a universal list of fixes. Across all possible tasks, tools, schemas, knowledge sources, workflows, and evaluator expectations, new intervention-distinguishable failures can keep appearing. In that setting, a finite intervention dictionary is not a well-posed reliability target.
+
+The positive result begins only after a deployment patch $D$ has been fixed. Inside a patch, the task family, schemas, tools, evaluator expectations, and admissible workflows recur. The engineering question then changes from ``Can one library cover all possible LLM failures?'' to ``How large must the local library be to cover enough of the reachable failure catalogue $C_D$?''
 
 \begin{proposition}[No Universal Finite Intervention Dictionary]\label{prop:nounidict}
-Fix a residual-error tolerance $\varepsilon$. Say that an intervention \emph{covers} a failure mode if it reduces that mode's residual error below $\varepsilon$. A domain $D$ is \emph{intervention-unbounded} if it contains an infinite sequence of failures $(f_j)_{j=1}^{\infty}$ such that each $f_j$ is not covered by any finite intervention dictionary that covers $\{f_1, \ldots, f_{j-1}\}$. Then the $\varepsilon$-resolution failure catalogue $C_D^{\varepsilon}$ is infinite. Consequently, no finite intervention dictionary can guarantee residual error below $\varepsilon$ over all of $D$.
+Fix a residual-error tolerance $\varepsilon$. If a domain $D$ contains an infinite sequence of failures where each new failure is not covered by any finite intervention dictionary covering all earlier failures, then the $\varepsilon$-resolution failure catalogue $C_D^{\varepsilon}$ is infinite. Consequently, no finite intervention dictionary can guarantee residual error below $\varepsilon$ over all of $D$.
 \end{proposition}
 
-\begin{proof}
-Suppose $C_D^{\varepsilon}$ were finite. Then after all its modes had appeared, every later failure would belong to one of the already-seen modes, so the interventions covering the earlier representative of that mode would also cover the later failure. But intervention-unboundedness says that each new $f_j$ is not covered by any dictionary covering the earlier failures, contradicting the assumption. Therefore $C_D^{\varepsilon}$ is infinite. Now suppose for contradiction that some finite dictionary $\mathcal{I}$ covered all of $D$. Then $\mathcal{I}$ in particular covers $\{f_1, \ldots, f_{j-1}\}$ for every $j$, so by intervention-unboundedness $\mathcal{I}$ does not cover $f_j$; but $\mathcal{I}$ covers all of $D$, so it covers $f_j$. Contradiction.
-\end{proof}
+\paragraph{Proof sketch.}
+Each new failure is intervention-distinguishable from the failures before it. The sequence therefore generates infinitely many distinct intervention modes, and any finite dictionary must miss some later mode. The full proof, including the precise definition of mode-level coverage, is in Appendix~\ref{app:proof-nounidict}.
 
-\paragraph{Engineering interpretation.}
-A universal reliability library is not a well-posed target. If the domain keeps changing the task family, tools, schemas, knowledge sources, and evaluator expectations, then new intervention-distinguishable failures can appear indefinitely. The correct reliability object is therefore not ``all LLM behaviour,'' but a bounded deployment patch. Proposition~\ref{prop:nounidict} is the inoculation against a misread of the rest of this paper: we are not claiming a fixed list of $\teApprox 50$ named patterns covers LLM use in general. We are claiming that \emph{inside a fixed operational patch} the reachable catalogue can be modelled as finite or effectively capped, and that is the regime in which the engineering math below applies.
+\paragraph{Engineering meaning.}
+Universal reliability is not a finite-library problem. A fixed list of interventions cannot cover open-ended LLM use in general. The rest of the paper is therefore about \emph{patch-local} reliability, not universal reliability. Proposition~\ref{prop:nounidict} is the inoculation against a misread: we are not claiming a fixed list of $\teApprox 50$ named patterns covers LLM use in general.
 
-\paragraph{From the negative to the positive result.}
-Proposition~\ref{prop:nounidict} explains why universal long-context reliability is the wrong engineering object. The right object is a bounded deployment patch. Once $D$ is fixed, the question changes from ``can one library cover all possible LLM failures?'' to ``how large must the library be to cover the reachable catalogue $C_D$ inside this patch?'' We now compose the three ingredients of \S\S\ref{sec:postulate}--\ref{sec:coverage}, namely $\beta$-stratification (Definition~\ref{def:hard}), the active-mode bound (Assumption~\ref{ass:active}), and the log-coverage form (Eq.~\ref{eq:coverage}), into that local budget statement. For \emph{sequence-length scaling} we use Assumption~\ref{ass:active}, not Postulate~\ref{post:logmode}: the empirical sparsity $\alpha = k/n \in [0.05, 0.10]$ is a \emph{finite-length} statement, and under~\citet[\S3.1]{arbuzov2025beyond}'s $k \sim \log n$ regime, $\alpha$ decays as $O(\log n / n)$.
+\medskip
 
-\paragraph{Conditionality.}
-The bound below is engineering math, not a theorem about LLMs. It holds conditional on three things: (i)~the log-coverage form of \S\ref{sec:coverage} applied on its declared domain $m \geq 2$, $|C_{\text{eff}}| \geq 2$; (ii)~a residual target $\varepsilon \in (0, e_{\text{hard}})$ that is non-trivial but attainable; (iii)~Assumption~\ref{ass:active} for any sequence-length rate claim, with the patch hypothesis that a bounded operational patch justifies modelling the reachable catalogue as finite or effectively capped. A different cumulative fitted to the same ErrorAtlas/HumanEval/MWPES anchors would preserve the qualitative polylog conclusion (Appendix~\ref{app:heaps}) while changing the exponent.
+The positive result composes $\beta$-stratification (Definition~\ref{def:hard}), the active-mode bound (Assumption~\ref{ass:active}), and the log-coverage form (Eq.~\ref{eq:coverage}) into a local budget statement. The result is conditional engineering math, not an unconditional theorem about LLMs: it depends on the log-coverage approximation, the active-mode exposure assumption, and the patch hypothesis that $C_D$ is finite or effectively capped. Appendix~\ref{app:proof-budget} states these conditions explicitly before the derivation.
 
 \begin{proposition}[Patch-Local Intervention Budget]\label{prop:budget}
-Let $\varepsilon \in (0, e_{\text{hard}})$ be a target per-hard-token residual error rate for sequences in domain $D$, with $|C_{\text{eff}}| \geq 2$, where
-\[
-C_{\text{eff}} \;=\; \begin{cases}
-  C_{\text{active},D}(n) & \text{(per-sequence scaling),} \\
-  C_D & \text{(full domain-library deployment).}
-\end{cases}
-\]
-Under the coverage form of \S\ref{sec:coverage}, the smallest intervention library satisfying $e_{\text{res}}(m) \leq \varepsilon$ has size
+Fix a deployment patch $D$. Let $\varepsilon \in (0, e_{\text{hard}})$ be the target per-hard-token residual error rate. Under the log-coverage approximation of \S\ref{sec:coverage}, a library covering the dominant local modes satisfies the target once
 \begin{equation}\label{eq:budget}
-m \;\geq\; \left\lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \right\rceil.
+m \;\geq\; \left\lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \right\rceil,
 \end{equation}
-If $C_{\text{eff}} = C_{\text{active},D}(n)$ and $k(n) = \Theta(\log n)$, then in the pre-cap regime
-\[
-m \;=\; O\!\bigl((\log\log n)^{1 - \varepsilon / e_{\text{hard}}}\bigr),
-\]
-i.e., the intervention budget grows doubly logarithmically with sequence length. In the cap regime, or for full domain-library deployment, $m \geq \lceil |C_D|^{1 - \varepsilon / e_{\text{hard}}} \rceil$ independent of $n$.
+where $C_{\text{eff}}$ is either the active catalogue $C_{\text{active},D}(n)$ touched by a single sequence, or the full reachable catalogue $C_D$ of the deployment patch. If $C_{\text{active},D}(n)$ grows logarithmically with the number of hard decisions and $k(n) = \Theta(\log n)$, then the pre-cap intervention budget grows doubly-logarithmically in sequence length. Once the patch catalogue saturates, the required budget becomes domain-constant in $|C_D|$.
 \end{proposition}
 
-\begin{proof}
-From \S\ref{sec:coverage}, $e_{\text{res}}(m) = (1 - F(m; |C_{\text{eff}}|))\,e_{\text{hard}}$. Requiring $e_{\text{res}}(m) \leq \varepsilon$ gives $F(m; |C_{\text{eff}}|) \geq 1 - \varepsilon / e_{\text{hard}}$. Since $\varepsilon < e_{\text{hard}}$, the required coverage lies below one and the cap in $F$ is inactive; with $F = \ln m / \ln |C_{\text{eff}}|$, we obtain $m \geq |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}}$, and taking the ceiling gives~\eqref{eq:budget}. Assumption~\ref{ass:active} gives $|C_{\text{active},D}(n)| = O(\log\log n)$ when $k(n) = \Theta(\log n)$, before the cap. After the cap, $|C_{\text{eff}}| = |C_D|$ and the bound is independent of $n$.
-\end{proof}
+\paragraph{Proof sketch.}
+The library removes cumulative hard-error mass $F(m; |C|)$. The residual hard-token error rate is therefore $(1 - F)\,e_{\text{hard}}$. Requiring this residual to be at most $\varepsilon$ rearranges, after substituting the log-coverage form, to the stated bound. The full step-by-step derivation, including the pre-cap and cap regimes, is in Appendix~\ref{app:proof-budget}.
 
-\paragraph{Engineering interpretation.}
-Once the patch is fixed, the problem changes. The relevant question is no longer whether arbitrary future failures exist, but how quickly the reachable local catalogue is discovered and how much residual mass is removed by the top interventions. Under the paper's assumptions, this yields a small and slowly growing intervention budget for per-hard-token reliability, domain-constant in the cap regime, with the exact size determined by the local discovery and rank-coverage curves rather than by a universal prior.
+\paragraph{Engineering meaning.}
+Once the patch is fixed, the problem changes. The relevant engineering question is no longer whether arbitrary future failures exist, but how quickly the reachable local catalogue is discovered and how much hard-error mass is removed by the top interventions. The intervention budget for per-hard-token reliability is small and slowly growing, domain-constant in the cap regime, with the exact size determined by the local discovery and rank-coverage curves rather than by a universal prior.
 
-We label these results \emph{Propositions} rather than \emph{Theorems} to keep their conditional nature visible. The formal content is engineering math, derived from the empirical postulates of \S\ref{sec:postulate} and \S\ref{sec:coverage}; it formalises a directional intuition rather than deriving a law of LLM reliability. The doubly-logarithmic rate stated in~\eqref{eq:budget} is the \emph{optimistic special case}: per-sequence, pre-cap, under logarithmic mode discovery. Weaker (but still polylog) rates obtain under Heaps (Appendix~\ref{app:heaps}); the cap regime is a domain-constant independent of $n$.
+\paragraph{Sequence-level caveat.}
+Proposition~\ref{prop:budget} bounds residual error per hard decision. A one-shot sequence-level target is strictly stricter because many hard decisions occur in one output: as $k$ grows the allowable residual per hard decision shrinks, and the required library approaches full-catalogue coverage. In some regimes the non-hard-token error mass alone already exceeds the sequence-level budget, so hard-token interventions cannot meet the SLA by themselves. The full three-regime analysis (and the per-hard-token tolerance $\tau_{\text{seq}}$ that converts a sequence target into the Proposition~\ref{prop:budget} bound) is in Appendix~\ref{app:seq-level}.
 
-\paragraph{Sequence-level versus per-hard-token bounds.}
-Proposition~\ref{prop:budget} bounds the \emph{per-hard-token} residual error. Sequence-level failure probability is strictly stronger. Define the non-hard-token survival factor
-\begin{equation}\label{eq:Sbase}
-S_{\text{base}} \;=\; (1 - e_{\text{easy}})^{(1 - \beta) k}\,(1 - e_{\text{non}})^{n - k},
-\end{equation}
-so that the composed survival from~\eqref{eq:three-rate} can be written $P(\text{correct}) = (1 - e_{\text{res}})^{\beta k}\, S_{\text{base}}$. The sequence-level target $P(\text{correct}) \geq 1 - \varepsilon_{\text{seq}}$ then yields three regimes:
+A common engineering rule of thumb, ``fix $\teApprox 50$ patterns per domain $\teArrow \teApprox 90\%$ error reduction,'' is best understood as a per-hard-token planning prior. The analogous sequence-level claim requires correspondingly more interventions and tighter coverage of the tail.
 
-\begin{description}[leftmargin=2em,itemsep=0.25ex]
-  \item[Regime (i): $S_{\text{base}} < 1 - \varepsilon_{\text{seq}}$.] Even at $e_{\text{res}} = 0$ the surviving non-hard-token failure mass exceeds the sequence-level budget. Hard-token interventions alone cannot meet the target; this is the route by which the exponential-in-$n$ concern re-enters, and it should be diagnosed before any catalogue-budgeting exercise.
-  \item[Regime (ii): $S_{\text{base}} \geq 1 - \varepsilon_{\text{seq}}$.] Define
-  \begin{equation}\label{eq:tauseq}
-  \tau_{\text{seq}} \;=\; 1 - \left(\frac{1 - \varepsilon_{\text{seq}}}{S_{\text{base}}}\right)^{1 / (\beta k)}.
-  \end{equation}
-  For $0 < \tau_{\text{seq}} < e_{\text{hard}}$, the sequence target is met whenever $e_{\text{res}}(m) \leq \tau_{\text{seq}}$, so the required library size is
-  \[
-  m \;\geq\; \left\lceil |C_{\text{eff}}|^{1 - \tau_{\text{seq}} / e_{\text{hard}}} \right\rceil.
-  \]
-  As the target tightens toward the feasibility boundary, $\tau_{\text{seq}} \to 0$ and $m \to |C_{\text{eff}}|$, so essentially every named mode must be covered.
-  \item[Regime (iii): $\tau_{\text{seq}} \geq e_{\text{hard}}$.] The sequence target is already met at the baseline hard-token rate; no intervention is required.
-\end{description}
-
-A common engineering rule of thumb, ``fix $\teApprox 50$ patterns per domain $\teArrow \teApprox 90\%$ error reduction,'' is best understood as a per-hard-token statement; the analogous sequence-level claim requires correspondingly more interventions and tighter coverage of the tail. Production systems with one-shot reliability targets should plan for the stricter regime, and check whether they are in Regime~(i), where catalogue-budgeting cannot help at all.
+We call these statements propositions rather than theorems because their force is conditional: they formalise the consequences of the paper's modelling assumptions rather than deriving a universal law of LLM reliability. The doubly-logarithmic rate is the optimistic special case under logarithmic active-mode exposure; Appendix~\ref{app:heaps} gives the Heaps and saturation variants. Appendix~\ref{app:why-propositions} expands on the conditional reading.
 
 \section{Empirical Evidence}
 \label{sec:evidence}
@@ -307,6 +276,142 @@ LLM reliability is often framed as an asymptotic scaling problem. Universal reli
 \bibliography{references}
 
 \appendix
+
+\section{Proof of Proposition~\ref{prop:nounidict}: No Universal Finite Intervention Dictionary}
+\label{app:proof-nounidict}
+
+Fix a residual-error tolerance $\varepsilon$. Say that an intervention \emph{covers} a failure mode if it reduces the residual error of that mode below $\varepsilon$. Coverage is mode-level: an intervention that covers a mode covers every failure event in that mode. The two conditions ``$D$ is intervention-unbounded'' and ``$|C_D^{\varepsilon}| = \infty$'' are equivalent under mode-level coverage; an unbounded witnessing sequence is constructed by taking one representative per mode, and an infinite catalogue forces the existence of such a sequence.
+
+Let $D$ be a domain. Call $D$ \emph{intervention-unbounded} if it contains an infinite sequence of failures $f_1, f_2, f_3, \ldots$ such that each new $f_j$ is not covered by any finite intervention dictionary that covers all earlier failures $\{f_1, \ldots, f_{j-1}\}$.
+
+\paragraph{Step 1: assume the opposite.}
+Suppose, for contradiction, that $C_D^{\varepsilon}$ is finite. Then there are only finitely many intervention-distinguishable failure modes in $D$. Write them as $C_D^{\varepsilon} = \{c_1, \ldots, c_M\}$ for some finite $M$.
+
+\paragraph{Step 2: what finiteness means.}
+If there are only $M$ intervention-distinguishable modes, then after all $M$ modes have appeared in the sequence, every later failure must belong to one of the already-seen modes.
+
+\paragraph{Step 3: same mode means same intervention class.}
+Modes are defined at intervention resolution $\varepsilon$. If a later failure belongs to the same mode as an earlier failure, then the intervention dictionary that covers the earlier representative of that mode also covers the later failure below residual tolerance $\varepsilon$.
+
+\paragraph{Step 4: contradiction.}
+Intervention-unboundedness says exactly the opposite: each new $f_j$ is not covered by any finite dictionary that covers $\{f_1, \ldots, f_{j-1}\}$. Therefore $f_j$ cannot belong to any earlier intervention mode, so each $f_j$ introduces a new intervention-distinguishable mode. The sequence $f_1, f_2, f_3, \ldots$ induces infinitely many such modes, contradicting the assumption that $C_D^{\varepsilon}$ is finite. Hence $|C_D^{\varepsilon}| = \infty$.
+
+\paragraph{Step 5: no finite dictionary covers the domain.}
+Suppose, again for contradiction, that some finite intervention dictionary $\mathcal{I}$ covers all of $D$. Then $\mathcal{I}$ covers every finite prefix $\{f_1, \ldots, f_{j-1}\}$ for every $j$. By intervention-unboundedness, any dictionary covering that prefix fails to cover $f_j$. Therefore $\mathcal{I}$ does not cover $f_j$, contradicting the assumption that $\mathcal{I}$ covers all of $D$. \qed
+
+\section{Derivation of Proposition~\ref{prop:budget}: Patch-Local Intervention Budget}
+\label{app:proof-budget}
+
+\paragraph{Conditions used.}
+Proposition~\ref{prop:budget} depends on four assumptions:
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.25ex]
+\item \textbf{Coverage model.} The cumulative hard-error mass covered by the top $m$ modes is approximated by
+\[
+F(m; |C|) \;=\; \min\!\left(1,\ \frac{\ln m}{\ln |C|}\right)
+\]
+on the declared domain $m \geq 2$, $|C| \geq 2$.
+\item \textbf{Non-trivial, attainable target.} The residual target satisfies $\varepsilon \in (0, e_{\text{hard}})$. If $\varepsilon \geq e_{\text{hard}}$ no intervention is needed; if $\varepsilon \leq 0$ the target is unattainable unless all residual hard-token error is eliminated.
+\item \textbf{Patch-local catalogue.} The result applies only after a deployment patch $D$ has been fixed and its reachable catalogue is modelled as finite or effectively capped.
+\item \textbf{Sequence-length claim.} The doubly-logarithmic rate further requires Assumption~\ref{ass:active} and $k(n) = \Theta(\log n)$. Without these, Proposition~\ref{prop:budget} still gives a catalogue-size budget but not the same sequence-length scaling.
+\end{enumerate}
+
+\paragraph{Step 1: define the target.}
+Let $e_{\text{hard}}$ be the baseline hard-token error rate and $\varepsilon \in (0, e_{\text{hard}})$ the target after intervention.
+
+\paragraph{Step 2: define the effective catalogue.}
+For per-sequence scaling, set $C_{\text{eff}} = C_{\text{active},D}(n)$: how many failure modes can a single sequence of length $n$ activate? For full deployment-library budgeting, set $C_{\text{eff}} = C_D$: how large must the library be to cover the recurring failure modes reachable inside $D$?
+
+\paragraph{Step 3: cumulative coverage.}
+Let the ranked local failure modes have hard-error masses $p_1 \geq p_2 \geq \cdots \geq p_{|C_{\text{eff}}|}$ with $\sum_i p_i = 1$. A library covering the top $m$ modes removes cumulative hard-error mass $F(m; |C_{\text{eff}}|) = \sum_{i=1}^{m} p_i$, approximated by the log-coverage form of \S\ref{sec:coverage}.
+
+\paragraph{Step 4: residual after intervention.}
+The uncovered mass fraction is $1 - F(m; |C_{\text{eff}}|)$, so the residual per-hard-token error rate is $e_{\text{res}}(m) = (1 - F(m; |C_{\text{eff}}|))\, e_{\text{hard}}$.
+
+\paragraph{Step 5: impose the target.}
+Requiring $e_{\text{res}}(m) \leq \varepsilon$ and dividing by $e_{\text{hard}} > 0$ gives
+\[
+1 - F(m; |C_{\text{eff}}|) \;\leq\; \frac{\varepsilon}{e_{\text{hard}}},
+\qquad\text{i.e.,}\qquad
+F(m; |C_{\text{eff}}|) \;\geq\; 1 - \frac{\varepsilon}{e_{\text{hard}}}.
+\]
+
+\paragraph{Step 6: substitute the log-coverage form.}
+Since $\varepsilon < e_{\text{hard}}$, the required coverage $1 - \varepsilon/e_{\text{hard}} \in (0, 1)$, so the cap in $F$ is inactive before saturation. Using $F = \ln m / \ln |C_{\text{eff}}|$:
+\[
+\frac{\ln m}{\ln |C_{\text{eff}}|} \;\geq\; 1 - \frac{\varepsilon}{e_{\text{hard}}}.
+\]
+
+\paragraph{Step 7: solve for $m$.}
+Multiplying by $\ln |C_{\text{eff}}| > 0$ and exponentiating,
+\[
+m \;\geq\; \exp\!\left[\left(1 - \frac{\varepsilon}{e_{\text{hard}}}\right) \ln |C_{\text{eff}}|\right] \;=\; |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}}.
+\]
+Taking the ceiling (since $m$ is integer-valued) yields $m \geq \lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \rceil$, the bound stated in Eq.~\eqref{eq:budget}.
+
+\paragraph{Step 8: sequence-length rate.}
+For per-sequence scaling, set $C_{\text{eff}} = C_{\text{active},D}(n)$. Assumption~\ref{ass:active} bounds $|C_{\text{active},D}(n)| \leq \min(A'_D + \sigma'_D \ln h(n),\, |C_D|)$. In the pre-cap regime, i.e., while $A'_D + \sigma'_D \ln h(n) < |C_D|$, the ceiling has not been reached and $|C_{\text{active},D}(n)| = O(\ln h(n))$. With $h(n) = \beta k(n)$ and $k(n) = \Theta(\log n)$, we get $h(n) = \Theta(\log n)$ and $\ln h(n) = \Theta(\log\log n)$, hence
+\[
+|C_{\text{active},D}(n)| \;=\; O(\log\log n),
+\]
+and substituting into the budget,
+\[
+m \;=\; O\!\bigl((\log\log n)^{1 - \varepsilon / e_{\text{hard}}}\bigr).
+\]
+This is the doubly-logarithmic pre-cap special case.
+
+\paragraph{Step 9: cap regime.}
+Once active-mode discovery saturates the patch catalogue, $|C_{\text{active},D}(n)| = |C_D|$, so $m \geq \lceil |C_D|^{1 - \varepsilon / e_{\text{hard}}} \rceil$, which no longer depends on $n$. The intervention budget is then domain-constant. \qed
+
+\section{Sequence-Level Reliability Derivation}
+\label{app:seq-level}
+
+Proposition~\ref{prop:budget} gives a per-hard-token residual target. Production systems often care about a stricter target: the probability that the entire sequence is correct.
+
+Starting from the composed reliability of Eq.~\eqref{eq:three-rate}, and writing the post-intervention hard-token rate as $e_{\text{res}}$,
+\[
+P(\text{correct}) \;=\; (1 - e_{\text{res}})^{\beta k}\,(1 - e_{\text{easy}})^{(1 - \beta) k}\,(1 - e_{\text{non}})^{n - k}.
+\]
+Define the non-hard-token survival factor
+\begin{equation}\label{eq:Sbase}
+S_{\text{base}} \;=\; (1 - e_{\text{easy}})^{(1 - \beta) k}\,(1 - e_{\text{non}})^{n - k},
+\end{equation}
+so that $P(\text{correct}) = (1 - e_{\text{res}})^{\beta k}\, S_{\text{base}}$. The sequence-level target $P(\text{correct}) \geq 1 - \varepsilon_{\text{seq}}$ becomes
+\[
+(1 - e_{\text{res}})^{\beta k}\, S_{\text{base}} \;\geq\; 1 - \varepsilon_{\text{seq}},
+\qquad\text{i.e.,}\qquad
+(1 - e_{\text{res}})^{\beta k} \;\geq\; \frac{1 - \varepsilon_{\text{seq}}}{S_{\text{base}}}.
+\]
+Three regimes follow.
+
+\paragraph{Regime (i): non-hard-token errors already violate the target.}
+If $S_{\text{base}} < 1 - \varepsilon_{\text{seq}}$, then even setting $e_{\text{res}} = 0$ cannot meet the target, because the maximum possible survival after eliminating all hard-token failures is only $S_{\text{base}}$. Hard-token interventions alone cannot meet the sequence-level SLA. This is the route by which the exponential-in-$n$ concern re-enters and should be diagnosed before any catalogue-budgeting exercise.
+
+\paragraph{Regime (ii): hard-token residual error determines feasibility.}
+If $S_{\text{base}} \geq 1 - \varepsilon_{\text{seq}}$, the target may be feasible. Taking the $(1/(\beta k))$-th power of the rearranged inequality and isolating $e_{\text{res}}$,
+\[
+e_{\text{res}} \;\leq\; 1 - \left(\frac{1 - \varepsilon_{\text{seq}}}{S_{\text{base}}}\right)^{1 / (\beta k)}
+\;=:\; \tau_{\text{seq}}.
+\]
+Applying Proposition~\ref{prop:budget} with $\varepsilon$ replaced by $\tau_{\text{seq}}$,
+\[
+m \;\geq\; \left\lceil |C_{\text{eff}}|^{1 - \tau_{\text{seq}} / e_{\text{hard}}} \right\rceil.
+\]
+As the sequence-level target becomes stricter ($\varepsilon_{\text{seq}}$ shrinks), $\tau_{\text{seq}} \to 0$ and the exponent $1 - \tau_{\text{seq}}/e_{\text{hard}} \to 1$, so $m \to |C_{\text{eff}}|$. Strict one-shot sequence-level reliability pushes the system toward full-catalogue coverage.
+
+\paragraph{Regime (iii): baseline hard-token error is already acceptable.}
+If $\tau_{\text{seq}} \geq e_{\text{hard}}$, the baseline hard-token rate already satisfies the sequence target (no intervention is required because $e_{\text{res}}(0) = e_{\text{hard}}$ from Eq.~\eqref{eq:eres}).
+
+\paragraph{Conclusion.}
+Per-hard-token reliability is easier than sequence-level reliability. A library that gives a large reduction in residual hard-token error may still be insufficient for one-shot sequence-level guarantees when many hard decisions occur in a single output. This is why the main paper treats the ``$\teApprox 50$ patterns'' rule of thumb as a per-hard-token planning prior, not a one-shot sequence-level SLA.
+
+\section{Why these are propositions rather than unconditional theorems}
+\label{app:why-propositions}
+
+Proposition~\ref{prop:nounidict} is a definitional impossibility result: once intervention-unboundedness is assumed, an infinite intervention-resolution catalogue follows. Its role is not to prove that every unbounded domain necessarily has infinite failure modes, but to show that open-ended domains cannot be assumed to admit finite dictionaries.
+
+Proposition~\ref{prop:budget} is conditional engineering math. It does not prove that LLM failures universally obey logarithmic mode discovery. It proves that \emph{if} a bounded patch has a finite or effectively capped reachable catalogue, \emph{and if} cumulative intervention coverage follows the stated head-heavy form, \emph{then} the required per-hard-token intervention budget grows slowly and becomes constant after catalogue saturation.
+
+The empirical burden therefore lies not in the algebra but in measuring, for each deployment patch, the local discovery curve $C_{\text{seen},D}(T)$, the per-sequence activation $C_{\text{active},D}(n)$, the cumulative coverage $F(m; |C_D|)$, the hard-token fraction $\beta_D$, and the baseline hard-token rate $e_{\text{hard}}$. This is why the paper frames the results as a reliability-engineering scaffold rather than as universal theorems about LLM behaviour.
 
 \section{Heaps Power-Law Variant and Cluster-Count Sensitivity}
 \label{app:heaps}
