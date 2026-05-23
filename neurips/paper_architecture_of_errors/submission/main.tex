@@ -72,7 +72,9 @@ The standard worry about long-context autoregressive generation is exponential. 
 This paper takes the next step. Sparsity tells us \emph{where} errors live; the natural follow-up is \emph{what} they are. Recent failure-mode atlases supply a striking empirical answer: errors are not only sparse, they are also \emph{repetitive}. ErrorAtlas~\citep{ashurytahan2026erroratlas}, covering 83 models across 35 datasets, organises observed failures into 17 named categories sorted by prevalence, with a long-tailed distribution heavily concentrated in the head. In code, two error types (\texttt{AssertionError} and \texttt{NameError}) cover 86.35\% of failures on HumanEval across 14 LLMs, replicated across 23 models on HumanEval Pro and MBPP Pro~\citep{wen2024fixing}. In math, MWPES-300K~\citep{sun2025mwpes} categorises 304,865 errors from 15 LLMs across four math word-problem datasets and reports that dataset characteristics shape error patterns systematically. The same picture appears in multi-hop QA~\citep{zhang2026weakestlink}, agentic tool use~\citep{cemri2025mast}, and retrieval-augmented generation~\citep{wood2024acurai}. These observations suggest a third layer in the reliability architecture, complementing key-token sparsity (Layer 1) and within-key stratified-manifold structure (Layer 2 in~\citealt{arbuzov2025beyond}). Within the small set of key tokens, only a fraction $\beta$ produce \emph{hard} failures, and inside bounded deployment patches those hard failures appear to cluster into a finite or effectively capped catalogue of recurring modes whose size grows much more slowly than the number of observed events.
 
 \paragraph{Contributions.}
-The central result is the conditional polylog intervention budget of Proposition~\ref{prop:budget}: $m \geq \lceil |C|^{1 - \varepsilon / e_{\text{hard}}} \rceil$, with a doubly-logarithmic rate as the optimistic special case under the postulate above. The \emph{sequence}-level analogue is strictly tighter and approaches full-catalogue coverage as $k$ grows; we surface this asymmetry rather than bury it. Around this central claim the paper does four supporting things. The three-layer formal framework, comprising sparsity ($\alpha$), stratification ($\beta$), and a bounded mode catalogue ($|C|$), partitions key tokens into easy and hard subsets, then adds the recurring-pattern catalogue (\S\ref{sec:framework}). The empirical postulate of logarithmic mode discovery is calibrated against ErrorAtlas, HumanEval, and MWPES, with $\sigma \in [0.87, 1.85]$ across anchors and $\sigma \approx 1.85$ adopted from ErrorAtlas as the conservative target. Section~\ref{sec:evidence} synthesises evidence for clustering, cluster-selective interventions, and sublinear length scaling, drawing on $\sim$60 prior published results including the six-axis capability-elimination harvest of 28 quantitatively-anchored citations stratified into Patterns A/B/C (Appendix~\ref{app:taxonomy}). And the re-audit of the most-cited steep-decay results (Appendix~\ref{app:reaudits}) shows each decays over a variable other than raw token length.
+The central contribution is a shift in what counts as the reliability object. Universal LLM reliability is not a finite-library problem; patch-local reliability is a catalogue-discovery and intervention-coverage problem. Two propositions formalise the move. Proposition~\ref{prop:nounidict} is the negative result: in an unbounded domain that keeps producing intervention-distinguishable failures, no finite intervention dictionary can guarantee bounded residual error universally. Proposition~\ref{prop:budget} is the corresponding positive result inside a fixed deployment patch, $m \geq \lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \rceil$, with a doubly-logarithmic sequence-length rate as the optimistic pre-cap special case and a domain-constant budget once the patch catalogue saturates. The sequence-level analogue is strictly tighter and approaches full-catalogue coverage as $k$ grows; we surface that asymmetry rather than bury it.
+
+Around this transition the paper does four supporting things. A three-layer framework, comprising sparsity ($\alpha$), hard-token stratification ($\beta$), and patch-local mode catalogue ($|C_D|$), separates \emph{where} errors occur, \emph{what} recurring forms they take, and \emph{which} capability interventions address them (\S\ref{sec:framework}). Logarithmic mode discovery is stated as an empirical postulate, not a theorem, calibrated against ErrorAtlas, HumanEval, and MWPES with $\sigma \in [0.87, 1.85]$ across anchors and $\sigma \approx 1.85$ carried as a conservative planning value. Section~\ref{sec:evidence} synthesises evidence for failure clustering, cluster-selective interventions, and sublinear length scaling, drawing on $\sim$60 prior published results including the six-axis capability-elimination harvest of 28 quantitatively-anchored citations stratified into Patterns A/B/C (Appendix~\ref{app:taxonomy}). And the most-cited steep-decay counter-evidence (Appendix~\ref{app:reaudits}) is re-audited and shown to decay primarily over task-structure variables, including compositional graph size, fact count, log-time horizon, capacity threshold, and evidence scope, rather than raw token length.
 
 \section{Related Work}
 \label{sec:related}
@@ -277,7 +279,10 @@ LLM reliability is often framed as an asymptotic scaling problem. Universal reli
 
 \appendix
 
-\section{Proof of Proposition~\ref{prop:nounidict}: No Universal Finite Intervention Dictionary}
+\section{Formal Proofs, Derivations, and Sensitivity Analysis}
+\label{app:formal}
+
+\subsection{Proof of Proposition~\ref{prop:nounidict}: No Universal Finite Intervention Dictionary}
 \label{app:proof-nounidict}
 
 Fix a residual-error tolerance $\varepsilon$. Say that an intervention \emph{covers} a failure mode if it reduces the residual error of that mode below $\varepsilon$. Coverage is mode-level: an intervention that covers a mode covers every failure event in that mode. The two conditions ``$D$ is intervention-unbounded'' and ``$|C_D^{\varepsilon}| = \infty$'' are equivalent under mode-level coverage; an unbounded witnessing sequence is constructed by taking one representative per mode, and an infinite catalogue forces the existence of such a sequence.
@@ -299,7 +304,7 @@ Intervention-unboundedness says exactly the opposite: each new $f_j$ is not cove
 \paragraph{Step 5: no finite dictionary covers the domain.}
 Suppose, again for contradiction, that some finite intervention dictionary $\mathcal{I}$ covers all of $D$. Then $\mathcal{I}$ covers every finite prefix $\{f_1, \ldots, f_{j-1}\}$ for every $j$. By intervention-unboundedness, any dictionary covering that prefix fails to cover $f_j$. Therefore $\mathcal{I}$ does not cover $f_j$, contradicting the assumption that $\mathcal{I}$ covers all of $D$. \qed
 
-\section{Derivation of Proposition~\ref{prop:budget}: Patch-Local Intervention Budget}
+\subsection{Derivation of Proposition~\ref{prop:budget}: Patch-Local Intervention Budget}
 \label{app:proof-budget}
 
 \paragraph{Conditions used.}
@@ -362,7 +367,7 @@ This is the doubly-logarithmic pre-cap special case.
 \paragraph{Step 9: cap regime.}
 Once active-mode discovery saturates the patch catalogue, $|C_{\text{active},D}(n)| = |C_D|$, so $m \geq \lceil |C_D|^{1 - \varepsilon / e_{\text{hard}}} \rceil$, which no longer depends on $n$. The intervention budget is then domain-constant. \qed
 
-\section{Sequence-Level Reliability Derivation}
+\subsection{Sequence-Level Reliability Derivation}
 \label{app:seq-level}
 
 Proposition~\ref{prop:budget} gives a per-hard-token residual target. Production systems often care about a stricter target: the probability that the entire sequence is correct.
@@ -404,7 +409,7 @@ If $\tau_{\text{seq}} \geq e_{\text{hard}}$, the baseline hard-token rate alread
 \paragraph{Conclusion.}
 Per-hard-token reliability is easier than sequence-level reliability. A library that gives a large reduction in residual hard-token error may still be insufficient for one-shot sequence-level guarantees when many hard decisions occur in a single output. This is why the main paper treats the ``$\teApprox 50$ patterns'' rule of thumb as a per-hard-token planning prior, not a one-shot sequence-level SLA.
 
-\section{Why these are propositions rather than unconditional theorems}
+\subsection{Why these are propositions rather than unconditional theorems}
 \label{app:why-propositions}
 
 Proposition~\ref{prop:nounidict} is a definitional impossibility result: once intervention-unboundedness is assumed, an infinite intervention-resolution catalogue follows. Its role is not to prove that every unbounded domain necessarily has infinite failure modes, but to show that open-ended domains cannot be assumed to admit finite dictionaries.
@@ -413,7 +418,7 @@ Proposition~\ref{prop:budget} is conditional engineering math. It does not prove
 
 The empirical burden therefore lies not in the algebra but in measuring, for each deployment patch, the local discovery curve $C_{\text{seen},D}(T)$, the per-sequence activation $C_{\text{active},D}(n)$, the cumulative coverage $F(m; |C_D|)$, the hard-token fraction $\beta_D$, and the baseline hard-token rate $e_{\text{hard}}$. This is why the paper frames the results as a reliability-engineering scaffold rather than as universal theorems about LLM behaviour.
 
-\section{Heaps Power-Law Variant and Cluster-Count Sensitivity}
+\subsection{Heaps Power-Law Variant and Cluster-Count Sensitivity}
 \label{app:heaps}
 
 A reader who prefers to derive cluster-count growth from standard Heaps' law rather than from Postulate~1 obtains a qualitatively similar result. Let $|C|(k_{\text{hard}}) \teApprox K \cdot k_{\text{hard}}^{b}$ with $b \in (0, 1)$. Canonical fits give $b \teApprox 0.5$ for natural-language vocabularies; failure-mode taxonomies plateau much more sharply (ErrorAtlas stabilises at $|C| = 17$ across $10^4{+}$ failures), implying a smaller effective $b \teApprox 0.2$ in our setting. Composing with $k = \Theta(\log n)$, we get $|C| = O((\log n)^{b})$, and Proposition~\ref{prop:budget} becomes
