@@ -154,12 +154,14 @@ Primed constants are distinct from those of Postulate~\ref{post:logmode}: corpus
 
 The two bounds answer different questions, and the rest of the paper picks the right one at each point. Proposition~\ref{prop:budget}'s sequence-length scaling rate is governed by $C_{\text{active},D}(n)$ via Assumption~\ref{ass:active}: how much of the catalogue can a single sequence touch? Full domain-library budgeting, the practical engineering target for a deployed system, uses $C_D$: how large does the library need to be to cover the domain's reachable failure modes? The cap $|C_D|$ enters both: once enough has been sampled (or activated) to saturate the domain ceiling, further growth stops and the budget becomes a domain-constant function of $|C_D|$ alone.
 
-\paragraph{Empirical defense.}
-Three published taxonomies anchor the mode-rate parameter $\sigma$ at endpoint corpus scales. ErrorAtlas at $T \gtrsim 10^4$ observed failures has $|C| = 17$, giving $\sigma \teApprox 17 / \ln T \teApprox 1.85$ at $T = 10^4$ under $A = 0$. HumanEval~\citep{wen2024fixing}, on a comparable corpus size, has $|C| \in [8, 12]$ and accordingly $\sigma \in [0.87, 1.30]$. MWPES, an order of magnitude larger ($T \teApprox 3 \times 10^5$), still has $|C| \in [15, 20]$ and yields $\sigma \in [1.2, 1.6]$. Across the three anchors, $\sigma$ falls in the range $[0.87, 1.85]$; we carry $\sigma \teApprox 1.85$ (the ErrorAtlas value, the largest of the three) as a conservative downstream target. Endpoint counts at a single corpus scale are not discovery curves: a subsample-vs-discovered-modes measurement has not been published for any LLM error taxonomy at this writing, and remains the explicit empirical test we flag (\S\ref{sec:limitations}, Appendix~\ref{app:heaps}).
+\paragraph{Empirical calibration.}
+Existing LLM error taxonomies provide endpoint anchors for small named catalogues at observed corpus scales. ErrorAtlas, HumanEval-style code taxonomies~\citep{wen2024fixing}, and MWPES~\citep{sun2025mwpes} place $|C|$ roughly in the $8$--$20$ range across corpora ranging from approximately $10^4$ to $3 \times 10^5$ observed failures, yielding $\sigma \in [0.87, 1.85]$ under the simple $A=0$ logarithmic calibration. We use $\sigma \teApprox 1.85$ as a conservative planning value, not as a fitted law. These endpoint counts are not discovery curves: the missing test is a subsample-vs-discovered-modes measurement within a fixed deployment patch. Full calibration details are in Appendix~\ref{app:calibration}.
 
-\textbf{Capabilities are coarser than error classes.} Postulate~1's $\sigma \teApprox 1.85$ is calibrated against \emph{named error categories}, but a single capability axis often targets several L2 categories at once. A Python interpreter removes the execution-error component of arithmetic, unit conversion, simple counting, list manipulation, and date arithmetic; a constrained decoder eliminates by construction the format-violation cluster and the structural component of ``missing required element.'' Postulate~1 is therefore a conservative input for the engineering question; the formal coverage problem is weighted set cover, with the ranked-category form of Proposition~\ref{prop:budget} as a tractable proxy. An alternative power-law (Heaps) formulation and symbolic-form sensitivity analysis across candidate cluster-count laws are given in Appendix~\ref{app:heaps}.
+\paragraph{Capabilities are coarser than error categories.}
+The category count $|C|$ is conservative for engineering because deployed interventions operate at the capability level, not the label level. A Python interpreter can remove execution-error components across arithmetic, unit conversion, counting, list manipulation, and date arithmetic; a constrained decoder can eliminate several structural output failures at once. The formal coverage problem is therefore closer to weighted set cover over failure mass than one-intervention-per-category counting. The ranked-category model used in Proposition~\ref{prop:budget} is a tractable proxy; the full capability harvest appears in Appendix~\ref{app:taxonomy}.
 
-\textbf{Domain patches cap the catalogue.} A model deployed in a fixed application domain occupies a bounded sub-region of the stratified manifold, a \emph{domain patch} $P_D$~\citep{arbuzov2025beyond,li2025stratified}. Empirical support: embedding-space intrinsic dimensions of $\sim 5$--$15$ across domains, well below ambient $\sim 10^3$~\citep{park2024linear,li2025stratified}; cross-domain accuracy spreads of $20$--$70\%$ on a single base model~\citep{wangy2024mmlupro}; log-popularity thresholds below which scaling fails~\citep{mallen2023popqa,kandpal2023longtail}. None of these \emph{measure} $|C_D|$ directly; together they motivate the patch-indexed hypothesis. The patch makes logarithmic or saturating discovery dynamics plausible inside fixed domains; $\sigma_D$, $A_D$, $\beta_D$, $|C_D|$ are all domain-indexed. We treat the patch's reachable catalogue as finite or effectively capped: a modelling choice motivated by the heterogeneity evidence above, not a derivation from boundedness alone.
+\paragraph{Domain patches cap the engineering problem.}
+A fixed deployment patch restricts the task family, schemas, tools, workflows, and evaluator expectations. Prior work on localized representations~\citep{park2024linear,li2025stratified}, cross-domain performance variation~\citep{wangy2024mmlupro}, and long-tail knowledge~\citep{mallen2023popqa,kandpal2023longtail} supports the weaker claim that model behaviour is strongly domain-dependent; it does not directly measure $|C_D|$. We therefore treat the patch's reachable catalogue as finite or effectively capped as a modelling assumption motivated by domain heterogeneity, not as a theorem derived from boundedness. The full evidence breakdown is in Appendix~\ref{app:patch-evidence}.
 
 \subsection{Coverage by a targeted intervention library}
 \label{sec:coverage}
@@ -551,6 +553,52 @@ GPT-4o achieves 55.8\% pair accuracy across 1,001 minimally-different true/false
 
 \paragraph{Unifying observation.}
 Every counter-paper decays over a variable that is not $n$: compositional graph size, fact count, log-time horizon, capacity threshold, or evidence scope. The apparent rapid decay is, in each case, in a quantity our framework already concentrates the action in ($k_{\text{hard}}$ and $|C|$), not in raw sequence length. This is a relocation, not a dissolution. Where $k_{\text{hard}}$ grows with task length (adversarial compositional structure, multi-hop fact chains, long horizons that force more decisions), reliability remains hard; the framework's value is directing intervention toward capability provisioning along the actual decay axis rather than toward context-window or compute-budget expansion that does not help.
+
+\section{Patch Evidence Detail}
+\label{app:patch-evidence}
+
+The body's claim that domain patches cap the engineering problem rests on a triangulation of indirect evidence. None of the items below \emph{measures} the patch ceiling $|C_D|$ directly; they support the weaker claim that model behaviour is strongly domain-dependent and that operational neighbourhoods occupy bounded regions of the model's behavioural space.
+
+\begin{center}
+\small
+\begin{tabular}{p{4.0cm}p{4.5cm}p{4.5cm}}
+\toprule
+\textbf{Evidence type} & \textbf{What it supports} & \textbf{What it does not prove} \\
+\midrule
+Low intrinsic-dimensional structure in representations~\citep{park2024linear,li2025stratified} & Domains occupy localised structure in model representation space & Does not measure failure-catalogue size $|C_D|$ \\
+\midrule
+Cross-domain accuracy spreads on a single base model~\citep{wangy2024mmlupro} & Same model behaves differently across domains; performance is patch-dependent & Does not imply finite failure modes \\
+\midrule
+Long-tail / popularity thresholds in knowledge tasks~\citep{mallen2023popqa,kandpal2023longtail} & Coverage depends on domain frequency and training exposure & Does not prove logarithmic mode discovery \\
+\midrule
+Patch-specific intervention performance (across \S\ref{sec:evidence}, Appendix~\ref{app:taxonomy}) & Local tools, schemas, and capability libraries change residual error structure & Does not imply universal cross-patch transfer of the same intervention library \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The purpose of this evidence is motivational. It supports patch-indexing of $\sigma_D$, $A_D$, $\beta_D$, $|C_D|$, but the finite (or effectively capped) reachable catalogue remains an empirical modelling assumption to be measured per deployment, not derived from any of the rows above.
+
+\section{Empirical Calibration Detail}
+\label{app:calibration}
+
+Three published LLM error taxonomies anchor the mode-rate parameter $\sigma$ in the body's $\sigma \in [0.87, 1.85]$ range. The simple calibration uses $|C| \approx A + \sigma \ln T$ with $A = 0$; this is a deliberately conservative readout that ignores any positive intercept and uses endpoint counts rather than discovery curves.
+
+\begin{center}
+\small
+\begin{tabular}{p{3.5cm}p{2.6cm}p{1.8cm}p{2.4cm}p{3.2cm}}
+\toprule
+\textbf{Source} & \textbf{Approx.\ observed failures $T$} & \textbf{Named categories $|C|$} & \textbf{Implied $\sigma$ at $A=0$} & \textbf{Role} \\
+\midrule
+ErrorAtlas~\citep{ashurytahan2026erroratlas} & $\gtrsim 10^4$ & 17 & $\teApprox 1.85$ & Conservative cross-domain anchor (used as planning value) \\
+\midrule
+HumanEval categorisation~\citep{wen2024fixing} & comparable scale & $8$--$12$ & $\teApprox 0.87$--$1.30$ & Code-domain anchor \\
+\midrule
+MWPES-300K~\citep{sun2025mwpes} & $\teApprox 3 \times 10^5$ & $15$--$20$ & $\teApprox 1.2$--$1.6$ & Math-domain anchor (largest corpus) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+These are endpoint counts, not discovery curves: they tell us \emph{how many} named categories a taxonomer assigned at a single corpus scale, not how the count grew with $T$. They do not prove logarithmic mode discovery. Their role in this paper is twofold: they motivate the empirical postulate of \S\ref{sec:postulate}, and they identify the explicit empirical test that would either tighten the postulate or move the analysis to the Heaps variant of Appendix~\ref{app:heaps}: repeatedly subsample failures from a fixed deployment patch $D$ and plot discovered modes $|C_{\text{seen},D}(T)|$ against $T$.
 
 \newpage
 \input{checklist.tex}

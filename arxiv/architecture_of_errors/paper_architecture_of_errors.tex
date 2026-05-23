@@ -559,55 +559,30 @@ corpus discovery and per-sequence activation need not share the same
 rate. Proposition 2's sequence-length scaling uses
 \(C_{\text{active},D}(n)\); full domain-library budgeting uses \(C_D\).}
 
-\textbf{Empirical defense.} We anchor Postulate 1 against three
-large-scale taxonomies:
+\textbf{Empirical calibration.} Existing LLM error taxonomies provide
+endpoint anchors for small named catalogues at observed corpus scales.
+ErrorAtlas (Ashury-Tahan et al., 2026), HumanEval-style code taxonomies
+(Wen et al., 2024), and MWPES (Sun et al., 2025) place \(|C|\) roughly
+in the \(8\)--\(20\) range across corpora ranging from approximately
+\(10^4\) to \(3 \times 10^5\) observed failures, yielding
+\(\sigma \in [0.87, 1.85]\) under the simple \(A=0\) logarithmic
+calibration. We use \(\sigma \approx 1.85\) as a conservative planning
+value, not as a fitted law. These endpoint counts are not discovery
+curves: the missing test is a subsample-vs-discovered-modes measurement
+within a fixed deployment patch. Full calibration details are in
+Appendix C.
 
-\begin{itemize}
-\tightlist
-\item
-  ErrorAtlas (Ashury-Tahan et al., 2026): 83 models × 35 datasets,
-  \(k_{\text{hard}} \gtrsim 10^4\) failures, \(|C| = 17\). Taking
-  \(A = 0\) as a conservative anchor,
-  \(\sigma \approx 17 / \ln(10^4) \approx 1.85\).
-\item
-  HumanEval (Wen et al., 2024): \(k_{\text{hard}} \approx 10^4\),
-  \(|C| \in [8, 12]\) named modes, \(\sigma \in [0.87, 1.30]\).
-\item
-  MWPES (Sun et al., 2025): \(k_{\text{hard}} \approx 3 \times 10^5\),
-  \(|C| \in [15, 20]\), \(\sigma \in [1.2, 1.6]\).
-\end{itemize}
-
-Across the three anchors, \(\sigma\) falls in the range
-\(\sigma \in [0.87, 1.85]\). We carry \(\sigma \approx 1.85\) --- the
-ErrorAtlas anchor, the largest single-domain value --- as the target for
-downstream estimates, and report all rate conclusions parametrically in
-\(\sigma\). (An earlier draft adopted \(\sigma \approx 2\) with range
-\([1.5, 3.0]\); that overstated what the three anchors support.)
-
-\textbf{Capabilities are coarser than error classes.} The σ estimate
-above is derived from \emph{named error categories} in the published
-taxonomies, but the capability harvest of Section 4.2 reveals that a
-single capability often addresses multiple categories at once. A single
-Python interpreter removes the execution-error component of arithmetic,
-unit conversion, simple counting, list manipulation, and date
-arithmetic, while leaving residual failures in problem representation
-and code synthesis. A single constrained decoder eliminates by
-construction the format-violation cluster and the structural component
-of ``missing required element'' --- one of the most prevalent categories
-in ErrorAtlas's published prevalence ordering --- because schemas with
-required fields cannot omit those fields. Postulate 1's
-\(\sigma \approx 1.85\), calibrated against the raw 17-category
-taxonomy, is therefore a conservative input for the engineering
-question. When interventions cover \emph{sets} of L2 categories, the
-formal coverage problem becomes weighted set cover (with weights given
-by category mass); Proposition 2's ranked-category form is a tractable
-proxy for that problem, and the practical capability library required to
-hit a given coverage target is generally smaller than the formula's
-\(m\). We do not claim the polylog conclusion holds \emph{a fortiori} in
-a formal-optimality sense --- that would require a set-cover argument we
-do not develop here. We claim only that the ranked-category bound is a
-conservative approximation to the set-cover quantity that matters in
-practice.
+\textbf{Capabilities are coarser than error categories.} The category
+count \(|C|\) is conservative for engineering because deployed
+interventions operate at the capability level, not the label level. A
+Python interpreter can remove execution-error components across
+arithmetic, unit conversion, counting, list manipulation, and date
+arithmetic; a constrained decoder can eliminate several structural
+output failures at once. The formal coverage problem is therefore closer
+to weighted set cover over failure mass than
+one-intervention-per-category counting. The ranked-category model used
+in Proposition 2 is a tractable proxy; the full capability harvest is in
+Section 4.2.
 
 \textbf{Robustness.} The qualitative claim that follows in Section 3.4
 is robust to the choice between Heaps' law (power-law) and logarithmic
@@ -620,56 +595,27 @@ variant inherits that power and the polylog conclusion fails along the
 corresponding axis. We discuss the Heaps variant explicitly in Appendix
 A.5.
 
-\textbf{Domain patches cap the available catalogue.} Postulate 1
-describes how the \emph{count} of named modes grows with sampled
-failures, but it leaves open whether the catalogue is unbounded
-asymptotically. Real model deployment never visits the entire stratified
-manifold that token representations occupy (Arbuzov et al.~2025, §3.2;
-Li \& Sarwate 2025). A model deployed in a fixed application domain
-\(D\) --- cardiology RAG, legal contract drafting, code review ---
-occupies a bounded sub-region of that manifold, which we call the
-\emph{domain patch} \(P_D\). The patch may contain arbitrarily complex
-local transition geometry; it does not require the local complexity
-inside the patch to be small. What the patch does is restrict the
-\emph{support} of reachable failure modes. A cardiology RAG agent will
-not produce poetry-metaphor failures or theorem-proving failures; its
-accessible catalogue is bounded by what its operational neighborhood
-actually admits.
-
-Let \(C_D\) denote the set of recurring failure modes accessible within
-\(P_D\). Then empirical mode discovery is bounded by
+\textbf{Domain patches cap the engineering problem.} A fixed deployment
+patch restricts the task family, schemas, tools, workflows, and
+evaluator expectations. Prior work on localised representations (Park et
+al., 2024; Li \& Sarwate, 2025), cross-domain performance variation
+(Wang Y. et al., 2024), and long-tail knowledge (Mallen et al., 2023;
+Kandpal et al., 2023) supports the weaker claim that model behaviour is
+strongly domain-dependent; it does not directly measure \(|C_D|\). We
+therefore treat the patch's reachable catalogue as finite or effectively
+capped as a modelling assumption motivated by domain heterogeneity, not
+as a theorem derived from boundedness. Inside the patch, empirical mode
+discovery is bounded by
 
 \[
-|C_{\text{observed}}(t)| \leq \min\bigl(A_D + \sigma_D \ln t,\ |C_D|\bigr).
+|C_{\text{observed}}(t)| \leq \min\bigl(A_D + \sigma_D \ln t,\ |C_D|\bigr),
 \]
 
-The logarithmic term is Postulate 1 applied within the patch; the cap
-\(|C_D|\) is the domain-imposed ceiling. We do \emph{not} claim that the
-patch derives logarithmic discovery --- the patch bounds the catalogue
-and makes logarithmic or saturating discovery dynamics plausible inside
-fixed domains. The cap is what changes the asymptotic behaviour of
-Proposition 2: once enough failures have been sampled that
-\(A_D + \sigma_D \ln k_{\text{hard}}\) reaches \(|C_D|\), further
-sampling does not enlarge the catalogue and the intervention budget
-becomes a domain-constant function of \(|C_D|\) alone.
-
-Two lines of evidence support the cap. Structurally, embedding-space
-analyses find that representations decompose into local strata whose
-intrinsic dimensions range \(\sim 5\)--\(15\) across domains, well below
-the ambient \(\sim 10^3\) scale (Park et al.~2024; Li \& Sarwate 2025)
---- the differential-geometric anchor for treating \(P_D\) as a
-sub-manifold rather than a slogan. Empirically, cross-domain
-heterogeneity is now routine: MMLU-Pro reports a 14-domain accuracy
-spread from \(\sim 20\%\) to \(> 70\%\) on a single base model (Wang Y.
-et al.~2024); Kandpal et al.~(2023) find log-linear scaling between
-training-document count and retrieval accuracy
-(\(R^2 \in [0.98, 0.99]\)); Mallen et al.~(PopQA, 2023) identify a
-log-popularity threshold below which scaling does not help. None of
-these \emph{measures} \(|C_D|\) directly. Together they motivate the
-patch-indexed hypothesis without measuring \(C_D\); direct support would
-require per-domain mode-discovery curves. The cap is currently a
-structural conjecture consistent with the observed heterogeneity, not an
-empirical fit.
+so that once enough failures have been sampled to reach \(|C_D|\),
+further sampling does not enlarge the catalogue and the intervention
+budget becomes a domain-constant function of \(|C_D|\) alone.
+\(\sigma_D\), \(A_D\), \(\beta_D\), \(|C_D|\) are all domain-indexed.
+The full evidence breakdown is in Appendix B.
 
 Crucially, \(\sigma_D\), \(A_D\), \(\beta_D\), and \(|C_D|\) are all
 domain-indexed. Deploying the same base model in three different
@@ -2262,6 +2208,113 @@ headline rate should be read as \emph{polylogarithmic in the pre-cap
 regime, domain-constant in the cap regime} --- with the specific
 exponent flagged as a falsifiability test rather than a fitted
 prediction.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Appendix B. Patch Evidence
+Detail}\label{appendix-b.-patch-evidence-detail}
+
+The body's claim that domain patches cap the engineering problem rests
+on a triangulation of indirect evidence. None of the items below
+\emph{measures} the patch ceiling \(|C_D|\) directly; they support the
+weaker claim that model behaviour is strongly domain-dependent and that
+operational neighbourhoods occupy bounded regions of the model's
+behavioural space.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Evidence type
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What it supports
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What it does \emph{not} prove
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Low intrinsic-dimensional structure in representations (Park et al.,
+2024; Li \& Sarwate, 2025) & Domains occupy localised structure in model
+representation space & Does not measure failure-catalogue size
+\(\lvert C_D \rvert\) \\
+Cross-domain accuracy spreads on a single base model (Wang Y. et al.,
+2024) & Same model behaves differently across domains; performance is
+patch-dependent & Does not imply finite failure modes \\
+Long-tail / popularity thresholds in knowledge tasks (Mallen et al.,
+2023; Kandpal et al., 2023) & Coverage depends on domain frequency and
+training exposure & Does not prove logarithmic mode discovery \\
+Patch-specific intervention performance (across §4.2) & Local tools,
+schemas, and capability libraries change residual error structure & Does
+not imply universal cross-patch transfer of the same intervention
+library \\
+\end{longtable}
+}
+
+The purpose of this evidence is motivational. It supports patch-indexing
+of \(\sigma_D\), \(A_D\), \(\beta_D\), \(|C_D|\), but the finite (or
+effectively capped) reachable catalogue remains an empirical modelling
+assumption to be measured per deployment, not derived from any of the
+rows above.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Appendix C. Empirical Calibration
+Detail}\label{appendix-c.-empirical-calibration-detail}
+
+Three published LLM error taxonomies anchor the mode-rate parameter
+\(\sigma\) in the body's \(\sigma \in [0.87, 1.85]\) range. The simple
+calibration uses \(|C| \approx A + \sigma \ln T\) with \(A = 0\); this
+is a deliberately conservative readout that ignores any positive
+intercept and uses endpoint counts rather than discovery curves.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1667}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2222}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2222}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2222}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1667}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Source
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Approx. observed failures \(T\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Named categories \(\lvert C \rvert\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Implied \(\sigma\) at \(A=0\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Role
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+ErrorAtlas (Ashury-Tahan et al., 2026) & \(\gtrsim 10^4\) & 17 &
+\(\approx 1.85\) & Conservative cross-domain anchor (used as planning
+value) \\
+HumanEval categorisation (Wen et al., 2024) & comparable scale &
+\(8\)--\(12\) & \(\approx 0.87\)--\(1.30\) & Code-domain anchor \\
+MWPES-300K (Sun et al., 2025) & \(\approx 3 \times 10^5\) &
+\(15\)--\(20\) & \(\approx 1.2\)--\(1.6\) & Math-domain anchor (largest
+corpus) \\
+\end{longtable}
+}
+
+These are endpoint counts, not discovery curves: they tell us \emph{how
+many} named categories a taxonomer assigned at a single corpus scale,
+not how the count grew with \(T\). They do not prove logarithmic mode
+discovery. Their role in this paper is twofold: they motivate the
+empirical postulate of §3.2, and they identify the explicit empirical
+test that would either tighten the postulate or move the analysis to the
+Heaps variant of Appendix A.5: repeatedly subsample failures from a
+fixed deployment patch \(D\) and plot discovered modes
+\(|C_{\text{seen},D}(T)|\) against \(T\).
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
