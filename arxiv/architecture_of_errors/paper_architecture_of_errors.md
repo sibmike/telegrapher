@@ -1,15 +1,35 @@
 ---
 title: "The Architecture of Errors: Logarithmic Mode Discovery and Polylogarithmic Intervention Budgets for Long-Context LLM Reliability"
-author:
-  - Mikhail L. Arbuzov
-  - Alexey A. Shvets
-  - Sisong Bei
 date: ""
+header-includes: |
+  \AtBeginDocument{%
+    \author{%
+      Mikhail L. Arbuzov\\
+      Independent Researcher\\
+      \texttt{mike.arbuzov54@gmail.com}
+      \and
+      Sisong Bei\\
+      Independent Researcher\\
+      \texttt{qurining@gmail.com}
+      \and
+      Ziwei Dong\\
+      Independent Researcher\\
+      \texttt{ziwei.dong@alumni.emory.edu}
+      \and
+      Dmitri Kalaev\\
+      Independent Researcher\\
+      \texttt{kalaevdr@gmail.com}
+      \and
+      Alexey Shvets\\
+      Palo Alto Networks\\
+      \texttt{ashvets@paloaltonetworks.com}
+    }%
+  }
 ---
 
 **Abstract**
 
-Universal LLM reliability is not a finite-library problem: across all possible tasks, tools, schemas, knowledge sources, and evaluator expectations, new intervention-distinguishable failure modes can appear without bound, so no finite intervention dictionary can guarantee bounded residual error universally. But deployed systems do not operate over the whole universe; they operate inside bounded patches with recurring tasks, schemas, tools, and evaluator expectations. Within such patches, empirical evidence suggests failures are sparse, repetitive, and concentrated in a small recurring catalogue, so reliability becomes a local catalogue-discovery and intervention-coverage problem rather than an exponential token-length problem. We formalize this transition with a negative result showing that no universal finite intervention dictionary exists, an inverse-discovery corollary showing that logarithmic mode discovery implies exponential data cost for linearly expanding the discovered tail, and a positive patch-local result showing that under logarithmic or capped mode discovery the intervention budget grows polylogarithmically in sequence length and becomes domain-constant once the patch catalogue saturates. The framework relocates rather than dissolves long-context difficulty: where the number of hard decisions itself grows with task length, reliability remains hard; the contribution is to identify the on-axis intervention rather than to make those regimes easy.
+Universal LLM reliability is not a finite-library problem: across all possible tasks, tools, schemas, knowledge sources, and evaluator expectations, new intervention-distinguishable failure modes can appear without bound, so no finite intervention dictionary can guarantee bounded residual error for every intervention-distinguishable mode of an unbounded domain. But deployed systems do not operate over the whole universe; they operate inside operationally bounded patches with recurring tasks, schemas, tools, and evaluator expectations. Within such patches, empirical evidence suggests failures are sparse, repetitive, and concentrated in a small recurring catalogue, so reliability becomes a local catalogue-discovery and intervention-coverage problem rather than an exponential token-length problem. We formalize this transition with a worst-case-mode-wise negative result showing that no finite intervention dictionary covers every intervention-distinguishable failure mode of an unbounded domain, an inverse-discovery corollary showing that the logarithmic upper envelope cannot deliver linearly more distinct tail modes without exponentially more observed hard-failure events, and a positive patch-local result showing that under log active-mode exposure and head-heavy coverage, a sufficient per-hard-decision intervention budget grows polylogarithmically in sequence length and becomes domain-constant once the patch catalogue saturates. The framework relocates rather than dissolves long-context difficulty: where the number of hard decisions itself grows with task length, reliability remains hard; the contribution is to identify the on-axis intervention rather than to make those regimes easy.
 
 ---
 
@@ -33,11 +53,11 @@ These observations suggest a third layer in the reliability architecture, comple
 
 If failure modes form a small, slowly-growing catalogue, then targeted interventions become a viable engineering strategy. Each recurring mode admits a specific countermeasure: arithmetic errors fall to a Python interpreter (Gao et al., 2022; Chen et al., 2022; Gou et al., 2023); format violations to constrained decoding (Suresh et al., 2025; Wang D. Y.-B. et al., 2025); hallucinations to retrieval augmentation, with one paper reporting 100% elimination on RAGTruth (Wood & Forbes, 2024; 95% CI 91–100%, benchmark-conditional — not a by-construction guarantee for RAG in general); over-refusals to preference optimisation (Karaman et al., 2024); tool-call errors to structured uncertainty (Suri et al., 2025). We collect twelve such categories with quantitative "one cluster, one intervention" results in Section 4.2.
 
-The natural question becomes: how many interventions are enough? If new failure modes follow canonical Heaps-style growth (Manning et al., 2008), the optimistic doubly-logarithmic rate fails, but the intervention budget can still remain polylogarithmic when the number of hard decisions grows sublinearly. The practical question is therefore the exponent and constants, not whether the program is hopeless. The data also suggest the more optimistic case: error-taxonomy work plateaus quickly, with most domains stabilising at 10–50 recurring modes even at large corpus sizes. We treat this as an *empirical postulate of logarithmic mode discovery* (Section 3.2) rather than as a derived consequence — Zipfian rank-frequency does *not* imply logarithmic cluster growth in the strict mathematical sense; Heaps' law is the correct type–token consequence of Zipf-distributed events, and it is power-law, not logarithmic. Under our postulate, the required intervention budget scales polylogarithmically in sequence length (Proposition 2, Section 3.4).
+The natural question becomes: how many interventions are enough? If new failure modes follow canonical Heaps-style growth (Manning et al., 2008), the optimistic doubly-logarithmic rate fails, but the intervention budget can still remain polylogarithmic when the number of hard decisions grows sublinearly. The practical question is therefore the exponent and constants, not whether the program is hopeless. The data also suggest the more optimistic case: error-taxonomy work plateaus quickly, with most domains stabilising at 10–50 recurring modes even at large corpus sizes. We treat this as an *empirical postulate of logarithmic mode discovery* (Section 3.2) rather than as a derived consequence — Zipfian rank-frequency does *not* imply logarithmic cluster growth in the strict mathematical sense; Heaps' law is the correct type–token consequence of Zipf-distributed events, and it is power-law, not logarithmic. Under our postulate, a sufficient per-hard-decision intervention budget scales polylogarithmically in sequence length under log active-mode exposure (Proposition 2, Section 3.4).
 
 ### 1.3 Contributions
 
-The paper's central contribution is a shift in the reliability object: universal LLM reliability is not a finite-library problem, but patch-local reliability can be treated as catalogue discovery and intervention coverage. We formalise this transition with two propositions and one corollary. Proposition 1 gives the negative result: if an unbounded domain keeps producing intervention-distinguishable failures, no finite intervention dictionary can guarantee bounded residual error universally. Corollary 1 gives the inverse economic implication of logarithmic discovery: linearly expanding the discovered-mode catalogue requires exponentially more observed hard-failure events, so open-domain tail discovery has rapidly diminishing returns. Proposition 2 gives the corresponding positive result inside a fixed deployment patch: under logarithmic or capped mode discovery, the intervention budget required to bound per-hard-token residual error satisfies $m \geq \lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \rceil$, with a doubly-logarithmic sequence-length rate as the optimistic pre-cap special case and a domain-constant budget once the patch catalogue saturates. The sequence-level analogue is strictly tighter and approaches full-catalogue coverage as $k$ grows; we surface that asymmetry rather than bury it.
+The paper's central contribution is a shift in the reliability object: universal LLM reliability is not a finite-library problem, but patch-local reliability can be treated as catalogue discovery and intervention coverage. We formalise this transition with two propositions and one corollary. Proposition 1 gives the worst-case-mode-wise negative result: if an unbounded domain keeps producing intervention-distinguishable failures, no finite intervention dictionary can guarantee bounded residual error for every intervention-distinguishable mode of the domain. Corollary 1 gives the inverse economic implication of the logarithmic upper envelope: the envelope cannot deliver linearly more distinct tail modes without exponentially more observed hard-failure events, so open-domain tail discovery has rapidly diminishing returns. Proposition 2 gives the corresponding sufficient, model-implied positive result inside a fixed deployment patch: under log active-mode exposure and head-heavy coverage, a sufficient per-hard-decision intervention budget satisfies $m \geq \lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \rceil$, with a doubly-logarithmic sequence-length rate as the optimistic pre-cap special case and a domain-constant budget once the patch catalogue saturates. The sequence-level analogue is strictly tighter and approaches full-catalogue coverage as $k$ grows; we surface that asymmetry rather than bury it.
 
 Around this transition the paper does four supporting things. A three-layer framework — sparsity ($\alpha$), hard-token stratification ($\beta$), and patch-local mode catalogue ($|C_D|$) — refines our previous two-rate model and separates *where* errors occur, *what* recurring forms they take, and *which* capability interventions address them. Logarithmic mode discovery is stated as an empirical postulate, not a theorem, calibrated against ErrorAtlas, HumanEval, and MWPES with $\sigma \in [0.87, 1.85]$ across anchors and $\sigma \approx 1.85$ carried as a conservative planning value. Section 4 synthesises evidence for failure clustering, cluster-selective interventions, and sublinear length scaling, drawing on approximately sixty prior published results, including the six-axis capability-elimination harvest of 28 quantitatively-anchored citations stratified into Patterns A/B/C (by-construction, strong empirical with class-shift, moderate with residual shift). And Section 6 re-audits the most-cited steep-decay counter-evidence (Dziri et al., 2023; Kuratov et al., 2024; Kwa et al., 2025; Wan et al., 2025), showing that each decays primarily over task-structure variables — compositional graph size, fact count, log-time horizon, capacity threshold, or evidence scope — rather than raw token length.
 
@@ -116,7 +136,7 @@ The natural question is how $|C|$ grows with the number of observed failures. Tw
 
 **Important: Zipfian rank-frequency does not imply logarithmic growth.** Although it is tempting to derive logarithmic mode discovery from a Zipfian pattern-frequency distribution, the derivation fails: Heaps' law is the correct type–token consequence of Zipf-distributed events, and it is power-law, not logarithmic. We therefore state logarithmic mode discovery as an empirical postulate, defensible by direct measurement of error taxonomies, rather than as a theorem.
 
-**Notation: corpus vs sequence.** Two sample-size variables matter here, and conflating them is the seam that lets reviewers in. Let $h(n) = \beta k(n)$ denote the number of hard-token decision opportunities in a single sequence of length $n$. Let $T$ denote the number of observed hard-failure events in a corpus used to discover or estimate the domain's failure catalogue. These are not the same object: $h(n)$ controls per-sequence exposure, while $T$ controls empirical catalogue discovery. We further write $C_D$ for the full reachable catalogue of recurring failure modes inside domain patch $D$ (defined at the end of this section), $C_{\text{seen},D}(T)$ for the subset discovered after $T$ sampled failures, and $C_{\text{active},D}(n)$ for the subset that a single sequence of length $n$ can activate.
+**Notation: corpus vs sequence.** Two sample-size variables matter here, and conflating them is the seam that lets reviewers in. Let $h(n) = \beta k(n)$ denote the number of hard-token decision opportunities in a single sequence of length $n$. Let $T$ denote the number of observed hard-failure events in a corpus used to discover or estimate the domain's failure catalogue. These are not the same object: $h(n)$ controls per-sequence exposure, while $T$ controls empirical catalogue discovery. We further write $C_D$ for the full reachable catalogue of recurring failure modes inside domain patch $D$ (defined at the end of this section), $C_{\text{seen},D}(T)$ for the subset discovered after $T$ sampled failures, and $C_{\text{active},D}(n)$ for the subset that a single sequence of length $n$ can activate. We write $\ln T$ and $\ln h(n)$ for clarity; small-sample bounds may be read with $\ln(1 + T)$ and $\ln(1 + h(n))$, and discrete counts such as $\beta k$ are interpreted either as expected values or as $\lfloor \beta k \rfloor$ asymptotically. These reformulations do not affect any rate claim below.
 
 **Postulate 1 (Patch-indexed catalogue discovery).** *Within a fixed application domain $D$, the number of named recurring failure modes discovered after $T$ sampled hard-failure events is bounded by*
 
@@ -138,7 +158,23 @@ $$
 
 **Capabilities are coarser than error categories.** The category count $|C|$ is conservative for engineering because deployed interventions operate at the capability level, not the label level. A Python interpreter can remove execution-error components across arithmetic, unit conversion, counting, list manipulation, and date arithmetic; a constrained decoder can eliminate several structural output failures at once. The formal coverage problem is therefore closer to weighted set cover over failure mass than one-intervention-per-category counting. The ranked-category model used in Proposition 2 is a tractable proxy; the full capability harvest is in Section 4.2.
 
+**L2 → L4 as weighted set cover.** Formally, let each L4 intervention $I_j$ cover a subset $S_j \subseteq C_D$ of the L2 mode catalogue, with per-mode residual-reduction weight $r_{ij} \in [0, 1]$ on mode $i$. The deployment problem chooses a library $\mathcal{I}$ of size at most $m$ to maximise covered hard-error mass:
+
+$$
+\max_{\mathcal{I} : |\mathcal{I}| \leq m}\; \sum_{i \in C_D} p_i \cdot \mathbf{1}\{i \text{ covered by some } I_j \in \mathcal{I}\}.
+$$
+
+Proposition 2 below uses the analytically tractable special case in which the $m$-th-ranked intervention covers the $m$-th-ranked mode (one mode per intervention, ordered by marginal covered mass). In real deployments one L4 capability typically covers several L2 categories simultaneously, so the ranked-category budget of Proposition 2 is a conservative proxy for the true set-cover optimum: the empirically achieved library size for a given residual target may be a constant factor smaller than the formula predicts. The full set-cover treatment of overlap, additivity, and prompt-channel interference is in Appendix B.
+
 **Robustness.** The qualitative claim that follows in Section 3.4 is robust to the choice between Heaps' law (power-law) and logarithmic discovery: as long as $|C|$ grows sublinearly in $k_{\text{hard}}$ **and $k_{\text{hard}}$ is itself polylogarithmic in $n$** (the $k = \Theta(\log n)$ regime of Arbuzov et al., 2025, §3.1), the resulting intervention-budget bound is polylogarithmic in $n$. If $k_{\text{hard}}$ grows as a positive power of $n$, the Heaps variant inherits that power and the polylog conclusion fails along the corresponding axis. We discuss the Heaps variant explicitly in Appendix A.5.
+
+**Operational patch.** A deployment patch $D$ is more than a topic label. It is an operational tuple fixing, over a chosen time window, the components that determine which failure modes are reachable at all:
+
+$$
+D = (\mathcal{X},\, \mathcal{S},\, \mathcal{U},\, \mathcal{R},\, \mathcal{E},\, \mathcal{P},\, H,\, \tau),
+$$
+
+where $\mathcal{X}$ is the task input distribution, $\mathcal{S}$ the input/output schema family, $\mathcal{U}$ the user or client class, $\mathcal{R}$ the retrieval corpus or knowledge source, $\mathcal{E}$ the evaluator or acceptance criterion, $\mathcal{P}$ the policy and safety constraints, $H$ the workflow horizon (single-turn vs multi-turn vs agentic), and $\tau$ the time window over which these components are fixed. A *patch shift* occurs when one or more of these components changes enough to alter the reachable failure catalogue $C_D$. Legal review on contracts from a fixed jurisdiction is a different patch from legal review across mixed jurisdictions; medical RAG over UpToDate is a different patch from medical RAG over arbitrary web content. The patch-local claims in this paper apply within a single, operationally fixed tuple of this form, not to "the domain" in any looser sense.
 
 **Domain patches cap the engineering problem.** A fixed deployment patch restricts the task family, schemas, tools, workflows, and evaluator expectations. Prior work on localised representations (Park et al., 2024; Li & Sarwate, 2025), cross-domain performance variation (Wang Y. et al., 2024), and long-tail knowledge (Mallen et al., 2023; Kandpal et al., 2023) supports the weaker claim that model behaviour is strongly domain-dependent; it does not directly measure $|C_D|$. We therefore treat the patch's reachable catalogue as finite or effectively capped as a modelling assumption motivated by domain heterogeneity, not as a theorem derived from boundedness. Inside the patch, empirical mode discovery is bounded by
 
@@ -152,35 +188,41 @@ Crucially, $\sigma_D$, $A_D$, $\beta_D$, and $|C_D|$ are all domain-indexed. Dep
 
 The discovery variable $T$, the sequence-exposure variable $h(n)$, and the patch ceiling $|C_D|$ answer different questions: $T$ determines how much of the catalogue we have measured, $h(n)$ determines how much of it a single sequence can activate, and $|C_D|$ determines the maximum catalogue that the domain can expose.
 
-**Corollary 1 — Inverse Discovery Cost.** The logarithmic discovery postulate has a reverse implication. If the number of discovered modes grows as $q(T) \approx A_D + \sigma_D \ln T$, then discovering $q$ distinct modes requires
+**Corollary 1 — Inverse Discovery Cost.** Postulate 1 is an *upper-bound* statement: the discovered catalogue cannot grow faster than $A_D + \sigma_D \ln T$. Inverting the bound in the rigorous direction yields a lower bound on the sample budget needed for the envelope to *permit* a given number of distinct modes. If $q > A_D$ distinct modes have been discovered after $T$ observed hard-failure events in patch $D$, then under Postulate 1,
 
 $$
-T(q) \approx \exp\!\left(\frac{q - A_D}{\sigma_D}\right)
+T \;\geq\; \exp\!\left(\frac{q - A_D}{\sigma_D}\right).
 $$
 
-observed hard-failure events. So under the logarithmic model, linearly expanding the discovered-mode catalogue costs multiplicatively more data: for each additional $\Delta q$ modes, the required sample budget rises by a factor of $\exp(\Delta q / \sigma_D)$. At the conservative calibration $\sigma_D \approx 1.85$, five additional discovered modes need roughly $15\times$ more observed hard failures; ten additional modes need roughly $220\times$ more. This does not mean ordinary failures are rare — it is a statement about *newly distinguishable* tail modes, which become increasingly expensive to find. Combined with the head-heavy coverage model of §3.3, this gives the economic interpretation: generic open-domain training spends increasing data on low-mass tail discovery, while patch-local reliability directly targets the high-mass local head. Full derivation in Appendix A.6.
+Equivalently, the logarithmic upper envelope cannot reach $q$ discovered modes until the sample budget is exponential in $q$. *Tightness clause.* If the empirical discovery curve is approximately tight against the envelope at the relevant corpus scales, this lower bound becomes the approximate inverse cost $T(q) \approx \exp((q - A_D)/\sigma_D)$, and each additional $\Delta q$ modes raises the sample budget by a factor of approximately $\exp(\Delta q / \sigma_D)$ — at the conservative calibration $\sigma_D \approx 1.85$, five additional discovered modes need roughly $15\times$ more observed hard failures, and ten additional modes need roughly $220\times$ more. The lower bound is unconditional under Postulate 1; the multiplicative-cost reading is conditional on tightness. This does not mean ordinary failures are rare; it is a statement about *newly distinguishable* tail modes, which the envelope permits only slowly. Combined with the head-heavy coverage model of §3.3, the economic reading is that generic open-domain training spends increasing data on low-mass tail discovery, while patch-local reliability directly targets the high-mass local head. Full derivation in Appendix A.6.
 
 ### 3.3 Coverage by a targeted intervention library
 
 Given a catalogue of $|C|$ recurring modes, an *intervention library* of size $m$ covers the $m$ most prevalent modes, leaving the remaining $|C| - m$ uncovered. The cumulative coverage of such a library depends on the rank-frequency distribution of the patterns themselves.
 
-For Zipf-distributed pattern frequencies with exponent $s = 1$, the discrete cumulative mass is $H_m / H_{|C|}$ where $H_j = \sum_{i=1}^{j} 1/i$ is the harmonic number. For our ErrorAtlas anchor ($|C| = 17$, $m = 5$), the Zipf cumulative gives $H_5 / H_{17} \approx 66.4\%$. A more conservative, slower-rising closed form is the log-coverage curve
+**Empirical and approximate coverage.** Let $p_1 \geq p_2 \geq \cdots \geq p_{|C|}$ be the ranked empirical hard-error masses of the local failure modes, with $\sum_{i=1}^{|C|} p_i = 1$. The exact cumulative coverage of the top-$m$ library is the empirical step function
 
 $$
-F(m; |C|) = \min\!\left(1,\ \frac{\ln m}{\ln |C|}\right),
+F_{\text{emp}}(m) = \sum_{i=1}^{m} p_i, \qquad m \in \{0, 1, \ldots, |C|\},
 $$
 
-which yields $F(5; 17) \approx 56.8\%$ and $F(10; 17) \approx 81.3\%$ — concentrating less mass in the top-$m$ head than the Zipf cumulative at the same $m$. We adopt this log-coverage form as a *postulated* functional family rather than as an empirically-anchored fit. Although the published ErrorAtlas paper sorts its 17 categories by prevalence (Table 1) and reports per-category percentages in benchmark-specific analyses, it does not publish a single cross-domain cumulative top-$m$ coverage curve at the time of writing; the qualitative shape (a long-tailed distribution with heavy concentration in the head) is what the published taxonomy reports, and the log-coverage form is the simplest closed expression respecting the $\min(1, \cdot)$ cap, with no free parameters once $|C|$ is fixed, that yields the polylog conclusion of Section 3.4. Alternative cumulatives (Zipf–Mandelbrot with offset, truncated power law, saturating exponential) match the same qualitative shape with comparable freedom; a structural preference among them is not available at current evidence levels. Appendix A.5 shows that the qualitative polylog conclusion of Proposition 2 survives across all four candidate cumulatives we consider. Empirical anchoring of $F(m; |C|)$ to a measured cumulative-coverage curve remains an explicit falsifiability test — see Appendix A.5 and §6.3.
+with $F_{\text{emp}}(0) = 0$, $F_{\text{emp}}(1) = p_1$, and $F_{\text{emp}}(|C|) = 1$ by construction. $F_{\text{emp}}$ handles every edge case directly and requires no patching. For closed-form analysis at scales where the per-mode masses are not directly measured, we use the continuum log-head approximation
 
-A second caveat is that $F(m; |C|)$ counts *named L2 categories covered*, not *L4 capability axes deployed*. A single capability axis typically targets several L2 categories on average (Section 4.2.0). Real-deployment residual error is therefore often lower than $F(m; |C|)$ predicts at any given $m$: the bound remains valid but is loose in this regime. Empirically observed library sizes that achieve a given residual threshold may be a constant factor smaller than the formula's prediction.
+$$
+F_{\log}(m; |C|) = \min\!\left(1,\ \frac{\ln m}{\ln |C|}\right), \qquad m \geq 2,\ |C| \geq 2,
+$$
 
-**Domain of $F$.** The log-coverage form is intended for $m \geq 2$ and $|C| \geq 2$. We adopt the empirical conventions $F(0; |C|) := 0$ (no interventions cover no mass) and $F(1; |C|) := p_1$, where $p_1$ is the observed mass of the single most prevalent mode. The latter convention avoids the artificial $\ln 1 / \ln |C| = 0$ output of the closed form at $m = 1$; the log approximation is not anchored at the single-intervention edge case. For $|C| = 1$, residual error is fully covered (if the single mode is intervened on) or fully uncovered (otherwise) by definition, and the formula is not invoked.
+as a *planning approximation* to $F_{\text{emp}}$, not as the true distribution. For our ErrorAtlas anchor ($|C| = 17$, $m = 5$), $F_{\log}(5; 17) \approx 56.8\%$; doubling the library to $m = 10$ pushes it to $F_{\log}(10; 17) \approx 81.3\%$. A Zipf-1 reference for the same anchor gives $H_5 / H_{17} \approx 66.4\%$, concentrating more mass in the head than $F_{\log}$ — so the log form is conservative relative to Zipf. Proposition 2 below is therefore a closed-form planning approximation to empirical ranked coverage, not a distribution-free theorem; the qualitative polylog conclusion is what survives across cumulative-coverage families (Appendix A.5), and a direct fit of $F_{\text{emp}}$ to a measured cumulative-coverage curve in any single patch remains an explicit falsifiability test.
+
+A second caveat is that $F_{\log}(m; |C|)$ tracks ranked *L2 categories covered*, not *L4 capability axes deployed*. A single capability axis typically covers several L2 categories on average (Section 4.2.0); under the set-cover model of §3.2, real-deployment residual error at a given $m$ is therefore often lower than $F_{\log}(m; |C|)$ predicts. The bound remains valid but is loose in this regime, and empirically achieved library sizes for a given residual threshold may be a constant factor smaller than the formula's prediction. For $|C| = 1$, residual error is fully covered or fully uncovered by definition, and neither $F_{\text{emp}}$ nor $F_{\log}$ is informative.
 
 After deploying the top-$m$ intervention library, the residual per-hard-token error rate is
 
 $$
-e_{\text{res}}(m) = \bigl(1 - F(m; |C|)\bigr) \cdot e_{\text{hard}}.
+e_{\text{res}}(m) = \bigl(1 - F_{\log}(m; |C|)\bigr) \cdot e_{\text{hard}}
 $$
+
+under the log-head approximation, or the corresponding $F_{\text{emp}}$ expression if the per-mode masses are known directly.
 
 ### 3.4 From universal impossibility to patch-local reliability
 
@@ -188,7 +230,9 @@ The finite-catalogue claim is patch-local. It does not say that all possible LLM
 
 The positive result begins only after a deployment patch $D$ has been fixed. Inside a patch, the task family, schemas, tools, evaluator expectations, and admissible workflows recur. The engineering question then changes from "Can one library cover all possible LLM failures?" to "How large must the local library be to cover enough of the reachable failure catalogue $C_D$?"
 
-**Proposition 1 (No Universal Finite Intervention Dictionary).** *Fix a residual-error tolerance $\varepsilon$. If a domain $D$ contains an infinite sequence of failures where each new failure is not covered by any finite intervention dictionary covering all earlier failures, then the $\varepsilon$-resolution failure catalogue $C_D^{\varepsilon}$ is infinite. Consequently, no finite intervention dictionary can guarantee residual error below $\varepsilon$ over all of $D$.*
+**Proposition 1 (No Universal Finite Intervention Dictionary).** *Fix a residual-error tolerance $\varepsilon$. If a domain $D$ contains an infinite sequence of failures where each new failure is not covered by any finite intervention dictionary covering all earlier failures, then the $\varepsilon$-resolution failure catalogue $C_D^{\varepsilon}$ is infinite. Consequently, no finite intervention dictionary can guarantee residual error below $\varepsilon$ for every intervention-distinguishable mode in $D$.*
+
+*Metric.* This is a worst-case, mode-wise guarantee, not a claim about expected residual error under a fixed probability distribution. Under a distributional metric, an infinite uncovered tail may still have arbitrarily small total mass; the proposition rules out only the worst-case-mode-coverage reading of universal reliability, which is the reading the engineering literature implicitly assumes when it asks for "a fixed list of interventions that covers LLM use."
 
 *Proof sketch.* Each new failure is intervention-distinguishable from the failures before it; the sequence therefore generates infinitely many distinct intervention modes, and any finite dictionary must miss some later mode. The full proof, including the precise definition of mode-level coverage, is in Appendix A.1.
 
@@ -196,13 +240,13 @@ The positive result begins only after a deployment patch $D$ has been fixed. Ins
 
 The positive result composes $\beta$-stratification, the active-mode bound (Assumption 2), and the log-coverage form into a local budget statement. The result is conditional engineering math: it depends on the log-coverage approximation, the active-mode exposure assumption, and the patch hypothesis that $C_D$ is finite or effectively capped. Appendix A.2 states these conditions explicitly before the derivation.
 
-**Proposition 2 (Patch-Local Intervention Budget).** *Fix a deployment patch $D$. Let $\varepsilon \in (0, e_{\text{hard}})$ be the target per-hard-token residual error rate. Under the log-coverage approximation of §3.3, a library covering the dominant local modes satisfies the target once*
+**Proposition 2 (Patch-Local Sufficient Intervention Budget).** *Fix a deployment patch $D$. Let $\varepsilon \in (0, e_{\text{hard}})$ be the target per-hard-decision residual error rate. Under the log-head approximation $F_{\log}$ of §3.3, a library covering the dominant local modes is sufficient for the target once*
 
 $$
 m \;\geq\; \left\lceil |C_{\text{eff}}|^{1 - \varepsilon / e_{\text{hard}}} \right\rceil,
 $$
 
-*where $C_{\text{eff}}$ is either the active catalogue $C_{\text{active},D}(n)$ touched by a single sequence, or the full reachable catalogue $C_D$ of the deployment patch. If $C_{\text{active},D}(n)$ grows logarithmically with the number of hard decisions and $k(n) = \Theta(\log n)$, then the pre-cap intervention budget grows doubly-logarithmically in sequence length. Once the patch catalogue saturates, the required budget becomes domain-constant in $|C_D|$.*
+*where $C_{\text{eff}}$ is either the active catalogue $C_{\text{active},D}(n)$ touched by a single sequence, or the full reachable catalogue $C_D$ of the deployment patch. If $C_{\text{active},D}(n)$ grows logarithmically with the number of hard decisions and $k(n) = \Theta(\log n)$, then the pre-cap sufficient budget grows doubly-logarithmically in sequence length. Once the patch catalogue saturates, the sufficient budget becomes domain-constant in $|C_D|$. This is a sufficient, model-implied budget under the stated approximation, not a proof of the true minimal intervention library.*
 
 *Proof sketch.* The library removes cumulative hard-error mass $F(m; |C|)$; the residual hard-token error rate is therefore $(1 - F)\,e_{\text{hard}}$. Requiring this residual to be at most $\varepsilon$ rearranges, after substituting the log-coverage form, to the stated bound. The full step-by-step derivation, including the pre-cap and cap regimes, is in Appendix A.2.
 
@@ -210,7 +254,7 @@ $$
 
 **Sequence-level caveat.** Proposition 2 bounds residual error per hard decision. A one-shot sequence-level target is strictly stricter because many hard decisions occur in one output: as $k$ grows the allowable residual per hard decision shrinks, and the required library approaches full-catalogue coverage. In some regimes the non-hard-token error mass alone already exceeds the sequence-level budget, so hard-token interventions cannot meet the SLA by themselves. The full three-regime analysis (and the per-hard-token tolerance $\tau_{\text{seq}}$ that converts a sequence target into the Proposition 2 bound) is in Appendix A.3.
 
-A common engineering rule of thumb — "fix ≈50 patterns per domain → ≈90% error reduction" — is best understood as a per-hard-token planning prior. The analogous sequence-level claim requires correspondingly more interventions and tighter coverage of the tail.
+A common engineering rule of thumb — "cover the local head with on the order of tens of interventions" — is best understood as a per-hard-decision planning prior, not a derived constant from the formal model. The per-hard-decision residual-error reduction implied by $F_{\log}$ at typical $|C|$ and head-heavy mass is large; the sequence-level analogue requires correspondingly more interventions and tighter coverage of the tail.
 
 We call these statements propositions rather than theorems because their force is conditional: they formalise the consequences of the paper's modelling assumptions rather than deriving a universal law of LLM reliability. The doubly-logarithmic rate is the optimistic special case under logarithmic active-mode exposure; Appendix A.5 gives the Heaps and saturation variants. Appendix A.4 expands on the conditional reading.
 
@@ -400,7 +444,7 @@ A complementary observation: a clean $(1 - \varepsilon)^N$ exponential cannot si
 
 **Karpinska et al. (2024), NoCha.** GPT-4o achieves 55.8% pair accuracy across 1,001 minimally-different true/false claim pairs about long fictional books (mean length 127K tokens). The paper reports performance by *evidence scope*, not by context length: 59.8% on sentence-level retrieval, 47.6% on passage-level, 41.6% on global reasoning. No per-context-length curve is reported. The decay axis is the number of evidence pieces that must be integrated — i.e., a $k$-axis quantity, not an $n$-axis one. NoCha is therefore not counter-evidence to a sublinear-in-$n$ claim. Evidence-scope decay is exactly the $k$-axis observation the framework predicts cannot be addressed by scaling raw context length — it requires retrieval or process supervision along the actual decay axis. The relocation is informational, not magical.
 
-**Unifying observation.** Every counter-paper decays over a variable that is not $n$: compositional graph size, fact count, log-time horizon, capacity threshold, or evidence scope. The apparent rapid decay is, in each case, in a quantity that our framework already concentrates the action in ($k_{\text{hard}}$ and $|C|$), not in raw sequence length. This is a relocation, not a dissolution. These papers are not counter-evidence to the sublinear-in-$n$ thesis, but they identify regimes where the framework predicts steep $k_{\text{hard}}$-axis decay in practice. Identifying the correct intervention axis is the contribution of this re-audit; promising that those regimes are easy is not. Where $k_{\text{hard}}$ grows with task length — adversarial compositional structure, multi-hop fact chains, long horizons that force more decisions — reliability remains hard; the framework's value is in directing intervention toward capability provisioning along the actual decay axis rather than toward context-window or compute-budget expansion that does not help.
+**Unifying observation.** Each of the steep-decay counter-papers we re-audit decays over a variable other than $n$: compositional graph size, fact count, log-time horizon, capacity threshold, or evidence scope. The apparent rapid decay is, in each case, in a quantity that our framework already concentrates the action in ($k_{\text{hard}}$ and $|C|$), not in raw sequence length. This is a relocation, not a dissolution. These papers are not counter-evidence to the sublinear-in-$n$ thesis, but they identify regimes where the framework predicts steep $k_{\text{hard}}$-axis decay in practice. Identifying the correct intervention axis is the contribution of this re-audit; promising that those regimes are easy is not. Where $k_{\text{hard}}$ grows with task length — adversarial compositional structure, multi-hop fact chains, long horizons that force more decisions — reliability remains hard; the framework's value is in directing intervention toward capability provisioning along the actual decay axis rather than toward context-window or compute-budget expansion that does not help.
 
 ### 6.3 Limitations, residual budget, and falsifiability
 
@@ -448,9 +492,9 @@ That accounts for 13 sub-classes mapped to one of the six axes. The remaining fo
 
 LLM reliability is often framed as an asymptotic scaling problem: as outputs get longer, do errors compound to inevitable failure? In our previous work (Arbuzov et al., 2025) we argued that this framing rests on a false uniformity assumption — errors concentrate at $\sim 5{-}10\%$ of tokens, not all of them. This paper takes the next step: within that sparse set, errors are not only concentrated but also *repetitive*. They cluster into a finite catalogue of recurring failure modes whose size, under the empirical postulate of Section 3.2, grows logarithmically — and under the more conservative Heaps alternative, as a small power — of the number of observed failures.
 
-The conditional consequence (Proposition 2) is that the intervention budget required to bound per-hard-token residual error scales polylogarithmically in sequence length within a fixed domain patch, and becomes a domain-constant once the patch ceiling $|C_D|$ is reached. The optimistic special case (Postulate 1, $k \sim \log n$) gives a doubly-logarithmic rate; the conservative Heaps variant of Appendix A.5 gives $(\log n)^b$ with small $b$; the symbolic-rates form of Appendix A.5 shows the polylog conclusion is stable across this family. Available evidence is consistent with libraries on the order of tens of interventions covering the head of the per-hard-token failure distribution in many fixed domains. The exact number is patch-indexed and should be estimated from local discovery and rank-coverage curves, not assumed from cross-domain priors. Sequence-level reliability targets are strictly tighter and approach full-catalogue coverage as $k$ grows; practitioners should pick the regime that matches their cost structure rather than reading the per-token result as the production SLA.
+The conditional consequence (Proposition 2) is that a sufficient per-hard-decision intervention budget scales polylogarithmically in sequence length within a fixed domain patch under the log active-mode-exposure assumption, and becomes a domain-constant once the patch ceiling $|C_D|$ is reached. The optimistic special case (Postulate 1 tight, $k \sim \log n$) gives a doubly-logarithmic rate; the conservative Heaps variant of Appendix A.5 gives $(\log n)^b$ with small $b$; the symbolic-rates form of Appendix A.5 shows the polylog conclusion is stable across this family. Available evidence is consistent with libraries on the order of tens of interventions covering the head of the per-hard-decision failure distribution in many fixed domains. The exact number is patch-indexed and should be estimated from local discovery and rank-coverage curves, not assumed from cross-domain priors. Sequence-level reliability targets are strictly tighter and approach full-catalogue coverage as $k$ grows; practitioners should pick the regime that matches their cost structure rather than reading the per-decision result as the production SLA.
 
-The same logarithmic discovery postulate carries an inverse interpretation (Corollary 1, Appendix A.6): discovering linearly more distinct tail modes requires exponentially more observed hard-failure events. Combined with head-heavy failure mass, this explains why generic frontier post-training can face diminishing reliability returns in open-ended deployment settings — the high-mass head is discovered early, while the tail becomes increasingly expensive to find and contributes less marginal residual-error reduction. The framework therefore does not say frontier scaling is useless. It says frontier-only reliability is economically misaligned with fixed deployment patches: once $D$ is known, local adaptation, tools, validators, retrieval, constrained decoding, and process supervision can target recurring failure mass directly, where generic post-training would have to rediscover the same local repairs indirectly across an open-ended task universe.
+The same logarithmic discovery postulate carries an inverse interpretation (Corollary 1, Appendix A.6): the logarithmic envelope cannot deliver linearly more distinct tail modes without exponentially more observed hard-failure events. Combined with head-heavy failure mass, this explains why generic frontier post-training can face diminishing reliability returns in open-ended deployment settings — the high-mass head is discovered early, while the tail becomes increasingly expensive to find and contributes less marginal residual-error reduction. The framework therefore does not say frontier scaling is useless. It says frontier-only reliability is economically misaligned with fixed deployment patches: once $D$ is known, local adaptation, tools, validators, retrieval, constrained decoding, and process supervision can target recurring failure mass directly, where generic post-training would have to rediscover the same local repairs indirectly across an open-ended task universe.
 
 This reframes the long-context reliability question from "can we bound the growth of $n$-token error?" to "have we catalogued enough failure modes?" The latter question is finite and addressable. Whether it generalises to agentic, scientific, and long-horizon regimes where the published taxonomies do not yet reach is the open empirical question this paper invites. In the domains where taxonomies have been measured — general, code, math — the architecture of LLM errors is compact and the engineering problem is small. Whether the same holds elsewhere is a falsifiable empirical test, and we have named it.
 
@@ -476,13 +520,13 @@ Let $D$ be a domain. Call $D$ *intervention-unbounded* if it contains an infinit
 
 **Step 4: contradiction.** Intervention-unboundedness says exactly the opposite: each new $f_j$ is not covered by any finite dictionary that covers $\{f_1, \ldots, f_{j-1}\}$. Therefore $f_j$ cannot belong to any earlier intervention mode, so each $f_j$ introduces a new intervention-distinguishable mode. The sequence $f_1, f_2, f_3, \ldots$ induces infinitely many such modes, contradicting the assumption that $C_D^{\varepsilon}$ is finite. Hence $|C_D^{\varepsilon}| = \infty$.
 
-**Step 5: no finite dictionary covers the domain.** Suppose, again for contradiction, that some finite intervention dictionary $\mathcal{I}$ covers all of $D$. Then $\mathcal{I}$ covers every finite prefix $\{f_1, \ldots, f_{j-1}\}$ for every $j$. By intervention-unboundedness, any dictionary covering that prefix fails to cover $f_j$. Therefore $\mathcal{I}$ does not cover $f_j$, contradicting the assumption that $\mathcal{I}$ covers all of $D$. $\square$
+**Step 5: no finite dictionary covers every mode of the domain.** Suppose, again for contradiction, that some finite intervention dictionary $\mathcal{I}$ covers every mode of $D$. Then $\mathcal{I}$ covers every finite prefix $\{f_1, \ldots, f_{j-1}\}$ for every $j$. By intervention-unboundedness, any dictionary covering that prefix fails to cover $f_j$. Therefore $\mathcal{I}$ does not cover $f_j$, contradicting the assumption that $\mathcal{I}$ covers every mode of $D$. $\square$
 
-### A.2 Derivation of Proposition 2: Patch-Local Intervention Budget
+### A.2 Derivation of Proposition 2: Patch-Local Sufficient Intervention Budget
 
-**Conditions used.** Proposition 2 depends on four assumptions:
+**Conditions used.** Proposition 2 gives a sufficient, model-implied budget under the following assumptions:
 
-1. **Coverage model.** The cumulative hard-error mass covered by the top $m$ modes is approximated by $F(m; |C|) = \min(1,\, \ln m / \ln |C|)$ on the declared domain $m \geq 2$, $|C| \geq 2$.
+1. **Coverage model.** The cumulative hard-error mass covered by the top $m$ modes is approximated by $F_{\log}(m; |C|) = \min(1,\, \ln m / \ln |C|)$ on the declared domain $m \geq 2$, $|C| \geq 2$. Throughout this appendix, $F$ refers to $F_{\log}$ unless otherwise stated.
 2. **Non-trivial, attainable target.** The residual target satisfies $\varepsilon \in (0, e_{\text{hard}})$. If $\varepsilon \geq e_{\text{hard}}$ no intervention is needed; if $\varepsilon \leq 0$ the target is unattainable unless all residual hard-token error is eliminated.
 3. **Patch-local catalogue.** The result applies only after a deployment patch $D$ has been fixed and its reachable catalogue is modelled as finite or effectively capped.
 4. **Sequence-length claim.** The doubly-logarithmic rate further requires Assumption 2 and $k(n) = \Theta(\log n)$.
@@ -550,7 +594,7 @@ e_{\text{res}} \;\leq\; 1 - \left(\frac{1 - \varepsilon_{\text{seq}}}{S_{\text{b
 \;=:\; \tau_{\text{seq}}.
 $$
 
-Applying Proposition 2 with $\varepsilon$ replaced by $\tau_{\text{seq}}$ gives the required library size $m \geq \lceil |C_{\text{eff}}|^{1 - \tau_{\text{seq}} / e_{\text{hard}}} \rceil$. As the sequence target becomes stricter ($\varepsilon_{\text{seq}}$ shrinks), $\tau_{\text{seq}} \to 0$ and the exponent $1 - \tau_{\text{seq}}/e_{\text{hard}} \to 1$, so $m \to |C_{\text{eff}}|$. Strict one-shot sequence-level reliability pushes the system toward full-catalogue coverage.
+Applying Proposition 2 with $\varepsilon$ replaced by $\tau_{\text{seq}}$ gives the sufficient library size $m \geq \lceil |C_{\text{eff}}|^{1 - \tau_{\text{seq}} / e_{\text{hard}}} \rceil$. As the sequence target becomes stricter ($\varepsilon_{\text{seq}}$ shrinks), $\tau_{\text{seq}} \to 0$ and the exponent $1 - \tau_{\text{seq}}/e_{\text{hard}} \to 1$, so $m \to |C_{\text{eff}}|$. Strict one-shot sequence-level reliability pushes the system toward full-catalogue coverage.
 
 **Regime (iii): baseline hard-token error is already acceptable.** If $\tau_{\text{seq}} \geq e_{\text{hard}}$, the baseline hard-token rate already satisfies the sequence target (since $e_{\text{res}}(0) = e_{\text{hard}}$).
 
@@ -562,13 +606,13 @@ $$
 
 and the hard-token term dominates *only* when $(n-k)\, e_{\text{non}} = o(\beta k\, e_{\text{res}}(m))$ — equivalently $e_{\text{non}} = o(\beta \alpha\, e_{\text{res}}(m))$ with $\alpha = k/n$. Under that shortcut, $e_{\text{res}}(m) \lesssim \varepsilon_{\text{seq}}/(\beta k)$ and the budget reduces to $m \geq \lceil |C|^{1 - \varepsilon_{\text{seq}}/(\beta k\, e_{\text{hard}})} \rceil$. We retain this as a production heuristic; the multiplicative $S_{\text{base}}/\tau_{\text{seq}}$ treatment above is the literal statement, and the shortcut is valid only inside Regime (ii) and only when the non-key aggregate is genuinely small relative to $\beta k\, e_{\text{res}}(m)$.
 
-**Conclusion.** Per-hard-token reliability is easier than sequence-level reliability. A library that gives a large reduction in residual hard-token error may still be insufficient for one-shot sequence-level guarantees when many hard decisions occur in a single output. This is why the main paper treats the "≈50 patterns" rule of thumb as a per-hard-token planning prior, not a one-shot sequence-level SLA.
+**Conclusion.** Per-hard-token reliability is easier than sequence-level reliability. A library that gives a large reduction in residual hard-token error may still be insufficient for one-shot sequence-level guarantees when many hard decisions occur in a single output. This is why the main paper treats the "tens of interventions" rule of thumb as a per-hard-decision planning prior, not a one-shot sequence-level SLA.
 
 ### A.4 Why these are propositions rather than unconditional theorems
 
 Proposition 1 is a definitional impossibility result: once intervention-unboundedness is assumed, an infinite intervention-resolution catalogue follows. Its role is not to prove that every unbounded domain necessarily has infinite failure modes, but to show that open-ended domains cannot be assumed to admit finite dictionaries.
 
-Proposition 2 is conditional engineering math. It does not prove that LLM failures universally obey logarithmic mode discovery. It proves that *if* a bounded patch has a finite or effectively capped reachable catalogue, *and if* cumulative intervention coverage follows the stated head-heavy form, *then* the required per-hard-token intervention budget grows slowly and becomes constant after catalogue saturation.
+Proposition 2 is conditional engineering math. It does not prove that LLM failures universally obey logarithmic mode discovery. It proves that *if* a bounded patch has a finite or effectively capped reachable catalogue, *and if* cumulative intervention coverage follows the stated head-heavy form, *then* a sufficient per-hard-decision intervention budget grows slowly and becomes constant after catalogue saturation. It does not prove that the true minimal intervention library has the same scaling.
 
 The empirical burden therefore lies not in the algebra but in measuring, for each deployment patch, the local discovery curve $C_{\text{seen},D}(T)$, the per-sequence activation $C_{\text{active},D}(n)$, the cumulative coverage $F(m; |C_D|)$, the hard-token fraction $\beta_D$, and the baseline hard-token rate $e_{\text{hard}}$. This is why the paper frames the results as a reliability-engineering scaffold rather than as universal theorems about LLM behaviour.
 
@@ -594,47 +638,51 @@ Numerical constants require a measured discovery curve $C_{\text{seen},D}(T)$ or
 
 ### A.6 Inverse Discovery Cost
 
-The body Corollary 1 (§3.2) inverts the logarithmic discovery postulate to read out a sample-budget cost for distinct-mode discovery. This appendix gives the algebra, the numerical anchors, sensitivity to the alternative cluster-count laws of A.5, and a separate mode-mediated gain corollary that connects discovery cost to broad capability proxies.
+The body Corollary 1 (§3.2) inverts the upper-bound discovery postulate into a sample-budget lower bound on novel-mode discovery. This appendix gives the algebra, the numerical anchors, the tightness assumption that converts the lower bound into an approximate inverse cost, sensitivity to the Heaps cluster-count alternative of §A.5, the saturation regime, and a separate mode-mediated gain sub-corollary that connects discovery cost to broad capability proxies.
 
-**Setup.** Let $q(T) = |C_{\text{seen},D}(T)|$ be the number of distinct failure modes discovered in patch $D$ after $T$ observed hard-failure events. Postulate 1 (§3.2) approximates discovery as
+**Setup.** Let $q(T) = |C_{\text{seen},D}(T)|$ be the number of distinct failure modes discovered in patch $D$ after $T$ observed hard-failure events. Postulate 1 (§3.2) is an upper bound,
 $$
-q(T) \approx A_D + \sigma_D \ln T, \qquad \sigma_D > 0.
+q(T) \leq A_D + \sigma_D \ln T, \qquad \sigma_D > 0,
+$$
+on the discovered catalogue under the logarithmic-envelope assumption.
+
+**Inversion (lower bound on $T$).** The upper-bound postulate is monotone in $T$. Taking the inverse direction yields a *lower bound* on $T$ required for the envelope to permit $q$ discovered modes: if $q > A_D$ distinct modes have been discovered after $T$ events, then
+$$
+T \;\geq\; \exp\!\left(\frac{q - A_D}{\sigma_D}\right).
+$$
+This is the rigorous direction of the corollary. The upper envelope cannot reach $q$ until the sample budget has grown exponentially in $q$.
+
+**Tightness assumption.** The lower bound above is unconditional under Postulate 1. The stronger reading — that observed hard failures at scale $T(q) \approx \exp((q - A_D)/\sigma_D)$ actually deliver $q$ discovered modes, and that each additional $\Delta q$ modes raises the sample budget by approximately $\exp(\Delta q/\sigma_D)$ — requires the additional assumption that the empirical discovery curve is approximately *tight* against the envelope at the relevant corpus scales. Without that assumption, the appendix gives a lower bound on $T$ only. With it,
+$$
+\frac{T(q + \Delta q)}{T(q)} \;\approx\; \exp\!\left(\frac{\Delta q}{\sigma_D}\right).
 $$
 
-**Inversion.** Subtract $A_D$, divide by $\sigma_D$, and exponentiate to get the sample budget required to discover $q$ distinct modes:
-$$
-T(q) \approx \exp\!\left(\frac{q - A_D}{\sigma_D}\right).
-$$
+**Numerical anchors under tightness.** At the conservative calibration $\sigma_D \approx 1.85$ (§3.2):
 
-**Multiplicative cost per extra mode.** Compare the budget at $q + \Delta q$ to the budget at $q$:
-$$
-\frac{T(q + \Delta q)}{T(q)} \approx \exp\!\left(\frac{\Delta q}{\sigma_D}\right).
-$$
+- $\exp(5/1.85) \approx 14.9$ — five extra modes need roughly $15\times$ more observed hard failures.
+- $\exp(10/1.85) \approx 222$ — ten extra modes need roughly $220\times$ more.
 
-Each additional block of $\Delta q$ discovered modes therefore costs a *multiplicative* sample increase. At the conservative calibration $\sigma_D \approx 1.85$ (§3.2):
-
-- $\exp(5/1.85) \approx 14.9$ — five extra modes require roughly $15\times$ more observed hard failures.
-- $\exp(10/1.85) \approx 222$ — ten extra modes require roughly $220\times$ more.
+These are tightness-conditional anchors, not unconditional consequences of Postulate 1. The subsample-discovery measurement of §3.2 is precisely the test of whether tightness holds.
 
 **What this is and is not.** The corollary describes *new distinct-mode discovery*. Ordinary failures inside already-discovered modes may remain common and cheap to observe; the exponential cost lives only on the *category-novelty* axis. Conflating ordinary failure rate with novel-mode arrival rate would over-claim the result.
 
-**Heaps alternative.** Under the Heaps cluster-count law of A.5, $q(T) = K T^b$ with $b \in (0,1)$, the inverse cost is *polynomial* rather than exponential:
+**Heaps alternative.** Under the Heaps cluster-count law of A.5, $q(T) = K T^b$ with $b \in (0,1)$, the corresponding inverse cost is polynomial rather than exponential:
 $$
 T(q) = (q / K)^{1/b}.
 $$
-The exponential inverse-cost claim is specific to the logarithmic postulate; the broader qualitative claim — that tail discovery has diminishing returns — survives under any concave discovery curve. Sensitivity is therefore: exponential under logarithmic, polynomial under Heaps, undefined past the patch ceiling.
+The exponential inverse-cost reading is specific to the logarithmic upper envelope; the broader qualitative claim — that tail discovery has diminishing returns — survives under any concave discovery curve. Sensitivity is therefore: exponential under logarithmic-and-tight, polynomial under Heaps, undefined past the patch ceiling.
 
-**Saturation regime.** Once $q(T) \leq |C_D|$ has been saturated, discovery stops; the inversion above applies only in the pre-cap regime. Inside saturated patches the corollary's multiplicative-cost claim is vacuous because no novel modes remain to discover, which is itself a property of the patch, not a failure of the corollary.
+**Saturation regime.** Once $q(T) \leq |C_D|$ has been saturated, discovery stops; the inversion above applies only in the pre-cap regime. Inside saturated patches the corollary's multiplicative-cost reading is vacuous because no novel modes remain to discover, which is itself a property of the patch, not a failure of the corollary.
 
-**Mode-mediated capability gain (a second sub-corollary).** Suppose broad capability or reliability gain $G$ inside the patch is approximately linear in the number of useful discovered modes, $G(q) = G_0 + \gamma q$ for some $\gamma > 0$. Composing with logarithmic mode discovery,
+**Mode-mediated capability gain (a second sub-corollary).** Suppose broad capability or reliability gain $G$ inside the patch is approximately linear in the number of useful discovered modes, $G(q) = G_0 + \gamma q$ for some $\gamma > 0$. Composing with the logarithmic envelope at tightness,
 $$
-G(T) = G_0 + \gamma A_D + \gamma \sigma_D \ln T,
+G(T) \;\approx\; G_0 + \gamma A_D + \gamma \sigma_D \ln T,
 $$
-so $G$ grows *logarithmically* in observed hard-failure exposure. Inverting,
+so $G$ grows logarithmically in observed hard-failure exposure under tightness. Inverting,
 $$
-T(G) = \exp\!\left(\frac{G - G_0 - \gamma A_D}{\gamma \sigma_D}\right).
+T(G) \;\approx\; \exp\!\left(\frac{G - G_0 - \gamma A_D}{\gamma \sigma_D}\right).
 $$
-A linear gain in mode-mediated broad reliability therefore requires exponential growth in observed hard-failure exposure under the postulate. We deliberately phrase $G$ as a *mode-mediated capability/reliability* proxy, not as "intelligence" — the corollary does not say frontier scaling is useless or that intelligence requires exponential data in any general sense. It says, more narrowly, that for fixed deployment reliability where improvement is mediated by discovering new useful modes, generic open-domain training pays a heavy data tax relative to direct patch-local measurement and intervention.
+A linear gain in mode-mediated broad reliability therefore corresponds to exponential growth in observed hard-failure exposure under the postulate at tightness. We phrase $G$ as a *mode-mediated capability/reliability* proxy, not as "intelligence": the corollary does not say frontier scaling is useless or that intelligence requires exponential data in any general sense. The narrower claim is that for fixed deployment reliability where improvement is mediated by discovering new useful modes, generic open-domain training pays a heavy data tax relative to direct patch-local measurement and intervention.
 
 **Engineering reading.** The corollary explains, without invoking new mechanisms, two empirical signals: (a) why generic post-training shows diminishing reliability returns once a domain's head modes are covered, and (b) why patch-local measurement combined with targeted tools, retrieval, validators, constrained decoding, and process supervision often outperforms more frontier-scale data on the deployment SLA. Frontier scaling and patch-local engineering solve different problems: scaling improves the substrate; patch-local engineering removes recurring deployment failure mass.
 
@@ -671,7 +719,7 @@ These are endpoint counts, not discovery curves: they tell us *how many* named c
 
 ## References
 
-Arbuzov, M. L., Bei, S., Dong, Z., Kalaev, D., & Shvets, A. A. (2025). Beyond exponential decay: Rethinking error accumulation in large language models. *arXiv preprint arXiv:2505.24187*.
+Arbuzov, M. L., Bei, S., Dong, Z., Kalaev, D., & Shvets, A. A. (2025). Beyond exponential decay: Rethinking error accumulation in large language models. *arXiv preprint arXiv:2505.24187v2 [cs.CL]*, 06 May 2026. CC BY 4.0.
 
 Asai, A., Wu, Z., Wang, Y., Sil, A., & Hajishirzi, H. (2024). Self-RAG: Learning to retrieve, generate, and critique through self-reflection. *International Conference on Learning Representations (ICLR) 2024*. arXiv:2310.11511.
 
