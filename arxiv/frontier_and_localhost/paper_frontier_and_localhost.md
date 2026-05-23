@@ -74,7 +74,7 @@ Two loops follow naturally. **Loop 1** is within-context: a session feedback sig
 
 These five terms — Loop 1, Loop 2, Auto-gated, Human-gated, None — anchor the rest of the paper.
 
-The framing positions the work against several adjacent literatures. CoALA (Sumers et al., 2023) proposes a static cognitive architecture of modular memory and structured action; we update CoALA's snapshot into a dynamic deployment architecture with governance. The self-evolution surveys (Tao 2024; Gao et al. 2026; Fang et al. 2025) treat agents as learners that update weights, representations, or optimiser-selected artifacts — they locate the gradient inside the model. The memory-survey of Du (2026) and the skills-survey of Zhou et al. (2026) cover individual substrates with version-and-promotion machinery that mirrors S3 and S2 here but stops at the substrate boundary. ACE (2025) treats context as a single evolving playbook. Each adjacent work touches a piece of the picture; none develops the cross-substrate artifact-layer descent framing or the design space it implies.
+The framing positions the work against several adjacent literatures. CoALA (Sumers et al., 2023) proposes a static cognitive architecture of modular memory and structured action; we update CoALA's snapshot into a dynamic deployment architecture with governance. The self-evolution surveys (Gao et al. 2026; Fang et al. 2025) treat agents as learners that update weights, representations, or optimiser-selected artifacts — they locate the gradient inside the model. The memory-survey of Du (2026) and the skills-survey of Zhou et al. (2026) cover individual substrates with version-and-promotion machinery that mirrors S3 and S2 here but stops at the substrate boundary. ACE (2025) treats context as a single evolving playbook. Each adjacent work touches a piece of the picture; none develops the cross-substrate artifact-layer descent framing or the design space it implies.
 
 ### 3.1 The mechanism stack
 
@@ -235,8 +235,8 @@ Aggregating the survey by substrate gives this distribution:
 | **S1 — Instructions** | 12 | 2.83 | *(none)* | Rules persist across IDEs and agents (Claude Code's CLAUDE.md, Cursor Rules, AGENTS.md, Windsurf, Continue.dev) but no surveyed instruction system closes both an automated inner loop and a governed two-loop promotion. Ceiling held at 4 by Claude Code and Replit |
 | **S2 — Skills** | 16 | 2.62 | SAGE, COSPLAY | Research frontier is active (failure-triggered skill update); production governance is weaker. Anthropic's skills repository is one-pool with PR review but no automated eval gate |
 | **S3 — Memory** | 19 | 3.16 | SSGM | Cross-session memory is widespread; *correctable, versioned* memory is rare. Production memory systems (ChatGPT Memory, Claude Memory, Mem0, Zep, MemGPT) treat memory as append-only |
-| **S4 — Tools** | 19 | 3.63 | MCP, Harvey, Hippocratic AI | Most mature production substrate. Tool bundles are the commercial unit; MCP is the cross-vendor standard with 9,400+ public servers and 78% enterprise adoption |
-| **S5 — Orchestration** | 19 | 2.68 | MAE, Memento-Skills | Multi-agent topologies exist (LangGraph, AutoGen, CrewAI) but topology *evolution* is rare; production rarely exposes governed promotion paths for emerging agent graphs |
+| **S4 — Tools** | 19 | 3.63 | MCP, Harvey, Hippocratic AI | Most mature production substrate. Tool bundles are the commercial unit; MCP is the cross-vendor standard with broad public-server ecosystem and substantial enterprise adoption |
+| **S5 — Orchestration** | 19 | 2.68 | MAE | Multi-agent topologies exist (LangGraph, AutoGen, CrewAI) but topology *evolution* is rare; production rarely exposes governed promotion paths for emerging agent graphs |
 | **S6 — Governance** | 21 | 3.05 | Braintrust, Vellum, LangSmith Hub, AGENTS.md/AAIF | High production maturity for prompts-as-code — immutable commits, eval-gated PR merge, sub-five-minute rollback — typically without inner-loop adaptation |
 | **INTEGRATED** | 34 | 3.74 | NanoResearch, AutoAgent, SkillRL | The high-water mark when present, but the cluster is dominated by research systems lacking enterprise governance |
 
@@ -252,7 +252,7 @@ Five clusters recur across the corpus. The four-cluster grouping below maps each
 | Production hybrid | SkillForge (2026, 4), CASCADE (2025, 4.5), Sierra OS 2.0 (2025, 3), Cognition Devin (2024, 3) | Auto / Human | Algorithmic Loop-1 gate plus reviewer-judgment Loop-2 gate is the production-viable cell; SkillForge is the architectural exemplar |
 | Reviewer-judgment | OpenCore (2025, 4) | Human / Human | Automated extraction machinery with reviewer-judgment gates on both loops; the only published $n>1$ mini-batch rule in the corpus (5-dream threshold); cross-organisation federation via fork-and-contribute-back |
 | Governance-first | Braintrust, Vellum, LangSmith Hub (all 2024, S6 = 5) | None / Auto | Eval-gated promotion exists; candidate generation is manual (engineers iterate prompts); no patch-plastic inner loop |
-| Open standards | AGENTS.md (2025), MCP (2024), Claude Skills (2025), Cursor Rules (2024) | Mixed / Mixed | Vendor-cross convergence on artifact format and tool attachment; 60k+ AGENTS.md repos; 9,400+ MCP servers; 78% enterprise MCP adoption |
+| Open standards | AGENTS.md (2025), MCP (2024), Claude Skills (2025), Cursor Rules (2024) | Mixed / Mixed | Vendor-cross convergence on artifact format and tool attachment; tens of thousands of AGENTS.md repositories; broad MCP server ecosystem with substantial enterprise adoption |
 
 ### 6.3 Surprising absences
 
@@ -276,7 +276,7 @@ The 142-system corpus, scored against the rubric of §4, produces four archetypa
 
 **Governance-first.** Systems where Loop 2 is Auto-gated by an eval criterion but Loop 1 is essentially absent — there is no automatic candidate-generation pipeline. **Braintrust**, **Vellum**, **LangSmith Hub**, **W&B Weave**, **Agenta**, **LangFuse**. The pattern is *prompts-as-code*: immutable commits, semantic-version tag pointers, PR-blocked merges on eval regression, sub-five-minute rollback. Engineers iterate the artifacts manually; the eval pipeline gates the promotion. We frame this as **MLOps for scaffolds**, distinct from MLOps for weights.
 
-**Open standards.** Systems where the artifact format and the layering convention are open standards across vendors. **AGENTS.md** (Linux Foundation, December 2025) is now in over 60,000 GitHub repositories; Lulla et al. (2026) report −28.64% wall-clock and −16.58% tokens with no quality loss after adding an AGENTS.md scaffold. **MCP** (Anthropic, 2024) has 9,400+ public servers, 78% enterprise adoption, ~97M SDK downloads/month. **Claude Agent Skills**, **Cursor Rules**, **GitHub Copilot custom instructions**, **Windsurf rules**, **Continue.dev rules**, **Zed AI rules**, **Replit `replit.md`** all converge on the same pattern: a git-tracked markdown artifact attached to a workspace, with an MCP-style tool layer for actions. Convergence across vendors is the strongest evidence the architecture is real rather than a single vendor's local optimum.
+**Open standards.** Systems where the artifact format and the layering convention are open standards across vendors. **AGENTS.md** (Linux Foundation, December 2025) is now in over 60,000 GitHub repositories; Lulla et al. (2026) report −28.64% wall-clock and −16.58% tokens with no quality loss after adding an AGENTS.md scaffold. **MCP** (Anthropic, 2024) has become the cross-vendor standard with thousands of public servers and substantial enterprise adoption. **Claude Agent Skills**, **Cursor Rules**, **GitHub Copilot custom instructions**, **Windsurf rules**, **Continue.dev rules**, **Zed AI rules**, **Replit `replit.md`** all converge on the same pattern: a git-tracked markdown artifact attached to a workspace, with an MCP-style tool layer for actions. Convergence across vendors is the strongest evidence the architecture is real rather than a single vendor's local optimum.
 
 The four clusters do not partition the corpus — many systems sit between two clusters — but they capture the architectural variation. Vertical-bundle vendors (Harvey for legal, Hippocratic AI for healthcare, Sierra for customer experience) sit between *open standards* and *production hybrid*: the bundle is the commercial unit; the underlying model is mostly the same one a competitor would use.
 
@@ -333,7 +333,7 @@ Patch-completeness is not global generality. It is local generality under bounda
 
 Patch-plasticity introduces failure modes weight-only systems do not have. We name them here; the full taxonomy (nine categories A–I with severity ratings and counter-principles P1–P8) is deferred to follow-on practitioner work.
 
-**Scaffold bloat** is the dominant near-term risk. IFScale (Jaroslawicz et al., 2025) reports a 35× cost increase as instruction count scales from 10 to 250, with frontier-model accuracy collapsing to 68% at 500 instructions. Lost-in-the-middle (Liu et al., 2024) supplies the mechanism. **Poisoned memory** is the dominant security risk: PoisonedRAG (Zou et al., 2024) reports 90%+ attack success rate against standard RAG; Memory Control Flow Attacks (Xu et al., 2026) report 100% persistence after injection. **Prompt injection via tools and MCP** is the dominant cross-vendor attack surface, with CVE-2025-54136 ("MCPoison") demonstrating a public MCP-server compromise pathway. **Eval fragility** is the dominant ecosystem risk: the Leaderboard Illusion (Lin et al., 2025) documents up to 112% inflation on common benchmarks under optimisation-on-test-set effects; eval suites are themselves patch-plastic artifacts and must survive Goodhart's Law. **Coordination failures** in multi-agent systems are documented in MAST (Cemri et al., 2025) — 14 distinct failure modes with $\kappa = 0.88$ agreement, dominantly role-confusion / context-loss / coordination rather than prompt quality. **Overfitting to patch** is structural: scaffolds tuned to a deployment over-fit it, and the framework predicts but does not measure how badly. **Plasticity loss at the scaffold level** is the slow-moving risk: context rot, instruction conflict, memory pollution, and tool-version drift produce a scaffold-level analogue of weight-level plasticity loss (Dohare et al. 2024, Lyle et al. 2023). Scaffolds age; a six-month-old `CLAUDE.md` is often worse than a clean rebuild, and no surveyed system treats pruning or expiration as a first-class operation.
+**Scaffold bloat** is the dominant near-term risk. IFScale (Jaroslawicz et al., 2025) reports a 35× cost increase as instruction count scales from 10 to 250, with frontier-model accuracy collapsing to 68% at 500 instructions. Lost-in-the-middle (Liu et al., 2023) supplies the mechanism. **Poisoned memory** is the dominant security risk: PoisonedRAG (Zou et al., 2024) reports 90%+ attack success rate against standard RAG; Memory Control Flow Attacks (Xu et al., 2026) report >90% vulnerability across major LLM agent frameworks. **Prompt injection via tools and MCP** is the dominant cross-vendor attack surface, with CVE-2025-54136 ("MCPoison") demonstrating a public MCP-server compromise pathway. **Eval fragility** is the dominant ecosystem risk: the Leaderboard Illusion (Singh et al., 2025) documents up to 112% relative performance gains on the Chatbot Arena distribution under differential training-data access — a structural overfitting pathway, not benchmark error; eval suites are themselves patch-plastic artifacts and must survive Goodhart's Law. **Coordination failures** in multi-agent systems are documented in MAST (Cemri et al., 2025) — 14 distinct failure modes with $\kappa = 0.88$ agreement, dominantly role-confusion / context-loss / coordination rather than prompt quality. **Overfitting to patch** is structural: scaffolds tuned to a deployment over-fit it, and the framework predicts but does not measure how badly. **Plasticity loss at the scaffold level** is the slow-moving risk: context rot, instruction conflict, memory pollution, and tool-version drift produce a scaffold-level analogue of weight-level plasticity loss (Dohare et al. 2024, Lyle et al. 2023). Scaffolds age; a six-month-old `CLAUDE.md` is often worse than a clean rebuild, and no surveyed system treats pruning or expiration as a first-class operation.
 
 Taken together: the patch-plastic surface is real, quantified by 2024–2026 work, and largely unmitigated in production. Follow-on practitioner work walks the mitigation principles in detail.
 
@@ -376,21 +376,21 @@ The full per-system spreadsheet is `p3_master_scores.csv` in the repository. The
 | Cursor Rules | 2024 | S1 Instructions | n/a | n/a | 3 | T3/T4 (\url{docs.cursor.com/rules}) | `.cursor/rules/*.mdc` multi-scope + MCP attach; git-tracked |
 | Anthropic Agent Skills | 2025 | S2 Skills | n/a | Human | 3 | T3 (\url{anthropic.com/engineering}) | Progressive disclosure spec; LangChain replication 29%→95% pass-rate |
 | SAGE | 2025 | S2 Skills | Auto | Auto | 5 | T2 (arXiv:2512.17102) | +8.9% SGC, 26% fewer steps, 59% fewer tokens on AppWorld |
-| COSPLAY | 2026 | S2 Skills | Auto | Auto | 5 | T2 (arXiv:2604.20987) | Boundary proposal + segmentation; only S2 = 5 with contracts |
+| COSPLAY | 2026 | S2 Skills | Auto | Auto | 5 | T2 (arXiv:2604.20987) | Co-evolving decision agent + learnable skill bank; skills discovered from rollouts form a structured skill library for long-horizon tasks |
 | Reflexion | 2023 | S3 Memory | Auto | n/a | 4 | T1 (NeurIPS 2023; arXiv:2303.11366) | Canonical failure-triggered episodic memory; +8% HotpotQA |
 | Generative Agents | 2023 | S3 Memory | Auto | n/a | 4 | T1 (UIST 2023; arXiv:2304.03442) | Reflection + importance memory primitive |
 | Governed Collaborative Memory (SSGM) | 2026 | S3 Memory | Auto | Auto | 5 | T2 (arXiv:2605.04264) | Only memory system with full provenance + versioning + correction |
-| MCP | 2024 | S4 Tools | n/a | n/a | 5 | T3 (modelcontextprotocol.io) | Cross-vendor; 9,400+ servers; 78% enterprise; ~97M SDK downloads/month |
+| MCP | 2024 | S4 Tools | n/a | n/a | 5 | T3 (modelcontextprotocol.io) | Cross-vendor standard; thousands of public servers; substantial enterprise adoption |
 | Harvey | 2026 | S4 Tools | n/a | n/a | 5 | T3 (harvey.ai) | 400K queries/day; 18,000+ workflows; 200+ legal data sources |
 | Hippocratic AI | 2026 | S4 Tools | n/a | n/a | 5 | T3 (hippocraticai.com) | \$3.5B valuation; 30% readmission reduction; 360% care-capacity boost |
 | Multi-Agent Evolve (MAE) | 2025 | S5 Orchestration | Auto | n/a | 5 | T2 (arXiv:2510.23595) | RL co-evolution of Proposer/Solver/Judge population |
-| Memento-Skills | 2026 | S5 Orchestration | Auto | Auto | 5 | T2 (arXiv:2604.02460) | Unit-test-gated skill promotion within multi-agent topology |
 | Cemri et al. (AG2) | 2025 | S5 Orchestration | n/a | n/a | 3 | T2 (arXiv:2503.13657) | Specialisation +4.5 pp on GSM-Plus ($p = 0.03$); MAST 14 failure modes |
 | Braintrust | 2024 | S6 Governance | n/a | Auto | 5 | T3 (braintrust.dev) | Prompts-as-code: immutable commits, eval-gated PR merge, sub-5 min rollback |
 | Vellum | 2024 | S6 Governance | n/a | Auto | 5 | T3 (vellum.ai) | Same governance pattern; production deployment with eval thresholds |
 | LangSmith Hub | 2024 | S6 Governance | n/a | Auto | 5 | T3 (\url{smith.langchain.com}) | Prompt repository with environment promotion and eval blocking |
 | Self-Refine\* | 2023 | (contrast) | n/a | n/a | 1 | T2 (arXiv:2303.17651) | Fails the patch-plastic discriminator: in-context iteration only |
 | Mem0\* | 2024 | (contrast) | n/a | n/a | 2 | T3/T4 (mem0.ai) | Fails Loop 2: per-user memory with no cross-context promotion path |
+| Tran \& Kiela\* | 2026 | (contrast) | n/a | n/a | 1 | T2 (arXiv:2604.02460) | Single-agent baselines match or beat multi-agent systems under matched thinking-token budgets — orthogonal finding constraining S5 claims |
 
 ```{=latex}
 \endgroup
@@ -402,37 +402,35 @@ The full per-system spreadsheet is `p3_master_scores.csv` in the repository. The
 
 ## References
 
-ACE authors. (2025). Agentic Context Engineering: Evolving playbooks via generation, reflection, and curation. *arXiv preprint arXiv:2510.04618*.
-
 AGENTS.md. (2025). AGENTS.md: A cross-vendor open standard for agent instructions. Linux Foundation. <https://agents.md>
+
+Agashe, S., Han, J., Gan, S., Yang, J., Li, A., & Wang, X. E. (2024). Agent S: An open agentic framework that uses computers like a human. *arXiv preprint arXiv:2410.08164*.
+
+Agashe, S., et al. (2025). Agent S2: A compositional generalist-specialist framework for computer use agents. *arXiv preprint arXiv:2504.00906*.
 
 Anthropic. (2024). Model Context Protocol specification. <https://modelcontextprotocol.io>
 
-Arbuzov, M. L., Shvets, A. A., & Bei, S. (2025). Beyond exponential decay: Rethinking error accumulation in large language models. *arXiv preprint arXiv:2505.24187*.
+Arbuzov, M. L., Bei, S., Dong, Z., Kalaev, D., & Shvets, A. A. (2025). Beyond exponential decay: Rethinking error accumulation in large language models. *arXiv preprint arXiv:2505.24187*.
 
 Arbuzov, M. L., Shvets, A. A., & Bei, S. (2026). The architecture of errors: Logarithmic mode discovery and polylogarithmic intervention budgets for long-context LLM reliability. *arXiv preprint* (forthcoming).
 
-Bao, M., et al. (2024). AutoManual: Constructing instruction manuals by LLM agents via interactive environmental learning. *NeurIPS 2024*. arXiv:2405.16247.
+Cemri, M., et al. (2025). Why do multi-agent LLM systems fail? *arXiv preprint arXiv:2503.13657*. Introduces the MAST taxonomy.
 
-Cao, Y., et al. (2025). Mobile-Agent-E: Self-evolving mobile assistant for complex tasks. *arXiv preprint arXiv:2501.11733*.
+Chen, M., Li, Y., Yang, Y., Yu, S., Lin, B., & He, X. (2024). AutoManual: Constructing instruction manuals by LLM agents via interactive environmental learning. *NeurIPS 2024*. arXiv:2405.16247.
 
-Cemri, M., et al. (2025). MAST: A taxonomy of failure modes in multi-agent LLM systems. *arXiv preprint arXiv:2503.13657*.
+Chen, Y., et al. (2025). Multi-Agent Evolve: LLM self-improve through co-evolution. *arXiv preprint arXiv:2510.23595*.
 
-Chen, S., et al. (2024). Agent S: An open agentic framework that uses computers like a human. *arXiv preprint arXiv:2410.08164*.
-
-Chen, S., et al. (2025). Agent S2: Compositional open agentic framework. *arXiv preprint arXiv:2504.00906*.
-
-Chen, W., et al. (2026). Governed collaborative memory / SSGM. *arXiv preprint arXiv:2605.04264*.
+Cuadros, D. F., Maiga, A.-A., Meskhidze, H., & Curtis-Trudel, A. (2026). Governed collaborative memory as artificial selection in LLM-based multi-agent systems. *arXiv preprint arXiv:2605.04264*. Body text refers to the system as SSGM; the paper itself does not use that acronym.
 
 Dohare, S., et al. (2024). Loss of plasticity in deep continual learning. *Nature*, 632(8026), 768–774.
 
 Du, P. (2026). Memory for autonomous LLM agents: Mechanisms, evaluation, and emerging frontiers. *arXiv preprint arXiv:2603.07670*.
 
-Fang, J., Peng, Y., Zhang, X., et al. (2025). A comprehensive survey of self-evolving AI agents. *arXiv preprint arXiv:2508.07407*.
+Fang, J., Peng, Y., Zhang, X., et al. (2025). A comprehensive survey of self-evolving AI agents: A new paradigm bridging foundation models and lifelong agentic systems. *arXiv preprint arXiv:2508.07407*.
 
-Gao, H.-A., Geng, J., Hua, W., et al. (2026). A survey of self-evolving agents: What, when, how. *Transactions on Machine Learning Research*. arXiv:2507.21046.
+Gao, H.-a., Geng, J., Hua, W., et al. (2026). A survey of self-evolving agents: What, when, how, and where to evolve on the path to artificial super intelligence. *Transactions on Machine Learning Research*. arXiv:2507.21046.
 
-Harada, T., et al. (2025). The curse of instructions: Compliance collapse under instruction-set growth. *ICLR 2025*.
+Harada, K., et al. (2025). Curse of instructions: Large language models cannot follow multiple instructions at once. *ICLR 2025*. <https://openreview.net/forum?id=R6q67CDBCH>
 
 Harvey. (2026). Harvey product overview. <https://www.harvey.ai>
 
@@ -440,23 +438,25 @@ Hippocratic AI. (2026). Polaris clinical outcome evidence. <https://www.hippocra
 
 Hu, S., Lu, C., & Clune, J. (2024). Automated design of agentic systems (ADAS). *arXiv preprint arXiv:2408.08435*.
 
-Huang, T., et al. (2025). CASCADE: A collaborative and adaptive science agent with skill distillation and evolution. *arXiv preprint arXiv:2512.23880*.
+Huang, X., et al. (2025). CASCADE: Cumulative agentic skill creation through autonomous development and evolution. *arXiv preprint arXiv:2512.23880*.
 
-Jaroslawicz, K., et al. (2025). IFScale: Instruction-following at scale. *arXiv preprint arXiv:2507.11538*.
+Jaroslawicz, D., et al. (2025). How many instructions can LLMs follow at once? *arXiv preprint arXiv:2507.11538*. Introduces the IFScale benchmark.
 
 Jiang, P., Lin, J., Shi, Z., et al. (2025). Adaptation of agentic AI: A survey of post-training, memory, and skills. *arXiv preprint arXiv:2512.16301*.
 
-Lin, T., et al. (2025). The leaderboard illusion: Quantifying optimisation-on-test-set effects in LLM benchmarks. *arXiv preprint*.
+Liu, N. F., et al. (2023). Lost in the middle: How language models use long contexts. *TACL*. arXiv:2307.03172.
 
-Liu, N. F., et al. (2024). Lost in the middle: How language models use long contexts. *TACL*.
+Liu, X., et al. (2026). SkillForge: Forging domain-specific, self-evolving agent skills in cloud technical support. *arXiv preprint arXiv:2604.08618*. Accepted at ACM SIGIR 2026 Industry Track.
 
-Liu, Z., et al. (2025). Multi-agent evolve: RL for joint Proposer/Solver/Judge optimisation. *arXiv preprint arXiv:2510.23595*.
+Lulla, J. L., et al. (2026). On the impact of AGENTS.md files on the efficiency of AI coding agents. *arXiv preprint arXiv:2601.20404*.
 
-Lulla, A., et al. (2026). Empirical evaluation of AGENTS.md as a scaffold standard. *arXiv preprint arXiv:2601.20404*.
+Lyle, C., Zheng, Z., Nikishin, E., Avila Pires, B., Pascanu, R., & Dabney, W. (2023). Understanding plasticity in neural networks. *ICML 2023* (oral). arXiv:2303.01486.
 
-Lyle, C., et al. (2023). Understanding plasticity in neural networks. *arXiv preprint arXiv:2303.07507*.
+Madaan, A., et al. (2023). Self-Refine: Iterative refinement with self-feedback. *NeurIPS 2023*. arXiv:2303.17651.
 
-Newell, A., et al. (1990). *Unified theories of cognition*. Harvard University Press.
+Newell, A. (1990). *Unified theories of cognition*. Harvard University Press.
+
+Novikov, A., et al. (2025). AlphaEvolve: A coding agent for scientific and algorithmic discovery. *arXiv preprint arXiv:2506.13131*. (DeepMind.)
 
 OpenCore. (2025). OpenCore: Open-source LLM-assisted coding practices. <https://github.com/sibmike/opencore>. MIT License.
 
@@ -470,36 +470,40 @@ Sierra. (2024). Sierra Agent OS. <https://sierra.ai>
 
 Sierra. (2025). Agent OS 2.0: From answers to memory and action. <https://sierra.ai/blog/agent-os-2-0>
 
-SkillForge authors. (2026). SkillForge: Forging domain-specific self-evolving agent skills in cloud technical support. *arXiv preprint arXiv:2604.08618*.
-
-SkillRL authors. (2026). SkillRL: Evolving agents via recursive skill-augmented reinforcement learning. *arXiv preprint arXiv:2602.08234*.
+Singh, S., et al. (2025). The leaderboard illusion. *arXiv preprint arXiv:2504.20879*.
 
 Sumers, T. R., Yao, S., Narasimhan, K., & Griffiths, T. L. (2023). Cognitive architectures for language agents (CoALA). *Transactions on Machine Learning Research*. arXiv:2309.02427.
 
 Tan, W., et al. (2024). Cradle: Empowering foundation agents towards general computer control. *arXiv preprint arXiv:2403.03186*.
 
-Tran, S., & Kiela, D. (2026). Memento-Skills: Unit-test-gated skill promotion for multi-agent systems. *arXiv preprint arXiv:2604.02460*.
+Tran, D., & Kiela, D. (2026). Single-agent LLMs outperform multi-agent systems on multi-hop reasoning under equal thinking token budgets. *arXiv preprint arXiv:2604.02460*.
 
 Wang, G., et al. (2023). Voyager: An open-ended embodied agent with large language models. *arXiv preprint arXiv:2305.16291*.
 
+Wang, J., et al. (2025). Reinforcement learning for self-improving agent with skill library. *arXiv preprint arXiv:2512.17102*. Method named SAGE (Skill Augmented GRPO for self-Evolution).
+
 Wang, X., et al. (2026). AutoAgent: Evolving cognition and elastic memory orchestration for adaptive agents. *arXiv preprint arXiv:2603.09716*.
 
-Wu, R., et al. (2025). EvolveR: Self-evolving LLM agents through an experience-driven lifecycle. *arXiv preprint arXiv:2510.16079*.
+Wang, Z., et al. (2025). Mobile-Agent-E: Self-evolving mobile assistant for complex tasks. *arXiv preprint arXiv:2501.11733*.
+
+Wu, R., et al. (2025). EvolveR: Self-evolving LLM agents through an experience-driven lifecycle. *arXiv preprint arXiv:2510.16079*. Accepted at ICML 2026.
+
+Wu, X., et al. (2026). Co-evolving LLM decision and skill bank agents for long-horizon tasks. *arXiv preprint arXiv:2604.20987*. Framework named COSPLAY.
 
 Wu, Z., et al. (2024). OS-Copilot: Towards generalist computer agents with self-improvement. *arXiv preprint arXiv:2402.07456*.
 
-Xu, J., et al. (2026). NanoResearch: Co-evolving skills, memory, and policy for personalized research automation. *arXiv preprint arXiv:2605.10813*.
+Xia, P., et al. (2026). SkillRL: Evolving agents via recursive skill-augmented reinforcement learning. *arXiv preprint arXiv:2602.08234*.
 
-Xu, Z., et al. (2026). Memory control flow attacks against large language model agents. *arXiv preprint* (MCFA).
+Xu, Jinhang, et al. (2026). NanoResearch: Co-evolving skills, memory, and policy for personalized research automation. *arXiv preprint arXiv:2605.10813*.
+
+Xu, Zhenlin, et al. (2026). From storage to steering: Memory control flow attacks on LLM agents. *arXiv preprint arXiv:2603.15125*. Introduces the MCFA attack class.
 
 Zhang, H., et al. (2026). CoEvoSkills: Self-evolving agent skills via co-evolutionary verification. *arXiv preprint arXiv:2604.01687*.
 
-Zhang, J., et al. (2025). Darwin Gödel machine: Open-ended evolution of self-improving agents. *arXiv preprint arXiv:2505.22954*.
+Zhang, J., et al. (2025). Darwin Gödel machine: Open-ended evolution of self-improving agents. *arXiv preprint arXiv:2505.22954*. (Body text refers to this as DGM.)
+
+Zhang, Q., Hu, C., Upasani, S., et al. (2025). Agentic Context Engineering: Evolving contexts for self-improving language models. *arXiv preprint arXiv:2510.04618*.
 
 Zhou, Y., Shu, W., Su, Y., et al. (2026). A comprehensive survey on agent skills: Taxonomy, techniques, and applications. *arXiv preprint arXiv:2605.07358*.
 
-Zhou, Y., et al. (2025). SAGE: Skill-augmented GRPO for self-evolution. *arXiv preprint arXiv:2512.17102*.
-
-Zou, W., et al. (2024). PoisonedRAG: Knowledge corruption attacks on retrieval-augmented generation. *arXiv preprint*.
-
-(DeepMind AlphaEvolve authors). (2025). AlphaEvolve: A coding agent for scientific and algorithmic discovery. *arXiv preprint arXiv:2506.13131*.
+Zou, W., et al. (2024). PoisonedRAG: Knowledge corruption attacks to retrieval-augmented generation of large language models. *arXiv preprint arXiv:2402.07867*. Accepted at USENIX Security 2025.
