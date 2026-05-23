@@ -1854,19 +1854,24 @@ this paper invites. In the domains where taxonomies have been measured
 and the engineering problem is small. Whether the same holds elsewhere
 is a falsifiable empirical test, and we have named it.
 
-Several extensions stand out. Direct empirical measurement of the
-mode-rate constant \(\sigma\) on new domains --- agentic, scientific,
+Two empirical extensions stand out. Direct measurement of the mode-rate
+constant \(\sigma\) on new domains --- agentic, scientific,
 code-in-production --- would test the cross-domain generality of
 Postulate 1 and surface outlier domains where the catalogue may grow
-faster than logarithmically. A fuller empirical sequence-level
-validation --- measuring \(S_{\text{base}}\), \(\beta\), and active-mode
-exposure directly in deployed systems --- would turn the sequence-level
-analogue of §3.4 from a formal bound into an operational SLA estimator.
-The deepest question is structural: why does mode discovery look
-logarithmic in the first place? Integration with the attention-mechanism
-bounds and stratified-manifold geometry flagged as future work in
-Arbuzov et al.~(2025, §6) would replace our empirical postulate with a
-derived result --- closing the loop between the two papers.
+faster than logarithmically. A fuller sequence-level validation ---
+measuring \(S_{\text{base}}\), \(\beta\), and active-mode exposure
+directly in deployed systems --- would turn the sequence-level analogue
+of §3.4 from a formal bound into an operational SLA estimator.
+
+The conceptual follow-on goes in a different direction. This paper names
+the engineering object: a patch-local failure catalogue and the
+intervention budget that covers its head. It does not say how production
+systems actually accumulate and govern that library over time. That
+question --- how the localhost scaffold (instructions, tools, retrieval,
+memory, orchestration, governance) learns to cover the local failure
+topology --- is the subject of Part 3 of this series, \emph{Frontier and
+Localhost}. Reliability engineering, in that frame, is governance of the
+scaffold rather than scaling of the weights.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
