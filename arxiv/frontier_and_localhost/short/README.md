@@ -39,6 +39,7 @@ Per the paper-compression skill's Step 7. The audit confirms that no important e
 | §2 three constraints + Kirk/Padmakumar evidence | preserved | §2 |
 | §2 scaffold-uniquely-satisfies bullet list | preserved as 1 sentence | §2 |
 | §2 placement-question paragraph | preserved | §2 closing |
+| §2 three-stage taxonomy table (Patchwork / Random artifact search / Artifact-layer descent) | new in framing revision | §2 closer (mirrors long-version §2.5) |
 | §3 intro + estimators-of-same-quantity prose | preserved (compressed) | §3 opening |
 | §3 patch scope hierarchy USER ⊂ PROJECT ⊂ STACK ⊂ TENANT ⊂ CORE | preserved verbatim | §3 |
 | §3 *Assumptions and scope* box (v2 reviewer fix) | preserved verbatim | §3 |

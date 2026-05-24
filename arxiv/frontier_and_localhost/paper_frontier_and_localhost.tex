@@ -88,26 +88,38 @@ Weights}
 
 \textbf{Abstract}
 
-Reliability has moved from the weights to the scaffold. Surveying
-production and research LLM systems from 2023--2026, we show that
-practitioners repeatedly wrap frozen frontier models in local,
-persistent, feedback-updated artifacts: instructions, skills, memories,
-tools, orchestration graphs, and governance pipelines. We argue that
-these artifacts form a deployment-time learning layer --- a
-\emph{localhost scaffold} --- that adapts a general model to the
-recurring failure topology of a specific patch. We formalise this as
-\textbf{artifact-layer descent}: failures provide noisy loss signals,
-candidate scaffold deltas are generated, gates accept or reject them,
-accepted deltas persist and may be promoted across contexts. The
-resulting two-loop architecture explains the convergence of modern agent
-systems across IDE plugins, vertical-bundle vendors, and self-evolving
-research agents, and it reveals an unfilled design corner: automated
-local scaffold evolution combined with governed, auditable,
-cross-organisation promotion --- a \emph{DP-FedAvg-style aggregator with
-an automated eval gate at the scaffold layer}. The contribution is
-conceptual and survey-based. A practitioner-facing companion paper will
-handle reference architectures, maturity ladders, design principles, and
-the full failure taxonomy.
+Production LLM systems increasingly adapt through scaffold artifacts
+outside the model weights: prompts, rules, memories, skills, tools,
+routing graphs, eval suites, and governance pipelines that update from
+deployment feedback on a cadence the weights cannot match. Yet this
+layer is still mostly maintained as \emph{patchwork}: failures trigger
+local fixes; fixes accumulate as brittle prompts, stale memories, ad hoc
+tool bindings, and unprincipled workflow exceptions. The field has built
+an external adaptation layer for LLMs without building the optimizer
+that should govern it. Surveying approximately 130 production and
+research systems from 2023--2026, we formalise the disciplined
+alternative as \textbf{artifact-layer descent}: a discrete, gated,
+deployment-time update process in which recurring residuals generate
+candidate scaffold deltas, gates estimate finite directional loss
+change, accepted deltas persist, and promotion across contexts is
+bounded by evidence radius. The resulting two-loop architecture (local
+update; cross-context promotion under a gate) is consistent with
+convergent patterns across IDE plugins, vertical-bundle vendors, and
+self-evolving research agents. Thirteen research systems plus two
+industry exemplars satisfy a strict composite-two-loop criterion;
+placing them on a 3×3 matrix of gate types leaves three populated cells
+and three empty cells. The consequential empty cell is enterprise
+full-auto: automated local evolution combined with governed cross-tenant
+promotion, versioned lineage with RBAC, and rollback --- in ML language,
+a DP-FedAvg-style cross-tenant aggregator with an automated eval gate at
+the scaffold layer, in the limit where artifacts are embedded as
+mergeable update representations. The contribution is not the claim that
+prompts are weights; it is that production AI now has an external
+adaptation surface that needs optimization, regularization, versioning,
+rollback, and governance, and that the path from today's patchwork to
+that discipline is a tractable engineering programme. A
+practitioner-facing companion paper will handle reference architectures,
+maturity ladders, design principles, and the full failure taxonomy.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -123,9 +135,19 @@ Production has stopped behaving this way. In 2025--2026, frontier models
 update on cycles measured in months, but the systems built on top of
 them update continuously --- in markdown files, persistent memories,
 retrieved skills, registered tools, evaluation suites, agent topologies,
-version-controlled prompt repositories, and PR-gated governance. The
-fast learning is no longer in the weights. It is in a fast-changing
-\emph{localhost} scaffold wrapped around a slow-changing frontier.
+version-controlled prompt repositories, and PR-gated governance. A
+growing share of deployment-time adaptation now occurs outside the
+weights, in a fast-changing \emph{localhost} scaffold wrapped around a
+slow-changing frontier. The section title is a metaphor --- the gradient
+inside the model still happens during training, and the scaffold layer
+is not a gradient in the calculus sense. The substantive claim is the
+milder one: production AI has accidentally created an external learning
+surface, and right now it is being operated as patchwork rather than as
+a disciplined optimization process. What this paper formalises is the
+disciplined limit case --- a discrete, gated, deployment-time update
+process that adapts a frozen frontier to the recurring failure topology
+of a specific patch --- and what the survey finds is that almost no
+deployed system has yet built the optimizer for that surface.
 
 This paper argues that scaffold evolution can be modeled as learning in
 a precise sense: scaffold artifacts are updated from failure signal, the
@@ -141,21 +163,26 @@ measurable patch loss, no credit-assignment process, no persistent
 artifact distinct from optimiser state) the framing should be read as
 modeling language rather than a theorem.
 
-Once you accept the framing, the field snaps into place. A Claude Skill
-is not ``just a markdown file.'' It is a learned procedural weight kept
-outside the model. A Cursor Rule is not ``just an instruction.'' It is a
-local parameter for one project's distribution shift. A RAG connector is
-not ``just retrieval.'' It is patch-specific memory access. A tool
-registry is not ``just integration.'' It is capability provisioning
-along an axis the base model cannot reach. A PR review against a shared
-rule repository is not ``just governance.'' It is a promotion gate on a
-federated update. An eval suite that blocks merge is not ``just
-testing.'' It is a validation-loss check before promotion. A
-cross-tenant artifact repository is not ``just sharing.'' It is
-\emph{federated-style artifact aggregation} across distributed shards
---- scope expansion under a gate, rather than arithmetic averaging of
-comparable updates (we sharpen the distinction in §3.2 and §9). The
-mechanisms were already there; only the name was missing.
+Read together, these artifacts form a single external adaptation surface
+that current production practice still treats as scattered engineering.
+Naming the surface makes the optimization discipline it needs --- and
+visibly lacks --- visible. A Claude Skill is not ``just a markdown
+file.'' It is a learned procedural weight kept outside the model. A
+Cursor Rule is not ``just an instruction.'' It is a local parameter for
+one project's distribution shift. A RAG connector is not ``just
+retrieval.'' It is patch-specific memory access. A tool registry is not
+``just integration.'' It is capability provisioning along an axis the
+base model cannot reach. A PR review against a shared rule repository is
+not ``just governance.'' It is a promotion gate on a federated update.
+An eval suite that blocks merge is not ``just testing.'' It is a
+validation-loss check before promotion. A cross-tenant artifact
+repository is not ``just sharing.'' It is \emph{federated artifact
+promotion} across distributed shards --- scope expansion under a gate,
+rather than arithmetic averaging of numeric updates (we sharpen the
+distinction in §3.2 and §9). The mechanisms were already in production;
+what is new is reading them as a single external adaptation surface
+rather than as scattered engineering choices, and asking what
+optimization discipline that surface needs.
 
 We survey approximately 130 systems across six substrates (instructions,
 skills, memory, tools, orchestration, governance), score each on a 0--5
@@ -175,24 +202,32 @@ The architectural review of how to actually build such systems --- five
 reference patterns, a five-level maturity model, a substrate-selection
 rubric, three migration paths, the full nine-category failure taxonomy,
 and eight design principles --- is deferred to follow-on practitioner
-work. This paper is the survey and the framework.
+work. This paper is the survey and the framework. The single-line thesis
+is this: \textbf{the field has built an external adaptation layer for
+LLMs, but not the optimizer that should govern it.} The rest of the
+paper develops that observation into a survey of where production sits
+on a \emph{patchwork → random-search → descent} gradient, a
+formalisation of the disciplined limit case under stated assumptions,
+and a named empty corner where the optimizer most plainly does not yet
+exist.
 
 \subsection{2. Why patch errors must live outside the
 weights}\label{why-patch-errors-must-live-outside-the-weights}
 
 The scaffold is not merely where production systems happen to store
-patches. Under the constraints production deployment imposes --- high
-update cadence, per-tenant specificity, inspectability, reversibility,
-and auditable governance --- it is the \emph{dominant practical
-substrate} for patch-specific adaptation, because the weight substrate
-fails several of those constraints at once. Frontier training and
-production reliability optimise for objectives that are in tension, and
-that tension forces most adaptation outside the model. Per-tenant
-fine-tunes, LoRA adapters, distilled small models, and learned routing
-can in principle absorb some patch residuals; the survey finds that in
-practice the scaffold dominates because it is cheap, inspectable,
-reversible, locally scoped, and updatable on a daily cadence rather than
-a release cadence.
+patches. For high-churn, tenant-specific, auditable adaptation, the
+scaffold is \emph{often the practical substrate} --- not because no
+alternative exists, but because under deployment-time constraints
+(release cadence, tenant isolation, inspectability, rollback) it is
+cheap, locally scoped, reversible, and updatable at human time-scales
+while the weights are not. Frontier training and production reliability
+optimise for objectives that are in tension, and that tension pushes
+most patch-specific adaptation outside the model. Per-tenant fine-tunes,
+LoRA adapters, distilled small models, and learned routing can in
+principle absorb some patch residuals; the survey finds production has
+consequently located the bulk of patch-residual adaptation in the
+scaffold, but whether this remains true under different deployment
+constraints is an empirical question rather than a structural necessity.
 
 \textbf{Frontier training optimises for breadth.} The weights are tuned
 for cross-patch generalisation: they smooth over local conventions,
@@ -280,11 +315,94 @@ interventions there. The frontier model generalises; the localhost
 scaffold specialises; reliability comes from governing that
 specialisation.
 
+\subsection{2.5 Patchwork, random artifact search, and artifact-layer
+descent}\label{patchwork-random-artifact-search-and-artifact-layer-descent}
+
+Three stages of scaffold maintenance practice recur across the corpus.
+They differ in how candidate updates are produced, in whether
+failure-mode discovery and credit assignment are explicit, and in
+whether promotion is bounded by evidence radius.
+
+\textbf{Stage 1 --- Patchwork.} Humans add prompts, rules, tools,
+memories, and routing logic after failures. Each fix is proposed by
+intuition, committed with weak evidence, and accumulated without
+pruning. The dominant failure mode is bloat: scaffolds grow until
+lost-in-the-middle (§10) erases the marginal benefit of new additions.
+Most production deployments observed in the survey sit here.
+
+\textbf{Stage 2 --- Random artifact search.} Many scaffold variants are
+tried --- A/B'd rubrics, swapped memory schemas, regenerated tool
+bundles --- but without stable credit assignment or principled
+promotion. Improvements happen locally; transfer is unreliable;
+overfitting to the in-distribution patch is the dominant failure mode.
+The governance-first cluster of §7 sits here when the eval pipeline is
+automated but the candidate-generation pipeline is not.
+
+\textbf{Stage 3 --- Artifact-layer descent.} Candidate deltas are tied
+to recurring failure modes, scored by an estimator of finite directional
+loss change, regularized by complexity/risk penalties, accepted only
+when they clear a gate, versioned, prunable, and promoted only within
+evidence radius. The composite-two-loop systems of §8 instantiate Stage
+3 for \emph{within-organisation} scope; the empty corner of §9 is Stage
+3 for \emph{cross-tenant} scope. The math of §3.2 applies to Stage 3 and
+only suggestively to Stages 1--2.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Stage
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Update mechanism
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Credit assignment
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Promotion discipline
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Dominant failure mode
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{1. Patchwork} & Intuition-driven local edits & Implicit / ad hoc
+& None & Bloat \\
+\textbf{2. Random artifact search} & Many variants tried under eval &
+Weak; eval is the only signal & Eval-gated CI but no
+failure-to-coordinate tracing & Overfitting to in-distribution patch \\
+\textbf{3. Artifact-layer descent} & Residual → coordinate → delta &
+Explicit per failure mode & Evidence-radius-bounded; reversible & (the
+discipline this paper formalises) \\
+\end{longtable}
+}
+
+The paper's central claim is therefore not ``modern AI systems are doing
+stochastic descent'' --- they mostly are not. It is that \emph{they can
+become so} once the patchwork loop is instrumented with measurable patch
+loss, residual capture, failure-to-coordinate credit assignment,
+candidate delta synthesis, and a gate that estimates directional loss
+change before persistence or promotion. The survey of §§5--8 asks which
+deployed systems have closed which of those five steps; the empty corner
+of §9 names the closure that no public system has yet achieved.
+
 \subsection{3. Artifact-layer descent}\label{artifact-layer-descent}
 
 The remaining question is whether ``scaffold evolution'' is learning in
-any technical sense or just engineering practice. The answer depends on
-what one means by learning.
+any technical sense or just engineering practice. The answer is: it
+\emph{becomes} learning in a precise technical sense only in the Stage-3
+limit of §2.5 --- only when the patchwork loop is instrumented with
+measurable patch loss, residual capture, failure-to-coordinate credit
+assignment, candidate delta synthesis, and a gate that estimates
+directional loss change before persistence or promotion. Current
+practice across the surveyed corpus mostly resembles unguided search
+over scaffold configurations (Stage 1 or Stage 2); the formalism below
+describes the Stage-3 limit, and the survey of §§5--8 asks which
+deployed systems have closed which of the five required steps.
 
 Let \(D\) be a deployment patch --- a specific application, user, or
 task distribution. \emph{Patch} is used throughout this paper with a
@@ -369,19 +487,21 @@ feedback signal triggers an update to a persisted local artifact.
 \textbf{Loop 2} is cross-context: a local artifact is promoted to a
 shared scope (cross-project, cross-user, cross-organisation) under
 explicit versioning. Loop 1 is the local descent step on a per-patch
-loss; Loop 2 is \emph{federated-style artifact aggregation} --- scope
-expansion under a gate, not arithmetic averaging of comparable numeric
-updates. The DP-FedAvg analogue applies only to the \emph{target} design
-in §9 (the empty enterprise corner), which would additionally require
-artifacts to be embedded as mergeable update objects before averaging
-makes sense; surveyed Loop-2 mechanisms are selection, merge, curation,
-review, and distribution rather than averaging. Each loop has a gate;
-gates are \textbf{Auto-gated} when the decision is an operationalised
-algorithmic criterion (RL threshold, eval score, LLM-judge with
-quantified agreement, surrogate verifier, benchmark cascade),
-\textbf{Human-gated} when the decision is reviewer judgment (automation
-often precedes the gate but the gate itself is reviewer discretion), and
-\textbf{None} when the loop is absent.
+loss; Loop 2 is \emph{federated artifact promotion or aggregation} ---
+scope expansion under a gate, not arithmetic averaging of numeric
+updates. FedAvg is a useful analogy only in the limit where artifacts
+have been embedded into mergeable update representations and the
+aggregation is parameter-space averaging; the DP-FedAvg framing in §9's
+empty-corner target assumes that limit. Surveyed Loop-2 mechanisms are
+selection, merge, curation, review, and distribution; none of the
+systems in the survey performs parameter-space averaging in any
+technical sense. Each loop has a gate; gates are \textbf{Auto-gated}
+when the decision is an operationalised algorithmic criterion (RL
+threshold, eval score, LLM-judge with quantified agreement, surrogate
+verifier, benchmark cascade), \textbf{Human-gated} when the decision is
+reviewer judgment (automation often precedes the gate but the gate
+itself is reviewer discretion), and \textbf{None} when the loop is
+absent.
 
 These five terms --- Loop 1, Loop 2, Auto-gated, Human-gated, None ---
 anchor the rest of the paper.
@@ -400,7 +520,8 @@ single evolving playbook. Each adjacent work touches a piece of the
 picture; none develops the cross-substrate artifact-layer descent
 framing or the design space it implies.
 
-\subsubsection{3.1 The mechanism stack}\label{the-mechanism-stack}
+\subsubsection{3.1 The mechanism stack: from patchwork to
+descent}\label{the-mechanism-stack-from-patchwork-to-descent}
 
 The abstract update rule \(S_{t+1} = S_t + G(\Delta S)\) expands into
 six operations that every patch-plastic system must perform --- whether
@@ -1458,10 +1579,13 @@ have to account for.
 
 \subsection{10. A new failure surface}\label{a-new-failure-surface}
 
-Patch-plasticity introduces failure modes weight-only systems do not
-have. We name them here; the full taxonomy (nine categories A--I with
-severity ratings and counter-principles P1--P8) is deferred to follow-on
-practitioner work.
+Patchwork scaffold maintenance introduces failure modes weight-only
+systems do not have; instrumenting the loop to Stage 3 (§2.5) is what
+mitigates them at the architectural level, with the specific
+countermeasures deferred to follow-on practitioner work. We name the
+failure surface here; the full taxonomy (nine categories A--I with
+severity ratings and counter-principles P1--P8) is deferred to that
+companion.
 
 \textbf{Scaffold bloat} is the dominant near-term risk. IFScale
 (Jaroslawicz et al., 2025) reports latency growing roughly 35× for one
@@ -1506,13 +1630,25 @@ practitioner work walks the mitigation principles in detail.
 
 \subsection{11. Conclusion}\label{conclusion}
 
+The field has built an external adaptation layer for LLMs, but not the
+optimizer that should govern it. If reliability is increasingly repaired
+through persistent scaffold artifacts, then production AI needs a theory
+and engineering discipline for the discrete, gated, auditable learning
+that happens there --- not just for the differentiable learning inside
+the model. This paper is one step toward that discipline: a survey of
+where production sits on the \emph{patchwork → random-search → descent}
+gradient of §2.5, a formalisation of the Stage-3 limit under stated
+assumptions, and a named empty corner where the optimizer most plainly
+does not yet exist.
+
 The field did not wait for frontier weights to become perfectly
 reliable. It built a second learning system around them. That second
 system is made of markdown files, skills, memories, tools, orchestration
 graphs, eval suites, PRs, version histories, and rollback buttons. It
 looks like engineering clutter until viewed as a scaffold parameter
 vector under update. Then the clutter resolves into architecture:
-production LLMs learn locally, outside the weights.
+production LLMs learn locally, outside the weights --- and most of them
+are still learning by patchwork.
 
 The mechanisms were already there. A Claude Skill has been a procedural
 weight since Anthropic shipped progressive disclosure. A Cursor Rule has
@@ -1551,9 +1687,9 @@ make scaffold investment pay off. Whether this remains true at agentic,
 scientific, and long-horizon scales is the empirical test the next paper
 should design.
 
-Practical generality therefore arrives locally first: not as a universal
-mind, but as model--scaffold systems whose competence is fitted to
-bounded worlds and is in principle measurable through the
+Practical generality therefore arrives locally first: not measured at
+the global model level, but as model--scaffold systems whose competence
+is fitted to bounded worlds and is in principle measurable through the
 \((r, n, d)\)-patch-completeness condition of §9.1. The frontier model
 generalises. The localhost scaffold specialises. Reliability comes from
 governing that specialisation. The mechanisms were already there ---
