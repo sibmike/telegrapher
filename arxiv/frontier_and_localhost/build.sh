@@ -4,9 +4,11 @@
 # Requires: pandoc, xelatex (MiKTeX or TeX Live)
 # Produces: paper_frontier_and_localhost.tex, paper_frontier_and_localhost.pdf
 #
-# Zip for arXiv upload after build succeeds:
-#   zip paper_frontier_and_localhost.zip paper_frontier_and_localhost.tex
-# (No figures in this survey paper, so the zip is .tex only.)
+# Zip for arXiv upload is produced automatically at the end of this script as
+# paper_frontier_and_localhost.zip, containing the .tex source and the entire
+# supplementary/ tree (master CSV, per-substrate harvests, composite-two-loop
+# audit, prior-art check). Reviewers can re-run the survey discriminator from
+# primary sources.
 
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -52,3 +54,12 @@ xelatex -interaction=nonstopmode -halt-on-error paper_frontier_and_localhost.tex
 
 echo "Build complete: paper_frontier_and_localhost.pdf"
 ls -la paper_frontier_and_localhost.pdf
+
+echo "[zip] Packaging arXiv source bundle (tex + supplementary)"
+rm -f paper_frontier_and_localhost.zip
+if [ -d supplementary ]; then
+  zip -r paper_frontier_and_localhost.zip paper_frontier_and_localhost.tex supplementary > /dev/null
+else
+  zip paper_frontier_and_localhost.zip paper_frontier_and_localhost.tex > /dev/null
+fi
+ls -la paper_frontier_and_localhost.zip
