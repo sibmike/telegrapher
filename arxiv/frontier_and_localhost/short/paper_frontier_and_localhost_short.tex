@@ -88,40 +88,23 @@ Weights (Short Version)}
 
 \textbf{Abstract}
 
-Production LLM systems increasingly adapt through scaffold artifacts
-outside the model weights: prompts, rules, memories, skills, tools,
-routing graphs, eval suites, and governance pipelines that update from
-deployment feedback on a cadence the weights cannot match. Yet this
-layer is still mostly maintained as \emph{patchwork}: failures trigger
-local fixes; fixes accumulate as brittle prompts, stale memories, ad hoc
-tool bindings, and unprincipled workflow exceptions. The field has built
-an external adaptation layer for LLMs without building the optimizer
-that should govern it. Surveying approximately 130 production and
-research systems from 2023--2026, we formalise the disciplined
-alternative as \textbf{artifact-layer descent}: a discrete, gated,
-deployment-time update process in which recurring residuals generate
-candidate scaffold deltas, gates estimate finite directional loss
-change, accepted deltas persist, and promotion across contexts is
-bounded by evidence radius. The resulting two-loop architecture (local
-update; cross-context promotion under a gate) is consistent with
-convergent patterns across IDE plugins, vertical-bundle vendors, and
-self-evolving research agents. Thirteen research systems plus two
-industry exemplars satisfy a strict composite-two-loop criterion;
-placing them on a 3×3 matrix of gate types leaves three populated cells
-and three empty cells. The consequential empty cell is enterprise
-full-auto: automated local evolution combined with governed cross-tenant
-promotion, versioned lineage with RBAC, and rollback --- in ML language,
-a DP-FedAvg-style cross-tenant aggregator with an automated eval gate at
-the scaffold layer, in the limit where artifacts are embedded as
-mergeable update representations. The contribution is not the claim that
-prompts are weights; it is that production AI now has an external
-adaptation surface that needs optimization, regularization, versioning,
-rollback, and governance, and that the path from today's patchwork to
-that discipline is a tractable engineering programme. This short version
-states the argument and its supporting tables; full formalism,
-per-system evidence, cluster walks, cell-by-cell matrix discussion, and
-the audit trail live in Appendices E and F and in the supplementary
-bundle.
+Production LLM systems increasingly adapt outside the model weights.
+After deployment failures, teams modify prompts, rules, memories,
+skills, tools, eval suites, routing graphs, and governance pipelines on
+a cadence that frontier weight updates cannot match. But this scaffold
+layer is still mostly maintained as \emph{patchwork}: fixes are proposed
+by intuition, committed with weak credit assignment, accumulated without
+pruning, and promoted beyond the scope where they were validated. This
+paper formalises a disciplined alternative --- \textbf{artifact-layer
+descent} --- in which recurring residuals are assigned to scaffold
+coordinates, candidate artifact deltas are tested against patch loss,
+accepted deltas persist with rollback, and promotion is bounded by
+\emph{evidence radius}. Surveying approximately 130 production and
+research systems from 2023--2026, we find current systems partially
+instantiate this loop but leave a central architecture gap: governed
+scaffold optimization across contexts. The contribution is not the claim
+that prompts are weights; it is to name the missing optimizer for an
+adaptation layer the field has already built.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -137,7 +120,7 @@ files, persistent memories, retrieved skills, registered tools,
 evaluation suites, agent topologies, version-controlled prompt
 repositories, PR-gated governance --- update continuously. A growing
 share of deployment-time adaptation now occurs outside the weights, in a
-fast-changing \emph{localhost} scaffold wrapped around a slow-changing
+fast-changing \emph{local scaffold} wrapped around a slow-changing
 frontier. The section title is a metaphor --- the gradient inside the
 model still happens during training, and the scaffold layer is not a
 gradient in the calculus sense. The substantive claim is the milder one:
@@ -165,20 +148,16 @@ optimization discipline that surface needs.
 This paper surveys approximately 130 production and research systems,
 identifies the six substrates where the scaffold lives, formalises the
 two-loop architecture (local update, cross-context promotion under a
-gate), and names an empty corner of the design space --- automated local
-scaffold evolution combined with governed cross-organisation promotion,
-versioned lineage with RBAC, and rollback --- as the most consequential
-open architecture problem. The single-line thesis is this: \textbf{the
-field has built an external adaptation layer for LLMs, but not the
-optimizer that should govern it.} The rest of the paper develops that
-observation into a survey of where production sits on a \emph{patchwork
-→ random-search → descent} gradient, a formalisation of the disciplined
-limit case under stated assumptions, and a named empty corner where the
-optimizer most plainly does not yet exist. The compression of v2 of this
-paper into a short body plus extended appendices is the present
-document; the long version lives at
-\texttt{paper\_frontier\_and\_localhost.\{md,pdf\}} in the same arXiv
-bundle.
+gate), and names a missing architecture --- governed cross-tenant
+scaffold optimization with versioned lineage, role-based access, and
+rollback --- as the most consequential open problem. The single-line
+thesis is this: \textbf{the field has built an external adaptation layer
+for LLMs, but not the optimizer that should govern it.} The rest of the
+paper develops that observation into a survey of where production sits
+on a \emph{patchwork → random-search → descent} gradient, a
+formalisation of the disciplined limit case under stated assumptions,
+and a named missing architecture where the optimizer most plainly does
+not yet exist.
 
 \subsection{2. Why patch errors live outside the
 weights}\label{why-patch-errors-live-outside-the-weights}
@@ -229,8 +208,8 @@ cheap, inspectable, reversible, locally scoped, and updatable on a daily
 cadence rather than a release cadence. The placement question that
 \emph{Architecture of Errors} left open --- where do the interventions
 live? --- has this as its answer: the frontier model generalises, the
-localhost scaffold specialises, and reliability comes from governing
-that specialisation.
+local scaffold specialises, and reliability comes from governing that
+specialisation.
 
 \textbf{Three stages of scaffold maintenance recur across the corpus},
 differing in how candidate updates are produced, whether credit
@@ -278,30 +257,46 @@ so} once the patchwork loop is instrumented with measurable patch loss,
 residual capture, failure-to-coordinate credit assignment, candidate
 delta synthesis, and a gate that estimates directional loss change
 before persistence or promotion. The survey of §§5--8 asks which
-deployed systems have closed which of those five steps; the empty corner
-of §9 names the closure that no public system has yet achieved.
+deployed systems have closed which of those five steps; §9 names the
+closure that no public system has yet achieved.
 
 \subsection{3. Artifact-layer descent}\label{artifact-layer-descent}
 
-Scaffold evolution \emph{becomes} learning in a precise sense only in
-the Stage-3 limit of §2: only when the patchwork loop is instrumented
-with measurable patch loss, residual capture, failure-to-coordinate
-credit assignment, candidate delta synthesis, and a gate that estimates
-directional loss change before persistence or promotion. In that limit,
-a failure is observed, a candidate edit is proposed from residual
-structure, a gate (an eval suite, an LLM-judge, an RL threshold, a
-surrogate verifier, a reviewer's PR) estimates whether the edit reduces
-patch loss, accepted edits persist, and some of them are promoted up a
-scope hierarchy under evidence-radius discipline. Stated in optimisation
-language, the Stage-3 form is discrete, gated, patch-local stochastic
-descent over a structured artifact space, with a noisy gate standing in
-for the gradient and a governance system standing in for the learning
-rate. The substrate is discrete, symbolic, and human-readable rather
-than continuous and differentiable; the gate is mediated by humans,
-evals, or surrogate verifiers rather than computed by chain rule.
-Scaffold updates \emph{are not} stochastic descent by default --- they
-are mechanism when the five conditions above hold and modeling language
-otherwise.
+\textbf{The disciplined version of scaffold maintenance is a concrete
+pipeline.} Observe a failure. Diagnose its failure mode. Identify which
+scaffold coordinate caused it --- a stale memory entry, an
+under-specified instruction, a missing tool argument, a brittle
+retrieval rule, a misrouted agent edge. Propose a candidate artifact
+edit. Test the edit against patch loss. Accept or reject by a gate.
+Persist accepted edits; prune or roll back when they regress. Promote
+across contexts only as far as the evidence supports --- a local fix
+should only spread to other deployments to the extent it has been
+validated there. We call that last constraint the edit's \emph{evidence
+radius}. The rest of this section formalises this pipeline; §§4--9 ask
+which deployed systems have closed which of its steps.
+
+\textbf{Most current production does not close this loop.} A failure
+happens, someone adds a prompt or rule or memory entry, the artifact
+pile grows, nobody knows what caused improvement, nobody knows when to
+prune, and fixes leak into broader contexts. This is patchwork (Stage 1
+of §2), not stochastic descent. Even systems with eval-gated CI (Stage
+2) usually lack failure-to-coordinate credit assignment, so improvements
+are real but unattributed and brittle to transfer. Scaffold updates
+\emph{become} stochastic descent --- Stage 3 --- only when the patchwork
+loop is instrumented with measurable patch loss, residual capture,
+failure-to-coordinate credit assignment, candidate delta synthesis, and
+a gate that estimates directional loss change before persistence or
+promotion. The descent picture below is mechanism when those five
+conditions hold and modeling language otherwise.
+
+\textbf{Two loops, in plain English first.} \emph{Loop 1} is the local
+fix: a failure produces a candidate edit, the edit is tested, and the
+accepted edit changes one deployment's scaffold. \emph{Loop 2} is the
+decision whether that local fix should be shared with other deployments
+--- promoted from one repository to a team-wide template, from one
+tenant's playbook to a cross-tenant skill library, and so on. Loop 1
+changes one \(L_D\); Loop 2 changes \emph{which} \(L_D\) is being
+descended on.
 
 \textbf{Assumptions and scope of the formalization.} The descent
 argument below holds when: (i) the frontier model parameters
@@ -363,26 +358,25 @@ semantic-merge and MAP-Elites archive selection as proposal-pruning
 steps that \emph{precede} the per-edit gate. The per-system mapping is
 in Appendix C.
 
-\textbf{Two loops follow naturally.} Loop 1 is within-context: a session
-feedback signal triggers an update to a persisted local artifact. Loop 2
-is cross-context: a local artifact is promoted to a shared scope under
-explicit versioning --- \emph{federated artifact promotion or
-aggregation}, not arithmetic averaging of numeric updates. FedAvg is a
-useful analogy only in the limit where artifacts have been embedded into
-mergeable update representations and the aggregation is parameter-space
-averaging; surveyed Loop-2 mechanisms are selection, merge, curation,
-review, and distribution. They map cleanly onto two distinct quantities
-in the optimisation analogy. \emph{Edit magnitude} --- how much a single
-accepted edit changes the local scaffold under \(\oplus\) --- plays the
-role of learning rate. \emph{Promotion radius} --- how many downstream
-patches the accepted edit affects --- controls \emph{which loss is being
-descended on}: USER-level acceptance descends on one patch's \(L_D\);
-PROJECT promotion descends on an average over a project's patches; CORE
-or cross-tenant promotion descends on a federated average over many
-tenants' losses. Learning rate and radius are independently
-controllable, and the gate must be calibrated against both. Governance
-is not administrative overhead; it is the regularization system that
-prevents a small-magnitude edit from being descended on the wrong loss.
+\textbf{Loops as descent steps of different radius.} Loop 1 and Loop 2
+map cleanly onto two distinct quantities in the optimisation analogy.
+\emph{Edit magnitude} --- how much a single accepted edit changes the
+local scaffold under \(\oplus\) --- plays the role of learning rate.
+\emph{Promotion radius} --- how many downstream patches the accepted
+edit affects --- controls \emph{which loss is being descended on}:
+USER-level acceptance descends on one patch's \(L_D\); PROJECT promotion
+descends on an average over a project's patches; TENANT or CORE
+promotion descends on a federated average over many tenants' losses.
+Loop 2 is \emph{federated artifact promotion} --- selection, merge,
+curation, review, distribution --- not arithmetic averaging of numeric
+updates. FedAvg is a useful analogy only in the limit where artifacts
+have been embedded as mergeable update representations and the
+aggregation is parameter-space averaging; no surveyed system meets that
+limit. Learning rate and radius are independently controllable, and the
+gate must be calibrated against both. Governance is not administrative
+overhead; it is the regularization system that prevents a small fix from
+being descended on the wrong loss --- for instance, a one-line rule that
+fixes one repository but ships to every tenant's CORE.
 
 Each loop has a gate. Gates are \textbf{Auto-gated} when the decision is
 an operationalised algorithmic criterion (RL threshold, eval score,
@@ -403,8 +397,8 @@ make the mechanism visible.
 
 \subsection{4. Six scaffold substrates}\label{six-scaffold-substrates}
 
-A patch-plastic scaffold composes six substrates. They are the
-coordinates of \(\theta_s\), each independently editable.
+A patch-local scaffold composes six substrates. They are the coordinates
+of \(\theta_s\), each independently editable.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -454,7 +448,7 @@ independent-editability property holds.
 
 The survey covers approximately 130 unique LLM systems published or
 productionised between January 2023 and May 2026 --- approximately 90
-satisfying the patch-plastic discriminator (score ≥ 3 on at least one
+satisfying the patch-local discriminator (score ≥ 3 on at least one
 substrate) and forming the \textbf{core corpus}, approximately 38
 commonly described as agentic or self-improving but failing at least one
 discriminator and held aside as a \textbf{contrast corpus}. A separate,
@@ -468,9 +462,9 @@ evidence and explicitly flagged in §8. Full inclusion/exclusion
 criteria, evidence-tier definitions (T1 peer-reviewed; T2 arXiv; T3
 production claim; T4 open-source artifact; T5 industry blog), scoring
 discipline, sensitivity analysis under two natural relaxations of the
-criterion, and the per-system audit trail are in Appendix B, with the
-master CSV and per-substrate evidence harvests bundled under
-\texttt{supplementary/}.
+criterion, and the representative per-system audit trail are in Appendix
+B; Appendix A lists 30 representative survey rows and Appendix D lists
+representative contrast entries.
 
 \subsection{6. Substrate maturity is
 uneven}\label{substrate-maturity-is-uneven}
@@ -572,8 +566,8 @@ reviewer-gated promotion (a candidate occupant would be a solo or
 small-team workflow where the marginal cost of a bad auto-merge exceeds
 the marginal cost of human latency); \textbf{{[}Human × None{]}} because
 a system requiring human authorship on Loop 1 without any Loop 2
-collapses to engineer-edits-a-config and is not patch-plastic in the
-sense of §3.
+collapses to engineer-edits-a-config and is not patch-local in the sense
+of §3.
 
 Two cross-cutting findings sharpen the picture. \textbf{Noise reduction
 via batching is largely absent in the surveyed auto-gated systems}:
@@ -593,9 +587,11 @@ cell-by-cell discussion, the closest-approaches enumeration that
 supports §9's empty-corner claim, and the DGM dual-mode footnote are in
 Appendix F.
 
-\subsection{9. The empty corner}\label{the-empty-corner}
+\subsection{9. The missing architecture: governed cross-tenant scaffold
+optimization}\label{the-missing-architecture-governed-cross-tenant-scaffold-optimization}
 
-Four properties define what we call \textbf{enterprise full-auto}:
+Four properties define the architecture that no surveyed system fully
+instantiates:
 
 \begin{itemize}
 \tightlist
@@ -636,86 +632,78 @@ Four properties define what we call \textbf{enterprise full-auto}:
   \end{enumerate}
 \end{itemize}
 
-No surveyed system has all four. The closest approaches partition the
-requirements: AlphaEvolve has (a) and partial (b) within a single
-organisation; SkillForge has (a) and (b) within one enterprise with
-partial (c) via VFS commits; Sierra Agent OS 2.0 has (b) and partial
-(a); the governance-first cluster has (c) and (d) explicitly but no (a)
-or (b) in the strict sense. The full enumeration is in Appendix F. In ML
-terms, the empty corner is a \emph{DP-FedAvg-style cross-tenant
-aggregator with an automated eval gate at the scaffold layer}:
-per-tenant artifact pools with tenant-tagged provenance, aggregation
-across tenants with operator-tunable privacy bounds, an automated eval
-gate blocking promotion when patch loss does not decrease, versioned
-lineage with RBAC, and a rollback envelope on every promoted artifact.
-Naming the corner converts a vague gap into a specific four-property
-audit criterion that any future system can be measured against. Whether
-the corner \emph{should} be filled is deployment-dependent (in
-safety-critical domains, reviewer-judgment gates may be a design feature
-rather than a defect); the narrower survey claim --- that no public
-system currently fills it --- is what matters for the next two years of
-architecture work.
-
-\subsubsection{9.1 Patch-completeness as an operational
-hypothesis}\label{patch-completeness-as-an-operational-hypothesis}
-
-The two-tier architecture also raises a measurable question about
-generality in production:
-
-\begin{quote}
-A model--scaffold composite is \emph{(r, n, d)-patch-complete} for a
-deployment patch \(D\) when its residual error rate on a stationary
-patch eval suite of size \(n\) stays at or below \(r\) over a deployment
-window of \(d\) days.
-\end{quote}
-
-The definition makes patch-completeness an empirical property of a
-specific deployment and a specific eval rather than a philosophical
-claim about generality. We are not aware of any surveyed system that has
-formally demonstrated \((r, n, d)\)-patch-completeness with held-out
-evaluation and a stationary patch over a non-trivial \(d\). The
-framework predicts such demonstrations should appear in narrow
-production verticals --- a coding agent confined to one repository with
-stable conventions, a legal agent confined to a stable due-diligence
-workflow --- once eval discipline catches up with deployment scope. The
-governance question is then operational: at what residual rate \(r\) and
-over what window \(d\) is local competence load-bearing enough to
-require governance attention even before global robustness is
-established? §10 catalogues the failure surface that the answer must
-account for.
+The closest approaches partition the requirements: AlphaEvolve has (a)
+and partial (b) within a single organisation; SkillForge has (a) and (b)
+within one enterprise with partial (c) via VFS commits; Sierra Agent OS
+2.0 has (b) and partial (a); the governance-first cluster has (c) and
+(d) explicitly but no (a) or (b) in the strict sense. The full
+enumeration is in Appendix F. In ML terms, what is missing is a
+privacy-preserving cross-tenant aggregator with an automated eval gate
+at the scaffold layer --- per-tenant artifact pools with tenant-tagged
+provenance, aggregation across tenants with operator-tunable privacy
+bounds, an automated eval gate blocking promotion when patch loss does
+not decrease, versioned lineage with RBAC, and a rollback envelope on
+every promoted artifact. The DP-FedAvg framing in the federated-learning
+literature is a useful analogy for this target only if artifacts are
+first embedded as mergeable update representations; in surveyed
+practice, Loop 2 is selection and review rather than parameter
+averaging. Naming the missing architecture converts a vague gap into a
+four-property audit criterion that any future system can be measured
+against. Whether it \emph{should} be filled is deployment-dependent ---
+in safety-critical domains, reviewer-judgment gates may be a design
+feature rather than a defect --- but no public system currently fills
+it, and that is what matters for the next two years of architecture
+work. Whether the optimizer-equipped composite reaches deployment-level
+reliability is a deployment-by-deployment empirical question; the
+paper's contribution is to name what \emph{would have to be true} of the
+optimizer for that question to even be testable.
 
 \subsection{10. A new failure surface}\label{a-new-failure-surface}
 
 Patchwork scaffold maintenance introduces failure modes weight-only
-systems do not have; instrumenting the loop to Stage 3 (§2) is what
-mitigates them at the architectural level. \textbf{Scaffold bloat} is
-the dominant near-term risk: IFScale (Jaroslawicz et al., 2025) reports
-latency growing roughly 35× for one reasoning model (o4-mini) as
-instruction count scales from 10 to 250, and the best frontier model in
-that benchmark (Gemini 2.5 Pro) drops to 68\% accuracy at 500
-instructions, with weaker models degrading further; the underlying
-mechanism (lost-in-the-middle, instruction interference; Liu et al.,
-2023) persists across model generations even when individual
-frontier-model scaling improves. \textbf{Poisoned memory} is the
-dominant security risk (PoisonedRAG reports 90\%+ attack success rate
-against standard RAG; Memory Control Flow Attacks report
-\textgreater90\% vulnerability across major LLM agent frameworks).
-\textbf{Prompt injection via tools and MCP} is the dominant cross-vendor
-attack surface (CVE-2025-54136 ``MCPoison'' demonstrated a public
-MCP-server compromise pathway). \textbf{Eval fragility} is the dominant
-ecosystem risk: the Leaderboard Illusion documents up to 112\% relative
+systems do not have; each one is also a missing piece of the optimizer.
+\textbf{Scaffold bloat} is the dominant near-term risk: IFScale
+(Jaroslawicz et al., 2025) reports latency growing roughly 35× for one
+reasoning model (o4-mini) as instruction count scales from 10 to 250,
+and the best frontier model in that benchmark (Gemini 2.5 Pro) drops to
+68\% accuracy at 500 instructions, with weaker models degrading further;
+the underlying mechanism (lost-in-the-middle, instruction interference;
+Liu et al., 2023) persists across model generations even when individual
+frontier-model scaling improves --- the architectural mitigation is a
+complexity penalty \(\Omega(z)\) in the gate and explicit pruning in the
+loop. \textbf{Poisoned memory} is the dominant security risk
+(PoisonedRAG reports 90\%+ attack success rate against standard RAG;
+Memory Control Flow Attacks report \textgreater90\% vulnerability across
+major LLM agent frameworks) --- the architectural mitigation is
+provenance and gating on memory writes, with rollback envelopes on
+accepted entries. \textbf{Prompt injection via tools and MCP} is the
+dominant cross-vendor attack surface (CVE-2025-54136 ``MCPoison''
+demonstrated a public MCP-server compromise pathway) --- the
+architectural mitigation is permission scoping and promotion gates that
+treat tool bindings as first-class scaffold coordinates rather than
+ambient configuration. \textbf{Eval fragility} is the dominant ecosystem
+risk: the Leaderboard Illusion documents up to 112\% relative
 performance gains under differential training-data access --- eval
-suites are themselves patch-plastic artifacts and must survive
-Goodhart's Law. \textbf{Coordination failures} are documented in MAST
-(14 failure modes, \(\kappa = 0.88\) agreement, dominantly
-role-confusion and context-loss). \textbf{Patch overfitting} is
-structural (scaffolds tuned to a deployment over-fit it).
-\textbf{Plasticity loss at the scaffold level} is the slow-moving risk:
-context rot, instruction conflict, memory pollution, tool-version drift
-produce a scaffold-level analogue of weight-level plasticity loss; no
-surveyed system treats pruning or expiration as a first-class operation.
-The patch-plastic surface is real, quantified by 2024--2026 work, and
-largely unmitigated in production.
+suites are themselves patch-local artifacts and must survive Goodhart's
+Law; the architectural mitigation is held-out evals scoped within
+evidence radius rather than promoted as universal benchmarks.
+\textbf{Coordination failures} are documented in MAST (14 failure modes,
+\(\kappa = 0.88\) agreement, dominantly role-confusion and context-loss)
+--- the architectural mitigation is treating orchestration topology as a
+scaffold coordinate subject to the same gate and rollback discipline as
+instructions and memories. \textbf{Patch overfitting} is structural
+(scaffolds tuned to a deployment over-fit it) --- the architectural
+mitigation is \emph{evidence radius} discipline at promotion: do not
+propagate a fix beyond the scope that validated it. \textbf{Plasticity
+loss at the scaffold level} is the slow-moving risk: context rot,
+instruction conflict, memory pollution, tool-version drift produce a
+scaffold-level analogue of weight-level plasticity loss; no surveyed
+system treats pruning or expiration as a first-class operation, and the
+architectural mitigation is to make expiry and rollback explicit
+operations in the loop rather than retrospective hygiene. The failure
+surface is real, quantified by 2024--2026 work, and largely unmitigated
+in production --- and every entry on it names a piece of the optimizer
+that current systems do not yet have.
 
 \subsection{11. Conclusion}\label{conclusion}
 
@@ -727,8 +715,8 @@ that happens there --- not just for the differentiable learning inside
 the model. This paper is one step toward that discipline: a survey of
 where production sits on the \emph{patchwork → random-search → descent}
 gradient of §2, a formalisation of the Stage-3 limit under stated
-assumptions, and a named empty corner where the optimizer most plainly
-does not yet exist.
+assumptions, and a named missing architecture where the optimizer most
+plainly does not yet exist.
 
 The field did not wait for frontier weights to become perfectly
 reliable. It built a second learning system around them --- made of
@@ -737,40 +725,32 @@ suites, PRs, version histories, and rollback buttons. The mechanisms
 were already in production; what changed in 2025--2026 is that the
 combination became dense enough across vendors to read as a single
 external adaptation surface --- most of which is still being maintained
-as patchwork. Once you name the surface, the empty corners become
-concrete engineering targets, the most consequential being enterprise
-full-auto: Auto-gated Loop 1 plus governed multi-tenant cross-org Loop
-2, with versioned lineage, RBAC, and rollback. In ML language, a
-DP-FedAvg-style cross-tenant aggregator with an automated eval gate at
-the scaffold layer, in the limit where artifacts are embedded as
-mergeable update representations. Whether the corner should be filled is
-deployment-dependent; that it has not been is the survey's headline
-finding.
+as patchwork. Once that surface is named, the missing pieces become
+concrete engineering targets. The most consequential is governed
+cross-tenant scaffold optimization: Auto-gated Loop 1 plus governed
+multi-tenant cross-org Loop 2, with versioned lineage, RBAC, and
+rollback. Whether it should be filled is deployment-dependent; that it
+has not been is the survey's headline finding.
 
-Practical generality therefore arrives locally first: not measured at
-the global model level, but as model--scaffold systems whose competence
-is fitted to bounded worlds and is in principle measurable through the
-\((r, n, d)\)-patch-completeness condition of §9.1. The frontier model
-generalises. The localhost scaffold specialises. Reliability comes from
-governing that specialisation, and the most consequential open
-architecture problem is the one that combines automated local evolution
-with auditable cross-tenant aggregation --- turning today's patchwork
-into tomorrow's optimizer.
+The frontier model generalises. The local scaffold specialises.
+Reliability comes from governing that specialisation, and the most
+consequential open architecture problem is the one that combines
+automated local evolution with auditable cross-tenant aggregation ---
+turning today's patchwork into tomorrow's optimizer.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \subsection{Appendix A. Representative survey
 rows}\label{appendix-a.-representative-survey-rows}
 
-The full per-system spreadsheet is
-\texttt{supplementary/p3\_master\_scores.csv}. The 30 rows below are a
-representative spot-check covering all six substrates, both research and
-production, and all four clusters of §7. \emph{Loop 1} and \emph{Loop 2}
-columns apply to systems satisfying the composite-two-loop criterion;
-\emph{n/a} means the loop is absent. \emph{PP} is the integrated
-patch-plasticity score (0--5); \emph{Evidence} abbreviates the strongest
-available source tier (T1 peer-reviewed; T2 arXiv; T3 production claim;
-T4 open-source artifact; T5 industry blog).
+The 30 rows below are a representative spot-check of the corpus,
+covering all six substrates, both research and production, and all four
+clusters of §7. \emph{Loop 1} and \emph{Loop 2} columns apply to systems
+satisfying the composite-two-loop criterion; \emph{n/a} means the loop
+is absent. \emph{PP} is the integrated patch-local-adaptation score
+(0--5); \emph{Evidence} abbreviates the strongest available source tier
+(T1 peer-reviewed; T2 arXiv; T3 production claim; T4 open-source
+artifact; T5 industry blog).
 
 \begingroup\small
 
@@ -877,7 +857,7 @@ LangSmith Hub & 2024 & S6 Governance & n/a & Auto & 5 & T3
 (\url{smith.langchain.com}) & Prompt repository with environment
 promotion and eval blocking \\
 Self-Refine* & 2023 & (contrast) & n/a & n/a & 1 & T2 (arXiv:2303.17651)
-& Fails the patch-plastic discriminator: in-context iteration only \\
+& Fails the patch-local discriminator: in-context iteration only \\
 Mem0* & 2024 & (contrast) & n/a & n/a & 2 & T3/T4 (mem0.ai) & Fails Loop
 2: per-user memory with no cross-context promotion path \\
 Tran \& Kiela* & 2026 & (contrast) & n/a & n/a & 1 & T2
@@ -896,15 +876,14 @@ clarity.}
 
 \subsection{Appendix B. Data appendix}\label{appendix-b.-data-appendix}
 
-\textbf{Corpus size.} The supplementary file
-\texttt{p3\_master\_scores.csv} contains approximately 130 unique LLM
-systems scored across the six substrates. Because a system can be scored
-on multiple substrates, the row count in the CSV exceeds the
+\textbf{Corpus size.} The survey scores approximately 130 unique LLM
+systems across the six substrates. Each system may be scored on multiple
+substrates; the per-substrate row count therefore exceeds the
 unique-system count.
 
 \textbf{Core / contrast split.} Approximately 90 unique systems satisfy
-the patch-plastic discriminator (score ≥ 3 on at least one substrate)
-and form the core corpus. The remaining ≈ 38 systems form the contrast
+the patch-local discriminator (score ≥ 3 on at least one substrate) and
+form the core corpus. The remaining ≈ 38 systems form the contrast
 corpus --- commonly described as agentic or self-improving in public
 discourse but failing at least one discriminator. Appendix D enumerates
 representative contrast systems.
@@ -944,12 +923,12 @@ cluster-level claims are robust to dropping any single T2 system.
 
 \textbf{Scoring discipline.} Each system received a
 substrate-by-substrate 0--5 score against the rubric of §4 and an
-integrated patch-plasticity (PP) score in \{0,1,2,3,3.5,4,4.5,5\}.
+integrated patch-local-adaptation score (PP) in \{0,1,2,3,3.5,4,4.5,5\}.
 Half-scores were used sparingly when one criterion was clearly met and
 another partially. Ambiguous cases were resolved conservatively
-(downward). Scoring is single-rater; the CSV exposes every per-system
-score so reviewers can audit ambiguous classifications independently
-against the per-substrate evidence harvests.
+(downward). Scoring is single-rater; Appendix A and Appendix D together
+expose representative per-system scores and exclusion reasons so readers
+can audit ambiguous classifications independently.
 
 \textbf{Composite two-loop criterion (sensitivity analysis).} The strict
 count of thirteen research systems satisfying the composite-two-loop
@@ -961,40 +940,8 @@ updates optimizer state without persisting an artifact distinct from
 optimiser state --- the count rises to approximately fifteen by
 re-admitting DSPy and TextGrad. The qualitative findings (Auto×Auto
 well-populated; {[}Human × Human{]} and {[}Human × Auto{]} empty in the
-surveyed corpus; governance-first cluster in {[}None × Auto{]};
-enterprise full-auto cell empty) survive both relaxations.
-
-\textbf{Supplementary files (shipped under \texttt{supplementary/}).}
-
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-File
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Contents
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-\texttt{p3\_master\_scores.csv} & Per-system, per-substrate 0--5 scores
-with evidence citations \\
-\texttt{p3\_harvest\_s1\_instructions.md} \ldots{}
-\texttt{p3\_harvest\_s6\_governance.md} & Per-substrate evidence
-harvests \\
-\texttt{p3\_harvest\_integrated.md} & Cross-substrate integrated
-audit \\
-\texttt{p3\_harvest\_composite\_two\_loop.md} & Strict
-composite-two-loop audit, 22 candidates \\
-\texttt{p3\_harvest\_failure\_modes.md} & Evidence harvest for §10
-failure surface \\
-\texttt{p3\_prior\_art\_check.md} & Prior-art reconciliation against
-adjacent literatures \\
-\end{longtable}
-}
+surveyed corpus; governance-first cluster in {[}None × Auto{]}; the
+cross-tenant governed-optimisation cell empty) survive both relaxations.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1076,7 +1023,7 @@ with it.
 \subsection{Appendix D. Contrast set}\label{appendix-d.-contrast-set}
 
 The contrast corpus of approximately 38 systems is included to make the
-patch-plastic discriminator audit-able. Representative entries:
+patch-local discriminator audit-able. Representative entries:
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -1148,9 +1095,10 @@ Engineer-authored convention files \\
 \end{longtable}
 }
 
-The full per-system exclusion log lives in
-\texttt{supplementary/p3\_master\_scores.csv} and the per-substrate
-evidence harvests.
+The representative entries above cover the main exclusion families
+(in-context-only; no Loop 2; framework-only; engineer-authored without
+failure trigger; optimiser-state-only); finer-grained per-system
+breakdowns are deferred to follow-on practitioner work.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1167,7 +1115,7 @@ rule means.
 \subsubsection{E.1 The mechanism stack}\label{e.1-the-mechanism-stack}
 
 The abstract update rule of §3 expands into six operations that every
-patch-plastic system must perform --- whether explicitly engineered or
+patch-local system must perform --- whether explicitly engineered or
 accidentally emergent.
 
 \begin{enumerate}
@@ -1422,9 +1370,10 @@ machinery.
 
 This appendix carries the per-substrate distributions, the per-cluster
 system walks, the cell-by-cell two-loop matrix discussion, the
-closest-approaches enumeration for the empty corner, and the
-orchestration-bounding result of Tran \& Kiela. It supplies the
-verification material for §§6--9.
+closest-approaches enumeration for the missing cross-tenant
+governed-optimisation architecture, and the orchestration-bounding
+result of Tran \& Kiela. It supplies the verification material for
+§§6--9.
 
 \subsubsection{F.1 Substrate maturity
 distribution}\label{f.1-substrate-maturity-distribution}
@@ -1524,7 +1473,7 @@ gate is the production-viable cell; SkillForge is the architectural
 exemplar \\
 Governance-first & Braintrust, Vellum, LangSmith Hub (all 2024, S6 = 5)
 & None / Auto & Eval-gated promotion exists; candidate generation is
-manual; no patch-plastic inner loop \\
+manual; no patch-local inner loop \\
 Open standards & AGENTS.md (2025), MCP (2024), Claude Skills (2025),
 Cursor Rules (2024) & Mixed / Mixed & Vendor-cross convergence on
 artifact format and tool attachment; tens of thousands of AGENTS.md
@@ -1535,7 +1484,7 @@ adoption \\
 
 \subsubsection{F.3 Surprising absences}\label{f.3-surprising-absences}
 
-Five absences stand out across the patch-plastic core corpus:
+Five absences stand out across the patch-local core corpus:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1672,7 +1621,7 @@ the primary evidence.
 \textbf{{[}None × Auto-gated{]}} holds the governance-first
 prompts-as-code systems (Braintrust, LangSmith Hub, Vellum). They have a
 real Loop 2 --- eval-gated CI blocks promotion on regression --- but no
-Loop 1 in the patch-plastic sense because the candidate artifacts are
+Loop 1 in the patch-local sense because the candidate artifacts are
 authored by engineers at their desks rather than triggered by session
 feedback. The asterisks mark this: governance without inner-loop
 adaptation. The cell is informative because it shows what survives when
@@ -1692,19 +1641,20 @@ during the May 2026 survey window.
 
 \textbf{{[}Human × None{]}} is structurally improbable: a system
 requiring human authorship on Loop 1 but with no Loop 2 collapses to
-``engineer-edits-a-config'' and is not patch-plastic in the sense of §3.
+``engineer-edits-a-config'' and is not patch-local in the sense of §3.
 
 \textbf{DGM dual-mode note.} DGM operates in both {[}Auto × Auto{]}
 (primary archive-based evolution) and {[}Auto × Human{]} (sandboxed
 code-modification review) modes depending on deployment configuration;
 we list it once in the dominant cell.
 
-\subsubsection{F.6 Closest approaches to the empty
-corner}\label{f.6-closest-approaches-to-the-empty-corner}
+\subsubsection{F.6 Closest approaches to governed cross-tenant scaffold
+optimization}\label{f.6-closest-approaches-to-governed-cross-tenant-scaffold-optimization}
 
-The four properties of enterprise full-auto are (a) auto-gated Loop 1,
-(b) multi-tenant cross-org promotion, (c) versioned lineage with RBAC,
-(d) rollback. Closest approaches partition the requirements:
+The four properties of governed cross-tenant scaffold optimization are
+(a) auto-gated Loop 1, (b) multi-tenant cross-org promotion, (c)
+versioned lineage with RBAC, (d) rollback. Closest approaches partition
+the requirements:
 
 \begin{itemize}
 \tightlist
@@ -1731,8 +1681,8 @@ No surveyed system combines (b), (c), and (d) under any gate type ---
 the cross-organisational governance triad is itself unfilled,
 independently of whether Loop 1 is auto-gated.
 
-\subsubsection{F.7 Deployment-dependence of the empty
-corner}\label{f.7-deployment-dependence-of-the-empty-corner}
+\subsubsection{F.7 Deployment-dependence of the missing
+architecture}\label{f.7-deployment-dependence-of-the-missing-architecture}
 
 Whether the corner \emph{should} be filled is deployment-dependent. In
 safety-critical domains --- medical decision support, legal advice,

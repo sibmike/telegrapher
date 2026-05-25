@@ -21,8 +21,7 @@ The short version compresses by relocation rather than deletion. The body carrie
 | §6 Substrate maturity is uneven | One-paragraph unevenness claim | **Appendix F.1** (per-substrate distribution table) |
 | §7 Four clusters | One-paragraph cluster naming | **Appendix F.2 + F.4** (cluster table, per-cluster walks with metrics, Tran & Kiela bound) |
 | §8 The two-loop design space | Matrix + populated/empty summary | **Appendix F.5** (cell-by-cell discussion, DGM dual-mode note) |
-| §9 The empty corner | Four properties + DP-FedAvg one-liner | **Appendix F.6 + F.7** (closest approaches, deployment-dependence) |
-| §9.1 Patch-completeness as operational hypothesis | $(r, n, d)$-operationalisation | (body-only, already terse) |
+| §9 The missing architecture: governed cross-tenant scaffold optimization | Four properties + DP-FedAvg-as-analogy one-liner | **Appendix F.6 + F.7** (closest approaches, deployment-dependence) |
 | §10 A new failure surface | Single paragraph naming the seven failure modes | (body-only, already concentrated) |
 | §11 Conclusion | Two paragraphs | (body-only) |
 
@@ -87,7 +86,7 @@ Per the paper-compression skill's Step 7. The audit confirms that no important e
 | §9 closest-approaches enumeration | preserved verbatim | Appendix F.6 |
 | §9 DP-FedAvg empty-corner statement | preserved verbatim | §9 + Appendix F.7 |
 | §9 deployment-dependent paragraph | preserved verbatim | Appendix F.7 |
-| §9.1 $(r, n, d)$-patch-completeness operationalisation (v2 fix) | preserved verbatim | §9.1 |
+| §9.1 $(r, n, d)$-patch-completeness operationalisation (v2 fix) | cut in editorial pass — distracted from the optimizer thesis; pointer sentence in §9 | (removed) |
 | §10 failure surface (v2 IFScale framing fix) | preserved verbatim | §10 |
 | §11 conclusion | preserved (compressed) | §11 |
 | Appendix A (30 representative rows) | preserved verbatim | Appendix A |
@@ -126,7 +125,7 @@ Every reviewer-fix from the long-version v2 revision is present in the short ver
 - AlphaTensor / Winograd caveat on the Strassen claim (Appendix F.4).
 - CASCADE "within-benchmark" framing (Appendix F.4).
 - IFScale framing correction — 68% is best-model-at-N=500, 35× is latency on one reasoning model (§10).
-- $(r, n, d)$-operationalised patch-completeness (§9.1, replacing v1's AGI rhetoric).
+- (cut in editorial pass) $(r, n, d)$-operationalised patch-completeness was preserved through v2 but removed from the short body in the editorial pass to keep the focus on the optimizer thesis; a one-sentence pointer remains in §9.
 - Sensitivity analysis under two relaxations (Appendix B).
 - OpenCore removed from every body and appendix location; audit trail in `supplementary/` retains the historical record with a `supplementary/README.md` explaining the omission.
 
