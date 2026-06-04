@@ -318,18 +318,31 @@ system has yet reached.
 
 \subsection{3. Artifact-layer descent}\label{artifact-layer-descent}
 
-\textbf{The disciplined version of scaffold maintenance is a concrete
-pipeline.} Observe a failure. Diagnose its failure mode. Identify which
-scaffold coordinate caused it: a stale memory entry, an under-specified
+\textbf{The disciplined version of scaffold maintenance is one loop, run
+again and again over the life of a deployment.} It does not react to
+single failures; it works from their accumulated record, and it ends
+with a decision about how widely to trust each fix. As the deployment
+runs, it logs what went wrong --- failed outputs, user corrections,
+rejected answers, eval regressions, tool-call errors. Reflecting over
+that record, the loop clusters the failures into recurring \emph{failure
+modes} and takes up the ones that matter most: a mode earns attention in
+proportion to how often it recurs and how badly it fails ---
+repeatability times severity, which is exactly its contribution to the
+deployment's failure rate. For such a mode, locate the single scaffold
+coordinate responsible --- a stale memory entry, an under-specified
 instruction, a missing tool argument, a brittle retrieval rule, a
-misrouted agent edge. Propose a candidate artifact edit. Test the edit
-against patch loss. Accept or reject by a gate. Persist accepted edits;
-prune or roll back when they regress. Promote across contexts only as
-far as the evidence supports. We call that last constraint the edit's
-\emph{evidence radius}: a local fix should only spread to other
-deployments to the extent it has been validated there. The rest of this
-section formalises this pipeline. §§4--9 ask which deployed systems have
-closed which of its steps.
+misrouted agent edge --- and synthesise one candidate edit to it.
+Measure whether the edit lowers \emph{patch loss} --- the deployment's
+failure rate on its own recurring tasks --- and let a gate accept or
+reject it on that measurement. Keep an accepted edit in the scaffold;
+prune it or roll it back if a later check shows it made things worse.
+Then take the step most systems skip: decide how far the edit should
+travel, and promote it to other deployments only as far as it has
+actually been validated. That last limit --- a fix earned on one
+deployment spreads only as far as its evidence reaches --- is the edit's
+\emph{evidence radius}. The rest of this section makes each step
+precise; §§4--9 then ask which deployed systems have closed which of
+them.
 
 \textbf{Most current production does not close this loop.} A failure
 happens, someone adds a prompt or rule or memory entry, the artifact
@@ -346,37 +359,43 @@ kept or promoted. The descent picture below is mechanism when those five
 conditions hold, and modeling language otherwise.
 
 \textbf{Two loops, in plain English first.} \emph{Loop 1} is the local
-fix: a failure produces a candidate edit, the edit is tested, the
-accepted edit changes one deployment's scaffold. \emph{Loop 2} is the
-decision whether that local fix should be shared with other deployments.
-It promotes from one repository to a team-wide template, from one
-tenant's playbook to a cross-tenant skill library, and so on. Loop 1
-changes one \(L_D\). Loop 2 changes \emph{which} \(L_D\) is being
-descended on.
+fix: a recurring failure type produces a candidate edit, the edit is
+tested, and the accepted edit changes one deployment's scaffold.
+\emph{Loop 2} is the separate decision of whether that local fix should
+be shared with other deployments --- promoting it from one repository to
+a team-wide template, from one tenant's playbook to a cross-tenant skill
+library, and so on. The two loops turn different knobs. Loop 1 improves
+the scaffold against a single deployment's own failures; Loop 2 changes
+\emph{which} deployment's failures the scaffold is being tuned against.
 
-\textbf{Assumptions and scope of the formalization.} The descent
-argument below holds when: (i) the frontier model parameters
-\(\theta_M\) are fixed during the adaptation window; (ii) scaffold edits
-are persistent, inspectable artifacts distinct from transient context;
-(iii) the patch admits a measurable operational loss; (iv) the proposal
-process can attribute failures to scaffold coordinates with non-zero
-probability; (v) gates are imperfect estimators of finite directional
-loss change rather than oracle access to the true loss change; (vi)
-Loop-2 promotion is scope expansion under a gate, not arithmetic
-averaging of comparable updates. Survey claims of the form ``no surveyed
-system has X'' are bounded by the audited public corpus and the survey
-cutoff of May 2026.
+\textbf{Assumptions and scope of the formalization.} The descent picture
+is only as good as the conditions it rests on, so we state them before
+formalising it; where a condition fails, the same picture should be read
+as analogy rather than mechanism. The argument below holds when: (i) the
+frontier model's weights stay frozen while the scaffold is being
+adapted; (ii) each scaffold edit is a persistent, inspectable artifact,
+not a transient prompt that vanishes after one session; (iii) the
+deployment exposes a loss you can actually measure --- a failure rate, a
+correction rate, an eval score; (iv) the process that proposes edits
+can, at least sometimes, trace a failure back to the scaffold coordinate
+responsible for it; (v) the gate is a noisy estimator of whether an edit
+helps, not an oracle that knows the true change in loss; and (vi) Loop-2
+promotion widens an artifact's scope under a gate, rather than
+numerically averaging comparable updates the way weight-space federated
+learning does. Survey claims of the form ``no surveyed system has X''
+are bounded by the audited public corpus and the survey cutoff of May
+2026.
 
 \textbf{Patch scope hierarchy.} \emph{Patch} is used throughout this
 paper with a defined scope hierarchy: USER ⊂ PROJECT ⊂ STACK ⊂ TENANT ⊂
 CORE. A USER patch is one human's account or fork. A PROJECT is one
 repository, workflow, or product workspace. A STACK is a curated bundle
 of projects under one team. A TENANT is an organisation or customer.
-CORE is the cross-tenant universal scope. Each level induces its own
-loss as an average over the patches it contains. When the text says
-``cross-tenant promotion'' it specifically means moving artifacts up to
-the TENANT or CORE level. ``Patch-specific adaptation'' without
-qualifier means descent on a USER or PROJECT-level loss.
+CORE is the cross-tenant universal scope. Each level has its own loss
+--- the average failure rate over all the patches it contains. When the
+text says ``cross-tenant promotion'' it specifically means moving
+artifacts up to the TENANT or CORE level. ``Patch-specific adaptation''
+without qualifier means descent on a USER or PROJECT-level loss.
 
 The patch loss is the expected residual failure rate of the
 model-scaffold composite on patch \(D\):
@@ -390,7 +409,9 @@ disagreement). The important distinction is substrate. \(\theta_M\) is
 fixed during deployment. \(\theta_s\) is the object being fit.
 
 A failure does not yield an analytic gradient. It yields a candidate
-edit. The gate \(G_t\) accepts the edit if its noisy estimate of the
+edit --- synthesised by reflection over the failure history, and
+proposed in order of the recurrence × severity of the mode it addresses.
+The gate \(G_t\) accepts the edit if its noisy estimate of the
 directional loss change clears a margin. The accepted edit applies to
 the current scaffold; rejected edits leave the scaffold unchanged:
 
@@ -425,18 +446,24 @@ through gets stricter at each step, because the loss it is being tested
 against is now an average over more patches, and a fix that helps one
 repo can hurt another.
 
-That observation maps cleanly onto two distinct quantities in the
-optimisation analogy. \emph{Edit magnitude} (how much a single accepted
-edit changes the local scaffold) plays the role of learning rate.
-\emph{Promotion radius} (how many downstream patches the accepted edit
-affects) controls \emph{which loss} is being descended on. USER-level
-acceptance descends on one patch's \(L_D\). PROJECT promotion descends
-on an average over a project's patches. TENANT or CORE promotion
-descends on a federated average over many tenants' losses. The two knobs
-are independently controllable, and the gate must be calibrated against
-both. This is why governance is not administrative overhead. It is the
-regularization system that prevents a small fix from being descended on
-the wrong loss.
+That observation maps cleanly onto two distinct knobs in the
+optimisation analogy, and the point is that they are separate knobs. The
+first is \emph{edit magnitude} --- how much a single accepted edit
+changes the local scaffold. This is the analogue of a learning rate: it
+sets how big each step is. The second is \emph{promotion radius} --- how
+many downstream patches the accepted edit is applied to. This does not
+change the step size; it changes the \emph{target} the step is aimed at,
+that is, which average failure rate the scaffold is being tuned to
+reduce. Accept an edit at the USER level and you are reducing the
+failure rate on one patch (\(L_D\)). Promote it to a PROJECT and you are
+now reducing the average failure rate across all of that project's
+patches; promote it to TENANT or CORE and the target becomes a federated
+average over many tenants' patches. A larger radius therefore aims the
+same edit at a broader, harder-to-please target, and an edit that lowers
+the narrow average can raise the broad one. The two knobs are set
+independently, and the gate must be calibrated against both. This is why
+governance is not administrative overhead. It is the regularization
+system that keeps a small fix from being aimed at the wrong target.
 
 A note on Loop 2 and FedAvg. Loop 2 is \emph{federated artifact
 promotion}: selection, merge, curation, review, distribution. It is not
@@ -1183,31 +1210,42 @@ alternative to descent (Appendix G.7). The architectural mitigation is a
 complexity penalty \(\Omega(z)\) in the gate, explicit pruning in the
 loop, and hygiene operations treated as first-class.
 
-\emph{Poisoned memory} is the dominant security risk. PoisonedRAG
+\emph{Poisoned memory} is the dominant security risk. Because memory is
+persistent and is read back into later prompts, an attacker who gets one
+malicious entry written can have it retrieved and acted on long after
+the attack, in sessions that never saw the original input. PoisonedRAG
 reports 90\%+ attack success rate against standard RAG; Memory Control
 Flow Attacks report \textgreater90\% vulnerability across major LLM
-agent frameworks. Mitigation here is architectural too: provenance and
-gating on memory writes, with rollback envelopes on accepted entries.
+agent frameworks. The mitigation is architectural too: record where each
+memory entry came from (provenance), gate what is allowed to be written,
+and keep a rollback envelope on accepted entries so a poisoned one can
+be removed.
 
 \emph{Prompt injection via tools and MCP} is the dominant cross-vendor
-attack surface. CVE-2025-54136 (``MCPoison'') demonstrated a public
-MCP-server compromise pathway. The architectural mitigation is
-permission scoping and promotion gates that treat tool bindings as
-first-class scaffold coordinates rather than ambient configuration.
+attack surface. The mechanism is that a tool's output, or a connected
+MCP server, can smuggle instructions into the model's context that the
+model then follows as if the user had issued them. CVE-2025-54136
+(``MCPoison'') demonstrated a public MCP-server compromise pathway. The
+architectural mitigation is to scope each tool's permissions narrowly
+and to put tool bindings through the same promotion gate as any other
+scaffold edit, treating them as first-class scaffold coordinates rather
+than ambient configuration that nobody reviews.
 
 \emph{Eval fragility} is the dominant ecosystem risk. The Leaderboard
-Illusion documents up to 112\% relative performance gains under
-differential training-data access. Eval suites are themselves
-patch-local artifacts and must survive Goodhart's Law. Ong et al.
-(\citeproc{ref-ong2026harnesseval}{2026}) extend the diagnosis to
-scaffold optimisers themselves: evaluating harness optimisers solely by
-target-agent performance gains cannot distinguish \emph{informed} Loop-1
-updates from Stage-2 trial-and-error, leaving open whether reported
-gains are descent (§2 Stage 3) or random search (§2 Stage 2). The
-architectural mitigation is held-out evals scoped within evidence radius
-rather than promoted as universal benchmarks, plus direct evaluation of
-optimiser updates against their attribution claims rather than only
-their downstream scores.
+Illusion documents up to 112\% relative performance gains when some
+competitors get more access to the benchmark's own data than others ---
+a score that reflects exposure to the test rather than true capability.
+Eval suites are themselves patch-local artifacts and must survive
+Goodhart's Law: once a metric becomes the target, optimisers learn to
+game it. Ong et al. (\citeproc{ref-ong2026harnesseval}{2026}) extend the
+diagnosis to scaffold optimisers themselves: evaluating harness
+optimisers solely by target-agent performance gains cannot distinguish
+\emph{informed} Loop-1 updates from Stage-2 trial-and-error, leaving
+open whether reported gains are descent (§2 Stage 3) or random search
+(§2 Stage 2). The architectural mitigation is held-out evals scoped
+within evidence radius rather than promoted as universal benchmarks,
+plus direct evaluation of optimiser updates against their attribution
+claims rather than only their downstream scores.
 
 \emph{Coordination failures} are documented in MAST: 14 failure modes,
 \(\kappa = 0.88\) agreement, dominantly role-confusion and context-loss.
@@ -1732,8 +1770,15 @@ proposal process \(z_t \sim Q_t(z \mid H_t, \theta_s^t)\), where \(H_t\)
 is the accumulated history of failures, corrections, rejected outputs,
 eval regressions, reviewer comments, tool-call traces, and prior
 accepted deltas, and conditioning on \(\theta_s^t\) ensures
-admissibility at the current scaffold. The finite directional difference
-induced by the edit is
+admissibility at the current scaffold. \(Q_t\) is not uniform over
+admissible edits: it concentrates on the failure modes with the largest
+expected loss contribution. For a mode \(m\) that recurs with frequency
+\(f_m\) and carries per-occurrence loss \(s_m\), that contribution is
+\(f_m s_m\) --- repeatability times severity --- so high-frequency or
+high-severity modes are proposed first. This is the proposal-side
+counterpart to the gate's acceptance test, and what makes A3 (proposal
+coverage), stated below, plausible rather than merely assumed. The
+finite directional difference induced by the edit is
 \[\Delta_z L_D(\theta_s) = L_D(\theta_s \oplus z) - L_D(\theta_s).\] A
 useful edit is one with \(\Delta_z L_D < 0\). The gate's noisy estimate
 of this quantity is \(\widehat{\Delta}_z L_D\).
