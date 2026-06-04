@@ -39,12 +39,20 @@ pandoc paper_frontier_and_localhost.md \
   --to=latex \
   --standalone \
   --pdf-engine=xelatex \
+  --citeproc \
+  --bibliography=references.bib \
+  -M link-citations=true \
   -V geometry:margin=1in \
   -V graphics=true \
   -V mainfont="Cambria" \
   -V mainfontoptions="Ligatures=TeX" \
   -V monofont="Consolas" \
   --output=paper_frontier_and_localhost.tex
+# Citations: references.bib is the single source of truth. pandoc --citeproc
+# resolves [@key] inline cites and generates the reference list at conversion
+# time (rendered directly into the .tex, so no .bib/.csl ships to arXiv).
+# Style is citeproc's built-in default (Chicago author-date); add --csl=FILE.csl
+# here to change it. Undefined [@key] cites surface as pandoc warnings above.
 
 echo "[2/3] xelatex pass 1"
 xelatex -interaction=nonstopmode -halt-on-error paper_frontier_and_localhost.tex > /dev/null

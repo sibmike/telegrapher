@@ -1,160 +1,3 @@
-% Options for packages loaded elsewhere
-\PassOptionsToPackage{unicode}{hyperref}
-\PassOptionsToPackage{hyphens}{url}
-\documentclass[
-]{article}
-\usepackage{xcolor}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath,amssymb}
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
-\usepackage{iftex}
-\ifPDFTeX
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
-  \usepackage{unicode-math} % this also loads fontspec
-  \defaultfontfeatures{Scale=MatchLowercase}
-  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
-\fi
-\usepackage{lmodern}
-\ifPDFTeX\else
-  % xetex/luatex font selection
-  \setmainfont[Ligatures=TeX]{Cambria}
-  \setmonofont[]{Consolas}
-\fi
-% Use upquote if available, for straight quotes in verbatim environments
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-\IfFileExists{microtype.sty}{% use microtype if available
-  \usepackage[]{microtype}
-  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
-}{}
-\makeatletter
-\@ifundefined{KOMAClassName}{% if non-KOMA class
-  \IfFileExists{parskip.sty}{%
-    \usepackage{parskip}
-  }{% else
-    \setlength{\parindent}{0pt}
-    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
-}{% if KOMA class
-  \KOMAoptions{parskip=half}}
-\makeatother
-\usepackage{longtable,booktabs,array}
-\newcounter{none} % for unnumbered tables
-\usepackage{calc} % for calculating minipage widths
-% Correct order of tables after \paragraph or \subparagraph
-\usepackage{etoolbox}
-\makeatletter
-\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
-\makeatother
-% Allow footnotes in longtable head/foot
-\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
-\makesavenoteenv{longtable}
-\usepackage{graphicx}
-\makeatletter
-\newsavebox\pandoc@box
-\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
-  \sbox\pandoc@box{#1}%
-  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
-  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
-  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
-  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
-  \else\usebox{\pandoc@box}%
-  \fi%
-}
-% Set default figure placement to htbp
-\def\fps@figure{htbp}
-\makeatother
-% definitions for citeproc citations
-\NewDocumentCommand\citeproctext{}{}
-\NewDocumentCommand\citeproc{mm}{%
-  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
-\makeatletter
- % allow citations to break across lines
- \let\@cite@ofmt\@firstofone
- % avoid brackets around text for \cite:
- \def\@biblabel#1{}
- \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
-\makeatother
-\newlength{\cslhangindent}
-\setlength{\cslhangindent}{1.5em}
-\newlength{\csllabelwidth}
-\setlength{\csllabelwidth}{3em}
-\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
- {\begin{list}{}{%
-  \setlength{\itemindent}{0pt}
-  \setlength{\leftmargin}{0pt}
-  \setlength{\parsep}{0pt}
-  % turn on hanging indent if param 1 is 1
-  \ifodd #1
-   \setlength{\leftmargin}{\cslhangindent}
-   \setlength{\itemindent}{-1\cslhangindent}
-  \fi
-  % set entry spacing
-  \setlength{\itemsep}{#2\baselineskip}}}
- {\end{list}}
-\usepackage{calc}
-\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
-\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\usepackage{xurl}
-\usepackage{bookmark}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same}
-\hypersetup{
-  pdftitle={Frontier and Localhost: How Production AI Learns Outside the Weights},
-  pdfauthor={Mikhail L. Arbuzov Independent Researcher mike.arbuzov54@gmail.com; Lee Mosbacker Independent Researcher lee.mosbacker@gmail.com; Sisong Bei Independent Researcher qurining@gmail.com; Ziwei Dong Independent Researcher ziwei.dong@alumni.emory.edu; Dmitri Kalaev Independent Researcher kalaevdr@gmail.com; Alexey A. Shvets Palo Alto Networks ashvets@paloaltonetworks.com},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-
-\title{Frontier and Localhost: How Production AI Learns Outside the
-Weights}
-\author{Mikhail L. Arbuzov\\
-Independent Researcher\\
-mike.arbuzov54@gmail.com \and Lee Mosbacker\\
-Independent Researcher\\
-lee.mosbacker@gmail.com \and Sisong Bei\\
-Independent Researcher\\
-qurining@gmail.com \and Ziwei Dong\\
-Independent Researcher\\
-ziwei.dong@alumni.emory.edu \and Dmitri Kalaev\\
-Independent Researcher\\
-kalaevdr@gmail.com \and Alexey A. Shvets\\
-Palo Alto Networks\\
-ashvets@paloaltonetworks.com}
-\date{}
-
-\begin{document}
-\maketitle
-
-\textbf{Abstract}
-
-Production LLM systems increasingly adapt outside the model weights.
-After deployment failures, teams modify prompts, rules, memories,
-skills, tools, eval suites, routing graphs, and governance pipelines on
-a cadence that frontier weight updates cannot match. But this scaffold
-layer is still mostly maintained as \emph{patchwork}: fixes are proposed
-by intuition, committed with weak credit assignment, accumulated without
-pruning, and promoted beyond the scope where they were validated. This
-paper formalises a disciplined alternative, which we call
-\emph{artifact-layer descent}. The pipeline is concrete. Recurring
-residuals are assigned to scaffold coordinates. Candidate artifact
-deltas are tested against patch loss. Accepted deltas persist with
-rollback. Promotion across contexts is bounded by \emph{evidence
-radius}: a local fix spreads only as far as the evidence supports.
-Surveying approximately 130 production and research systems from 2023 to
-2026, we find current systems partially instantiate this loop but leave
-a central architecture gap, namely governed scaffold optimization across
-contexts. The contribution is not the claim that prompts are weights. It
-is to name the missing optimizer for an adaptation layer the field has
-already built.
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
 \subsection{1. The gradient moved outside the
 model}\label{the-gradient-moved-outside-the-model}
 
@@ -223,19 +66,18 @@ contradictory tenant preferences, and rare workflow-specific failures in
 order to preserve broad competence across millions of unseen
 deployments. The smoothing is the training objective, not an artefact.
 RLHF reduces output diversity and homogenises preferred styles across
-users (\citeproc{ref-kirk2024understanding}{{Kirk et al.} 2024};
-\citeproc{ref-padmakumar2023diversity}{Padmakumar and He 2023}), and
+users \citep{kirk2024understanding, padmakumar2023diversity}, and
 instruction-tuning data composition rewards patterns that generalise
 across the annotator pool rather than patterns specific to any one
 deployment. The frontier model is therefore \emph{trained to be unable}
 to encode a single tenant's idiosyncrasies as preferred behaviour.
-Tiwari et al. (\citeproc{ref-tiwari2026fastandslow}{2026}) supply an
-independent two-timescale optimisation motivation from the in-context /
-in-weights side: in-context adaptation is cheap and rapid but
-capacity-bounded, in-weights adaptation is expressive but induces
-catastrophic forgetting and plasticity loss; the scaffold layer is the
-substrate that absorbs what in-context adaptation can carry cheaply,
-leaving the weights free to generalise.
+\citet{tiwari2026fastandslow} supply an independent two-timescale
+optimisation motivation from the in-context / in-weights side:
+in-context adaptation is cheap and rapid but capacity-bounded,
+in-weights adaptation is expressive but induces catastrophic forgetting
+and plasticity loss; the scaffold layer is the substrate that absorbs
+what in-context adaptation can carry cheaply, leaving the weights free
+to generalise.
 
 \textbf{Production reliability is achieved in depth.} Inside a single
 deployment patch, reliability is determined by exactly what global
@@ -466,10 +308,9 @@ descent}\label{skillopt-and-the-convergence-on-artifact-layer-descent}
 
 The §3 picture is mechanism when the five conditions hold and metaphor
 otherwise. Recent work has begun to operationalise all five for
-skill-document adaptation. SkillOpt
-(\citeproc{ref-yang2026skillopt}{Yang et al. 2026}) is the clearest
-case: it treats a single markdown skill document as the trainable
-external state of a frozen agent and edits it with explicit
+skill-document adaptation. SkillOpt \citep{yang2026skillopt} is the
+clearest case: it treats a single markdown skill document as the
+trainable external state of a frozen agent and edits it with explicit
 deep-learning-style controls --- rollout batches, reflection
 minibatches, add/delete/replace edits, a textual learning-rate budget
 with cosine decay, a held-out selection-split accept gate, a
@@ -571,50 +412,42 @@ We carry that distinction into §§7--9.
 \textbf{The convergent landscape.} Five clusters of concurrent work
 instantiate complementary subsets of §3's mechanism stack, each
 targeting a different substrate or exposing a different constraint. The
-\emph{reflective-evolution} family {[}GEPA; Agrawal et al.
-(\citeproc{ref-agrawal2025gepa}{2025}){]} instantiates \(Q_t\) via
-reflection-as-gradient over trajectory feedback and a Pareto-frontier
-proposal-pruning step, leaving the SkillOpt-style persistent skill
-artifact \(\theta_s\) and strictly-greater held-out gate open; Tiwari et
-al. (\citeproc{ref-tiwari2026fastandslow}{2026}) supply the matching
+\emph{reflective-evolution} family {[}GEPA; \citet{agrawal2025gepa}{]}
+instantiates \(Q_t\) via reflection-as-gradient over trajectory feedback
+and a Pareto-frontier proposal-pruning step, leaving the SkillOpt-style
+persistent skill artifact \(\theta_s\) and strictly-greater held-out
+gate open; \citet{tiwari2026fastandslow} supply the matching
 two-timescale motivation cited in §2. \emph{Reflective Context Learning}
-(\citeproc{ref-vassilyev2026rcl}{Vassilyev et al. 2026}) is the most
-direct independent formalisation: it observes that ``the fundamental
-problems of learning, including credit assignment, overfitting,
-forgetting, local optima, and high-variance learning signals, persist
-whether the learned object lies in parameter space or context space''
-and introduces a generalisation penalty that maps onto §3's
-\(\Omega(z)\). A \emph{harness-optimisation} cluster (Meta-Harness,
-\citeproc{ref-lee2026metaharness}{Lee et al. 2026}; AHE,
-\citeproc{ref-lin2026ahe}{Lin et al. 2026}; MOSS,
-\citeproc{ref-cai2026moss}{Cai et al. 2026}; CANTANTE,
-\citeproc{ref-zehle2026cantante}{Zehle 2026};
-\citeproc{ref-ong2026harnesseval}{Ong et al. 2026}) targets the
-orchestration substrate (§4, S5) rather than the skill substrate, names
-credit assignment as the central engineering bottleneck of scaffold
-evolution, and --- in MOSS's case --- extends evolution to source-level
-code that is ``physically unreachable from the text layer.'' A
-\emph{multi-objective + lifecycle} pair (MOCHA,
-\citeproc{ref-tanjim2026mocha}{Tanjim et al. 2026}; Ratchet,
-\citeproc{ref-zhang2026ratchet}{X. Zhang et al. 2026}) sharpens two
-assumptions of the §3 picture: MOCHA shows that the complexity penalty
-\(\Omega(z)\) is a Pareto frontier rather than a scalar, and Ratchet
-shows that lifecycle hygiene (outcome-driven retirement, bounded
-active-cap, pattern canonicalisation) is a precondition for residual
-capture and mode discovery --- the gap between LLM-authored skills
-(\(+0.0\) pp over no-skill) and human-curated skills (\(+16.2\) pp) is
-Ratchet's evidence that the bottleneck is lifecycle management, not
-authoring alone. A \emph{cross-task transfer / evidence-radius} cluster
-(ICT, \citeproc{ref-shalev2026ict}{Shalev et al. 2026}; Combee,
-\citeproc{ref-li2026combee}{Li et al. 2026}; CORAL,
-\citeproc{ref-qu2026coral}{Qu et al. 2026}; PACE,
-\citeproc{ref-ling2026pace}{Ling et al. 2026}) instruments Loop 2
-empirically: ICT measures the lower bound of evidence radius (one task),
-Combee scales the evidence pool through parallelism, CORAL provides the
-only asynchronous multi-agent Loop-2 mechanism in the current corpus
-through shared persistent memory and a heartbeat gate, and PACE
-demonstrates the two-timescale Loop-1 / Loop-2 architecture under
-small-frozen-model production constraints.
+\citep{vassilyev2026rcl} is the most direct independent formalisation:
+it observes that ``the fundamental problems of learning, including
+credit assignment, overfitting, forgetting, local optima, and
+high-variance learning signals, persist whether the learned object lies
+in parameter space or context space'' and introduces a generalisation
+penalty that maps onto §3's \(\Omega(z)\). A \emph{harness-optimisation}
+cluster
+\citetext{\citealp[Meta-Harness,][]{lee2026metaharness}; \citealp[AHE,][]{lin2026ahe}; \citealp[MOSS,][]{cai2026moss}; \citealp[CANTANTE,][]{zehle2026cantante}; \citealp{ong2026harnesseval}}
+targets the orchestration substrate (§4, S5) rather than the skill
+substrate, names credit assignment as the central engineering bottleneck
+of scaffold evolution, and --- in MOSS's case --- extends evolution to
+source-level code that is ``physically unreachable from the text
+layer.'' A \emph{multi-objective + lifecycle} pair
+\citetext{\citealp[MOCHA,][]{tanjim2026mocha}; \citealp[Ratchet,][]{zhang2026ratchet}}
+sharpens two assumptions of the §3 picture: MOCHA shows that the
+complexity penalty \(\Omega(z)\) is a Pareto frontier rather than a
+scalar, and Ratchet shows that lifecycle hygiene (outcome-driven
+retirement, bounded active-cap, pattern canonicalisation) is a
+precondition for residual capture and mode discovery --- the gap between
+LLM-authored skills (\(+0.0\) pp over no-skill) and human-curated skills
+(\(+16.2\) pp) is Ratchet's evidence that the bottleneck is lifecycle
+management, not authoring alone. A \emph{cross-task transfer /
+evidence-radius} cluster
+\citetext{\citealp[ICT,][]{shalev2026ict}; \citealp[Combee,][]{li2026combee}; \citealp[CORAL,][]{qu2026coral}; \citealp[PACE,][]{ling2026pace}}
+instruments Loop 2 empirically: ICT measures the lower bound of evidence
+radius (one task), Combee scales the evidence pool through parallelism,
+CORAL provides the only asynchronous multi-agent Loop-2 mechanism in the
+current corpus through shared persistent memory and a heartbeat gate,
+and PACE demonstrates the two-timescale Loop-1 / Loop-2 architecture
+under small-frozen-model production constraints.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -955,16 +788,16 @@ MLOps for weights.
 
 \emph{Open standards} systems converge across vendors on the artifact
 format and the tool layer. AGENTS.md is now in over 60,000 GitHub
-repositories with measured efficiency gains: {Lulla et al.}
-(\citeproc{ref-lulla2026empirical}{2026}) report -28.64\% wall-clock and
--16.58\% tokens with no quality loss. MCP has become the cross-vendor
-tool standard with thousands of public servers and substantial
-enterprise adoption. Claude Agent Skills, Cursor Rules, GitHub Copilot
-custom instructions, Windsurf rules, Continue.dev rules, Zed AI rules,
-and Replit \texttt{replit.md} all converge on a git-tracked markdown
-artifact attached to a workspace, with an MCP-style tool layer for
-actions. Convergence across vendors is the strongest evidence the
-architecture is real rather than any one vendor's local optimum.
+repositories with measured efficiency gains: \citet{lulla2026empirical}
+report -28.64\% wall-clock and -16.58\% tokens with no quality loss. MCP
+has become the cross-vendor tool standard with thousands of public
+servers and substantial enterprise adoption. Claude Agent Skills, Cursor
+Rules, GitHub Copilot custom instructions, Windsurf rules, Continue.dev
+rules, Zed AI rules, and Replit \texttt{replit.md} all converge on a
+git-tracked markdown artifact attached to a workspace, with an MCP-style
+tool layer for actions. Convergence across vendors is the strongest
+evidence the architecture is real rather than any one vendor's local
+optimum.
 
 The four clusters do not partition the corpus (many systems sit between
 two clusters), but they capture the architectural variation.
@@ -972,13 +805,13 @@ Vertical-bundle vendors (Harvey for legal, Hippocratic AI for
 healthcare) sit between \emph{open standards} and \emph{production
 hybrid}: the bundle is the commercial unit; the underlying model is
 mostly the same one a competitor would use. One result from the
-orchestration literature also constrains the picture. Tran and Kiela
-(\citeproc{ref-tran2026singleagent}{2026}) report that single-agent LLMs
-match or beat multi-agent systems on multi-hop reasoning when
-thinking-token budgets are matched. The implication is that observed
-maturity gaps on S5 may reflect the rarity of governed topology
-\emph{evolution}, and the conflation of agent-count with compute-budget,
-rather than a structural deficit of multi-agent designs.
+orchestration literature also constrains the picture.
+\citet{tran2026singleagent} report that single-agent LLMs match or beat
+multi-agent systems on multi-hop reasoning when thinking-token budgets
+are matched. The implication is that observed maturity gaps on S5 may
+reflect the rarity of governed topology \emph{evolution}, and the
+conflation of agent-count with compute-budget, rather than a structural
+deficit of multi-agent designs.
 
 \subsection{8. The two-loop design
 space}\label{the-two-loop-design-space}
@@ -1113,24 +946,23 @@ Appendix G) has (a) fully and partial (c) via the exported
 \texttt{best\_skill.md} artifact and the protected slow-update field,
 and reports positive cross-model / cross-harness / cross-benchmark
 transfer as empirical evidence-radius measurement; it does not implement
-(b) cross-organisational promotion or (d) explicit rollback. CORAL {[}Qu
-et al. (\citeproc{ref-qu2026coral}{2026}); Appendix G.8{]} has partial
-(a) via heartbeat-gated promotion and asynchronous multi-agent Loop 2
-within one system; no (b) cross-organisational scope, no formal (c)
-RBAC, no (d) rollback. PACE {[}Ling et al.
-(\citeproc{ref-ling2026pace}{2026}); Appendix G.8{]} has (a) at the
+(b) cross-organisational promotion or (d) explicit rollback. CORAL
+{[}\citet{qu2026coral}; Appendix G.8{]} has partial (a) via
+heartbeat-gated promotion and asynchronous multi-agent Loop 2 within one
+system; no (b) cross-organisational scope, no formal (c) RBAC, no (d)
+rollback. PACE {[}\citet{ling2026pace}; Appendix G.8{]} has (a) at the
 small-model production timescale and a fast/slow two-timescale Loop-1 +
 Loop-2 that consolidates across one deployment's own episodes; no
-cross-deployment (b), no formal (c) or (d). Meta-Harness {[}Lee et al.
-(\citeproc{ref-lee2026metaharness}{2026}); Appendix G.6{]} has (a) over
-the harness substrate (S5) with a filesystem-of-candidates
-credit-assignment record; no Loop-2 cross-organisational promotion, no
-RBAC or rollback. Sierra Agent OS 2.0 has (b) and partial (a). The
-governance-first cluster has (c) and (d) explicitly but no (a) or (b) in
-the strict sense. The convergent evidence sharpens rather than reduces
-the §9 gap: every closest approach satisfies a non-trivial subset of (a)
-and (c), but no member yet provides (b) or (d) under any governance
-regime. The full enumeration is in Appendix F.
+cross-deployment (b), no formal (c) or (d). Meta-Harness
+{[}\citet{lee2026metaharness}; Appendix G.6{]} has (a) over the harness
+substrate (S5) with a filesystem-of-candidates credit-assignment record;
+no Loop-2 cross-organisational promotion, no RBAC or rollback. Sierra
+Agent OS 2.0 has (b) and partial (a). The governance-first cluster has
+(c) and (d) explicitly but no (a) or (b) in the strict sense. The
+convergent evidence sharpens rather than reduces the §9 gap: every
+closest approach satisfies a non-trivial subset of (a) and (c), but no
+member yet provides (b) or (d) under any governance regime. The full
+enumeration is in Appendix F.
 
 In ML terms, what is missing is a privacy-preserving cross-tenant
 aggregator with an automated eval gate at the scaffold layer. The
@@ -1161,26 +993,25 @@ Patchwork scaffold maintenance introduces failure modes weight-only
 systems do not have. Each one is also a missing piece of the optimizer.
 
 \emph{Scaffold bloat} is the dominant near-term risk. IFScale
-(\citeproc{ref-jaroslawicz2025ifscale}{{Jaroslawicz et al.} 2025})
-reports latency growing roughly 35× for one reasoning model (o4-mini) as
-instruction count scales from 10 to 250, and the best frontier model in
-that benchmark (Gemini 2.5 Pro) drops to 68\% accuracy at 500
-instructions, with weaker models degrading further. The underlying
-mechanism {[}lost-in-the-middle, instruction interference; {Liu et al.}
-(\citeproc{ref-liu2023lostmiddle}{2023}){]} persists across model
+\citep{jaroslawicz2025ifscale} reports latency growing roughly 35× for
+one reasoning model (o4-mini) as instruction count scales from 10 to
+250, and the best frontier model in that benchmark (Gemini 2.5 Pro)
+drops to 68\% accuracy at 500 instructions, with weaker models degrading
+further. The underlying mechanism {[}lost-in-the-middle, instruction
+interference; \citet{liu2023lostmiddle}{]} persists across model
 generations even when individual frontier-model scaling improves.
-Ratchet (\citeproc{ref-zhang2026ratchet}{X. Zhang et al. 2026}) supplies
-direct empirical evidence that bloat is also a \emph{signal-quality}
-problem and not only a latency one: prior evaluation reports
-LLM-authored skills at \(+0.0\) pp over no-skill baselines while
-human-curated skills reach \(+16.2\) pp, which Ratchet attributes to
-lifecycle management and addresses with four hygiene mechanisms
-(outcome-driven retirement, bounded active-cap, meta-skill authoring,
-pattern canonicalisation); in §3 vocabulary, lifecycle hygiene is a
-precondition for residual capture and mode discovery to function, not an
-alternative to descent (Appendix G.7). The architectural mitigation is a
-complexity penalty \(\Omega(z)\) in the gate, explicit pruning in the
-loop, and hygiene operations treated as first-class.
+Ratchet \citep{zhang2026ratchet} supplies direct empirical evidence that
+bloat is also a \emph{signal-quality} problem and not only a latency
+one: prior evaluation reports LLM-authored skills at \(+0.0\) pp over
+no-skill baselines while human-curated skills reach \(+16.2\) pp, which
+Ratchet attributes to lifecycle management and addresses with four
+hygiene mechanisms (outcome-driven retirement, bounded active-cap,
+meta-skill authoring, pattern canonicalisation); in §3 vocabulary,
+lifecycle hygiene is a precondition for residual capture and mode
+discovery to function, not an alternative to descent (Appendix G.7). The
+architectural mitigation is a complexity penalty \(\Omega(z)\) in the
+gate, explicit pruning in the loop, and hygiene operations treated as
+first-class.
 
 \emph{Poisoned memory} is the dominant security risk. PoisonedRAG
 reports 90\%+ attack success rate against standard RAG; Memory Control
@@ -1197,16 +1028,16 @@ first-class scaffold coordinates rather than ambient configuration.
 \emph{Eval fragility} is the dominant ecosystem risk. The Leaderboard
 Illusion documents up to 112\% relative performance gains under
 differential training-data access. Eval suites are themselves
-patch-local artifacts and must survive Goodhart's Law. Ong et al.
-(\citeproc{ref-ong2026harnesseval}{2026}) extend the diagnosis to
-scaffold optimisers themselves: evaluating harness optimisers solely by
-target-agent performance gains cannot distinguish \emph{informed} Loop-1
-updates from Stage-2 trial-and-error, leaving open whether reported
-gains are descent (§2 Stage 3) or random search (§2 Stage 2). The
-architectural mitigation is held-out evals scoped within evidence radius
-rather than promoted as universal benchmarks, plus direct evaluation of
-optimiser updates against their attribution claims rather than only
-their downstream scores.
+patch-local artifacts and must survive Goodhart's Law.
+\citet{ong2026harnesseval} extend the diagnosis to scaffold optimisers
+themselves: evaluating harness optimisers solely by target-agent
+performance gains cannot distinguish \emph{informed} Loop-1 updates from
+Stage-2 trial-and-error, leaving open whether reported gains are descent
+(§2 Stage 3) or random search (§2 Stage 2). The architectural mitigation
+is held-out evals scoped within evidence radius rather than promoted as
+universal benchmarks, plus direct evaluation of optimiser updates
+against their attribution claims rather than only their downstream
+scores.
 
 \emph{Coordination failures} are documented in MAST: 14 failure modes,
 \(\kappa = 0.88\) agreement, dominantly role-confusion and context-loss.
@@ -1599,12 +1430,12 @@ Brief reason
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Self-Refine (\citeproc{ref-madaan2023selfrefine}{{Madaan et al.} 2023})
-& 2023 & No persistent artifact & In-context iteration only \\
-ReAct (\citeproc{ref-yao2023react}{Yao et al. 2023}) & 2023 & No
-persistent artifact & Thought-act-observe loop is intra-session \\
-Reflexion (\citeproc{ref-shinn2023reflexion}{{Shinn et al.} 2023}) &
-2023 & No Loop 2 & Per-agent episodic memory without promotion \\
+Self-Refine \citep{madaan2023selfrefine} & 2023 & No persistent artifact
+& In-context iteration only \\
+ReAct \citep{yao2023react} & 2023 & No persistent artifact &
+Thought-act-observe loop is intra-session \\
+Reflexion \citep{shinn2023reflexion} & 2023 & No Loop 2 & Per-agent
+episodic memory without promotion \\
 Generative Agents & 2023 & No Loop 2 & Per-agent reflection + importance
 memory \\
 ExpeL & 2023 & Loop boundary blurred & Experience bank built from
@@ -1617,15 +1448,13 @@ Claude Memory & 2025 & No Loop 2 & Per-conversation-thread
 persistence \\
 MemGPT & 2023 & No Loop 2 & Virtual-context management per agent \\
 DSPy & 2023 & No artifact distinct from optimiser state &
-Prompt-template optimization; SkillOpt {[}Yang et al.
-(\citeproc{ref-yang2026skillopt}{2026}); §3.5; Appendix G{]} realises
-the artifact-bearing form. \\
+Prompt-template optimization; SkillOpt {[}\citet{yang2026skillopt};
+§3.5; Appendix G{]} realises the artifact-bearing form. \\
 TextGrad & 2024 & No artifact distinct from optimiser state & Same
-boundary case as DSPy; SkillOpt {[}Yang et al.
-(\citeproc{ref-yang2026skillopt}{2026}); §3.5; Appendix G{]} adds the
-persistent \texttt{best\_skill.md}, held-out validation gate,
-rejected-edit memory, and textual learning-rate schedule that TextGrad
-lacks. \\
+boundary case as DSPy; SkillOpt {[}\citet{yang2026skillopt}; §3.5;
+Appendix G{]} adds the persistent \texttt{best\_skill.md}, held-out
+validation gate, rejected-edit memory, and textual learning-rate
+schedule that TextGrad lacks. \\
 MetaGen & 2026 & No Loop 2; no cross-session persistence & Role pool
 dynamic within single inference call \\
 MAE (Multi-Agent Evolve) & 2025 & No Loop 2 & Co-evolution within
@@ -1643,8 +1472,8 @@ Mobile-Agent-E, Cradle, OS-Copilot & 2024--2025 & No Loop 2 &
 Self-evolving but per-session/per-deployment \\
 Agent S, Agent S2 & 2024--2025 & No Loop 2 & Computer-use agentic
 framework \\
-ACE (\citeproc{ref-ace2025agentic}{{Q. Zhang et al.} 2025}) & 2025 & No
-Loop 2 in surveyed form & Single-context evolving playbook \\
+ACE \citep{ace2025agentic} & 2025 & No Loop 2 in surveyed form &
+Single-context evolving playbook \\
 Cursor Rules (vanilla) & 2024 & No Loop 2 & Per-project artifacts \\
 GitHub Copilot custom instructions, Windsurf, Continue.dev, Zed AI rules
 & 2024 & No Loop 1 & Engineer-authored at repo base branch \\
@@ -2005,24 +1834,24 @@ the requirements:
   Appendix G walkthrough maps every SkillOpt design decision to its §3
   counterpart.
 \item
-  \textbf{CORAL} (\citeproc{ref-qu2026coral}{Qu et al. 2026}) has
-  partial (a) via heartbeat-gated promotion and is the only system in
-  the corpus that implements asynchronous multi-agent Loop 2 within one
-  organisation through shared persistent memory; no (b)
-  cross-organisational scope, no formal (c) RBAC, no (d) rollback.
+  \textbf{CORAL} \citep{qu2026coral} has partial (a) via heartbeat-gated
+  promotion and is the only system in the corpus that implements
+  asynchronous multi-agent Loop 2 within one organisation through shared
+  persistent memory; no (b) cross-organisational scope, no formal (c)
+  RBAC, no (d) rollback.
 \item
-  \textbf{PACE} (\citeproc{ref-ling2026pace}{Ling et al. 2026}) has (a)
-  at the small-model production timescale and a fast/slow two-timescale
-  Loop 1 + Loop 2 that consolidates across one deployment's own episodes
-  rather than across deployments; no (b), no formal (c) or (d). PACE is
-  the closest demonstration that the two-loop architecture is
-  implementable under small-frozen-model constraints.
+  \textbf{PACE} \citep{ling2026pace} has (a) at the small-model
+  production timescale and a fast/slow two-timescale Loop 1 + Loop 2
+  that consolidates across one deployment's own episodes rather than
+  across deployments; no (b), no formal (c) or (d). PACE is the closest
+  demonstration that the two-loop architecture is implementable under
+  small-frozen-model constraints.
 \item
-  \textbf{Meta-Harness} (\citeproc{ref-lee2026metaharness}{Lee et al.
-  2026}) has (a) over the harness substrate (S5) with a
-  filesystem-of-candidates credit-assignment record that functions as
-  the accumulated history \(H_t\) of §3; no Loop-2 cross-organisational
-  promotion, no RBAC, no rollback.
+  \textbf{Meta-Harness} \citep{lee2026metaharness} has (a) over the
+  harness substrate (S5) with a filesystem-of-candidates
+  credit-assignment record that functions as the accumulated history
+  \(H_t\) of §3; no Loop-2 cross-organisational promotion, no RBAC, no
+  rollback.
 \item
   \textbf{SkillForge} has (a) and (b) within one enterprise, partial (c)
   via VFS commits; (d) is undocumented in the public report.
@@ -2073,19 +1902,19 @@ cost-per-point figure, both unchanged from v3.0.
 \subsubsection{G.1 The convergent
 landscape}\label{g.1-the-convergent-landscape}
 
-SkillOpt (\citeproc{ref-yang2026skillopt}{Yang et al. 2026}) is the
-cleanest current instance of artifact-layer descent in our survey, but
-it is one of at least fourteen independent research threads in
-2025--2026 that converge on the same disciplined gradient-like update
-mechanism for the scaffold layer. The cluster is striking because the
-convergence happens \emph{from different starting points}: GEPA and
-Tiwari et al.~start from prompt-optimisation and continual-learning
-respectively; RCL starts from cognitive-agent learning; Meta-Harness,
-AHE, MOSS, CANTANTE, and Ong et al.~start from harness engineering;
-MOCHA and Ratchet start from skill-deployment constraints; ICT, Combee,
-CORAL, and PACE start from cross-task / multi-agent /
-production-deployment angles. Each system instantiates a different
-subset of §3's five conditions, and each exposes a different gap.
+SkillOpt \citep{yang2026skillopt} is the cleanest current instance of
+artifact-layer descent in our survey, but it is one of at least fourteen
+independent research threads in 2025--2026 that converge on the same
+disciplined gradient-like update mechanism for the scaffold layer. The
+cluster is striking because the convergence happens \emph{from different
+starting points}: GEPA and Tiwari et al.~start from prompt-optimisation
+and continual-learning respectively; RCL starts from cognitive-agent
+learning; Meta-Harness, AHE, MOSS, CANTANTE, and Ong et al.~start from
+harness engineering; MOCHA and Ratchet start from skill-deployment
+constraints; ICT, Combee, CORAL, and PACE start from cross-task /
+multi-agent / production-deployment angles. Each system instantiates a
+different subset of §3's five conditions, and each exposes a different
+gap.
 
 The table below indexes the cluster by §3 mechanism and by what each
 system leaves open. Subsequent subsections walk each cluster in detail.
@@ -2113,45 +1942,37 @@ What it leaves open
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Reflective-evolution & GEPA (\citeproc{ref-agrawal2025gepa}{Agrawal et
-al. 2025}); Tiwari et al. (\citeproc{ref-tiwari2026fastandslow}{2026}) &
-\(Q_t\) over trajectory evidence with Pareto-frontier proposal-pruning;
-two-timescale in-context / in-weights motivation & (cross-substrate
-prompt opt) & persistent \(\theta_s\); \(L_t\) budget; held-out \(G_t\);
-rejected-edit buffer \\
-Reflective context & RCL (\citeproc{ref-vassilyev2026rcl}{Vassilyev et
-al. 2026}) & \(\theta_s\) over context space; generalisation penalty =
-\(\Omega(z)\); explicit naming of credit-assignment / overfitting /
-plasticity-loss in context space & S1+S2 (context) & cross-deployment
-Loop 2 \\
-Harness optimisation & Meta-Harness
-(\citeproc{ref-lee2026metaharness}{Lee et al. 2026}); AHE
-(\citeproc{ref-lin2026ahe}{Lin et al. 2026}); MOSS
-(\citeproc{ref-cai2026moss}{Cai et al. 2026}); CANTANTE
-(\citeproc{ref-zehle2026cantante}{Zehle 2026}); Ong et al.
-(\citeproc{ref-ong2026harnesseval}{2026}) & credit assignment (§3 op 3);
-filesystem-of-candidates as \(H_t\); contrastive multi-agent
-attribution; source-level extension beyond text-mutable & S5
+Reflective-evolution & GEPA \citep{agrawal2025gepa};
+\citet{tiwari2026fastandslow} & \(Q_t\) over trajectory evidence with
+Pareto-frontier proposal-pruning; two-timescale in-context / in-weights
+motivation & (cross-substrate prompt opt) & persistent \(\theta_s\);
+\(L_t\) budget; held-out \(G_t\); rejected-edit buffer \\
+Reflective context & RCL \citep{vassilyev2026rcl} & \(\theta_s\) over
+context space; generalisation penalty = \(\Omega(z)\); explicit naming
+of credit-assignment / overfitting / plasticity-loss in context space &
+S1+S2 (context) & cross-deployment Loop 2 \\
+Harness optimisation & Meta-Harness \citep{lee2026metaharness}; AHE
+\citep{lin2026ahe}; MOSS \citep{cai2026moss}; CANTANTE
+\citep{zehle2026cantante}; \citet{ong2026harnesseval} & credit
+assignment (§3 op 3); filesystem-of-candidates as \(H_t\); contrastive
+multi-agent attribution; source-level extension beyond text-mutable & S5
 (orchestration); S2+S5 (MOSS) & governed Loop 2 across orgs; RBAC;
 rollback \\
-Multi-objective + lifecycle & MOCHA
-(\citeproc{ref-tanjim2026mocha}{Tanjim et al. 2026}); Ratchet
-(\citeproc{ref-zhang2026ratchet}{X. Zhang et al. 2026}) & Pareto
-frontier as the true shape of \(\Omega(z)\); hygiene as precondition for
-residual capture and mode discovery & S2 + deployment constraints &
-gradient-analogue closure; gate strictness \\
-Cross-task transfer & ICT (\citeproc{ref-shalev2026ict}{Shalev et al.
-2026}); Combee (\citeproc{ref-li2026combee}{Li et al. 2026}); CORAL
-(\citeproc{ref-qu2026coral}{Qu et al. 2026}); PACE
-(\citeproc{ref-ling2026pace}{Ling et al. 2026}) & empirical
-evidence-radius (Loop-2 scope) measurement; async multi-agent Loop 2
-within one org; two-timescale Loop 1 + Loop 2 under small-model
-constraints & Integrated; S3+S5 & cross-organisational gate, lineage,
-rollback \\
-Worked instance & SkillOpt (\citeproc{ref-yang2026skillopt}{Yang et al.
-2026}) & all five §3 conditions: \(\theta_s\), \(L_D\), \(Q_t\)/\(z_t\),
-\(L_t\), \(G_t\) + rejected-edit buffer + slow/meta update & S2-led
-Integrated & cross-org Loop 2; RBAC; rollback \\
+Multi-objective + lifecycle & MOCHA \citep{tanjim2026mocha}; Ratchet
+\citep{zhang2026ratchet} & Pareto frontier as the true shape of
+\(\Omega(z)\); hygiene as precondition for residual capture and mode
+discovery & S2 + deployment constraints & gradient-analogue closure;
+gate strictness \\
+Cross-task transfer & ICT \citep{shalev2026ict}; Combee
+\citep{li2026combee}; CORAL \citep{qu2026coral}; PACE
+\citep{ling2026pace} & empirical evidence-radius (Loop-2 scope)
+measurement; async multi-agent Loop 2 within one org; two-timescale Loop
+1 + Loop 2 under small-model constraints & Integrated; S3+S5 &
+cross-organisational gate, lineage, rollback \\
+Worked instance & SkillOpt \citep{yang2026skillopt} & all five §3
+conditions: \(\theta_s\), \(L_D\), \(Q_t\)/\(z_t\), \(L_t\), \(G_t\) +
+rejected-edit buffer + slow/meta update & S2-led Integrated & cross-org
+Loop 2; RBAC; rollback \\
 \end{longtable}
 }
 
@@ -2256,48 +2077,46 @@ across baselines is which §3 conditions each one fails.
 
 \begin{itemize}
 \item
-  \textbf{TextGrad} (\citeproc{ref-yuksekgonul2024textgrad}{Yuksekgonul
-  et al. 2024})\textbf{.} Backpropagates textual feedback through
-  \texttt{tg.Variable} objects in a compound system. In §3 terms:
-  \(z_t\)-style edits exist, but \(\theta_s\) does not --- TextGrad has
-  no artifact distinct from optimiser state. There is no \(L_t\)
-  schedule, no held-out \(G_t\), and no rejected-edit buffer. SkillOpt's
-  measured advantage over TextGrad on direct chat ranges from \(+5.9\)
-  to \(+34.0\) points across benchmarks at GPT--5.5 scale and is
-  uniformly positive at all seven target-model scales. This matches our
-  Appendix D classification of TextGrad as failing the patch-local
-  discriminator on persistence; SkillOpt closes precisely that gap.
+  \textbf{TextGrad} \citep{yuksekgonul2024textgrad}\textbf{.}
+  Backpropagates textual feedback through \texttt{tg.Variable} objects
+  in a compound system. In §3 terms: \(z_t\)-style edits exist, but
+  \(\theta_s\) does not --- TextGrad has no artifact distinct from
+  optimiser state. There is no \(L_t\) schedule, no held-out \(G_t\),
+  and no rejected-edit buffer. SkillOpt's measured advantage over
+  TextGrad on direct chat ranges from \(+5.9\) to \(+34.0\) points
+  across benchmarks at GPT--5.5 scale and is uniformly positive at all
+  seven target-model scales. This matches our Appendix D classification
+  of TextGrad as failing the patch-local discriminator on persistence;
+  SkillOpt closes precisely that gap.
 \item
-  \textbf{GEPA} (\citeproc{ref-agrawal2025gepa}{Agrawal et al.
-  2025})\textbf{.} Reflective prompt evolution with Pareto-style
-  multi-candidate selection. Closer than TextGrad in that it carries
-  multiple candidates and a selection step. In §3 terms: \(Q_t\) is
-  real, but the optimisation target is a prompt rather than a persistent
-  skill artifact, \(G_t\) is not the strictly-greater held-out gate of
-  §3, and there is no \(L_t\) bound --- accepted edits can wholesale
-  rewrite. SkillOpt outperforms GEPA in the reported comparison; the
-  per-cell deltas should be read directly from SkillOpt's results table
-  rather than summarised here.
+  \textbf{GEPA} \citep{agrawal2025gepa}\textbf{.} Reflective prompt
+  evolution with Pareto-style multi-candidate selection. Closer than
+  TextGrad in that it carries multiple candidates and a selection step.
+  In §3 terms: \(Q_t\) is real, but the optimisation target is a prompt
+  rather than a persistent skill artifact, \(G_t\) is not the
+  strictly-greater held-out gate of §3, and there is no \(L_t\) bound
+  --- accepted edits can wholesale rewrite. SkillOpt outperforms GEPA in
+  the reported comparison; the per-cell deltas should be read directly
+  from SkillOpt's results table rather than summarised here.
 \item
-  \textbf{Trace2Skill} (\citeproc{ref-ni2026trace2skill}{{Ni et al.}
-  2026})\textbf{.} Distils trajectory-local lessons into reusable skill
-  artifacts. In §3 terms: \(\theta_s\) exists, but there is no iterative
-  \(G_t\) --- Trace2Skill mines skills offline rather than running a
-  held-out validation loop that accepts or rejects each candidate. Our
-  §3 mechanism stack therefore loses \emph{delta validation} (operation
-  4) and the \emph{rejected-edit buffer}. SkillOpt's measured gap over
-  Trace2Skill is \(+5.0\) to \(+19.0\) points across benchmarks at
-  GPT--5.5 direct chat.
+  \textbf{Trace2Skill} \citep{ni2026trace2skill}\textbf{.} Distils
+  trajectory-local lessons into reusable skill artifacts. In §3 terms:
+  \(\theta_s\) exists, but there is no iterative \(G_t\) --- Trace2Skill
+  mines skills offline rather than running a held-out validation loop
+  that accepts or rejects each candidate. Our §3 mechanism stack
+  therefore loses \emph{delta validation} (operation 4) and the
+  \emph{rejected-edit buffer}. SkillOpt's measured gap over Trace2Skill
+  is \(+5.0\) to \(+19.0\) points across benchmarks at GPT--5.5 direct
+  chat.
 \item
-  \textbf{EvoSkill} (\citeproc{ref-alzubi2026evoskill}{{Alzubi et al.}
-  2026})\textbf{.} Skill-folder evolution under failure analysis,
-  deployed harness-side. The strongest baseline on the Codex and Claude
-  Code harness rows. In §3 terms: \(\theta_s\) is a folder rather than a
-  single artifact, and credit assignment via failure analysis is
-  genuine, but there is no \(L_t\) bound on per-step folder edits and no
-  rejected-edit buffer. SkillOpt beats EvoSkill by \(+14.0\) inside
-  Codex and \(+3.2\) inside Claude Code on the GPT--5.5 five-benchmark
-  average.
+  \textbf{EvoSkill} \citep{alzubi2026evoskill}\textbf{.} Skill-folder
+  evolution under failure analysis, deployed harness-side. The strongest
+  baseline on the Codex and Claude Code harness rows. In §3 terms:
+  \(\theta_s\) is a folder rather than a single artifact, and credit
+  assignment via failure analysis is genuine, but there is no \(L_t\)
+  bound on per-step folder edits and no rejected-edit buffer. SkillOpt
+  beats EvoSkill by \(+14.0\) inside Codex and \(+3.2\) inside Claude
+  Code on the GPT--5.5 five-benchmark average.
 \item
   \textbf{Human skill} (expert-written, 145--516 tokens per benchmark).
   In §3 terms: \(\theta_s\) exists, but Loop 1 does not --- the artifact
@@ -2309,11 +2128,10 @@ across baselines is which §3 conditions each one fails.
   evidence. The ``untrained scaffold'' baseline.
 \end{itemize}
 
-ABSTRAL (\citeproc{ref-song2026abstral}{Song et al. 2026}) and EvoTest
-(\citeproc{ref-he2025evotest}{{He et al.} 2025}), referenced in
-SkillOpt's related work but not measured in their table, operate at the
-multi-agent design / test-time configuration layer rather than the
-persistent skill layer; they are out of scope for the
+ABSTRAL \citep{song2026abstral} and EvoTest \citep{he2025evotest},
+referenced in SkillOpt's related work but not measured in their table,
+operate at the multi-agent design / test-time configuration layer rather
+than the persistent skill layer; they are out of scope for the
 artifact-layer-descent comparison.
 
 Synthesising across all six measured baselines: the live difference is
@@ -2332,55 +2150,52 @@ inference-time optimiser calls.
 family}\label{g.4-gepa-tiwari-and-the-reflective-evolution-family}
 
 The immediate predecessor to SkillOpt's optimiser framing is
-\textbf{GEPA} (\citeproc{ref-agrawal2025gepa}{Agrawal et al. 2025}). It
-shows that natural-language reflection over execution trajectories can
-provide a richer adaptation signal than sparse scalar rewards for prompt
-evolution in compound AI systems. GEPA samples trajectories containing
-reasoning steps, tool calls, and tool outputs; reflects on them to
-diagnose failures and propose prompt updates; and maintains a Pareto
-frontier of candidate prompts rather than greedily mutating only the
-current best. Across six tasks, GEPA outperforms GRPO by 6\% on average
-and by up to 20\% while using up to 35× fewer rollouts, and also
-outperforms MIPROv2 in the reported aggregate comparison. In §3
-vocabulary, GEPA strongly instantiates the proposal side, \(Q_t\),
-through trajectory-conditioned reflection, and uses Pareto-based
-candidate selection as a proposal/pruning mechanism. What it does not
-instantiate is the full SkillOpt-style artifact lifecycle: a bounded
-edit budget on a reusable skill document, a strictly-greater held-out
-gate on each accepted skill update, a rejected-edit buffer used as
-negative feedback, and an exported deployment artifact with governance
-hooks.
+\textbf{GEPA} \citep{agrawal2025gepa}. It shows that natural-language
+reflection over execution trajectories can provide a richer adaptation
+signal than sparse scalar rewards for prompt evolution in compound AI
+systems. GEPA samples trajectories containing reasoning steps, tool
+calls, and tool outputs; reflects on them to diagnose failures and
+propose prompt updates; and maintains a Pareto frontier of candidate
+prompts rather than greedily mutating only the current best. Across six
+tasks, GEPA outperforms GRPO by 6\% on average and by up to 20\% while
+using up to 35× fewer rollouts, and also outperforms MIPROv2 in the
+reported aggregate comparison. In §3 vocabulary, GEPA strongly
+instantiates the proposal side, \(Q_t\), through trajectory-conditioned
+reflection, and uses Pareto-based candidate selection as a
+proposal/pruning mechanism. What it does not instantiate is the full
+SkillOpt-style artifact lifecycle: a bounded edit budget on a reusable
+skill document, a strictly-greater held-out gate on each accepted skill
+update, a rejected-edit buffer used as negative feedback, and an
+exported deployment artifact with governance hooks.
 
-\textbf{Tiwari et al. (\citeproc{ref-tiwari2026fastandslow}{2026})}
-supply the broader theoretical framing from the optimisation side,
-arguing explicitly that restricting learning to \emph{either} in-context
-(prompt optimisation) \emph{or} in-weights (RL / fine-tuning) is
-unnecessary and costly. In-context adaptation is cheap and rapid but
-capacity-bounded; in-weights adaptation is expressive but induces
-catastrophic forgetting and loss of plasticity
-(\citeproc{ref-dohare2024loss}{{Dohare et al.} 2024}). The scaffold
-layer of §2 is precisely the substrate that absorbs what in-context
-adaptation can carry cheaply, leaving the weights free to generalise.
-Tiwari et al.~supply the two-timescale motivation from the optimisation
-side; §2 supplies the matching motivation from the
-production-reliability side. The two framings are independent and
-mutually reinforcing.
+\textbf{\citet{tiwari2026fastandslow}} supply the broader theoretical
+framing from the optimisation side, arguing explicitly that restricting
+learning to \emph{either} in-context (prompt optimisation) \emph{or}
+in-weights (RL / fine-tuning) is unnecessary and costly. In-context
+adaptation is cheap and rapid but capacity-bounded; in-weights
+adaptation is expressive but induces catastrophic forgetting and loss of
+plasticity \citep{dohare2024loss}. The scaffold layer of §2 is precisely
+the substrate that absorbs what in-context adaptation can carry cheaply,
+leaving the weights free to generalise. Tiwari et al.~supply the
+two-timescale motivation from the optimisation side; §2 supplies the
+matching motivation from the production-reliability side. The two
+framings are independent and mutually reinforcing.
 
 \subsubsection{G.5 Reflective Context Learning: a parallel
 formalisation}\label{g.5-reflective-context-learning-a-parallel-formalisation}
 
 The most direct independent convergence on the §3 formalisation comes
-from \textbf{Reflective Context Learning} {[}RCL; Vassilyev et al.
-(\citeproc{ref-vassilyev2026rcl}{2026}){]}. Their opening observation is
-that ``the fundamental problems of learning, including credit
-assignment, overfitting, forgetting, local optima, and high-variance
-learning signals, persist whether the learned object lies in parameter
-space or context space,'' and that current methods are ``fragmented and
-ad hoc'' precisely because they address these challenges one at a time
-rather than as a unified optimisation problem over the context. The
-parallel to §3's argument --- that scaffold maintenance needs the
-discipline of weight-space optimisation applied to an external artifact
-layer --- is exact and arrived at independently.
+from \textbf{Reflective Context Learning} {[}RCL;
+\citet{vassilyev2026rcl}{]}. Their opening observation is that ``the
+fundamental problems of learning, including credit assignment,
+overfitting, forgetting, local optima, and high-variance learning
+signals, persist whether the learned object lies in parameter space or
+context space,'' and that current methods are ``fragmented and ad hoc''
+precisely because they address these challenges one at a time rather
+than as a unified optimisation problem over the context. The parallel to
+§3's argument --- that scaffold maintenance needs the discipline of
+weight-space optimisation applied to an external artifact layer --- is
+exact and arrived at independently.
 
 RCL maps onto §3 as follows. The \emph{learned context} is \(\theta_s\).
 The \emph{reflection signal} is a form of credit assignment identifying
@@ -2406,77 +2221,75 @@ credit assignment as the central unsolved problem of scaffold evolution,
 and its engineering solutions directly instantiate §3's operation 3
 (mode discovery) and operation 4 (delta validation).
 
-\textbf{Meta-Harness} (\citeproc{ref-lee2026metaharness}{Lee et al.
-2026}) is the cleanest representative. Its opening claim --- that ``the
-performance of large language model systems depends not only on model
-weights, but also on their harness: the code that determines what
-information to store, retrieve, and present to the model'' --- is §1's
-scaffold-versus-weights decomposition restated for the harness substrate
-specifically. Meta-Harness then identifies that existing text optimisers
-``compress feedback too aggressively,'' losing the fine-grained signal
-needed for credit assignment. Its solution is an outer-loop proposer
-with access to source code, scores, and execution traces of all prior
-candidates through a filesystem, so that the edit history itself becomes
-the credit-assignment signal. In §3 terms, the filesystem of prior
+\textbf{Meta-Harness} \citep{lee2026metaharness} is the cleanest
+representative. Its opening claim --- that ``the performance of large
+language model systems depends not only on model weights, but also on
+their harness: the code that determines what information to store,
+retrieve, and present to the model'' --- is §1's scaffold-versus-weights
+decomposition restated for the harness substrate specifically.
+Meta-Harness then identifies that existing text optimisers ``compress
+feedback too aggressively,'' losing the fine-grained signal needed for
+credit assignment. Its solution is an outer-loop proposer with access to
+source code, scores, and execution traces of all prior candidates
+through a filesystem, so that the edit history itself becomes the
+credit-assignment signal. In §3 terms, the filesystem of prior
 candidates is a concrete form of the accumulated history \(H_t\) that
 conditions the proposal distribution \(Q_t\), and the outer loop is a
 Loop-1 closure over the harness substrate (§4, S5) rather than the skill
 substrate (S2).
 
-\textbf{Agentic Harness Engineering} {[}AHE; Lin et al.
-(\citeproc{ref-lin2026ahe}{2026}){]} attacks the same problem from the
-observability side. The core diagnosis is that harness engineering
-``faces a heterogeneous action space across editable components,
-voluminous trajectories that bury actionable signal, and edits whose
-effect is hard to attribute.'' These three failure modes map precisely
-onto §3's mechanism stack: a heterogeneous action space is the
-coordinate-identification problem (op 2, mode discovery); voluminous
-trajectories that bury signal is the residual-capture problem (op 1);
-and effects that are hard to attribute is operation 3, credit
-assignment. AHE's response --- three matched observability pillars
-giving every editable harness component a file-level representation ---
-is an engineering instantiation of the coordinate decomposition that §3
-assumes. The implicit claim is that artifact-layer descent requires not
-just the optimisation loop but also the instrumentation that makes
-scaffold coordinates individually observable and attributable.
+\textbf{Agentic Harness Engineering} {[}AHE; \citet{lin2026ahe}{]}
+attacks the same problem from the observability side. The core diagnosis
+is that harness engineering ``faces a heterogeneous action space across
+editable components, voluminous trajectories that bury actionable
+signal, and edits whose effect is hard to attribute.'' These three
+failure modes map precisely onto §3's mechanism stack: a heterogeneous
+action space is the coordinate-identification problem (op 2, mode
+discovery); voluminous trajectories that bury signal is the
+residual-capture problem (op 1); and effects that are hard to attribute
+is operation 3, credit assignment. AHE's response --- three matched
+observability pillars giving every editable harness component a
+file-level representation --- is an engineering instantiation of the
+coordinate decomposition that §3 assumes. The implicit claim is that
+artifact-layer descent requires not just the optimisation loop but also
+the instrumentation that makes scaffold coordinates individually
+observable and attributable.
 
-\textbf{MOSS} (\citeproc{ref-cai2026moss}{Cai et al. 2026}) extends the
-harness argument by observing that all prior self-evolving agent systems
-``confine evolution to text-mutable artifacts --- skill files, prompt
-configurations, memory schemas, workflow graphs --- and leave the agent
-harness untouched.'' Since routing, hook ordering, state invariants, and
-dispatch live in code rather than in any text artifact, an entire class
-of structural failure is, in MOSS's phrase, ``physically unreachable
-from the text layer.'' MOSS therefore extends Loop-1 evolution to
-source-level code rewriting. In §4 terms, MOSS evolves S2 (Skills) and
-S5 (Orchestration) simultaneously, rather than treating the
-orchestration substrate as a fixed wrapper around an evolvable skill
-layer. This matters for §9: a governed cross-tenant scaffold optimiser
-that covers only text-mutable artifacts leaves the code substrate
-ungoverned, and MOSS's diagnosis suggests the gap is not merely
-inconvenient but structurally incomplete.
+\textbf{MOSS} \citep{cai2026moss} extends the harness argument by
+observing that all prior self-evolving agent systems ``confine evolution
+to text-mutable artifacts --- skill files, prompt configurations, memory
+schemas, workflow graphs --- and leave the agent harness untouched.''
+Since routing, hook ordering, state invariants, and dispatch live in
+code rather than in any text artifact, an entire class of structural
+failure is, in MOSS's phrase, ``physically unreachable from the text
+layer.'' MOSS therefore extends Loop-1 evolution to source-level code
+rewriting. In §4 terms, MOSS evolves S2 (Skills) and S5 (Orchestration)
+simultaneously, rather than treating the orchestration substrate as a
+fixed wrapper around an evolvable skill layer. This matters for §9: a
+governed cross-tenant scaffold optimiser that covers only text-mutable
+artifacts leaves the code substrate ungoverned, and MOSS's diagnosis
+suggests the gap is not merely inconvenient but structurally incomplete.
 
-\textbf{CANTANTE} (\citeproc{ref-zehle2026cantante}{Zehle 2026}) attacks
-credit assignment directly in the multi-agent setting. Its observation
-is that ``scores are available only at the system level, whereas the
-parameters governing agent behavior are local,'' making optimisation of
-multi-agent scaffolds ``fundamentally a credit-assignment problem.''
-CANTANTE's solution is contrastive: it decomposes system-level rewards
-into per-agent update signals by contrasting rollouts of multiple
-jointly acting configurations. In §3 vocabulary, CANTANTE provides a
-concrete mechanism for operation 3 in the case where the scaffold is
-distributed across agents rather than concentrated in a single artifact.
-The gap it closes is the same one §3 identifies in Appendix E.6 --- that
-attribution (output error assigned to an upstream scaffold coordinate)
-must succeed with non-zero probability per failure --- but instantiated
-for the multi-agent topology substrate (S5).
+\textbf{CANTANTE} \citep{zehle2026cantante} attacks credit assignment
+directly in the multi-agent setting. Its observation is that ``scores
+are available only at the system level, whereas the parameters governing
+agent behavior are local,'' making optimisation of multi-agent scaffolds
+``fundamentally a credit-assignment problem.'' CANTANTE's solution is
+contrastive: it decomposes system-level rewards into per-agent update
+signals by contrasting rollouts of multiple jointly acting
+configurations. In §3 vocabulary, CANTANTE provides a concrete mechanism
+for operation 3 in the case where the scaffold is distributed across
+agents rather than concentrated in a single artifact. The gap it closes
+is the same one §3 identifies in Appendix E.6 --- that attribution
+(output error assigned to an upstream scaffold coordinate) must succeed
+with non-zero probability per failure --- but instantiated for the
+multi-agent topology substrate (S5).
 
-\textbf{Harness optimizer evaluation}
-(\citeproc{ref-ong2026harnesseval}{Ong et al. 2026}) provides
-independent empirical evidence for a failure mode this paper flags in
-§10: that evaluating scaffold optimisers ``solely by observing target
-agents' performance gains'' misses intermediate erroneous edits that
-hinder performance. Their finding --- that it is ``unclear whether
+\textbf{Harness optimizer evaluation} \citep{ong2026harnesseval}
+provides independent empirical evidence for a failure mode this paper
+flags in §10: that evaluating scaffold optimisers ``solely by observing
+target agents' performance gains'' misses intermediate erroneous edits
+that hinder performance. Their finding --- that it is ``unclear whether
 harness optimization is driven by optimizers' informed update actions or
 simply trial-and-error'' --- is a direct empirical instantiation of the
 distinction between Stage 2 (random artifact search) and Stage 3
@@ -2492,38 +2305,37 @@ Two papers expose constraints on the §3 picture that single-loss descent
 does not capture, both relevant to the §9 missing-architecture
 discussion.
 
-\textbf{MOCHA} (\citeproc{ref-tanjim2026mocha}{Tanjim et al. 2026})
-observes that agent skills are ``multi-field artifacts subject to hard
-platform constraints: description fields are truncated for routing,
-instruction bodies are compacted via progressive disclosure, and
-co-resident skills compete for limited context windows.'' Skill
-optimisation is therefore not a single-loss descent problem but an
-inherently multi-objective one: a skill must simultaneously maximise
-task performance and satisfy platform limits, and optimising for task
-performance alone produces skills that pass benchmarks but violate
-deployment constraints. MOCHA introduces \emph{Chebyshev annealing} to
-navigate the constraint frontier. In §3 terms, the complexity penalty
-\(\Omega(z)\) in the gate condition is precisely the mechanism MOCHA is
-operationalising, but §3's scalar \(\Omega\) is a simplification: in
-production, the constraint surface is a Pareto frontier, not a single
-penalty term. MOCHA's empirical contribution is to show that ignoring
-this frontier --- treating skill optimisation as unconstrained
-single-loss descent --- produces skills that degrade on real deployment
-infrastructure even when benchmark scores improve.
+\textbf{MOCHA} \citep{tanjim2026mocha} observes that agent skills are
+``multi-field artifacts subject to hard platform constraints:
+description fields are truncated for routing, instruction bodies are
+compacted via progressive disclosure, and co-resident skills compete for
+limited context windows.'' Skill optimisation is therefore not a
+single-loss descent problem but an inherently multi-objective one: a
+skill must simultaneously maximise task performance and satisfy platform
+limits, and optimising for task performance alone produces skills that
+pass benchmarks but violate deployment constraints. MOCHA introduces
+\emph{Chebyshev annealing} to navigate the constraint frontier. In §3
+terms, the complexity penalty \(\Omega(z)\) in the gate condition is
+precisely the mechanism MOCHA is operationalising, but §3's scalar
+\(\Omega\) is a simplification: in production, the constraint surface is
+a Pareto frontier, not a single penalty term. MOCHA's empirical
+contribution is to show that ignoring this frontier --- treating skill
+optimisation as unconstrained single-loss descent --- produces skills
+that degrade on real deployment infrastructure even when benchmark
+scores improve.
 
-\textbf{Ratchet} (\citeproc{ref-zhang2026ratchet}{X. Zhang et al. 2026})
-makes an argument that is, in some respects, orthogonal to the
-gradient-analogue framing and for that reason worth engaging directly.
-Ratchet's opening finding --- that LLM-authored skills deliver \(+0.0\)
-pp over no-skill baselines while human-curated ones deliver \(+16.2\) pp
---- suggests that the bottleneck in self-evolving skill libraries is not
-the optimisation algorithm (the mechanism for proposing and accepting
-edits) but \emph{lifecycle management}: whether skills are written,
-retrieved, curated, and retired correctly. Ratchet introduces four
-hygiene mechanisms --- outcome-driven retirement, a bounded active-cap,
-meta-skill authoring, and pattern canonicalisation --- and shows that
-these lift the \(+0.0\) pp floor substantially before any
-gradient-analogue optimiser is applied.
+\textbf{Ratchet} \citep{zhang2026ratchet} makes an argument that is, in
+some respects, orthogonal to the gradient-analogue framing and for that
+reason worth engaging directly. Ratchet's opening finding --- that
+LLM-authored skills deliver \(+0.0\) pp over no-skill baselines while
+human-curated ones deliver \(+16.2\) pp --- suggests that the bottleneck
+in self-evolving skill libraries is not the optimisation algorithm (the
+mechanism for proposing and accepting edits) but \emph{lifecycle
+management}: whether skills are written, retrieved, curated, and retired
+correctly. Ratchet introduces four hygiene mechanisms --- outcome-driven
+retirement, a bounded active-cap, meta-skill authoring, and pattern
+canonicalisation --- and shows that these lift the \(+0.0\) pp floor
+substantially before any gradient-analogue optimiser is applied.
 
 This finding is not a refutation of the §3 picture but a clarification
 of the precondition for it. Artifact-layer descent, as formalised in §3,
@@ -2555,23 +2367,21 @@ context continues to improve performance when redeployed elsewhere ---
 without using that vocabulary.
 
 \textbf{Training Language Agents to Learn from Experience} {[}ICT;
-Shalev et al. (\citeproc{ref-shalev2026ict}{2026}){]} introduces the
-In-context Training framework specifically to evaluate \emph{cross-task
-self-improvement}: whether experience distilled from one set of tasks
-transfers to unseen tasks. Their finding that ``current reflection-based
-methods can only self-correct within a single task instance'' is a
-measurement of evidence radius at its lower bound --- a radius of
-exactly one task --- and their ICT framework is a systematic attempt to
-expand that radius through supervised distillation of reflections into
-reusable lessons. In §3 terms, ICT is an attempt to instrument Loop 2
-empirically: to measure whether a locally-validated edit (one that
-passed the gate on one task's \(L_D\)) continues to improve performance
-when the promotion radius is expanded to cover a distribution of unseen
-tasks.
+\citet{shalev2026ict}{]} introduces the In-context Training framework
+specifically to evaluate \emph{cross-task self-improvement}: whether
+experience distilled from one set of tasks transfers to unseen tasks.
+Their finding that ``current reflection-based methods can only
+self-correct within a single task instance'' is a measurement of
+evidence radius at its lower bound --- a radius of exactly one task ---
+and their ICT framework is a systematic attempt to expand that radius
+through supervised distillation of reflections into reusable lessons. In
+§3 terms, ICT is an attempt to instrument Loop 2 empirically: to measure
+whether a locally-validated edit (one that passed the gate on one task's
+\(L_D\)) continues to improve performance when the promotion radius is
+expanded to cover a distribution of unseen tasks.
 
-\textbf{Combee} (\citeproc{ref-li2026combee}{Li et al. 2026}) approaches
-the same measurement from the scaling direction. ACE
-(\citeproc{ref-ace2025agentic}{{Q. Zhang et al.} 2025}) established that
+\textbf{Combee} \citep{li2026combee} approaches the same measurement
+from the scaling direction. ACE \citep{ace2025agentic} established that
 context-as-living-artifact (a system prompt that accumulates, refines,
 and organises strategies through agentic interaction) could improve over
 static prompts on single-agent tasks. Combee extends this to
@@ -2588,34 +2398,34 @@ Combee's empirical results measure how much of the evidence-radius
 benefit can be captured by intra-organisation parallelism before the
 cross-organisational barrier is reached.
 
-\textbf{CORAL} (\citeproc{ref-qu2026coral}{Qu et al. 2026}) addresses
-the Loop-2 problem from the multi-agent open-ended discovery angle.
-CORAL replaces rigid control with long-running agents that explore,
-reflect, and collaborate through shared persistent memory, asynchronous
-multi-agent execution, and heartbeat-based interventions. The shared
-persistent memory is the cross-agent promoted artifact: a finding
-validated in one agent's exploration that is written to the shared store
-becomes available to all agents, and the heartbeat mechanism provides a
-form of auto-gated Loop-2 promotion. CORAL does not implement the
-versioned lineage, RBAC, or rollback that §9 requires, but it provides
-the only fully asynchronous multi-agent Loop-2 promotion mechanism in
-the current survey corpus, and its open-ended discovery framing makes
-the evidence-radius question concrete.
+\textbf{CORAL} \citep{qu2026coral} addresses the Loop-2 problem from the
+multi-agent open-ended discovery angle. CORAL replaces rigid control
+with long-running agents that explore, reflect, and collaborate through
+shared persistent memory, asynchronous multi-agent execution, and
+heartbeat-based interventions. The shared persistent memory is the
+cross-agent promoted artifact: a finding validated in one agent's
+exploration that is written to the shared store becomes available to all
+agents, and the heartbeat mechanism provides a form of auto-gated Loop-2
+promotion. CORAL does not implement the versioned lineage, RBAC, or
+rollback that §9 requires, but it provides the only fully asynchronous
+multi-agent Loop-2 promotion mechanism in the current survey corpus, and
+its open-ended discovery framing makes the evidence-radius question
+concrete.
 
-\textbf{PACE} (\citeproc{ref-ling2026pace}{Ling et al. 2026}) closes
-this cluster with a production-oriented two-timescale design for small
-language model agents. The fast timescale adapts prompts, parsers,
-validators, and control logic from failure signals within a deployment;
-the slow timescale consolidates across episodes. The two-timescale
-structure maps cleanly onto the Loop-1 / Loop-2 distinction of §3: Loop
-1 fires at the fast timescale, updating a single deployment's scaffold;
-Loop 2 fires at the slow timescale, consolidating across the
-deployment's own episodes rather than across deployments. PACE's
-contribution is to show that the two-loop architecture is implementable
-under the resource constraints of small, frozen production models ---
-not only under frontier-model assumptions --- and that the slow/fast
-consolidation structure persists even when the optimiser model and the
-target model are the same frozen small model.
+\textbf{PACE} \citep{ling2026pace} closes this cluster with a
+production-oriented two-timescale design for small language model
+agents. The fast timescale adapts prompts, parsers, validators, and
+control logic from failure signals within a deployment; the slow
+timescale consolidates across episodes. The two-timescale structure maps
+cleanly onto the Loop-1 / Loop-2 distinction of §3: Loop 1 fires at the
+fast timescale, updating a single deployment's scaffold; Loop 2 fires at
+the slow timescale, consolidating across the deployment's own episodes
+rather than across deployments. PACE's contribution is to show that the
+two-loop architecture is implementable under the resource constraints of
+small, frozen production models --- not only under frontier-model
+assumptions --- and that the slow/fast consolidation structure persists
+even when the optimiser model and the target model are the same frozen
+small model.
 
 \subsubsection{G.9 Synthesis: what the convergence
 establishes}\label{g.9-synthesis-what-the-convergence-establishes}
@@ -2636,9 +2446,8 @@ convergent evidence:
   harness code, system prompt, shared memory).
 \item
   \textbf{Credit assignment is the central engineering bottleneck.} AHE,
-  CANTANTE, Meta-Harness, and Ong et al.
-  (\citeproc{ref-ong2026harnesseval}{2026}) all identify credit
-  assignment --- attributing a system-level failure to a specific
+  CANTANTE, Meta-Harness, and \citet{ong2026harnesseval} all identify
+  credit assignment --- attributing a system-level failure to a specific
   scaffold coordinate --- as the problem that distinguishes disciplined
   Loop-1 evolution from trial-and-error. This is §3's operation 3, and
   it remains unsolved in the general multi-substrate case.
@@ -2755,365 +2564,3 @@ the complexity penalty \(\Omega(z)\) of §3, instantiated as a hard cap
 on accepted edits per step rather than a soft regulariser.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-\subsection{References}\label{references}
-
-\protect\phantomsection\label{refs}
-\begin{CSLReferences}{1}{1}
-\bibitem[\citeproctext]{ref-agashe2025agents2}
-{Agashe, Saaket et al.} 2025. {``{Agent S2}: A Compositional
-Generalist-Specialist Framework for Computer Use Agents.''} \emph{arXiv
-Preprint}. \url{https://arxiv.org/abs/2504.00906}.
-
-\bibitem[\citeproctext]{ref-agashe2024agents}
-Agashe, Saaket, Jiuzhou Han, Shuyu Gan, Jiachen Yang, Ang Li, and Xin
-Eric Wang. 2024. {``{Agent S}: An Open Agentic Framework That Uses
-Computers Like a Human.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2410.08164}.
-
-\bibitem[\citeproctext]{ref-agentsmd2025}
-AGENTS.md. 2025. \emph{{AGENTS.md}: A Cross-Vendor Open Standard for
-Agent Instructions}. Linux Foundation. \url{https://agents.md}.
-
-\bibitem[\citeproctext]{ref-agrawal2025gepa}
-Agrawal, Lakshya A., Shangyin Tan, Dilara Soylu, et al. 2025. {``{GEPA}:
-Reflective Prompt Evolution Can Outperform Reinforcement Learning.''}
-\emph{arXiv Preprint}. \url{https://arxiv.org/abs/2507.19457}.
-
-\bibitem[\citeproctext]{ref-alzubi2026evoskill}
-{Alzubi, Salaheddin et al.} 2026. {``{EvoSkill}: Automated Skill
-Discovery for Multi-Agent Systems.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2603.02766}.
-
-\bibitem[\citeproctext]{ref-anthropic2024mcp}
-Anthropic. 2024. \emph{Model Context Protocol Specification}.
-\url{https://modelcontextprotocol.io}.
-
-\bibitem[\citeproctext]{ref-arbuzov2025beyond}
-Arbuzov, Mikhail L., Sisong Bei, Ziwei Dong, Dmitri Kalaev, and Alexey
-A. Shvets. 2025. {``Beyond Exponential Decay: Rethinking Error
-Accumulation in Large Language Models.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2505.24187}.
-
-\bibitem[\citeproctext]{ref-arbuzov2026architecture}
-Arbuzov, Mikhail L., Alexey A. Shvets, and Sisong Bei. 2026. \emph{The
-Architecture of Errors: Logarithmic Mode Discovery and Polylogarithmic
-Intervention Budgets for Long-Context {LLM} Reliability}.
-
-\bibitem[\citeproctext]{ref-cai2026moss}
-Cai, Qianshu, Yonggang Zhang, Xianzhang Jia, et al. 2026. {``{MOSS}:
-Self-Evolution Through Source-Level Rewriting in Autonomous Agent
-Systems.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2605.22794}.
-
-\bibitem[\citeproctext]{ref-cemri2025mast}
-{Cemri, Mert et al.} 2025. {``Why Do Multi-Agent {LLM} Systems Fail?''}
-\emph{arXiv Preprint}. \url{https://arxiv.org/abs/2503.13657}.
-
-\bibitem[\citeproctext]{ref-chen2024automanual}
-Chen, Minghao, Yihang Li, Yanting Yang, Shiyu Yu, Binbin Lin, and
-Xiaofei He. 2024. {``{AutoManual}: Constructing Instruction Manuals by
-{LLM} Agents via Interactive Environmental Learning.''} \emph{Advances
-in Neural Information Processing Systems (NeurIPS)}.
-\url{https://arxiv.org/abs/2405.16247}.
-
-\bibitem[\citeproctext]{ref-chen2025multiagent}
-{Chen, Yixing et al.} 2025. {``Multi-Agent Evolve: {LLM} Self-Improve
-Through Co-Evolution.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2510.23595}.
-
-\bibitem[\citeproctext]{ref-cuadros2026governed}
-Cuadros, Diego F., Abdoul-Aziz Maiga, Helen Meskhidze, and Andre
-Curtis-Trudel. 2026. {``Governed Collaborative Memory as Artificial
-Selection in {LLM}-Based Multi-Agent Systems.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2605.04264}.
-
-\bibitem[\citeproctext]{ref-dohare2024loss}
-{Dohare, Shibhansh et al.} 2024. {``Loss of Plasticity in Deep Continual
-Learning.''} \emph{Nature} 632 (8026): 768--74.
-\url{https://doi.org/10.1038/s41586-024-07711-7}.
-
-\bibitem[\citeproctext]{ref-fawzi2022discovering}
-{Fawzi, Alhussein, Matej Balog, Aja Huang, et al.} 2022. {``Discovering
-Faster Matrix Multiplication Algorithms with Reinforcement Learning.''}
-\emph{Nature} 610 (7930): 47--53.
-
-\bibitem[\citeproctext]{ref-harvey2026}
-Harvey. 2026. \emph{Harvey Product Overview}.
-\url{https://www.harvey.ai}.
-
-\bibitem[\citeproctext]{ref-he2025evotest}
-{He, Yufei et al.} 2025. {``{EvoTest}: Evolutionary Test-Time Learning
-for Self-Improving Agentic Systems.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2510.13220}.
-
-\bibitem[\citeproctext]{ref-hippocratic2026}
-Hippocratic AI. 2026. \emph{Polaris Clinical Outcome Evidence}.
-\url{https://www.hippocraticai.com}.
-
-\bibitem[\citeproctext]{ref-hu2024adas}
-Hu, Shengran, Cong Lu, and Jeff Clune. 2024. {``Automated Design of
-Agentic Systems ({ADAS}).''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2408.08435}.
-
-\bibitem[\citeproctext]{ref-huang2025cascade}
-{Huang, Xu et al.} 2025. {``{CASCADE}: Cumulative Agentic Skill Creation
-Through Autonomous Development and Evolution.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2512.23880}.
-
-\bibitem[\citeproctext]{ref-jaroslawicz2025ifscale}
-{Jaroslawicz, Daniel et al.} 2025. {``How Many Instructions Can {LLMs}
-Follow at Once?''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2507.11538}.
-
-\bibitem[\citeproctext]{ref-kirk2024understanding}
-{Kirk, Robert, Ishita Mediratta, Christoforos Nalmpantis, et al.} 2024.
-{``Understanding the Effects of {RLHF} on {LLM} Generalisation and
-Diversity.''} \emph{ICLR 2024}. \url{https://arxiv.org/abs/2310.06452}.
-
-\bibitem[\citeproctext]{ref-lee2026metaharness}
-Lee, Yoonho, Roshen Nair, Qizheng Zhang, Kangwook Lee, Omar Khattab, and
-Chelsea Finn. 2026. {``{Meta-Harness}: End-to-End Optimization of Model
-Harnesses.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2603.28052}.
-
-\bibitem[\citeproctext]{ref-li2026combee}
-Li, Hanchen, Runyuan He, Qizheng Zhang, et al. 2026. {``{Combee}:
-Scaling Prompt Learning for Self-Improving Language Model Agents.''}
-\emph{arXiv Preprint}. \url{https://arxiv.org/abs/2604.04247}.
-
-\bibitem[\citeproctext]{ref-lin2026ahe}
-Lin, Jiahang, Shichun Liu, Chengjun Pan, et al. 2026. {``Agentic Harness
-Engineering: Observability-Driven Automatic Evolution of Coding-Agent
-Harnesses.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2604.25850}.
-
-\bibitem[\citeproctext]{ref-ling2026pace}
-Ling, Chen, Pei Chen, Albert Guan, et al. 2026. {``{PACE}: Two-Timescale
-Self-Evolution for Small Language Model Agents.''} \emph{arXiv
-Preprint}. \url{https://arxiv.org/abs/2605.23019}.
-
-\bibitem[\citeproctext]{ref-liu2023lostmiddle}
-{Liu, Nelson F. et al.} 2023. {``Lost in the Middle: How Language Models
-Use Long Contexts.''} \emph{Transactions of the Association for
-Computational Linguistics (TACL)}.
-\url{https://arxiv.org/abs/2307.03172}.
-
-\bibitem[\citeproctext]{ref-skillforge2026}
-{Liu, Xingyan et al.} 2026. {``{SkillForge}: Forging Domain-Specific,
-Self-Evolving Agent Skills in Cloud Technical Support.''} \emph{arXiv
-Preprint}. \url{https://arxiv.org/abs/2604.08618}.
-
-\bibitem[\citeproctext]{ref-lulla2026empirical}
-{Lulla, Jai Lal et al.} 2026. {``On the Impact of {AGENTS.md} Files on
-the Efficiency of {AI} Coding Agents.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2601.20404}.
-
-\bibitem[\citeproctext]{ref-lyle2023understanding}
-Lyle, Clare, Zeyu Zheng, Evgenii Nikishin, Bernardo Avila Pires, Razvan
-Pascanu, and Will Dabney. 2023. {``{Understanding Plasticity in Neural
-Networks}.''} \emph{International Conference on Machine Learning
-(ICML)}. \url{https://arxiv.org/abs/2303.01486}.
-
-\bibitem[\citeproctext]{ref-madaan2023selfrefine}
-{Madaan, Aman et al.} 2023. {``Self-Refine: Iterative Refinement with
-Self-Feedback.''} \emph{Advances in Neural Information Processing
-Systems (NeurIPS)}. \url{https://arxiv.org/abs/2303.17651}.
-
-\bibitem[\citeproctext]{ref-ni2026trace2skill}
-{Ni, Jingwei et al.} 2026. {``{Trace2Skill}: Distill Trajectory-Local
-Lessons into Transferable Agent Skills.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2603.25158}.
-
-\bibitem[\citeproctext]{ref-alphaevolve2025}
-{Novikov, Alexander et al.} 2025. \emph{{AlphaEvolve}: A Coding Agent
-for Scientific and Algorithmic Discovery}. arXiv preprint
-arXiv:2506.13131. \url{https://arxiv.org/abs/2506.13131}.
-
-\bibitem[\citeproctext]{ref-ong2026harnesseval}
-Ong, Kai Tzu-iunn, Minseok Kang, Dongwook Choi, et al. 2026. {``Towards
-Direct Evaluation of Harness Optimizers via Priority Ranking.''}
-\emph{arXiv Preprint}. \url{https://arxiv.org/abs/2605.22505}.
-
-\bibitem[\citeproctext]{ref-padmakumar2023diversity}
-Padmakumar, Vishakh, and He He. 2023. {``Does Writing with Language
-Models Reduce Content Diversity?''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2309.05196}.
-
-\bibitem[\citeproctext]{ref-park2023generative}
-{Park, Joon Sung et al.} 2023. {``Generative Agents: Interactive
-Simulacra of Human Behavior.''} \emph{Proceedings of the 36th Annual ACM
-Symposium on User Interface Software and Technology (UIST)}.
-\url{https://arxiv.org/abs/2304.03442}.
-
-\bibitem[\citeproctext]{ref-qu2026coral}
-Qu, Ao, Han Zheng, Zijian Zhou, et al. 2026. {``{CORAL}: Towards
-Autonomous Multi-Agent Evolution for Open-Ended Discovery.''}
-\emph{arXiv Preprint}. \url{https://arxiv.org/abs/2604.01658}.
-
-\bibitem[\citeproctext]{ref-shalev2026ict}
-Shalev, Yuval, Zifeng Ding, and Mateja Jamnik. 2026. {``Training
-Language Agents to Learn from Experience.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2605.20477}.
-
-\bibitem[\citeproctext]{ref-shinn2023reflexion}
-{Shinn, Noah et al.} 2023. {``Reflexion: Language Agents with Verbal
-Reinforcement Learning.''} \emph{Advances in Neural Information
-Processing Systems (NeurIPS)}. \url{https://arxiv.org/abs/2303.11366}.
-
-\bibitem[\citeproctext]{ref-sierra2024}
-Sierra. 2024. \emph{Sierra Agent OS}. \url{https://sierra.ai}.
-
-\bibitem[\citeproctext]{ref-sierra2025os20}
-Sierra. 2025. \emph{Agent {OS} 2.0: From Answers to Memory and Action}.
-\url{https://sierra.ai/blog/agent-os-2-0}.
-
-\bibitem[\citeproctext]{ref-singh2025leaderboard}
-{Singh, Shivalika et al.} 2025. {``The Leaderboard Illusion.''}
-\emph{arXiv Preprint}. \url{https://arxiv.org/abs/2504.20879}.
-
-\bibitem[\citeproctext]{ref-song2026abstral}
-Song, Weijia, Jiashu Yue, and Zhe Pang. 2026. {``{ABSTRAL}: Automatic
-Design of Multi-Agent Systems Through Iterative Refinement and Topology
-Optimization.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2603.22791}.
-
-\bibitem[\citeproctext]{ref-sumers2023coala}
-Sumers, Theodore R., Shunyu Yao, Karthik Narasimhan, and Thomas L.
-Griffiths. 2023. {``Cognitive Architectures for Language Agents
-({CoALA}).''} \emph{Transactions on Machine Learning Research (TMLR)}.
-\url{https://arxiv.org/abs/2309.02427}.
-
-\bibitem[\citeproctext]{ref-tan2024cradle}
-{Tan, Weihao et al.} 2024. {``Cradle: Empowering Foundation Agents
-Towards General Computer Control.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2403.03186}.
-
-\bibitem[\citeproctext]{ref-tanjim2026mocha}
-Tanjim, Md Mehrab, Jayakumar Subramanian, Xiang Chen, et al. 2026.
-{``{MOCHA}: Multi-Objective Chebyshev Annealing for Agent Skill
-Optimization.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2605.19330}.
-
-\bibitem[\citeproctext]{ref-tiwari2026fastandslow}
-Tiwari, Rishabh, Kusha Sareen, Lakshya A. Agrawal, et al. 2026.
-{``Learning, Fast and Slow: Towards {LLMs} That Adapt Continually.''}
-\emph{arXiv Preprint}. \url{https://arxiv.org/abs/2605.12484}.
-
-\bibitem[\citeproctext]{ref-tran2026singleagent}
-Tran, Dat, and Douwe Kiela. 2026. {``Single-Agent {LLMs} Outperform
-Multi-Agent Systems on Multi-Hop Reasoning Under Equal Thinking Token
-Budgets.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2604.02460}.
-
-\bibitem[\citeproctext]{ref-vassilyev2026rcl}
-Vassilyev, Nikita, William Berrios, Ruowang Zhang, Bo Han, Douwe Kiela,
-and Shikib Mehri. 2026. {``Reflective Context Learning: Studying the
-Optimization Primitives of Context Space.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2604.03189}.
-
-\bibitem[\citeproctext]{ref-wang2023voyager}
-{Wang, Guanzhi et al.} 2023. {``Voyager: An Open-Ended Embodied Agent
-with Large Language Models.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2305.16291}.
-
-\bibitem[\citeproctext]{ref-wang2025sage}
-{Wang, Jiongxiao et al.} 2025. {``Reinforcement Learning for
-Self-Improving Agent with Skill Library.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2512.17102}.
-
-\bibitem[\citeproctext]{ref-wang2026autoagent}
-{Wang, Xiaoxing et al.} 2026. {``{AutoAgent}: Evolving Cognition and
-Elastic Memory Orchestration for Adaptive Agents.''} \emph{arXiv
-Preprint}. \url{https://arxiv.org/abs/2603.09716}.
-
-\bibitem[\citeproctext]{ref-cao2025mobile}
-{Wang, Zhenhailong et al.} 2025. {``{Mobile-Agent-E}: Self-Evolving
-Mobile Assistant for Complex Tasks.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2501.11733}.
-
-\bibitem[\citeproctext]{ref-wu2025evolver}
-{Wu, Rong et al.} 2025. {``{EvolveR}: Self-Evolving {LLM} Agents Through
-an Experience-Driven Lifecycle.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2510.16079}.
-
-\bibitem[\citeproctext]{ref-wu2026cosplay}
-{Wu, Xiyang et al.} 2026. {``Co-Evolving {LLM} Decision and Skill Bank
-Agents for Long-Horizon Tasks.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2604.20987}.
-
-\bibitem[\citeproctext]{ref-wu2024oscopilot}
-{Wu, Zhiyong et al.} 2024. {``{OS-Copilot}: Towards Generalist Computer
-Agents with Self-Improvement.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2402.07456}.
-
-\bibitem[\citeproctext]{ref-skillrl2026}
-{Xia, Peng et al.} 2026. {``{SkillRL}: Evolving Agents via Recursive
-Skill-Augmented Reinforcement Learning.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2602.08234}.
-
-\bibitem[\citeproctext]{ref-xu2026nanoresearch}
-{Xu, Jinhang et al.} 2026. {``{NanoResearch}: Co-Evolving Skills,
-Memory, and Policy for Personalized Research Automation.''} \emph{arXiv
-Preprint}. \url{https://arxiv.org/abs/2605.10813}.
-
-\bibitem[\citeproctext]{ref-xu2026mcfa}
-{Xu, Zhenlin et al.} 2026. {``From Storage to Steering: Memory Control
-Flow Attacks on {LLM} Agents.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2603.15125}.
-
-\bibitem[\citeproctext]{ref-yang2026skillopt}
-Yang, Yifan, Ziyang Gong, Weiquan Huang, et al. 2026. \emph{{SkillOpt}:
-Executive Strategy for Self-Evolving Agent Skills}. arXiv preprint
-arXiv:2605.23904. \url{https://microsoft.github.io/SkillOpt}.
-
-\bibitem[\citeproctext]{ref-yao2023react}
-Yao, Shunyu, Jeffrey Zhao, Dian Yu, et al. 2023. {``{ReAct}: Synergizing
-Reasoning and Acting in Language Models.''} \emph{International
-Conference on Learning Representations (ICLR)}.
-\url{https://arxiv.org/abs/2210.03629}.
-
-\bibitem[\citeproctext]{ref-yuksekgonul2024textgrad}
-Yuksekgonul, Mert, Federico Bianchi, Joseph Boen, et al. 2024.
-{``{TextGrad}: Automatic {`Differentiation'} via Text.''} \emph{arXiv
-Preprint}. \url{https://arxiv.org/abs/2406.07496}.
-
-\bibitem[\citeproctext]{ref-zehle2026cantante}
-Zehle, Tom. 2026. {``{CANTANTE}: Optimizing Agentic Systems via
-Contrastive Credit Attribution.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2605.13295}.
-
-\bibitem[\citeproctext]{ref-zhang2026coevoskills}
-{Zhang, Hanrong et al.} 2026. {``{CoEvoSkills}: Self-Evolving Agent
-Skills via Co-Evolutionary Verification.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2604.01687}.
-
-\bibitem[\citeproctext]{ref-zhang2025darwin}
-{Zhang, Jenny et al.} 2025. {``Darwin {Gödel} Machine: Open-Ended
-Evolution of Self-Improving Agents.''} \emph{arXiv Preprint}.
-\url{https://arxiv.org/abs/2505.22954}.
-
-\bibitem[\citeproctext]{ref-ace2025agentic}
-{Zhang, Qizheng, Changran Hu, Shubhangi Upasani, et al.} 2025.
-\emph{Agentic Context Engineering: Evolving Contexts for Self-Improving
-Language Models}. arXiv preprint arXiv:2510.04618.
-\url{https://arxiv.org/abs/2510.04618}.
-
-\bibitem[\citeproctext]{ref-zhang2026ratchet}
-Zhang, Xing, Yanwei Cui, Guanghui Wang, et al. 2026. {``{Ratchet}: A
-Minimal Hygiene Recipe for Self-Evolving {LLM} Agents.''} \emph{arXiv
-Preprint}. \url{https://arxiv.org/abs/2605.22148}.
-
-\bibitem[\citeproctext]{ref-zhou2026survey}
-{Zhou, Yingli, Wang Shu, Yaodong Su, et al.} 2026. {``A Comprehensive
-Survey on Agent Skills: Taxonomy, Techniques, and Applications.''}
-\emph{arXiv Preprint}. \url{https://arxiv.org/abs/2605.07358}.
-
-\bibitem[\citeproctext]{ref-zou2024poisonedrag}
-{Zou, Wei et al.} 2024. {``{PoisonedRAG}: Knowledge Corruption Attacks
-to Retrieval-Augmented Generation of Large Language Models.''}
-\emph{arXiv Preprint}. \url{https://arxiv.org/abs/2402.07867}.
-
-\end{CSLReferences}
-
-\end{document}

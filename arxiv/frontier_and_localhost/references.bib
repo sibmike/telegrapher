@@ -1,6 +1,6 @@
 % Bibliography for "Frontier and Localhost: How Production AI Learns
 % Outside the Weights"
-% Arbuzov, Shvets, Bei (2026). Part 3 of a series following
+% Arbuzov, Mosbacker, Bei, Dong, Kalaev, Shvets (2026). Part 3 of a series following
 % arXiv:2505.24187 and *The Architecture of Errors* (Part 2).
 %
 % Citation keys follow author-year-firstword for legibility, matching
@@ -12,11 +12,22 @@
 % workflow without information loss.
 %
 % Last verified: every arXiv-bearing entry below was checked against the
-% arXiv abstract page in May 2026. Earlier versions of this file carried
-% multiple hallucinated first-author names, two wrong arXiv IDs, and
-% one entirely-wrong paper (Memento-Skills at 2604.02460). All known
-% issues identified in the May 2026 citation audit have been resolved
-% or marked with explicit TODO notes below.
+% arXiv abstract page. Earlier versions of this file carried multiple
+% hallucinated first-author names, two wrong arXiv IDs, and one
+% entirely-wrong paper (Memento-Skills at 2604.02460).
+%
+% June 2026 re-audit: independently re-verified all author lists against
+% the arXiv abstract pages. Corrected 13 entries whose given names were
+% hallucinated while surname + first initial happened to match the true
+% authors (cai2026moss, ong2026harnesseval, li2026combee, lin2026ahe,
+% ling2026pace, qu2026coral, lee2026metaharness, shalev2026ict,
+% tiwari2026fastandslow, tanjim2026mocha, vassilyev2026rcl,
+% zehle2026cantante, zhang2026ratchet). Removed 4 entries uncited anywhere in
+% this (long) manuscript: newell1990unified, press2022measuring,
+% harada2025curse, jiang2025adaptation. Three survey entries (gao2026survey,
+% fang2025comprehensive, du2026memory) are RETAINED here -- unlike the short
+% version, the long version cites them in its Section 3 adjacent-literature
+% positioning paragraph. gao2026survey's TMLR (01/2026) venue is confirmed.
 
 % ---------------------------------------------------------------------
 % A
@@ -55,6 +66,16 @@
   url          = {https://modelcontextprotocol.io},
 }
 
+@article{agrawal2025gepa,
+  author       = {Agrawal, Lakshya A. and Tan, Shangyin and Soylu, Dilara and Ziems, Noah and Khare, Rishi and Opsahl-Ong, Krista and Singhvi, Arnav and Shandilya, Herumb and Ryan, Michael J. and Jiang, Meng and Potts, Christopher and Sen, Koushik and Dimakis, Alexandros G. and Stoica, Ion and Klein, Dan and Zaharia, Matei and Khattab, Omar},
+  title        = {{GEPA}: Reflective Prompt Evolution Can Outperform Reinforcement Learning},
+  journal      = {arXiv preprint},
+  year         = {2025},
+  eprint       = {2507.19457},
+  archivePrefix = {arXiv},
+  note         = {Figures cited from the current arXiv version (six tasks, 6\% average); an earlier version reported four tasks and a 10\% average.},
+}
+
 @article{arbuzov2025beyond,
   author       = {Arbuzov, Mikhail L. and Bei, Sisong and Dong, Ziwei and Kalaev, Dmitri and Shvets, Alexey A.},
   title        = {Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models},
@@ -75,6 +96,15 @@
 % C
 % ---------------------------------------------------------------------
 
+@article{cai2026moss,
+  author       = {Cai, Qianshu and Zhang, Yonggang and Jia, Xianzhang and Zheng, Huajiang and Xue, Wei and Song, Jun and Tian, Xinmei and Guo, Yike},
+  title        = {{MOSS}: Self-Evolution through Source-Level Rewriting in Autonomous Agent Systems},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2605.22794},
+  archivePrefix = {arXiv},
+}
+
 @inproceedings{chen2024automanual,
   author       = {Chen, Minghao and Li, Yihang and Yang, Yanting and Yu, Shiyu and Lin, Binbin and He, Xiaofei},
   title        = {{AutoManual}: Constructing Instruction Manuals by {LLM} Agents via Interactive Environmental Learning},
@@ -84,7 +114,7 @@
   archivePrefix = {arXiv},
 }
 
-@inproceedings{agashe2024agents,
+@article{agashe2024agents,
   author       = {Agashe, Saaket and Han, Jiuzhou and Gan, Shuyu and Yang, Jiachen and Li, Ang and Wang, Xin Eric},
   title        = {{Agent S}: An Open Agentic Framework That Uses Computers Like a Human},
   journal      = {arXiv preprint},
@@ -119,7 +149,6 @@
   year         = {2026},
   eprint       = {2605.04264},
   archivePrefix = {arXiv},
-  note         = {Body text refers to the system as SSGM; the paper itself does not use that acronym.},
 }
 
 @article{cao2025mobile,
@@ -145,29 +174,12 @@
   number       = {8026},
   pages        = {768--774},
   year         = {2024},
-}
-
-@article{du2026memory,
-  author       = {Du, Pengfei},
-  title        = {Memory for Autonomous {LLM} Agents: Mechanisms, Evaluation, and Emerging Frontiers},
-  journal      = {arXiv preprint},
-  year         = {2026},
-  eprint       = {2603.07670},
-  archivePrefix = {arXiv},
+  doi          = {10.1038/s41586-024-07711-7},
 }
 
 % ---------------------------------------------------------------------
 % F
 % ---------------------------------------------------------------------
-
-@article{fang2025comprehensive,
-  author       = {Fang, Jinyuan and Peng, Yanwen and Zhang, Xi and others},
-  title        = {A Comprehensive Survey of Self-Evolving {AI} Agents: A New Paradigm Bridging Foundation Models and Lifelong Agentic Systems},
-  journal      = {arXiv preprint},
-  year         = {2025},
-  eprint       = {2508.07407},
-  archivePrefix = {arXiv},
-}
 
 @article{fawzi2022discovering,
   author       = {Fawzi, Alhussein and Balog, Matej and Huang, Aja and others},
@@ -181,29 +193,8 @@
 }
 
 % ---------------------------------------------------------------------
-% G
-% ---------------------------------------------------------------------
-
-@article{gao2026survey,
-  author       = {Gao, Huan-ang and Geng, Jiayi and Hua, Wenyue and others},
-  title        = {A Survey of Self-Evolving Agents: What, When, How, and Where to Evolve on the Path to Artificial Super Intelligence},
-  journal      = {Transactions on Machine Learning Research (TMLR)},
-  year         = {2026},
-  eprint       = {2507.21046},
-  archivePrefix = {arXiv},
-}
-
-% ---------------------------------------------------------------------
 % H
 % ---------------------------------------------------------------------
-
-@inproceedings{harada2025curse,
-  author       = {Harada, Keno and others},
-  title        = {Curse of Instructions: Large Language Models Cannot Follow Multiple Instructions at Once},
-  booktitle    = {International Conference on Learning Representations (ICLR)},
-  year         = {2025},
-  url          = {https://openreview.net/forum?id=R6q67CDBCH},
-}
 
 @misc{harvey2026,
   author       = {{Harvey}},
@@ -251,15 +242,6 @@
   note         = {Introduces the IFScale benchmark.},
 }
 
-@article{jiang2025adaptation,
-  author       = {Jiang, Pengcheng and Lin, Jiacheng and Shi, Zhiyi and others},
-  title        = {Adaptation of Agentic {AI}: A Survey of Post-Training, Memory, and Skills},
-  journal      = {arXiv preprint},
-  year         = {2025},
-  eprint       = {2512.16301},
-  archivePrefix = {arXiv},
-}
-
 % ---------------------------------------------------------------------
 % K
 % ---------------------------------------------------------------------
@@ -276,6 +258,42 @@
 % ---------------------------------------------------------------------
 % L
 % ---------------------------------------------------------------------
+
+@article{lee2026metaharness,
+  author       = {Lee, Yoonho and Nair, Roshen and Zhang, Qizheng and Lee, Kangwook and Khattab, Omar and Finn, Chelsea},
+  title        = {{Meta-Harness}: End-to-End Optimization of Model Harnesses},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2603.28052},
+  archivePrefix = {arXiv},
+}
+
+@article{li2026combee,
+  author       = {Li, Hanchen and He, Runyuan and Zhang, Qizheng and Ji, Changxiu and Mang, Qiuyang and Chen, Xiaokun and Agrawal, Lakshya A. and Liao, Wei-Liang and Yang, Eric and Cheung, Alvin and Zou, James and Olukotun, Kunle and Stoica, Ion and Gonzalez, Joseph E.},
+  title        = {{Combee}: Scaling Prompt Learning for Self-Improving Language Model Agents},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2604.04247},
+  archivePrefix = {arXiv},
+}
+
+@article{lin2026ahe,
+  author       = {Lin, Jiahang and Liu, Shichun and Pan, Chengjun and Lin, Lizhi and Dou, Shihan and Xi, Zhiheng and Huang, Xuanjing and Yan, Hang and Han, Zhenhua and Gui, Tao and Jiang, Yu-Gang},
+  title        = {Agentic Harness Engineering: Observability-Driven Automatic Evolution of Coding-Agent Harnesses},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2604.25850},
+  archivePrefix = {arXiv},
+}
+
+@article{ling2026pace,
+  author       = {Ling, Chen and Chen, Pei and Guan, Albert and Qu, Jiaming and Akbar, Shayan Ali and Gopinathan, Madhu and Cornejo, Erwin},
+  title        = {{PACE}: Two-Timescale Self-Evolution for Small Language Model Agents},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2605.23019},
+  archivePrefix = {arXiv},
+}
 
 @article{liu2023lostmiddle,
   author       = {Liu, Nelson F. and others},
@@ -306,7 +324,7 @@
 
 @inproceedings{lyle2023understanding,
   author       = {Lyle, Clare and Zheng, Zeyu and Nikishin, Evgenii and Avila Pires, Bernardo and Pascanu, Razvan and Dabney, Will},
-  title        = {Understanding Plasticity in Neural Networks},
+  title        = {{Understanding Plasticity in Neural Networks}},
   booktitle    = {International Conference on Machine Learning (ICML)},
   year         = {2023},
   eprint       = {2303.01486},
@@ -328,17 +346,18 @@
 }
 
 % ---------------------------------------------------------------------
-% N
+% O
 % ---------------------------------------------------------------------
 
-@book{newell1990unified,
-  author       = {Newell, Allen},
-  title        = {Unified Theories of Cognition},
-  publisher    = {Harvard University Press},
-  year         = {1990},
+@article{ong2026harnesseval,
+  author       = {Ong, Kai Tzu-iunn and Kang, Minseok and Choi, Dongwook and Cho, Junhee and Kim, Seungju and Lim, Seungwon and Jang, Geunha and Oh, Minwoo and Jeong, Bogyung and Kim, Sunghwan and Kwon, Taeyoon and Yeo, Jinyoung},
+  title        = {Towards Direct Evaluation of Harness Optimizers via Priority Ranking},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2605.22505},
+  archivePrefix = {arXiv},
 }
 
-% ---------------------------------------------------------------------
 % ---------------------------------------------------------------------
 % P
 % ---------------------------------------------------------------------
@@ -361,18 +380,31 @@
   archivePrefix = {arXiv},
 }
 
-@article{press2022measuring,
-  author       = {Press, Ofir and others},
-  title        = {Measuring and Narrowing the Compositionality Gap in Language Models},
+% ---------------------------------------------------------------------
+% Q
+% ---------------------------------------------------------------------
+
+@article{qu2026coral,
+  author       = {Qu, Ao and Zheng, Han and Zhou, Zijian and Yan, Yihao and Tang, Yihong and Ong, Shao Yong and Hong, Fenglu and Zhou, Kaichen and Jiang, Chonghe and Kong, Minwei and Zhu, Jiacheng and Jiang, Xuan and Li, Sirui and Wu, Cathy and Low, Bryan Kian Hsiang and Zhao, Jinhua and Liang, Paul Pu},
+  title        = {{CORAL}: Towards Autonomous Multi-Agent Evolution for Open-Ended Discovery},
   journal      = {arXiv preprint},
-  year         = {2022},
-  eprint       = {2210.03350},
+  year         = {2026},
+  eprint       = {2604.01658},
   archivePrefix = {arXiv},
 }
 
 % ---------------------------------------------------------------------
 % S
 % ---------------------------------------------------------------------
+
+@article{shalev2026ict,
+  author       = {Shalev, Yuval and Ding, Zifeng and Jamnik, Mateja},
+  title        = {Training Language Agents to Learn from Experience},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2605.20477},
+  archivePrefix = {arXiv},
+}
 
 @inproceedings{shinn2023reflexion,
   author       = {Shinn, Noah and others},
@@ -448,6 +480,24 @@
   archivePrefix = {arXiv},
 }
 
+@article{tanjim2026mocha,
+  author       = {Tanjim, Md Mehrab and Subramanian, Jayakumar and Chen, Xiang and Kveton, Branislav and Mukherjee, Subhojyoti and Zhang, Anlan and Kim, Sungchul and Sarkhel, Somdeb and Choudhury, Sunav},
+  title        = {{MOCHA}: Multi-Objective Chebyshev Annealing for Agent Skill Optimization},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2605.19330},
+  archivePrefix = {arXiv},
+}
+
+@article{tiwari2026fastandslow,
+  author       = {Tiwari, Rishabh and Sareen, Kusha and Agrawal, Lakshya A. and Gonzalez, Joseph E. and Zaharia, Matei and Keutzer, Kurt and Dhillon, Inderjit S. and Agarwal, Rishabh and Khatri, Devvrit},
+  title        = {Learning, Fast and Slow: Towards {LLMs} that Adapt Continually},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2605.12484},
+  archivePrefix = {arXiv},
+}
+
 @article{tran2026singleagent,
   author       = {Tran, Dat and Kiela, Douwe},
   title        = {Single-Agent {LLMs} Outperform Multi-Agent Systems on Multi-Hop Reasoning Under Equal Thinking Token Budgets},
@@ -456,6 +506,19 @@
   eprint       = {2604.02460},
   archivePrefix = {arXiv},
   note         = {Replaces the previous (hallucinated) "Memento-Skills" entry that mis-attributed this arXiv ID. The actual paper at this ID is a contrast finding: single-agent baselines match or beat multi-agent systems under matched thinking-token budgets.},
+}
+
+% ---------------------------------------------------------------------
+% V
+% ---------------------------------------------------------------------
+
+@article{vassilyev2026rcl,
+  author       = {Vassilyev, Nikita and Berrios, William and Zhang, Ruowang and Han, Bo and Kiela, Douwe and Mehri, Shikib},
+  title        = {Reflective Context Learning: Studying the Optimization Primitives of Context Space},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2604.03189},
+  archivePrefix = {arXiv},
 }
 
 % ---------------------------------------------------------------------
@@ -533,8 +596,32 @@
 }
 
 % ---------------------------------------------------------------------
+% Y
+% ---------------------------------------------------------------------
+
+@misc{yang2026skillopt,
+  author       = {Yang, Yifan and Gong, Ziyang and Huang, Weiquan and Yang, Qihao and Zhou, Ziwei and Huang, Zisu and Li, Yan and Gao, Xuemei and Dai, Qi and Liu, Bei and Qiu, Kai and Yang, Yuqing and Chen, Dongdong and Yang, Xue and Luo, Chong},
+  title        = {{SkillOpt}: Executive Strategy for Self-Evolving Agent Skills},
+  year         = {2026},
+  eprint       = {2605.23904},
+  archivePrefix = {arXiv},
+  howpublished = {arXiv preprint arXiv:2605.23904},
+  url          = {https://microsoft.github.io/SkillOpt},
+  note         = {Microsoft, Shanghai Jiao Tong University, Tongji University, Fudan University. Beats TextGrad, GEPA, Trace2Skill, and EvoSkill baselines on 52/52 evaluated cells.},
+}
+
+% ---------------------------------------------------------------------
 % Z
 % ---------------------------------------------------------------------
+
+@article{zehle2026cantante,
+  author       = {Zehle, Tom},
+  title        = {{CANTANTE}: Optimizing Agentic Systems via Contrastive Credit Attribution},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2605.13295},
+  archivePrefix = {arXiv},
+}
 
 @article{zhang2025darwin,
   author       = {Zhang, Jenny and others},
@@ -544,6 +631,15 @@
   eprint       = {2505.22954},
   archivePrefix = {arXiv},
   note         = {Referenced as DGM in body text.},
+}
+
+@article{zhang2026ratchet,
+  author       = {Zhang, Xing and Cui, Yanwei and Wang, Guanghui and Li, Ziyuan and Qiu, Wei and Zhu, Bing and He, Peiyang},
+  title        = {{Ratchet}: A Minimal Hygiene Recipe for Self-Evolving {LLM} Agents},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2605.22148},
+  archivePrefix = {arXiv},
 }
 
 @article{zhang2026coevoskills,
@@ -582,4 +678,99 @@
   eprint       = {2402.07867},
   archivePrefix = {arXiv},
   note         = {Accepted at USENIX Security 2025.},
+}
+
+% ---------------------------------------------------------------------
+% Baselines and foundational methods cited in the body (esp. Appendix D/G
+% contrast sets), added June 2026 during the BibTeX migration. Each was
+% verified against its arXiv abstract page; co-author given names are
+% abbreviated to "and others" where not individually verified, to avoid
+% the given-name hallucination failure mode.
+% ---------------------------------------------------------------------
+
+@inproceedings{yao2023react,
+  author       = {Yao, Shunyu and Zhao, Jeffrey and Yu, Dian and Du, Nan and Shafran, Izhak and Narasimhan, Karthik and Cao, Yuan},
+  title        = {{ReAct}: Synergizing Reasoning and Acting in Language Models},
+  booktitle    = {International Conference on Learning Representations (ICLR)},
+  year         = {2023},
+  eprint       = {2210.03629},
+  archivePrefix = {arXiv},
+}
+
+@article{yuksekgonul2024textgrad,
+  author       = {Yuksekgonul, Mert and Bianchi, Federico and Boen, Joseph and Liu, Sheng and Huang, Zhi and Guestrin, Carlos and Zou, James},
+  title        = {{TextGrad}: Automatic ``Differentiation'' via Text},
+  journal      = {arXiv preprint},
+  year         = {2024},
+  eprint       = {2406.07496},
+  archivePrefix = {arXiv},
+}
+
+@article{ni2026trace2skill,
+  author       = {Ni, Jingwei and others},
+  title        = {{Trace2Skill}: Distill Trajectory-Local Lessons into Transferable Agent Skills},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2603.25158},
+  archivePrefix = {arXiv},
+}
+
+@article{alzubi2026evoskill,
+  author       = {Alzubi, Salaheddin and others},
+  title        = {{EvoSkill}: Automated Skill Discovery for Multi-Agent Systems},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2603.02766},
+  archivePrefix = {arXiv},
+}
+
+@article{song2026abstral,
+  author       = {Song, Weijia and Yue, Jiashu and Pang, Zhe},
+  title        = {{ABSTRAL}: Automatic Design of Multi-Agent Systems Through Iterative Refinement and Topology Optimization},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2603.22791},
+  archivePrefix = {arXiv},
+}
+
+@article{he2025evotest,
+  author       = {He, Yufei and others},
+  title        = {{EvoTest}: Evolutionary Test-Time Learning for Self-Improving Agentic Systems},
+  journal      = {arXiv preprint},
+  year         = {2025},
+  eprint       = {2510.13220},
+  archivePrefix = {arXiv},
+}
+
+% ---------------------------------------------------------------------
+% Adjacent-literature surveys cited in the long version's Section 3
+% positioning paragraph (retained here though removed from the short
+% version, which does not cite them).
+% ---------------------------------------------------------------------
+
+@article{du2026memory,
+  author       = {Du, Pengfei},
+  title        = {Memory for Autonomous {LLM} Agents: Mechanisms, Evaluation, and Emerging Frontiers},
+  journal      = {arXiv preprint},
+  year         = {2026},
+  eprint       = {2603.07670},
+  archivePrefix = {arXiv},
+}
+
+@article{fang2025comprehensive,
+  author       = {Fang, Jinyuan and Peng, Yanwen and Zhang, Xi and others},
+  title        = {A Comprehensive Survey of Self-Evolving {AI} Agents: A New Paradigm Bridging Foundation Models and Lifelong Agentic Systems},
+  journal      = {arXiv preprint},
+  year         = {2025},
+  eprint       = {2508.07407},
+  archivePrefix = {arXiv},
+}
+
+@article{gao2026survey,
+  author       = {Gao, Huan-ang and Geng, Jiayi and Hua, Wenyue and others},
+  title        = {A Survey of Self-Evolving Agents: What, When, How, and Where to Evolve on the Path to Artificial Super Intelligence},
+  journal      = {Transactions on Machine Learning Research (TMLR)},
+  year         = {2026},
+  eprint       = {2507.21046},
+  archivePrefix = {arXiv},
 }

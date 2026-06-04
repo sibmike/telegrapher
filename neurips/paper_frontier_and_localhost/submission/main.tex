@@ -1,0 +1,105 @@
+\documentclass{article}
+
+% NeurIPS 2026 preprint form: author names visible, no line numbers,
+% no "Submitted to ..." footer. For the anonymized double-blind
+% submission package use \usepackage{neurips_2026} without [preprint];
+% for the camera-ready, use \usepackage[final]{neurips_2026}.
+\usepackage[preprint]{neurips_2026}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{newunicodechar}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{longtable}     % pandoc renders the survey/contrast tables as longtables
+\usepackage{array}
+\usepackage{calc}          % provides \real{} used in pandoc longtable column widths
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+% --- pandoc-fragment support macros (the body is a pandoc fragment, so the
+% helper definitions pandoc normally puts in its standalone template must be
+% supplied here) ---
+% Caption-less longtables: pandoc emits \def\LTcaptype{none}; define the counter
+% so longtable's \refstepcounter{\LTcaptype} is a harmless no-op under pdflatex.
+\makeatletter
+\@ifundefined{c@none}{\newcounter{none}}{}
+\makeatother
+% Tight (compact) list spacing used by pandoc.
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% This NeurIPS version is a format-only port of the arXiv "short" version
+% (../../arxiv/frontier_and_localhost/short/). The body is generated from that
+% Markdown via pandoc --natbib (\citep/\citet), so we preserve the source's
+% manual section numbering rather than re-numbering: LaTeX adds no section
+% numbers of its own, and the numbers shown ("3.5", "Appendix G.8", ...) come
+% from the heading text. This keeps every literal "S3.5 / Appendix G" cross
+% reference in the prose valid with zero renumbering.
+\setcounter{secnumdepth}{0}
+
+% Non-ASCII glyphs the pandoc body uses, mapped for pdflatex.
+\newunicodechar{§}{\S{}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{†}{\textdagger{}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{−}{\ensuremath{-}}
+\newunicodechar{∘}{\ensuremath{\circ}}
+
+\title{Frontier and Localhost:\\How Production AI Learns Outside the Weights}
+
+\author{%
+  Mikhail L. Arbuzov\\
+  Independent Researcher\\
+  \texttt{mike.arbuzov54@gmail.com}\\
+  \And
+  Lee Mosbacker\\
+  Independent Researcher\\
+  \texttt{lee.mosbacker@gmail.com}\\
+  \And
+  Sisong Bei\\
+  Independent Researcher\\
+  \texttt{qurining@gmail.com}\\
+  \AND
+  Ziwei Dong\\
+  Independent Researcher\\
+  \texttt{ziwei.dong@alumni.emory.edu}\\
+  \And
+  Dmitri Kalaev\\
+  Independent Researcher\\
+  \texttt{kalaevdr@gmail.com}\\
+  \And
+  Alexey A. Shvets\\
+  Palo Alto Networks\\
+  \texttt{ashvets@paloaltonetworks.com}\\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Production LLM systems increasingly adapt outside the model weights. After deployment failures, teams modify prompts, rules, memories, skills, tools, eval suites, routing graphs, and governance pipelines on a cadence that frontier weight updates cannot match. But this scaffold layer is still mostly maintained as \emph{patchwork}: fixes are proposed by intuition, committed with weak credit assignment, accumulated without pruning, and promoted beyond the scope where they were validated. This paper formalises a disciplined alternative, which we call \emph{artifact-layer descent}. The pipeline is concrete. Recurring residuals are assigned to scaffold coordinates. Candidate artifact deltas are tested against patch loss. Accepted deltas persist with rollback. Promotion across contexts is bounded by \emph{evidence radius}: a local fix spreads only as far as the evidence supports. Surveying approximately 130 production and research systems from 2023 to 2026, we find current systems partially instantiate this loop but leave a central architecture gap, namely governed scaffold optimization across contexts. The contribution is not the claim that prompts are weights. It is to name the missing optimizer for an adaptation layer the field has already built.
+\end{abstract}
+
+\input{body.tex}
+
+\nocite{*}
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+% NeurIPS paper checklist suppressed in this format-ready artifact.
+% Uncomment the two lines below at actual submission time (the
+% checklist file `checklist.tex` is filled and kept in the repo).
+% \newpage
+% \input{checklist.tex}
+
+\end{document}
