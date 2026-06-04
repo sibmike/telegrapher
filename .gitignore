@@ -57,3 +57,6 @@ error_files/
 
 # Internal working notes — harvests, plans, theorem drafts. Not for the public repo.
 /internal/
+
+# Style working docs (paper style guide + final-pass checklist). Local-only, not published.
+/style/

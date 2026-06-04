@@ -148,14 +148,15 @@ discipline this paper formalises) \\
 \end{longtable}
 }
 
-The paper's central claim is not that modern AI systems are doing
-stochastic descent. They mostly are not. The claim is that they
-\emph{become so} once the patchwork loop is instrumented with measurable
-patch loss, residual capture, failure-to-coordinate credit assignment,
-candidate delta synthesis, and a gate that estimates directional loss
-change before persistence or promotion. The survey of §§5--8 asks which
-deployed systems have closed which of those five steps. §9 names the
-closure that no public system has yet achieved.
+The paper's central claim is not that today's production systems already
+run this loop. Most do not. The claim is that a patchwork loop
+\emph{becomes} artifact-layer descent once five pieces are in place: a
+measurable patch loss, captured residuals, a failure traced back to the
+scaffold coordinate that caused it, a synthesised candidate edit, and a
+gate that checks whether the edit actually lowers loss before it is kept
+or promoted. The survey of §§5--8 asks which deployed systems have
+closed which of those five steps. §9 names the one closure no public
+system has yet reached.
 
 \subsection{3. Artifact-layer descent}\label{artifact-layer-descent}
 
@@ -179,12 +180,12 @@ prune, and fixes leak into broader contexts. This is patchwork (Stage 1
 of §2), not stochastic descent. Even systems with eval-gated CI (Stage
 2) usually lack failure-to-coordinate credit assignment, so improvements
 are real but unattributed and brittle to transfer. Scaffold updates
-\emph{become} stochastic descent (Stage 3) only when the patchwork loop
-is instrumented with five things: measurable patch loss, residual
-capture, failure-to-coordinate credit assignment, candidate delta
-synthesis, and a gate that estimates directional loss change before
-persistence or promotion. The descent picture below is mechanism when
-those five conditions hold, and modeling language otherwise.
+\emph{become} stochastic descent (Stage 3) only when five pieces are in
+place: a measurable patch loss; captured residuals; a failure traced
+back to the scaffold coordinate that caused it; a synthesised candidate
+edit; and a gate that checks whether the edit lowers loss before it is
+kept or promoted. The descent picture below is mechanism when those five
+conditions hold, and modeling language otherwise.
 
 \textbf{Two loops, in plain English first.} \emph{Loop 1} is the local
 fix: a failure produces a candidate edit, the edit is tested, the
@@ -293,15 +294,15 @@ cascade). They are \textbf{Human-gated} when the decision is reviewer
 judgment. They are \textbf{None} when the loop is absent. These five
 terms (Loop 1, Loop 2, Auto-gated, Human-gated, None) anchor §§5--9.
 
-The descent argument is \emph{mechanism} when five conditions hold:
-measurable patch loss, residual capture, failure-to-coordinate credit
-assignment, candidate delta synthesis, and a gate that estimates
-directional loss change before persistence or promotion. It is
-\emph{metaphor} when those conditions are absent. Appendix E formalises
-the assumptions A1--A5 needed for a one-step descent inequality and a
-convergence proposition of the loss to a \(G\)-stable scaffold, and
-works through the RAG, pitch-review, tool-use, and memory cases that
-make the mechanism visible.
+The descent argument is \emph{mechanism} when five conditions hold: a
+measurable patch loss; captured residuals; a failure traced back to the
+scaffold coordinate that caused it; a synthesised candidate edit; and a
+gate that checks whether the edit lowers loss before it is kept or
+promoted. It is \emph{metaphor} when those conditions are absent.
+Appendix E formalises the assumptions A1--A5 needed for a one-step
+descent inequality and a convergence proposition of the loss to a
+\(G\)-stable scaffold, and works through the RAG, pitch-review,
+tool-use, and memory cases that make the mechanism visible.
 
 \subsection{3.5. SkillOpt and the convergence on artifact-layer
 descent}\label{skillopt-and-the-convergence-on-artifact-layer-descent}
@@ -310,11 +311,11 @@ The §3 picture is mechanism when the five conditions hold and metaphor
 otherwise. Recent work has begun to operationalise all five for
 skill-document adaptation. SkillOpt \citep{yang2026skillopt} is the
 clearest case: it treats a single markdown skill document as the
-trainable external state of a frozen agent and edits it with explicit
-deep-learning-style controls --- rollout batches, reflection
-minibatches, add/delete/replace edits, a textual learning-rate budget
-with cosine decay, a held-out selection-split accept gate, a
-rejected-edit buffer that retains failed proposals as negative feedback,
+trainable external state of a frozen agent and edits it with seven
+explicit deep-learning-style controls: rollout batches; reflection
+minibatches; add/delete/replace edits; a textual learning-rate budget
+with cosine decay; a held-out selection-split accept gate; a
+rejected-edit buffer that keeps failed proposals as negative feedback;
 and an epoch-wise slow/meta update for longer-horizon consolidation.
 SkillOpt's introduction and method make the same operational analogy
 explicit (parameter → skill document; gradient → trajectory-derived edit
@@ -965,16 +966,16 @@ member yet provides (b) or (d) under any governance regime. The full
 enumeration is in Appendix F.
 
 In ML terms, what is missing is a privacy-preserving cross-tenant
-aggregator with an automated eval gate at the scaffold layer. The
-architecture would carry per-tenant artifact pools with tenant-tagged
-provenance, aggregation across tenants with operator-tunable privacy
-bounds, an automated eval gate blocking promotion when patch loss does
-not decrease, versioned lineage with RBAC, and a rollback envelope on
-every promoted artifact. The DP-FedAvg framing from the
-federated-learning literature is a useful analogy for this target, but
-only if artifacts are first embedded as mergeable update
-representations. In surveyed practice, Loop 2 is selection and review
-rather than parameter averaging.
+aggregator with an automated eval gate at the scaffold layer. Such an
+architecture would carry five parts: per-tenant artifact pools, each
+tagged with where its artifacts came from; a way to aggregate across
+tenants that the operator can tune for privacy; an automated eval gate
+that blocks a promotion whenever it does not lower patch loss; versioned
+lineage with RBAC; and a rollback envelope on every promoted artifact.
+The DP-FedAvg framing from the federated-learning literature is a useful
+analogy for this target, but only if artifacts are first embedded as
+mergeable update representations. In surveyed practice, Loop 2 is
+selection and review rather than parameter averaging.
 
 Naming the missing architecture converts a vague gap into a
 four-property audit criterion that any future system can be measured
