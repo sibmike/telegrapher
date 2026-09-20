@@ -1,11 +1,11 @@
 # Frontier and Localhost — short version
 
-Compressed version of *Frontier and Localhost: How Production AI Learns Outside the Weights* (Arbuzov, Shvets & Bei, 2026).
+Canonical version of *Frontier and Localhost: How Production AI Learns Outside the Weights* (Arbuzov, Mosbacker, Bei, Dong, Kalaev & Shvets, 2026). Current revision: **v3.2** (September 2026).
 
-- **Long version** (26 pages): `../paper_frontier_and_localhost.pdf` — full v2 with reviewer-fix revisions.
-- **Short version** (this directory, 21 pages total, ~6.5-page body): `paper_frontier_and_localhost_short.pdf` — body fitted under a 9-page budget; appendices unconstrained.
+- **Short version** (this directory, 42 pages total): `paper_frontier_and_localhost_short.pdf` — the canonical text for reading and citation; three figures; literature refresh through September 2026.
+- **Long version** (43 pages): `../paper_frontier_and_localhost.pdf` — earlier superset with extra survey breadth; carries the v3.2 mechanical fixes (counts, citations, spelling, notation) but not the refresh, the figures, or the structural edits.
 
-Both versions share the same survey audit trail in `supplementary/` (copied identically). Either bundle is independently submittable to arXiv.
+Both versions share the same survey audit trail in `supplementary/` (copied identically). Either bundle is independently submittable to arXiv; the short bundle (`paper_frontier_and_localhost_short.zip`) now also ships `figures/*.pdf`.
 
 ## What is in the body vs. in the appendices
 
@@ -15,14 +15,14 @@ The short version compresses by relocation rather than deletion. The body carrie
 |---|---|---|
 | §1 The gradient moved outside the model | Opening | (none — body-only) |
 | §2 Why patch errors live outside the weights | Why the scaffold is where adaptation had to land | (none — body-only) |
-| §3 Artifact-layer descent | What the scaffold is doing, mechanistically | **Appendix E** (mechanism stack, A1–A5, convergence proposition, correspondence table, worked cases) |
-| §3.5 SkillOpt: a recent worked instance of artifact-layer descent | Case study grounding the §3 formalism in a concrete recent system | **Appendix G** (full correspondence with Algorithm-1 pointers; per-baseline differentiation; §9 property audit; cost-and-bloat note) |
+| §3 Artifact-layer descent | What the scaffold is doing, mechanistically (Figures 1 and 2) | **Appendix E** (mechanism stack, A1–A5, convergence proposition, correspondence table, worked cases) |
+| §3.5 SkillOpt and the convergence on artifact-layer descent | Worked instance plus the five-family convergent landscape | **Appendix G** (SkillOpt correspondence with Algorithm-1 pointers; per-baseline differentiation; per-family walks G.4–G.8; synthesis; §9 property audit; cost-and-bloat note) |
 | §4 Six scaffold substrates | Coordinate decomposition | (substrate rubric table stays in body) |
-| §5 Survey method | One-paragraph method summary | **Appendix B** (full inclusion/exclusion, tiers, scoring, sensitivity) |
-| §6 Substrate maturity is uneven | One-paragraph unevenness claim | **Appendix F.1** (per-substrate distribution table) |
-| §7 Four clusters | One-paragraph cluster naming | **Appendix F.2 + F.4** (cluster table, per-cluster walks with metrics, Tran & Kiela bound) |
-| §8 The two-loop design space | Matrix + populated/empty summary | **Appendix F.5** (cell-by-cell discussion, DGM dual-mode note) |
-| §9 The missing architecture: governed cross-tenant scaffold optimization | Four properties + DP-FedAvg-as-analogy one-liner | **Appendix F.6 + F.7** (closest approaches, deployment-dependence) |
+| §5 Survey method | One-paragraph method summary | **Appendix B** (full inclusion/exclusion, tiers, scoring, sensitivity, survey window and refresh) |
+| §6 Substrate maturity is uneven | Maturity table + five absences (both in body) | — |
+| §7 Four clusters | Cluster table + per-cluster walks (both in body) | — |
+| §8 The two-loop design space | Figure 3 + populated/empty summary | **Appendix F.1** (named per-cell membership, cell-by-cell discussion, DGM dual-mode note) |
+| §9 The missing architecture: governed cross-tenant scaffold optimization | Four properties + compressed closest-approaches summary | **Appendix F.2 + F.3** (per-system closest approaches, deployment-dependence) |
 | §10 A new failure surface | Single paragraph naming the seven failure modes | (body-only, already concentrated) |
 | §11 Conclusion | Two paragraphs | (body-only) |
 
@@ -114,17 +114,33 @@ No other element was deleted. Every paragraph in the v2 long version is either i
 ### Page budget audit
 
 - **Target body**: 9 pages (soft).
-- **Actual body** (§1–§11, including abstract): ~12 pages after the v3.1 convergent-landscape addition (was ~11 in v3.0, ~6.5 in v2). The body now exceeds the soft 9-page target by 3 pages; the excess sits in §3.5 (convergent landscape table + synthesis paragraph) and small ripple edits in §2/§9/§10.
-- **Result**: over the soft 9-page target. The expansion is intentional: the convergence is the strongest evidence for the §9 missing-architecture claim, and burying it in the appendix would understate the contribution. If a venue requires a strict 9-page body, candidates for re-relegation to appendix are the §3.5 convergent-landscape table (which is fully duplicated in G.1) and the §3.5 synthesis paragraph (which is fully duplicated in G.9).
-- **Appendix span**: extended by ~5 pages for the restructured Appendix G (G.1–G.9 new; G.10–G.11 lifted from v3.0).
-- **References span**: extended by 14 entries (the convergent-cluster citations) plus SkillOpt from v3.0.
+- **Actual body** (§1–§11, including abstract): 16 pages in v3.2 (Appendix A begins on p. 17; references begin on p. 37; 42 pages total). The v3.2 growth over v3.1's ~12 pages comes from the three figures (~1.5 pages), the inline citations (Chicago author-date inflates table cells), and the refresh sentences in §§3.5, 6, 9, 10; the redundancy cuts in §§3, 5, 9 offset part of it.
+- **Result**: over the soft 9-page target. The expansion is intentional: the convergence is the strongest evidence for the §9 missing-architecture claim, and burying it in the appendix would understate the contribution. If a venue requires a strict 9-page body, candidates for relegation are the §3.5 landscape table and synthesis paragraph (G.1/G.9 now only point at them, so they would need to move rather than be deleted), Figure 2, and the §6 maturity table.
+- **Appendix span**: pp. 17–36 (Appendix A now 43 rows; F.1 carries the named §8 matrix; G.6–G.8 carry the refresh walks).
+- **References span**: 82 entries (69 in v3.1 + 5 citation-support entries + 8 refresh entries).
+
+## What is new in v3.2 (consistency, citations, figures, refresh)
+
+A reviewer-style pass over v3.1 plus a targeted literature refresh. No change to the thesis.
+
+- **Counts recomputed from `supplementary/p3_master_scores.csv`.** Corpus 130 unique systems; **99** core (score ≥ 3 on any substrate) and **31** contrast (was "~90 / ~38"). [Auto × Auto] holds **twelve** systems (the matrix already listed twelve; the prose said eleven); the strict composite audit passes **fourteen** research systems (was "thirteen"; SkillOpt's v3 addition was never recounted); relaxations become ~eighteen / ~sixteen. Appendix A now has 43 rows.
+- **§8 matrix honesty.** The named matrix moved to Appendix F.1 (Figure 3 replaces it in the body). Systems Appendix A scores outside the 22-system strict audit (COSPLAY, Cuadros, PACE, CORAL, GEPA, Meta-Harness, MOSS, RCL) are marked ‡ and stated as not re-audited; DSPy/TextGrad moved to [Auto × None]*.
+- **Appendix D split** into D.1 (fails the patch-local discriminator) and D.2 (core corpus but fails the composite criterion); it previously mixed the two.
+- **Cross-reference and numbering fixes.** "Paper-4 targets in §11" (no such content) → §§9–10; "Appendix F" for Tran & Kiela → §7; "scope box" → §3 assumptions; Appendix E.1 op 2 is now "mode discovery and credit assignment" and every "§3 operation 3 = credit assignment" reference points there.
+- **Contradictions removed** (§9 "no member provides (b) or (d)" vs SkillForge/Sierra in the same paragraph; §10 "no system treats pruning as first-class" vs Ratchet; §8 "every auto-gated system fires at n=1" vs SkillOpt; §6 "curriculum unspecified everywhere" vs SkillOpt/SkillRL; Score-5 definition vs MCP/Harvey rows). Overclaims hedged (§2 "trained to be unable", economic argument, "most production deployments"; §9 "next two years"; §3.5 "exact rather than analogical").
+- **Redundancy cut.** The five-conditions list is stated once (§3); §9's closest-approaches paragraph compressed (full list in F.2); G.1's duplicate landscape table and G.9's duplicate closing paragraph removed; §5 evidence policy is a pointer to Appendix B. A bridging sentence maps assumptions (i)–(vi) ↔ five conditions ↔ E.1 operations ↔ A1–A5.
+- **Citations.** ~25 named-work claims in §§2, 6, 7, 10 and Appendix A now carry inline `[@key]` cites; five new verified entries (McMahan 2017 FedAvg, McMahan 2018 DP-FedAvg, Check Point MCPoison advisory, Cognition Devin 2025 review, LangChain Skills).
+- **Prose/notation.** Leaked drafting text ("the user-stated thesis") and a duplicated G.2 paragraph removed; `$Q_t$`/`$H_t$` defined in §3; SkillOpt's `$L_t$` budget renamed `$\eta_t$` to avoid colliding with `$L_D$`; American spelling throughout (~140 edits; quoted material untouched); "Sierra Agent OS 2.0", "Anthropic Agent Skills", "Langfuse" normalized; §3.5's groupings are "research families" so they no longer collide with §7's "four clusters".
+- **Abstract and §1** now mention the convergence finding and the full roadmap (§3.5, §10).
+- **Figures.** `figures/make_figures.py` renders the three FIGURE_SPEC diagrams; Figure 1 (descent loop) and Figure 2 (scope hierarchy) sit in §3, Figure 3 (design-space grid) in §8. Figures are forced in-flow (`\floatplacement{figure}{H}`).
+- **Literature refresh (June–September 2026).** Five systems added with Appendix A rows (marked §): **FederatedSkill** (arXiv:2606.03143) — federated cross-client skill-patch aggregation with an auditable decision log; now the closest approach to §9 and narrows property (b) without closing it; **SkillClaw** (2604.08377) — cross-user shared skill repository; **ChronoMem** (2607.27773) — memory version control and semantic rollback; **HARNESSEVO** (2609.02889) — slot-wise credit assignment; **SkillsVote** (2605.18401) — lifecycle governance with attribution at the admission gate. Supporting cites: SkillOpt-Lite (2607.03451; ablates four of SkillOpt's seven controls and is the nearest instance of a multi-sample agreement filter), dependency-guided rollback repair (2608.10502), Always-On Agents survey (2606.30306). The thread count is now "at least eighteen". Appendix B states the window as January 2023 – May 2026 plus a targeted refresh through September 2026 (refresh looked for §9-narrowing work, not corpus completeness; §6 statistics are on the May corpus).
 
 ## What is new in v3.1 (convergent landscape)
 
 A short literature scan after the v3.0 SkillOpt case study found that SkillOpt is one of at least fourteen independent research threads in 2025–2026 that converge on artifact-layer descent from different substrate angles. v3.1 expands §3.5 from a single-system case study into a convergent-landscape map, with the full per-cluster walks landing in a restructured Appendix G.
 
 - **§2** — Tiwari et al. (2026) added as independent two-timescale (in-context / in-weights) motivation alongside the Kirk/Padmakumar evidence.
-- **§3.5** — re-titled "SkillOpt and the convergence on artifact-layer descent." The SkillOpt walkthrough is unchanged; a new convergence-framing paragraph names the 14-system cluster, a compact landscape table indexes the four complementary clusters and what each leaves open in §3 terms, and a synthesis paragraph names the four well-supported claims (scaffold-vs-weights decomposition; credit assignment as central bottleneck; hygiene as precondition; cross-org Loop 2 unfilled).
+- **§3.5** — re-titled "SkillOpt and the convergence on artifact-layer descent." The SkillOpt walkthrough is unchanged; a new convergence-framing paragraph names the 14-system cluster, a compact landscape table indexes the five complementary families and what each leaves open in §3 terms, and a synthesis paragraph names the four well-supported claims (scaffold-vs-weights decomposition; credit assignment as central bottleneck; hygiene as precondition; cross-org Loop 2 unfilled).
 - **§9** — closest-approaches paragraph extended with CORAL (async multi-agent Loop 2 within one system), PACE (two-timescale architecture under small-frozen-model constraints), and Meta-Harness (Loop 1 over the orchestration substrate).
 - **§10** — scaffold-bloat paragraph extended with Ratchet's hygiene-as-precondition finding ($+0.0$ pp without hygiene vs. $+16.2$ pp with four hygiene mechanisms); eval-fragility paragraph extended with Ong et al.'s direct-evaluation finding that current harness optimisers cannot be distinguished from Stage-2 trial-and-error by downstream score alone.
 - **Appendix F.2** — closest-approaches enumeration mirrored with CORAL/PACE/Meta-Harness bullets.
@@ -132,7 +148,7 @@ A short literature scan after the v3.0 SkillOpt case study found that SkillOpt i
 - **Appendix A** — 7 new representative rows: GEPA, Meta-Harness, MOSS, RCL, PACE, CORAL, Ratchet.
 - **`references.bib`** — 14 new BibTeX entries; new % O, % Q, % V section markers added.
 - **Body References section** — 14 new entries in alphabetical position.
-- **The long version** is still not updated; the v3.0 + v3.1 long-version port remains the next work item.
+- **The long version** received the v3.0 + v3.1 port in June 2026 and the v3.2 mechanical fixes in September 2026; the v3.2 refresh and figures are short-only.
 
 ## What is new in v3 (SkillOpt-only — historical)
 
@@ -146,7 +162,7 @@ Every reviewer-fix from the long-version v2 revision is present in the short ver
 - Hedged "federated-style artifact aggregation, not arithmetic averaging" Loop-2 framing (§3, §9).
 - Hedged "dominant practical substrate" language (§2; replaces "only reasonable substrate").
 - DGM collapsed to a single matrix entry with dual-mode footnote (Appendix F.5).
-- Reconciled counts (~130 systems, 13 strict + 2 industry, nine failed in the composite audit).
+- Reconciled counts (130 systems, 14 strict + 2 industry after the v3 SkillOpt addition, recounted in v3.2; nine failed in the composite audit).
 - AlphaTensor / Winograd caveat on the Strassen claim (Appendix F.4).
 - CASCADE "within-benchmark" framing (Appendix F.4).
 - IFScale framing correction — 68% is best-model-at-N=500, 35× is latency on one reasoning model (§10).
@@ -160,4 +176,4 @@ Every reviewer-fix from the long-version v2 revision is present in the short ver
 bash build.sh
 ```
 
-Produces `paper_frontier_and_localhost_short.{tex,pdf,zip}`. The zip is the arXiv source bundle (tex + `supplementary/` tree).
+Produces `paper_frontier_and_localhost_short.{tex,pdf,zip}`. The zip is the arXiv source bundle (tex + `figures/*.pdf` + `supplementary/` tree). To regenerate the figures first: `python ../figures/make_figures.py` (needs matplotlib), then copy the three PDFs into `figures/` here.

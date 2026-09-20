@@ -50,8 +50,8 @@ ls -la paper_frontier_and_localhost_short.pdf
 echo "[zip] Packaging arXiv source bundle (tex + supplementary)"
 rm -f paper_frontier_and_localhost_short.zip
 if [ -d supplementary ]; then
-  zip -r paper_frontier_and_localhost_short.zip paper_frontier_and_localhost_short.tex supplementary > /dev/null
+  zip -r paper_frontier_and_localhost_short.zip paper_frontier_and_localhost_short.tex figures/*.pdf supplementary > /dev/null
 else
-  zip paper_frontier_and_localhost_short.zip paper_frontier_and_localhost_short.tex > /dev/null
+  zip paper_frontier_and_localhost_short.zip paper_frontier_and_localhost_short.tex figures/*.pdf > /dev/null
 fi
 ls -la paper_frontier_and_localhost_short.zip

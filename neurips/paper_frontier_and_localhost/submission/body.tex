@@ -396,7 +396,7 @@ The headline empirics make the descent picture testable rather than
 aspirational. Across six benchmarks, seven target models, and three
 execution harnesses (direct chat, Codex, Claude Code), SkillOpt is best
 or tied-best on all 52 evaluated (model, benchmark, harness) cells,
-lifting GPT--5.5 by +23.5 / +24.8 / +19.1 points over no-skill under
+lifting GPT-5.5 by +23.5 / +24.8 / +19.1 points over no-skill under
 direct chat / Codex / Claude Code, and beating the strongest per-cell
 baseline drawn from TextGrad, GEPA, Trace2Skill, EvoSkill, human-skill,
 and one-shot-LLM by +5.4 points on average. Transfer is also measured: a
@@ -543,7 +543,7 @@ a system as patch-locally adaptive. A separate, stricter audit applied
 to 22 candidate systems uses a \emph{composite two-loop} criterion: Loop
 1 modifies a persisted artifact from session signal, \emph{and} Loop 2
 has an explicit cross-context promotion mechanism with versioning or
-lineage. Thirteen research systems pass the strict audit. Two industry
+lineage. Fourteen research systems pass the strict audit. Two industry
 exemplars (Sierra Agent OS 2.0, Cognition Devin) are also evaluated
 using vendor documentation as primary evidence; they are flagged in the
 §8 matrix because the evidence tier is weaker. The strict count moves
@@ -811,7 +811,7 @@ ReAct*, Mem0* \\
 for contrast.} † Industry exemplar evaluated using vendor documentation
 as primary evidence.
 
-Three cells are populated. \textbf{{[}Auto × Auto{]}} holds eleven
+Three cells are populated. \textbf{{[}Auto × Auto{]}} holds twelve
 research systems with machine-evaluated decision criteria on both loops.
 \textbf{{[}Auto × Human{]}} is the production-viable cell: Loop 1 fires
 at machine speed under an algorithmic criterion, Loop 2 requires human
@@ -1255,13 +1255,13 @@ expose representative per-system scores and exclusion reasons so readers
 can audit ambiguous classifications independently.
 
 \textbf{Composite two-loop criterion (sensitivity analysis).} The strict
-count of thirteen research systems satisfying the composite-two-loop
+count of fourteen research systems satisfying the composite-two-loop
 criterion changes under two natural relaxations. Relaxation (a) counts
 any of versioning, lineage, or rollback as Loop-2 governance; the count
-rises to approximately seventeen by re-admitting MAE, MetaGen,
+rises to approximately eighteen by re-admitting MAE, MetaGen,
 MetaReflection, and CLIN. Relaxation (b) admits session signal that
 updates optimizer state without persisting an artifact distinct from
-optimiser state; the count rises to approximately fifteen by
+optimiser state; the count rises to approximately sixteen by
 re-admitting DSPy and TextGrad. The qualitative findings (Auto×Auto
 well-populated; {[}Human × Human{]} and {[}Human × Auto{]} empty in the
 surveyed corpus; governance-first cluster in {[}None × Auto{]}; the
@@ -1711,7 +1711,7 @@ for §§8--9.
 \subsubsection{F.1 Two-loop matrix: cell-by-cell
 discussion}\label{f.1-two-loop-matrix-cell-by-cell-discussion}
 
-\textbf{{[}Auto × Auto{]}} is most populated (eleven systems). Every
+\textbf{{[}Auto × Auto{]}} is most populated (twelve systems). Every
 member has a machine-evaluated decision criterion on both loops.
 Velocity is the cluster's defining property; the lack of
 cross-organisational governance is its uniform weakness.
@@ -2038,7 +2038,7 @@ SkillOpt's own experiment design compares it against six baselines under
 an identical protocol (same target model, same held-out test split, same
 scorer). The differentiation below frames each baseline in §3 vocabulary
 and identifies the §3 mechanism the baseline lacks. The through-line is
-the user-stated thesis: \emph{the scaffold/evolution layer needs a
+the paper's thesis: \emph{the scaffold/evolution layer needs a
 disciplined gradient-like update mechanism}, and the live distinction
 across baselines is which §3 conditions each one fails.
 
@@ -2051,7 +2051,7 @@ across baselines is which §3 conditions each one fails.
   optimiser state. There is no \(L_t\) schedule, no held-out \(G_t\),
   and no rejected-edit buffer. SkillOpt's measured advantage over
   TextGrad on direct chat ranges from \(+5.9\) to \(+34.0\) points
-  across benchmarks at GPT--5.5 scale and is uniformly positive at all
+  across benchmarks at GPT-5.5 scale and is uniformly positive at all
   seven target-model scales. This matches our Appendix D classification
   of TextGrad as failing the patch-local discriminator on persistence;
   SkillOpt closes precisely that gap.
@@ -2073,7 +2073,7 @@ across baselines is which §3 conditions each one fails.
   that accepts or rejects each candidate. Our §3 mechanism stack
   therefore loses \emph{delta validation} (operation 4) and the
   \emph{rejected-edit buffer}. SkillOpt's measured gap over Trace2Skill
-  is \(+5.0\) to \(+19.0\) points across benchmarks at GPT--5.5 direct
+  is \(+5.0\) to \(+19.0\) points across benchmarks at GPT-5.5 direct
   chat.
 \item
   \textbf{EvoSkill} \citep{alzubi2026evoskill}\textbf{.} Skill-folder
@@ -2083,14 +2083,14 @@ across baselines is which §3 conditions each one fails.
   assignment via failure analysis is genuine, but there is no \(L_t\)
   bound on per-step folder edits and no rejected-edit buffer. SkillOpt
   beats EvoSkill by \(+14.0\) inside Codex and \(+3.2\) inside Claude
-  Code on the GPT--5.5 five-benchmark average.
+  Code on the GPT-5.5 five-benchmark average.
 \item
   \textbf{Human skill} (expert-written, 145--516 tokens per benchmark).
   In §3 terms: \(\theta_s\) exists, but Loop 1 does not --- the artifact
   is static at deployment. Provides the no-Loop-1 ceiling.
 \item
   \textbf{One-shot LLM skill} (generated zero-shot from a benchmark
-  description by GPT--5.5, never updated). In §3 terms: \(\theta_s\)
+  description by GPT-5.5, never updated). In §3 terms: \(\theta_s\)
   exists; Loop 1 does not; \(Q_t\) fires exactly once with no rollout
   evidence. The ``untrained scaffold'' baseline.
 \end{itemize}
