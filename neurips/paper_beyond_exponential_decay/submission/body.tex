@@ -1,0 +1,202 @@
+\begin{abstract}
+A common pessimistic argument holds that autoregressive language models suffer exponential decay in correctness over long outputs: if each token has independent error probability $e$, then $(1-e)^n \to 0$ as $n$ grows. The argument is clean to state and widely cited. It is also brittle, and three lines of recent empirical work make the cracks visible. The first is that only a small minority of tokens---under $10\%$ by the one direct measurement of long-range dependence, about $20\%$ by an entropy criterion inside reasoning traces---genuinely depends on long-range context or carries a decision; the rest get more predictable, not less, as context accumulates. The second is geometric: LLM embeddings organize into stratified low-dimensional manifolds, so once a model is working inside one semantic region it tends to stay there even when individual tokens slip. The third concerns what happens when models do err on the consequential tokens---errors turn out to be idiosyncratic across samples rather than systematic, which is why majority-vote ensembles recover so much accuracy. Pulling these together gives a two-rate model, $P(\text{correct}) \approx (1-e_{\text{key}})^k \cdot (1-e_{\text{non}})^{n-k}$, in which $k$ scales sublinearly with $n$ and $e_{\text{non}}$ approaches zero with sufficient context. The predicted decay is, at worst, stretched-exponential; often power-law; and when $k$ saturates at some task-specific $k_{\max}$, constant in $n$. A number of recent capabilities---anchor compression at $99\%$ KV-cache reduction, $128$K-token retrieval on consumer GPUs, self-consistency gains on reasoning benchmarks---then read as natural consequences of one structural fact rather than independent engineering wins: long-context reliability hinges on a handful of decision points, not on uniform per-token accuracy. We also mark where the argument stops: when the number of decisions grows with the task, as in long-horizon agentic work, the same model predicts the exponential decay in task length that agent evaluations report.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Autoregressive language models, the argument goes, are doomed for long outputs. If each token has even a $1\%$ error rate then a $100$-token chain is correct only $(0.99)^{100} \approx 37\%$ of the time, and longer chains decay exponentially toward zero \citep{lecun2023why,dziri2023faith}. The argument is clean, and it has been used to predict a hard ceiling on what autoregressive systems can do.
+
+What modern LLMs actually do is harder to square with this picture. Multi-page outputs hold together. Mid-generation self-correction is routine---later tokens revise earlier interpretations, a phenomenon documented across the inner-monologue literature \citep{gwern2023inner} and difficult to reconcile with monotonically increasing error. The attention patterns are lopsided: selecting just the top $\sim 1\%$ of tokens by attention mass recovers $\sim 89\%$ of full-attention scores on average across heads and layers in Llama-3-8B \citep{liu2024retrieval}, and fewer than $10\%$ of tokens in natural text gain meaningfully from context beyond the preceding four thousand tokens \citep{fang2024what}. A smaller base model paired with the right test-time-compute strategy can outperform a model roughly $14\times$ its size on reasoning problems where the smaller model already has a non-trivial success rate \citep{snell2024scaling}. None of this is consistent with uniform per-token error.
+
+Our reading is that the independent-error model fails because it averages over a heterogeneous population of tokens. A small fraction---key tokens---carry the load of long-range dependency and global coherence. The rest are constrained by local syntax and the accumulating context, and their error rate goes to zero rather than to a constant. Three threads of recent work make this concrete: \citet{fang2024what} on which tokens actually need long context, \citet{li2025unraveling} on the stratified-manifold organization of embeddings, and \citet{wang2023self} on the convergence of correct reasoning paths under sampling. Combined, they produce a refined model:
+\begin{equation}
+\label{eq:two-rate}
+P(\text{correct}) \approx (1-e_{\text{key}})^k \cdot (1-e_{\text{non}})^{n-k},
+\end{equation}
+where $k$ is the number of key tokens, $e_{\text{key}}$ their error rate, and $e_{\text{non}}$ the much lower error rate for the remaining $n-k$. Because $k$ scales sublinearly with $n$---logarithmically, as a fractional power, or saturating at some $k_{\max}$---and because $e_{\text{non}} \to 0$ with context, the predicted decay is far gentler than $(1-e)^n$.
+
+\paragraph{Contributions.}
+(1)~A two-rate error model that distinguishes key from non-key tokens and makes the dependence on $k(n)$ explicit (\S\ref{sec:framework}). (2)~A synthesis of evidence from three recent research streams---attention sparsity, embedding geometry, and ensemble convergence---that supports each component of the model (\S\ref{sec:evidence}). (3)~An accounting of how this framework reframes existing systems-level results (anchor compression, retrieval-augmented attention, self-consistency, tool integration) as predictable consequences of a single structural fact rather than independent engineering wins (\S\ref{sec:implications}).
+
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Error compounding.}
+The exposure-bias problem is old. \citet{bengio2015scheduled} formalized it: models trained with teacher forcing must, at inference time, condition on their own potentially noisy output, so small errors can compound through state updates. \citet{lecun2023why} extended the worry to autoregressive LLMs in the now-familiar form---if each token has error probability $e$, sequence-level correctness decays as $(1-e)^n$. The bound is tight when independence really holds, and loose otherwise; transformers attending backward over their own output is exactly the case where it goes loose, and the self-correction examples collected in \citet{gwern2023inner}---error rates that \emph{decrease} at certain points in a sequence---are hard to reconcile with strict monotonic accumulation. We keep the per-token decomposition but partition tokens by their long-range dependency. The step-level version of the worry has since acquired data of its own: \citet{kwa2025measuring} find that agent success falls off smoothly with the human time a task takes, \citet{ord2025halflife} shows that a constant hazard rate---exponential decay in task length---fits those data closely, and \citet{sinha2025illusion} find that per-step execution accuracy degrades along long horizons partly because models condition on their own earlier mistakes. We return to how these step-level results relate to the token-level argument in \S\ref{sec:limitations}.
+
+\paragraph{Long-context utilization.}
+\citet{liu2023lost} documented the lost-in-the-middle effect---models perform best when the relevant material sits near the beginning or end of the prompt and worst when it sits in the middle. The same skew was given a sharper edge by \citet{fang2024what}, whose long-short difference (LSD) metric finds fewer than $10\%$ of tokens in a natural corpus (GovReport) scoring LSD$>2$---that is, predicted materially better with the full context than with only the preceding $4{,}096$ tokens. \citet{liu2024retrieval} showed that scanning only $1{,}000$ critical tokens out of $100{,}000$ in Llama-3-8B recovers $\sim 89\%$ of full-attention scores on average (over $90\%$ for most heads), and used the observation to enable $128$K-token contexts on consumer GPUs. Anchor compression \citep{pang2024anchor} cuts the keys/values cache by up to $99\%$ at an average accuracy cost of about $1.5\%$. Each of these papers treats sparsity as an empirical fact about a particular system; we read them as direct evidence for $k \ll n$.
+
+\paragraph{Embedding geometry.}
+\citet{li2025unraveling} probed LLM embedding spaces with sparse mixture-of-experts and found a stratified-manifold structure: a union of low-dimensional submanifolds aligned with semantic domain. The story gets more concrete with \citet{robinson2025token}, whose fiber-bundle hypothesis test flags tokens whose embedding neighborhoods violate the local-smoothness assumption; semantically equivalent prompts containing such irregular tokens produce less stable continuations than those containing only regular-neighborhood tokens. \citet{viswanathan2024geometry} link intrinsic dimensionality to prediction loss; high-confidence contexts collapse to lower-dimensional representations. And \citet{gao2024insights}, probing intermediate layers, find near-perfect classifier accuracy at locating target information in the model's hidden states even when the surface generation gives the wrong answer. Compartmentalized representations, irregular versus regular embedding neighborhoods, dimensional collapse under confidence: this is what lets the model absorb the small token-level slips without breaking coherence at the semantic level.
+
+\paragraph{Ensemble reasoning.}
+Self-consistency, in \citet{wang2023self}'s formulation, is almost embarrassingly simple: sample multiple reasoning paths, take the majority answer. The gain was $+17.9$ points on GSM8K, with no retraining. Tree-of-Thoughts \citep{yao2023tree} extends the idea with structured tree search over intermediate thoughts, each branch self-evaluated before expansion, and pulls GPT-4 on Game-of-24 from $4\%$ to $74\%$. The pattern these methods exploit is that errors on reasoning-heavy questions tend to be idiosyncratic across samples (different paths fail at different junctions) while errors on knowledge-gap questions tend to be systematic (every sample fails the same way), which is why ensemble methods help in the first case and not in the second. The size of these effects is the part the independent-error model cannot absorb. If errors compounded uniformly, multiple samples would yield multiple failures, not a more accurate mode.
+
+\paragraph{Decision-point tokens in reasoning.}
+Three studies published after the first version of this paper locate the same structure inside reasoning traces rather than in long-context prediction. \citet{bigelow2025forking} show that re-sampling a generation at a small set of \emph{forking tokens}---sometimes a single punctuation mark---changes the outcome, while re-sampling elsewhere does not. \citet{lin2024critical} identify \emph{critical tokens} in incorrect reasoning trajectories and find that forcing an alternative at those positions alone often recovers the correct answer. \citet{wang2025beyond8020} find that in chain-of-thought generation only a minority of tokens---about $20\%$---carry high entropy, that these tokens act as forks between reasoning paths, and that restricting policy-gradient updates to them matches or exceeds full-gradient reinforcement learning (+11.0 points on AIME'25 for a 32B model). The fractions differ from the long-context estimate because the criteria differ---entropy at generation time versus dependence on distant context---but they agree on the structural point: correctness is decided at a sparse set of positions.
+
+\section{Theoretical Framework}
+\label{sec:framework}
+
+We develop the two-rate model in three stages: the partition of tokens into key and non-key, the manifold dynamics that structure error correlation, and the redundancy gain that ensemble methods extract.
+
+\subsection{Two-Rate Error Model}
+
+The independent-error argument assumes every token carries equal weight in the failure probability. It does not. Key tokens are the ones whose correctness genuinely depends on long-range context or global knowledge---factual claims, logical operators, points of co-reference, transitions between topics. Non-key tokens are governed by local regularity: syntax, frequent collocations, content already established by the surrounding text. Their error rate is small and decreases as more context accumulates.
+
+In a sequence of length $n$, let $k$ count the key tokens. The one direct estimate of $k/n$ for natural text is the LongPPL measurement of \citet{fang2024what}: fewer than $10\%$ of GovReport tokens are predicted materially better with the full context than with only the preceding $4{,}096$ tokens. The fraction depends on the short-window length $K$ used to define ``long range,'' so we write it as $\alpha_K$; adversarial-perturbation studies, which ask a different question, land in the same order of magnitude \citep{jin2020textfooler}. We hypothesize that $k$ grows sublinearly with $n$, possibly saturating at a task-specific $k_{\max}$: even a book-length argument operates within a finite knowledge frame requiring a bounded number of critical decisions. With per-token error rates $e_{\text{key}}$ (large) and $e_{\text{non}}$ (small, decreasing in context), Eq.~\ref{eq:two-rate} gives three regimes:
+
+\begin{enumerate}
+\setlength{\itemsep}{1pt}
+\item \textbf{Logarithmic key-token growth} ($k \sim \log n$): polynomial decay $n^{-c}$, much slower than exponential.
+\item \textbf{Fractional-power growth} ($k \sim \sqrt{n}$): stretched-exponential decay.
+\item \textbf{Saturating} ($k \to k_{\max}$): reliability becomes constant in $n$ once the key facts are committed.
+\end{enumerate}
+
+Two conditions are doing the work here, and both should be explicit. First, the regimes describe the key-token factor; the non-key factor $(1-e_{\text{non}})^{n-k}$ stays bounded away from zero only if the non-key error rates are summable, $\sum_i e_{\text{non}}(i) < \infty$---for instance $e_{\text{non}}(i) = O(i^{-(1+\delta)})$ for some $\delta > 0$. A constant $e_{\text{non}}$, however small, makes the non-key factor itself exponential in $n$ and the argument collapses; the claim that $e_{\text{non}} \to 0$ with context is therefore load-bearing, not decorative, and \S\ref{sec:evidence} collects the evidence for it. Second, with $k = c \ln n$ the key factor is $(1-e_{\text{key}})^{c \ln n} = n^{-c \ln(1/(1-e_{\text{key}}))}$, a power law whose exponent is small when $e_{\text{key}}$ is; and the saturating regime needs both $k \to k_{\max}$ and the summability condition. Figure~\ref{fig:regimes} plots the four curves for illustrative parameters.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\linewidth]{fig1_decay_regimes}
+\caption{Sequence-level correctness under the uniform model $(1-e)^n$ and under the two-rate model of Eq.~\ref{eq:two-rate} in its three regimes. Illustrative parameters: $e = 0.01$; $e_{\text{key}} = 0.05$; $e_{\text{non}}(i) = 0.02\, i^{-1.5}$ (summable); $k = \lceil 3 \ln n \rceil$, $k = \lceil \sqrt{n} \rceil$, and $k = \min(\lceil \sqrt{n} \rceil, 20)$. The curves are the functional forms the argument predicts, not fits to data.}
+\label{fig:regimes}
+\end{figure}
+
+The third regime is the strange one. \citet{pang2024anchor} compress each processed span into a single anchor token, discarding up to $99\%$ of the keys/values cache at an average accuracy cost of about $1.5\%$. That is consistent with a bounded number of load-bearing positions per span, and hard to express under exponential decay, where every discarded token should have cost something.
+
+\subsection{Stratified Manifold and Error Correlation}
+
+The $(1-e)^n$ form also assumes errors are independent across positions. They are not. The embedding space's stratified structure \citep{li2025unraveling} introduces correlation, and we can read the dynamics off it directly. Treat the model's hidden state as moving along a manifold $M_C$ determined by the prevailing context. Most errors are minor---a synonym substitution, a grammatical slip, a momentary wobble that stays on $M_C$ and has no downstream effect. Disruptive errors are different: a key-token mistake jumps the trajectory onto a different manifold $M_{C'}$, after which subsequent tokens cohere with the wrong commitment. The result is a fluent-but-wrong continuation. Errors cluster rather than scatter.
+
+Two consequences follow, and they are separate. The first needs no correlation at all: whatever the dependence between positions, the union bound gives
+\begin{equation}
+\label{eq:union}
+P(\text{any disruptive error}) \le k\, e_{\text{key}},
+\end{equation}
+to be compared with the uniform model's $1-(1-e)^n \approx n e$ for small $e$. The ratio of the two is $k/n$: with fewer than a tenth of positions carrying key decisions, the failure budget shrinks by at least that factor before any correlation is invoked. The second consequence is the correlation itself. When key-token failures co-occur---a wrong commitment early makes later positions cohere with it rather than fail independently---the probability of at least one failure sits \emph{below} the independent-errors value $1-(1-e_{\text{key}})^k$, because the same failure mass is concentrated in fewer sequences. Clustering does not make failures rarer per position; it makes them rarer per sequence. The manifold structure also explains the compartmentalization \citet{gao2024insights} document: intermediate layers preserve correct internal representations even when the surface output strays, because the hidden-state trajectory remains on the correct manifold even when token sampling does not.
+
+\subsection{Self-Consistency and Redundancy Gain}
+
+When key-token errors are idiosyncratic across samples---different paths fail at different junctions---majority-vote ensembles can recover the correct answer. For $m$ samples with error correlation $\rho$, write the effective error rate at a key decision as
+\begin{equation}
+\label{eq:ensemble}
+e_{\text{key}}^{\text{(eff)}} = f(\rho, m)\, e_{\text{key}},
+\end{equation}
+where $f \to 1$ at $\rho = 1$ (perfect correlation: every sample fails the same way, no gain). At $\rho = 0$ the value of $f$ depends on how the samples are combined. With an oracle verifier that accepts any correct sample (Pass@$m$), $f = e_{\text{key}}^{m-1}$. With majority voting---which is what self-consistency actually does---the effective error is the binomial tail $P[\mathrm{Bin}(m, e_{\text{key}}) \ge \lceil m/2 \rceil]$, which by Hoeffding's inequality is at most $\exp\!\big(-2m(\tfrac12 - e_{\text{key}})^2\big)$ whenever $e_{\text{key}} < \tfrac12$: still exponential in $m$, but at a rate set by the margin below one half rather than by $e_{\text{key}}$ itself. The condition $e_{\text{key}} < \tfrac12$ is not a technicality. It says majority voting can only help at decisions the model already gets right more often than not, which is exactly why it fails on knowledge-gap errors (\S\ref{sec:related}), where every sample inherits the same wrong answer. Wang et al.'s self-consistency results \citep{wang2023self} sit closer to the $\rho = 0$ regime than to $\rho = 1$, which is why a method that adds no parameters and no training data can lift GSM8K accuracy by $17.9$ points: the gain is structural, not a property of the sampling temperature.
+
+\citet{costello2025think} observe that iterative self-training raises Pass@1 while Pass@$k$ remains relatively stable. On our reading, this is the marginal gain from majority voting falling as correct reasoning paths cluster on a narrow manifold while incorrect ones fan out: ensemble methods only help when the model's spread of guesses straddles the right region.
+
+\section{Empirical Evidence}
+\label{sec:evidence}
+
+Three predictions, three lines of evidence. The framework says $k/n$ is small and stable; that token errors correlate via manifold geometry; and that correct reasoning paths converge while incorrect ones diverge. The supporting work for each comes from a different methodology, which is what makes the convergence interesting.
+
+\subsection{Key-Token Sparsity}
+
+The most direct measurement is \citet{fang2024what}'s long-short difference. A token counts as key if the full context improves its log-likelihood by more than $2$ nats over a $4{,}096$-token window and the token remains predictable under the full context; on the GovReport corpus, fewer than $10\%$ of tokens qualify. Perplexity restricted to those tokens (LongPPL) correlates with LongBench performance at Pearson $-0.96$ across the models they evaluate, where ordinary perplexity over all tokens correlates at $-0.18$; and on a retrieval task where the answer tokens are known in advance, perplexity on the non-answer tokens carries almost no signal at all. Adversarial robustness work, working from the opposite direction, lands in the same order of magnitude. TextFooler \citep{jin2020textfooler}, catalogued with related attacks in \citet{morris2022textattack}, drives classifier accuracy to near zero by swapping $3.5\%$--$22\%$ of words depending on task and target model---about $4\%$--$6\%$ on long IMDB reviews, $14\%$--$18\%$ on short entailment pairs---and its ablation shows that choosing \emph{which} words to perturb is what does the work: with the importance ranking removed and words chosen at random, after-attack accuracy rises by more than $45$ points. A minority of positions carries the decision whichever way one measures it; the exact fraction depends on the criterion, and we return to that dependence in \S\ref{sec:limitations}.
+
+The systems-level corollary is sharp. \citet{liu2024retrieval} reach $128$K-token effective context on consumer GPUs by computing attention only over the top $\sim 1{,}000$ tokens by attention mass, recovering $89\%$ of full-attention scores on average and over $90\%$ for most heads. Anchor-LLM \citep{pang2024anchor} compresses each span into a single anchor token, cutting the keys/values cache by up to $99\%$ at an average accuracy cost of about $1.5\%$. Neither method would work if token importance were uniform; both work because it is not.
+
+\subsection{Stratified Manifold Structure}
+
+\citet{li2025unraveling}'s sparse-MoE probe of frozen LLM embeddings finds a union of low-dimensional manifolds aligned with data source (movie and product reviews, tweets, news), with measurably different intrinsic dimension across regions. \citet{robinson2025token}'s fiber-bundle analysis distinguishes regular-neighborhood tokens (perturbation has minimal effect) from irregular-neighborhood tokens (prompts containing them yield less stable continuations). On our reading the irregular tokens sit at manifold junctions, and the mapping to our key/non-key partition is direct: irregular-neighborhood tokens are exactly the points where a small input change can move the trajectory between manifolds.
+
+\citet{viswanathan2024geometry} link this to confidence: prompts that elicit low-intrinsic-dimensional representations correlate with lower prediction loss. The model's state contracts as confidence rises---which is why the per-token error rate $e_{\text{non}}$ should fall, not stay constant, as context accumulates.
+
+\citet{gao2024insights} train layer-wise probes that achieve near-perfect accuracy at locating target information in intermediate representations, even when the LLM's surface generation gives the wrong answer---a ``know but don't tell'' gap between probing accuracy and generation accuracy that holds across positions and across models. The information was preserved internally; only the surface form failed. This is the manifold-stays-correct behavior our framework predicts.
+
+\subsection{Convergent Reasoning Paths}
+
+\citet{wang2023self} showed that self-consistency lifts GSM8K by $17.9$ points and SVAMP by $11.0$, with no model change. The mechanism, on our reading, is that correct paths concentrate near a low-dimensional attractor while incorrect ones disperse---so majority voting picks out the attractor's mode. \citet{yao2023tree}'s Tree-of-Thoughts moves GPT-4 on Game-of-24 from $4\%$ to $74\%$ by branching at high-uncertainty points specifically. Why do these methods help on reasoning but not on knowledge retrieval? Because knowledge gaps produce systematic errors (every sample fails the same way) while reasoning slips produce idiosyncratic ones (samples fail differently), and ensembling extracts no signal in the former regime. The framework's two error rates accommodate both: $e_{\text{key}}$ rises uniformly when the model lacks the relevant fact, and ensembling cannot help.
+
+A summary of how the systems-level results map onto the framework's three pillars appears in Appendix~\ref{app:systems}.
+
+\section{Practical Implications}
+\label{sec:implications}
+
+The framework is not just a description of why $(1-e)^n$ is wrong. It also predicts where computation should go, how context should be managed, and what to evaluate.
+
+\paragraph{Sparse attention and context compression.}
+If $k \ll n$, attention does not need to be dense. \citet{pang2024anchor}'s anchor compression and \citet{liu2024retrieval}'s top-$k$ attention are the existing demonstrations; \citet{wu2024tokenselect}'s dynamic KV-cache selection is another point on the same curve. These methods stop being clever tricks and become predictable: dense attention pays a quadratic cost to recover a sparse signal.
+
+\paragraph{Targeted compute at decision points.}
+Errors concentrate at manifold transitions, so compute should too. \citet{moshkov2025aimo}'s tool-integrated reasoning lets the model decide where to hand off to Python: it emits code blocks at the steps it judges need exact computation, under a budget of one to eight executions per solution, rather than computing everywhere. \citet{schuster2022calm}'s Confident Adaptive Language Modeling commits to a prediction at an earlier transformer layer when the model's intermediate confidence is high enough, reporting up to $3\times$ wall-clock speedup on text-generation tasks while preserving output quality. The adaptive-temperature decoding of \citet{zhu2024hotorcold} raises exploration at uncertain tokens and damps it elsewhere. Three different prescriptions, one underlying instruction: spend cycles where the manifold is about to fork.
+
+\paragraph{Strategic ensembles.}
+\citet{wang2023self}'s self-consistency, \citet{yao2023tree}'s tree search, and \citet{moshkov2025aimo}'s GenSelect all exploit the convergence-of-correct-paths structure. The framework explains why they work---and predicts when they will not, namely when errors are systematic rather than idiosyncratic, as in pure knowledge-retrieval tasks where every sample inherits the same gap.
+
+\paragraph{Evaluation aligned with key tokens.}
+Plain perplexity averages over a population the model is trying to handle separately, which is why it underperforms as a predictor. \citet{fang2024what}'s LongPPL restricts perplexity to key tokens and lifts the correlation with downstream performance to $r = -0.96$ from a near-zero baseline. \citet{costello2025think}'s self-improvement curves---Pass@1 rising round by round while Pass@$k$ holds---are, on our reading, the staircase pattern our model predicts at finer resolution, not the smooth exponential decay of the alternative.
+
+A more speculative implication---modular reasoning architectures that route by manifold region, building on the alignment-not-scale results of \citet{costello2025think}---we defer to Appendix~\ref{app:arch}.
+
+\section{Limitations}
+\label{sec:limitations}
+
+The framework is a synthesis, not a derivation. Five cautions belong on record. The two-rate model is descriptive: $k$, $e_{\text{key}}$, and $e_{\text{non}}$ are observable in principle but not yet jointly measured on a single benchmark, so the predicted decay regimes are arguments from supporting evidence rather than fitted curves. The manifold-structure account leans on \citet{li2025unraveling} and \citet{robinson2025token} for direct geometric evidence; both are recent, and replication on larger model scales would tighten the claim. The convergent-paths claim relies on a soft distinction between idiosyncratic and systematic errors; we have no quantitative criterion for separating the two in advance, only the post-hoc observation that ensemble methods help in the former regime and not in the latter.
+
+The fourth caution has become sharper since the first version of this paper. The token-level argument says reliability is governed by the number of key decisions, $k$; it says nothing about how $k$ grows with the \emph{task}. For long-horizon agentic work the answer appears to be: linearly. \citet{kwa2025measuring} find that agent success falls off smoothly with the human time a task takes, and \citet{ord2025halflife} shows that a constant hazard rate---exponential decay in task length---fits those data closely. That is not a contradiction of Eq.~\ref{eq:two-rate}; it is Eq.~\ref{eq:two-rate} in the regime where each additional subtask brings its own key decisions, so $k \propto n_{\text{steps}}$ and the decay is exponential in $k$. What the two-rate model rules out is exponential decay in \emph{tokens} at a fixed decision count, not exponential decay in decisions. \citet{sinha2025illusion} supply a mechanism that sits between the two levels: per-step execution accuracy degrades along a long horizon partly because the model conditions on its own earlier mistakes---the fluent-but-wrong continuation of \S\ref{sec:framework} playing out across steps---and models trained to reason before acting largely escape it. The bridge from token-level to step-level decay should start there.
+
+Finally, $k/n$ is criterion-dependent. The long-context estimate is under $10\%$ against a $4{,}096$-token window \citep{fang2024what}; the entropy-based estimate in reasoning traces is about $20\%$ \citep{wang2025beyond8020}; the perturbation estimates range from $3.5\%$ to $22\%$ \citep{jin2020textfooler}. A direct measurement of $k(n)$ would fix the short-window length $K$, compute the cumulative count of LSD-key tokens at $n \in \{1, 2, 4, 8, 16\}$K on a fixed corpus, and fit $k \propto n^{b}$: sublinear growth means $b < 1$ with a confidence interval excluding $1$. A constant fraction ($b \approx 1$) would falsify the sublinear hypothesis under that criterion and leave only the slower exponential $(1-e_{\text{key}})^{\alpha_K n}$. We regard this as the most important open test of the framework.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+The independent-error argument was always going to fail in one of two places. Either some tokens would matter more than others, breaking the per-token uniformity; or errors would correlate, breaking the independence. As it turns out, both fail at once. The empirical literature has been steadily accumulating the evidence: under a tenth of tokens carry the long-range dependency, embeddings stratify into manifolds that compartmentalize errors, and ensemble methods extract gains that any uniform-error model rules out.
+
+The two-rate model in Eq.~\ref{eq:two-rate} is a small change to the algebra and a large change to the predicted behavior. Reliability depends on $k$ key decisions, not on $n$ tokens; and $k$ scales sublinearly, often saturating. Modern LLMs hold coherence across thousands of tokens not because the underlying $(1-e)^n$ is being beaten by clever engineering, but because $(1-e)^n$ was the wrong functional form to begin with.
+
+The systems-level consequences are already visible. Anchor compression, retrieval-augmented attention, tool-integrated reasoning, and self-consistency all gain explanatory unity once they are read as instances of a single principle: identify where the manifold forks, and put the compute there. Future work should run the $k(n)$ measurement laid out in \S\ref{sec:limitations}, derive tighter bounds from attention-pattern statistics rather than from heuristic union bounds, and connect token-level decay to the reasoning-step decay that bears more directly on agentic systems. Two companion papers take the next steps: \citet{arbuzov2026architecture} asks what the recurring key-decision failures are inside a bounded deployment domain and how the budget of interventions needed to cover them grows, and a third paper surveys how production systems already patch those failures outside the model weights.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+
+\section{Architectural Implications: Modular Reasoning}
+\label{app:arch}
+
+The stratified-manifold view suggests an architectural prescription the main body only gestures at: instead of scaling monolithic models, route reasoning subtasks to specialized models aligned with manifold regions. The clearest existing evidence comes from alignment-not-scale work. \citet{costello2025think}'s Think-Prune-Train (TPT) pipeline shows that smaller models ($2$--$9$B parameters) iteratively fine-tuned on their own pruned reasoning traces can match models roughly an order of magnitude larger on GSM8K---improving Gemma2-2B from $41.9\%$ to $57.6\%$ Pass@1, Gemma2-9B to $82\%$ (matching LLaMA-3.1-70B), and LLaMA-3.1-70B to $91\%$ (above GPT-4o's $82\%$). Whether explicit routing on top of these aligned smaller models compounds the gains, or runs into a ceiling once the routed-to manifold is itself stratified, is the natural next question; we are not aware of a definitive empirical answer.
+
+The pattern across these systems is consistent. Fitting the manifold beats expanding the parameter count, when the task population is narrow enough that the manifold is well-defined. The open question is how broad a domain a single specialized model can cover before its internal stratification reasserts itself and the routing problem reappears one level down. We do not attempt to settle that here; it is a question for empirical work that systematically varies routing granularity.
+
+\section{Extended Case Studies in Advanced Reasoning Systems}
+\label{app:systems}
+
+The main body summarizes the systems-level evidence at a high level. Three case studies bear closer reading.
+
+\paragraph{AIMO-2 (\citet{moshkov2025aimo}).}
+The winning solution to the AI Mathematical Olympiad combines all three pillars of the framework. Tool integration hands exact computation to Python at the steps the model itself flags, addressing key-token uncertainty directly; the dataset-creation pipeline exploits the structured nature of correct reasoning paths to generate training data; GenSelect leverages the convergent-paths property to pick the best candidate solution from many (for their 14B model on the Comp-Math-24-25 set, majority voting over 64 samples reaches $76.3\%$ and GenSelect over the same samples $90.0\%$). The system reaches state-of-the-art on AIME and Harvard-MIT Mathematics Tournament problems. Most striking, the GenSelect mechanism works on \emph{compressed summaries} of reasoning traces, which would be impossible if errors were spread uniformly across the full output: the summaries would lack the discriminating signal.
+
+\paragraph{Test-time compute scaling (\citet{snell2024scaling}).}
+Optimal test-time strategy depends on problem difficulty and model size. \citet{snell2024scaling} show that compute-optimal allocation across the reasoning trajectory---rather than uniform sampling---substitutes meaningfully for parameter scale, with a smaller base model outperforming a $14\times$ larger one on the tasks where the smaller model attains non-trivial baseline accuracy. The framework reads this as a direct consequence of $k$ varying with task: hard problems have more decision points to traverse correctly, rewarding search-based exploration along those junctions; easier ones have few, rewarding cheaper sampling-based ensembling. An order-of-magnitude substitution of test-time strategy for parameter count is exactly what an independent-error model rules out and what the two-rate model predicts under saturation.
+
+\paragraph{Attention concentration in production models (\citet{liu2024retrieval}).}
+In Llama-3-8B, retrieving just $1{,}000$ critical tokens out of $100{,}000$ recovers about $89\%$ of full-attention scores on average and over $90\%$ for most heads. RetrievalAttention exploits this directly: at generation time, only the top critical tokens enter attention, with the rest treated as a nearest-neighbor lookup over $1$--$3\%$ of key vectors. The result is $128$K effective context on a single RTX 4090 with a $4.9\times$ decoding-latency reduction over exact KNN. The structural claim is the same one $k \ll n$ encodes; the engineering is just paying attention to it.
+
+A consolidated summary of how each result maps onto the framework's three pillars appears in Table~\ref{tab:implications}.
+
+\begin{table}[ht]
+\caption{How systems-level results map onto the framework's three pillars.}
+\label{tab:implications}
+\centering
+\small
+\begin{tabular}{p{2.6cm}p{3cm}p{3cm}p{3.5cm}}
+\toprule
+\textbf{Challenge} & \textbf{Independent-error view} & \textbf{Two-rate view} & \textbf{Exemplar systems} \\
+\midrule
+Long-context handling & Uniform attention over all tokens & Sparse retrieval focused on key tokens & Anchor LLMs \citep{pang2024anchor}; RetrievalAttention \citep{liu2024retrieval} \\
+\midrule
+Compute allocation & Equal resources for all tokens & Targeted at manifold transitions & Tool integration \citep{moshkov2025aimo}; CALM \citep{schuster2022calm} \\
+\midrule
+Error reduction & Independent samples, multiplicative gain & Branching at uncertain junctions & Self-consistency \citep{wang2023self}; GenSelect \citep{moshkov2025aimo} \\
+\midrule
+Evaluation & Uniform perplexity & Key-token-restricted metrics & LongPPL \citep{fang2024what}; success-plateau curves \citep{costello2025think} \\
+\midrule
+Architecture & Scale monolithic models & Alignment over scale & TPT \citep{costello2025think} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
