@@ -4,7 +4,9 @@
 
 Built from `main.tex` + `body.tex` in this folder (`bash build.sh`). The same `body.tex` is copied verbatim into the NeurIPS-format package.
 
-### Corrected statistics and attributions (each checked against the cited source)
+### Corrected statistics and attributions, first pass (2026-09-20)
+
+Superseded wherever it conflicts with the full-text review above. In particular, the AIMO-2 numbers and the "4,096-token window" for the LongPPL figure introduced in this pass were wrong.
 
 | Location | v2 text | v3 text | Source |
 |---|---|---|---|
@@ -16,6 +18,33 @@ Built from `main.tex` + `body.tex` in this folder (`bash build.sh`). The same `b
 | §3.1 | Anchor result "requires k to be effectively bounded" | "consistent with a bounded number of load-bearing positions per span" | hedged; the paper does not measure k |
 | §5, App. B | AIMO-2 tool integration "fires Python execution at high-entropy spans" | model emits code blocks itself, budget of 1–8 executions per solution; GenSelect numbers added (76.3% majority@64 vs 90.0% GenSelect, 14B, Comp-Math-24-25) | OpenMathReasoning paper §TIR, §GenSelect (arXiv:2504.16891) |
 | App. A | TPT lets small models "match models 30× larger" | "roughly an order of magnitude larger" | TPT abstract: Gemma2-9B (82%) matches LLaMA-3.1-70B (arXiv:2504.18116) |
+
+### Full-text citation review (2026-10-03, before upload)
+
+Every carry-over reference was re-read in full: the venue camera-ready where reachable, otherwise arXiv. Each citing sentence was checked against the passage it relies on, and the bib was rebuilt from venue records. Of 79 citing uses, 30 were accurate, 47 narrowed and 2 dropped. Per-sentence evidence is in `../../ieee_access/paper_beyond_exponential_decay/ledger_parts/A_v3_carryover.md` and `B_v3_carryover.md`.
+
+| Item | Before | After | Why |
+|---|---|---|---|
+| AIMO-2 (App. B) | "majority voting over 64 samples reaches 76.3% and GenSelect 90.0%" (14B, Comp-Math-24-25) | maj@64 86.7% vs GenSelect 90.0% *with the 32B model as selector*, AIME 2024 only; GenSelect adds 0–3.6 points; the Kaggle entry did not use GenSelect; SOTA claim limited to open-weight models | 76.3 is pass@1 (Table 7 caption). The September value came from a fetch summary, not the table |
+| LongPPL window | "<10% … than with only the preceding 4,096 tokens" (five places) | "<10% of GovReport tokens gain >2 nats from the full context over a truncated short context" | 4,096 is stated only for the LongPPL experiments (§4.1); the window behind the <10% figure (§2.2, Fig. 4a) is not stated |
+| RetrievalAttention | 89% of attention from top 1,000 of 100,000; 4.9×; "top ~1,000 tokens" | Camera-ready (NeurIPS 2025): attention from top-k approaches full attention once k is in the low hundreds of a 128K context; 100 retrieved keys + 640 fixed tokens; 7.93× | The 89% / 4.9× analysis exists only in arXiv v1–v3 |
+| Anchor-LLM | "99% KV reduction at ~1.5% cost" (unscoped) | after continual pre-training of Llama2-7B; cached five-shot demonstrations on short QA benchmarks | Scope stated in §1, §4, Table 1(b) |
+| Robinson et al. | irregular tokens "produce less stable continuations"; regular tokens "perturbation has minimal effect"; mapping to key tokens "direct" | stability is the authors' theoretical implication left to future experiments; non-rejection is "uninformative"; junction reading marked ours and untested | Abstract, §6, §7 |
+| Viswanathan et al. | "high-confidence contexts collapse"; "which is why e_non should fall" | cross-prompt correlation at fixed length; the within-sequence consequence marked as our untested reading | §3, §5 |
+| Gao et al. | "near-perfect" probing; "only the surface form failed"; manifold "explains" | near-perfect only on key-value retrieval; probe recovers location; authors' positional-bias account given; manifold reading marked ours | §4.1, §5 |
+| Ensembles and error types | idiosyncratic-vs-systematic split stated as fact | marked as our conjecture; ToT's own Table 2 counterexample added (majority voting lifts GPT-4 on Game of 24 only 4%→9%) | Not tested in any cited paper |
+| Tree of Thoughts | "branching at high-uncertainty points" | breadth-first search keeping the 5 best self-rated partial solutions; ~60% of CoT samples fail after the first step | §4.1 |
+| Self-consistency | ρ≈0 placement stated; "correct paths concentrate near an attractor" | ρ placement marked as our reading (no correlation measured); correct paths are diverse and converge on the final answer | §1, §3.5 |
+| Think-Prune-Train | "staircase our model predicts"; "alignment"; "2–9B models match 30× / order-of-magnitude larger" | staircase claim dropped (curves are over training rounds); "self-training"; only the 9B model shown to beat a model ~8× larger | §1, §4.2, §4.5 |
+| TextFooler | "drives accuracy to near zero"; IMDB "about 4–6%" | "below 15% except fake news"; IMDB 3.5–6%; entailment ~14–19%; ablation scope (BERT on MR, AG, SNLI) | Tables 3, 4, 8 |
+| Wang et al. (80/20) | "about 20% of tokens carry high entropy" (abstract, §2, §6) | over half of tokens below 0.01 entropy; the top-20% cutoff is the authors' design choice | §3 (80th-percentile threshold) |
+| Bigelow, Lin | "show … re-sampling elsewhere does not"; "often recovers" | GPT-3.5, seven tasks, abrupt shifts in up to 63% of examples plus gradual hazards; ~30% single re-sample, >90% within 64 | Table 1, Fig. 7; §2, Fig. 2 |
+| Chronology | "Three studies published after the first version" | "not discussed in the first version" (Bigelow and Lin's preprints predate v1) | arXiv dates |
+| Ord | "fits those data closely" | "about as well as METR's own curve; evidence only suggestive" | p. 6, p. 9 |
+| Hot or Cold | "raises exploration at uncertain tokens" | raises temperature at the first token of each code block, a fixed positional rule | Eq. 3 |
+| Snell | "allocation across the reasoning trajectory"; "model size"; "rules out" | per-prompt strategy choice by difficulty; difficulty and budget; FLOPs-matched on MATH; "hard to square with" | Abstract, §5.3, §7 |
+| Bengio, Dziri, Li & Sarwate, self-correction | "formalized"; Dziri as per-token; stratification "introduces correlation"; "self-correction is routine" | "identified its mechanism"; Dziri as the step-level analogue; correlation as our expectation; "later tokens sometimes revise" | §2.3; Prop. 4.1; static embeddings only |
+| Bib | — | venue records for all 28 audited entries: RetrievalAttention and Robinson now NeurIPS 2025; Critical Tokens now ICML 2025 with author "Liu, Qiuzhi"; TokenSelect author order; Snell ICLR title; pages/DOIs added | ledger bib notes |
 
 ### Citation-audit fixes (three-audit pass, 2026-09-20; 29 entries, none hallucinated)
 
