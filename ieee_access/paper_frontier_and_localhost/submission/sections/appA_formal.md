@@ -2,6 +2,21 @@
 
 This appendix states the setup behind Section REF(sec:loop), a one-step descent inequality under a noisy gate, an informal convergence proposition, the optimization-analogy correspondence, and four worked cases. No new theorem is claimed; the proposition is the ordinary target of local stochastic optimization under noisy estimators, restated for a discrete, versioned parameter.
 
+| Optimization concept | Scaffold analogue |
+|--------------|----------------------------------------------|
+| Parameter vector | Instructions, skills, memories, tools, routing graphs, evaluation gates, governance rules |
+| Loss | Failure, user correction, evaluation regression, retrieval miss, tool error, schema violation |
+| Gradient estimate | Credit assignment identifying the coordinate responsible for a failure |
+| Step | Accepted scaffold edit; step size is edit magnitude under $\oplus$ |
+| Aggregated update | Several recurring failures combined before an update, by averaging or by agreement across $k$ proposals |
+| Update radius | Promotion scope: which loss is descended (USER, PROJECT, STACK, TENANT, CORE) |
+| Validation loss | Held-out patch evaluation before merge |
+| Regularization | Complexity penalty $\Omega(z)$, bloat control, cross-patch regression checks |
+| Overfitting | Scaffold improves on this deployment and degrades elsewhere |
+| Rollback | Reverting a harmful accepted update |
+
+Table A-1. Optimization concepts and their scaffold analogues.
+
 ### Setup
 
 Let the frontier model have fixed parameters $\theta_M$ and let the scaffold be a structured object $\theta_s \in \Theta_s = \Theta_1 \times \cdots \times \Theta_6$ over the six substrate coordinates of Section REF(sec:method); $\Theta_s$ is discrete, symbolic, and versioned. For a deployment $D$, $L_D(\theta_s) = \mathbb{E}_{x \sim D}[\ell(\pi(\theta_M, \theta_s, x))]$. A candidate edit $z_t \sim Q_t(z \mid H_t, \theta_s^t)$ is drawn from a proposal process conditioned on the accumulated history $H_t$ of failures, corrections, rejected outputs, evaluation regressions, and prior accepted edits. $Q_t$ is not uniform: for a mode $m$ that recurs with frequency $f_m$ and carries per-occurrence loss $s_m$, its expected contribution to the failure rate is $f_m s_m$, so high-frequency or high-severity modes are proposed first. The finite directional difference is $\Delta_z L_D(\theta_s) = L_D(\theta_s \oplus z) - L_D(\theta_s)$; the gate sees only a noisy estimate $\widehat{\Delta}_z L_D$. The update is
@@ -19,22 +34,7 @@ Add (A3) proposal coverage, that at every non-gate-stable scaffold $Q_t$ places 
 
 ### Correspondence
 
-| Optimization concept | Scaffold analogue |
-|---|---|
-| Parameter vector | Instructions, skills, memories, tools, routing graphs, evaluation gates, governance rules |
-| Loss | Failure, user correction, evaluation regression, retrieval miss, tool error, schema violation |
-| Gradient estimate | Credit assignment identifying the coordinate responsible for a failure |
-| Step | Accepted scaffold edit; step size is edit magnitude under $\oplus$ |
-| Aggregated update | Several recurring failures combined before an update, by averaging or by agreement across $k$ proposals |
-| Update radius | Promotion scope: which loss is descended (USER, PROJECT, STACK, TENANT, CORE) |
-| Validation loss | Held-out patch evaluation before merge |
-| Regularization | Complexity penalty $\Omega(z)$, bloat control, cross-patch regression checks |
-| Overfitting | Scaffold improves on this deployment and degrades elsewhere |
-| Rollback | Reverting a harmful accepted update |
-
-Table A-1. Optimization concepts and their scaffold analogues.
-
-Credit assignment here is attribution, not backpropagation. Scaffold systems do not differentiate through instruction files; they trace an output error to an upstream coordinate, manually or with a judge or verifier. The descent argument needs only that this attribution succeeds with non-zero probability per failure, assumption (iv) of Section REF(sec:loop).
+Table REF(tab:A-1) pairs each optimization concept with its scaffold analogue. Credit assignment here is attribution, not backpropagation. Scaffold systems do not differentiate through instruction files; they trace an output error to an upstream coordinate, manually or with a judge or verifier. The descent argument needs only that this attribution succeeds with non-zero probability per failure, assumption (iv) of Section REF(sec:loop).
 
 ### Worked cases
 

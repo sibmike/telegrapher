@@ -20,6 +20,8 @@ Three papers. *Beyond Exponential Decay* (arXiv:2505.24187) shows that reliabili
 | `supplementary/p3_master_scores.csv`, `supplementary/p3_refresh_2026-10.csv` | Corpus scores: May-2026 corpus and October-2026 refresh rows. |
 | `scripts/recount.py` | Recomputes corpus counts, per-substrate maturity, matrix membership from the CSVs. |
 | `CLAIMS_AUDIT.md` | Every absolute claim of the arXiv version with its post-refresh verdict. |
+| `related_work_cards.md` | Evidence cards (one per neighbouring work, verified from primary sources) behind Supplementary S7, the extended related work. |
+| `submission/sections_before/` | Snapshot of the sections before the style and texture passes; `scripts/check_invariants.py` diffs numbers, citations, cross-references, and structure against it. |
 | `cover_letter.md` | Cover letter for the submission portal. |
 | `submission/build.sh` | pandoc → pdflatex → bibtex → pdflatex ×2; also builds `supplementary.pdf`. |
 
@@ -27,7 +29,9 @@ Class, font and logo files (`ieeeaccess.cls`, `IEEEtran.cls`, `IEEEtran.bst`, `s
 
 ## Status (2026-10-03)
 
-Draft complete and building: `main.pdf` 19 pages (two-column IEEE Access), 4 figures, 10 tables, 107 references; `supplementary.pdf` 49 pages (S1–S6). Corpus: 256 unique systems (130 by May 2026, 126 added by the October 2026 sweep), 204 core, 52 contrast; composite two-loop audit passed by 14 research systems and 3 industry exemplars. `scripts/verify_ieee.py` passes. The claims audit (`CLAIMS_AUDIT.md`) records 11 revised, 8 sharpened, 1 dropped, and the rest holding; the four-property gap of Section IX remains open.
+Draft complete and building: `main.pdf` 19 pages (two-column IEEE Access), 4 figures, 10 tables, 147 references; `supplementary.pdf` 40 pages (S1–S7). Corpus: 256 unique systems (130 by May 2026, 126 added by the October 2026 sweep), 204 core, 52 contrast; composite two-loop audit passed by 14 research systems and 3 industry exemplars. `scripts/verify_ieee.py` passes. The claims audit (`CLAIMS_AUDIT.md`) records 11 revised, 8 sharpened, 1 dropped, and the rest holding; the four-property gap of Section IX remains open.
+
+Passes applied on 2026-10-03, in order: the `writing-style` and `humanization` skills over every section (claims, numbers, citations, and cross-references held fixed; `scripts/check_invariants.py` against `submission/sections_before/`); the `extended-related-work` skill, which produced Supplementary S7 (organized by the article's four design commitments) and `related_work_cards.md` (one verified evidence card per cited neighbor); a skeptical-reviewer pass whose consistency defects, three overclaims, and ~30 missing canonical citations were all resolved (the new entries are in `supplementary/new_refs_2026-10-03.bib`, merged into `references.bib`); and a float-layout pass (every page rendered and inspected: table captions above the table per the IEEE class, proportioned column widths from the Markdown separator rows, every table placed on the page after its first reference, Figure 3 boxes resized to hold their text, Figure 4 cells relabeled to match Section VII).
 
 Still needed from the authors before submission: biographies and photos (six), city/country per address, funding statement and the Palo Alto Networks conflict note, approval of the AI-disclosure wording in the Acknowledgment, confirmation of the preprint/workshop disclosure in `cover_letter.md`, suggested reviewers, and a final read of the eleven revised claims.
 

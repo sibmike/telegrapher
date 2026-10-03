@@ -25,7 +25,8 @@ def convert(m):
     rest = re.sub(r"\\endfirsthead|\\endhead|\\endlastfoot|\\endfoot", "", rest)
     rest = re.sub(r"\\caption\{.*?\}\\tabularnewline\n?", "", rest, flags=re.S)
     body = "\\toprule" + rest
-    return "\\begin{table*}[!t]\n\\centering\\small\n\\begin{tabular}" + colspec + "\n" + body.strip() + "\n\\end{tabular}\n%%CAPTION%%\n\\end{table*}"
+    # IEEE convention: the table caption sits above the table (ieeeaccess sample and IEEEtran).
+    return "\\begin{table*}[!t]\n%%CAPTION%%\n\\centering\\small\n\\begin{tabular}" + colspec + "\n" + body.strip() + "\n\\end{tabular}\n\\end{table*}"
 
 # pandoc 3.x wraps each uncaptioned table in "{\def\LTcaptype{none} ... \end{longtable}\n}"; consume the wrapper too
 t = re.sub(r"\{\\def\\LTcaptype\{none\}[^\n]*\n\\begin\{longtable\}(.*?)\\end\{longtable\}\n\}", convert, t, flags=re.S)
@@ -37,7 +38,7 @@ def attach(m):
     tag = re.match(r"^Table\s+([IVXA-Z]+-\d+)\.\s*", label_par.strip())
     cap = label_par.strip()[tag.end():]
     return table.replace("%%CAPTION%%", "\\caption{" + cap + "}\\label{tab:" + tag.group(1) + "}")
-t = re.sub(r"(\\begin\{table\*\}.*?%%CAPTION%%\n\\end\{table\*\})\n\n(Table\s+[IVXA-Z]+-\d+\.[^\n]*)\n", attach, t, flags=re.S)
+t = re.sub(r"(\\begin\{table\*\}\[!t\]\n%%CAPTION%%(?:(?!\\end\{table\*\}).)*\\end\{table\*\})\n\n(Table\s+[IVXA-Z]+-\d+\.[^\n]*)\n", attach, t, flags=re.S)
 t = t.replace("%%CAPTION%%\n", "")
 
 # REF(x) tokens written in the Markdown become \ref{x}; a preceding word gets a non-breaking space.

@@ -39,19 +39,33 @@ for name in ("p3_master_scores.csv", "p3_refresh_2026-10.csv"):
 def esc(s): return (s or "").replace("|", "/").replace("\n", " ").strip()
 SUBS = {"INTEGRATED": "INT", "S1_Instructions": "S1", "S2_Skills": "S2", "S3_Memory": "S3", "S4_Tools": "S4", "S5_Orchestration": "S5", "S6_Governance": "S6"}
 def src(s):
+    """Source cell: the arXiv id when there is one; otherwise the host/path with parenthetical
+    notes dropped, cut at a path boundary near 30 characters, and a zero-width space after
+    each slash so pdflatex can break the URL inside the column (U+200B is declared in build.sh)."""
     s = esc(s)
     m = re.search(r"\d{4}\.\d{4,5}", s)
-    return "arXiv:" + m.group(0) if m else s[:28]
+    if m:
+        return "arXiv:" + m.group(0)
+    s = s.split(" (")[0].strip()
+    if len(s) > 30:
+        s = s[:30].rsplit("/", 1)[0] if "/" in s[:30] else s[:30]
+    return s.replace("/", "/​").replace(".", ".​")
 # dash lengths set pandoc's relative column widths
 lines = ["| Sub. | System | Score | Year | Source | Loop 1 | Loop 2 | Class | Added |",
-         "|---|------------------|--|--|---------|-----|-----|--|----|"]
+         "|---|------------|---|---|------------|-----|-----|-----|----|"]
+def gate(s):
+    # "Auto+Human" gets a break opportunity after the plus so it wraps inside its column
+    return esc(s).split("(")[0].strip()[:10].replace("+", "+​")
 for name, r in sorted(rows, key=lambda x: (x[1]["substrate"], x[1]["system"].lower())):
-    l1 = esc(r.get("loop1", "")).split("(")[0].strip()[:10]
-    l2 = esc(r.get("loop2", "")).split("(")[0].strip()[:10]
-    lines.append(f"| {SUBS.get(esc(r['substrate']), esc(r['substrate']))} | {esc(r['system'])[:48]} | {esc(r['score'])} | {esc(r['year'])} | {src(r['venue_or_source'])} | {l1} | {l2} | {esc(r.get('signal_class',''))[:5]} | {'Oct 26' if name.startswith('p3_refresh') else 'May 26'} |")
+    l1, l2 = gate(r.get("loop1", "")), gate(r.get("loop2", ""))
+    yr = esc(r["year"])
+    yr = yr if (yr.isdigit() and len(yr) == 4) else "—"      # SOAR's "classical" (pre-window)
+    cls = esc(r.get("signal_class", "")).split("(")[0].strip()
+    lines.append(f"| {SUBS.get(esc(r['substrate']), esc(r['substrate']))} | {esc(r['system'])[:48]} | {esc(r['score'])} | {yr} | {src(r['venue_or_source'])} | {l1} | {l2} | {cls} | {'Oct 26' if name.startswith('p3_refresh') else 'May 26'} |")
 s1 = ("# S1. Full score table\n\nEvery scored (substrate, system) row of the corpus: 130 systems scored by May 2026 and 126 added by the October 2026 sweep. "
       "Scores follow the 0–5 rubric of the main text (Table V-1); Loop 1 / Loop 2 gate types and signal classes are recorded for the October rows "
       "(and for May rows re-audited in Section VII). Substrate codes: INT integrated, S1 instructions, S2 skills, S3 memory, S4 tools, S5 orchestration, S6 governance. "
+      "A year of “—” marks a classical system that predates the survey window. "
       "The CSV files with per-row justifications accompany this document.\n\n```{=latex}\n\\begingroup\\scriptsize\n```\n\n" + "\n".join(lines) + "\n\n```{=latex}\n\\endgroup\n```\n")
 
 # ---- S2: data appendix (arXiv Appendix B)
@@ -84,15 +98,41 @@ s5 = "# S5. The convergent research families, system by system\n\n" + sub(g, [
 # ---- S6: claims audit + rubric table
 audit = open(os.path.join(PKG, "CLAIMS_AUDIT.md"), encoding="utf-8").read()
 audit = re.sub(r"^# .*\n", "", audit, count=1)
-s6 = "# S6. Claims audit and the rubric-reward comparison\n\n" + audit.replace("\n## ", "\n## S6.")
+# the repository path is an unbreakable code span that overruns the margin; name the file in prose
+audit = audit.replace("(`arxiv/frontier_and_localhost/short/paper_frontier_and_localhost_short.md`, line numbers as of 2026-09-20)",
+                      "(the arXiv short v3.2 Markdown source, line numbers as of 2026-09-20)")
+_s6n = [0]
+def _s6head(m):
+    _s6n[0] += 1
+    return f"\n## S6.{_s6n[0]} "
+s6 = "# S6. Claims audit and the rubric-reward comparison\n\n" + re.sub(r"\n## ", _s6head, audit)
+
+# ---- S7: extended related work (drafted section file)
+s7_path = os.path.join(PKG, "submission", "sections", "S7_extended_related_work.md")
+s7 = open(s7_path, encoding="utf-8").read().strip("\n") if os.path.exists(s7_path) else ""
 
 front = """---
 title: "Supplementary Material for: Frontier and Localhost: A Survey of How Production AI Learns Outside the Weights"
 date: "October 2026"
 ---
 
-This document accompanies the main article. S1 is the released score table; S2–S5 carry the verification material of the survey (data appendix, mechanism stack, contrast set and matrix membership, and the per-system walkthrough of the convergent research families); S6 is the audit of every absolute claim of the earlier preprint against the October-2026 literature, with the rubric-reward comparison that Section IV of the main text summarizes. Section numbers in the form "Section N" refer to the main article.
+This document accompanies the main article. S1 is the released score table; S2–S5 carry the verification material of the survey (data appendix, mechanism stack, contrast set and matrix membership, and the per-system walkthrough of the convergent research families); S6 is the audit of every absolute claim of the earlier preprint against the October-2026 literature, with the rubric-reward comparison that Section IV of the main text summarizes; S7 is the extended related work, organized by the article's four design commitments. Section numbers in the form "Section N" refer to the main article.
 
 """
-open(OUT, "w", encoding="utf-8", newline="\n").write(front + "\n\n".join([s1, s2, s3, s4, s5, s6]) + "\n")
+body = front + "\n\n".join([p for p in (s1, s2, s3, s4, s5, s6, s7) if p]) + "\n"
+
+# Lifted tables carry equal-dash separators, which pandoc turns into equal column widths; give
+# the long-text columns the width (dash counts are relative; cell text is untouched).
+WIDTHS = {
+    "| System | Year | Discriminator failure | Brief reason |": (16, 5, 24, 40),
+    "| System | Year | Composite-criterion failure | Brief reason |": (16, 5, 24, 40),
+    "| Section III quantity | SkillOpt instantiation | Section III role explained | Algorithm pointer |": (16, 24, 26, 20),
+    "| Line | Claim | Verdict | Evidence |": (5, 23, 10, 42),
+    "| Claim | Statement | Verdict | Evidence |": (5, 23, 10, 42),
+}
+for header, widths in WIDTHS.items():
+    sep = "|" + "|".join("-" * w for w in widths) + "|"
+    body = re.sub(r"(?m)^" + re.escape(header) + r"\n\|[-:|]+\|$", header + "\n" + sep, body)
+
+open(OUT, "w", encoding="utf-8", newline="\n").write(body)
 print("wrote", os.path.relpath(OUT, HERE), "rows:", len(rows))

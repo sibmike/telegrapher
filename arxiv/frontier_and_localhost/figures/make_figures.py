@@ -176,7 +176,7 @@ def fig3():
     small = OUT["suffix"] == "_ieee"          # column-width rendering: tighter grid, smaller type
     cw, ch = (1.05, 0.95) if small else (1.15, 0.95)
     gx0, gy0 = (1.45, 0.25) if small else (1.05, 0.25)
-    f_hdr, f_main, f_sub, f_empty = (7.5, 7, 6.5, 6.5) if small else (9, 9, 8, 8)
+    f_hdr, f_main, f_sub, f_empty = (7.5, 7, 6.5, 6.0) if small else (9, 9, 8, 8)
     cells = {
         (0, 0): ("shade", "Research full-auto", "SkillOpt, AlphaEvolve"),
         (0, 1): ("shade", "Production hybrid", "SkillForge"),
@@ -188,6 +188,15 @@ def fig3():
         (2, 1): ("blank", None, "—"),
         (2, 2): ("blank", None, "—"),
     }
+    if small:
+        # IEEE Access article (October-2026 corpus, its Section VII): the human-authored row is
+        # occupied by registries and curation workflows that fail the composite audit, and
+        # [Human x Auto] is the one cell with no surveyed occupant.
+        cells.update({
+            (1, 0): ("blank", None, "—"),
+            (1, 1): ("light", None, "MCP registries,\ncommunity hub"),
+            (1, 2): ("light", None, "curation:\nagent drafts,\nperson checks"),
+        })
     for r in range(3):
         for c in range(3):
             kind, main, sub = cells[(r, c)]
@@ -216,23 +225,25 @@ def fig3():
 def fig4(counts):
     """Corpus-flow diagram: candidate pool -> core / contrast -> strict audit -> passes.
     counts: dict with keys total, core, contrast, strict_candidates, strict_pass, industry."""
-    W, H = 3.5, 2.6
+    W, H = 3.5, 3.0
     fig, ax = canvas(W, H)
-    bw, bh = 2.6, 0.40
+    # Column-width figure: full-width boxes 3.3 in, split boxes 1.62 in, three text lines each,
+    # so every line stays inside its box at 7-7.5 pt (the earlier 2.6/1.25 in boxes overflowed).
+    bw, bh, sw, dx = 3.3, 0.56, 1.62, 0.86
     cx = W / 2
-    ys = [2.30, 1.65, 1.00, 0.35]
-    box(ax, cx, ys[0], bw, bh, f"{counts['total']} unique systems scored\n(six substrates, 0–5 rubric; {counts['may']} by May 2026, +{counts['oct']} in the Oct 2026 sweep)", fs=7.5)
+    ys = [2.65, 1.87, 1.09, 0.31]
+    box(ax, cx, ys[0], bw, bh, f"{counts['total']} unique systems scored\n(six substrates, 0–5 rubric)\n{counts['may']} by May 2026, +{counts['oct']} in the Oct 2026 sweep", fs=7.5)
     # split row
-    box(ax, cx - 0.72, ys[1], 1.25, bh, f"core corpus: {counts['core']}\n(score ≥ 3 on some substrate)", fs=7.5, fill=SHADE)
-    box(ax, cx + 0.72, ys[1], 1.25, bh, f"contrast: {counts['contrast']}\n(fails the discriminator)", fs=7.5, fill=LIGHT)
-    box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(Loop 1 from session signal and gated Loop 2 with versioning or lineage)", fs=7.5)
-    box(ax, cx - 0.72, ys[3], 1.25, bh, f"pass: {counts['strict_pass']} research\n+ {counts['industry']} industry exemplars", fs=7.5, fill=SHADE)
-    box(ax, cx + 0.72, ys[3], 1.25, bh, f"promote without lineage: {counts['relaxed_only']}\n(enter only under relaxation)", fs=7.5, fill=LIGHT)
-    arrow(ax, (cx - 0.3, ys[0] - bh / 2), (cx - 0.72, ys[1] + bh / 2))
-    arrow(ax, (cx + 0.3, ys[0] - bh / 2), (cx + 0.72, ys[1] + bh / 2))
-    arrow(ax, (cx - 0.72, ys[1] - bh / 2), (cx - 0.3, ys[2] + bh / 2))
-    arrow(ax, (cx - 0.3, ys[2] - bh / 2), (cx - 0.72, ys[3] + bh / 2))
-    arrow(ax, (cx + 0.3, ys[2] - bh / 2), (cx + 0.72, ys[3] + bh / 2))
+    box(ax, cx - dx, ys[1], sw, bh, f"core corpus: {counts['core']}\n(score ≥ 3 on\nsome substrate)", fs=7, fill=SHADE)
+    box(ax, cx + dx, ys[1], sw, bh, f"contrast: {counts['contrast']}\n(fails the\ndiscriminator)", fs=7, fill=LIGHT)
+    box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(Loop 1 from session signal;\ngated Loop 2 with versioning or lineage)", fs=7.5)
+    box(ax, cx - dx, ys[3], sw, bh, f"pass: {counts['strict_pass']} research\n+ {counts['industry']} industry\nexemplars", fs=7, fill=SHADE)
+    box(ax, cx + dx, ys[3], sw, bh, f"promote without lineage: {counts['relaxed_only']}\n(enter the matrix\nonly under relaxation)", fs=7, fill=LIGHT)
+    arrow(ax, (cx - 0.3, ys[0] - bh / 2), (cx - dx, ys[1] + bh / 2))
+    arrow(ax, (cx + 0.3, ys[0] - bh / 2), (cx + dx, ys[1] + bh / 2))
+    arrow(ax, (cx - dx, ys[1] - bh / 2), (cx - 0.3, ys[2] + bh / 2))
+    arrow(ax, (cx - 0.3, ys[2] - bh / 2), (cx - dx, ys[3] + bh / 2))
+    arrow(ax, (cx + 0.3, ys[2] - bh / 2), (cx + dx, ys[3] + bh / 2))
     save(fig, "fig4_corpus_flow")
 
 
