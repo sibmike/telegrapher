@@ -1,0 +1,88 @@
+# Claims audit — Frontier and Localhost, IEEE Access version (2026-10-03)
+
+Every absolute claim in the arXiv short v3.2 (`arxiv/frontier_and_localhost/short/paper_frontier_and_localhost_short.md`, line numbers as of 2026-09-20) of the form *no surveyed system / only X / first / absent / empty cell*, with its verdict after the October-2026 literature sweep (three parallel sweeps: skills; harness, context, and LLMOps governance; memory governance, competing surveys, rubric rewards; 127 systems added, scored from their own method sections) and the recount in `scripts/recount.py`. Verdicts: **holds** (unchanged), **sharpened** (true, now stated more precisely), **revised** (wording must change), **dropped** (not carried into the IEEE version). Evidence names the system(s) that forced the verdict; arXiv ids are in `submission/references.bib`.
+
+**Corpus after the sweep:** 256 unique systems (130 May + 126 October), 204 core, 52 contrast. No October addition scores 5 on any substrate. Composite two-loop audit: 14 research systems + 3 industry exemplars (Sierra Agent OS 2.0, Cognition Devin, and now Letta Context Repositories, whose shared-memory push carries git lineage but no gate) pass; 7 October systems promote across contexts without versioning or lineage and enter only under relaxation (a) or not at all (EvolveNet, Evo2Team, XRepoSkill, ShareMem, RASO, Spotify, Future AGI (T5 only)).
+
+**Corrections to the May data applied here (`scripts/apply_corrections.py`):** (1) the row "Governed Collaborative Memory / SSGM" conflated Cuadros et al. (2605.04264) with SSGM (Lam et al., 2603.11768); split, SSGM scored 2 (conceptual framework). (2) MAE and Memento-Skills were scored 5 on S5 in the CSV while the published table said no orchestration system reaches 5; both close one loop only, so they are re-scored 4 per the uniform rubric. S5 mean for the May corpus moves from 2.68 to 2.58.
+
+## The §9 corner (a)–(d)
+
+| Line | Claim | Verdict | Evidence |
+|---|---|---|---|
+| 70, 120, 235, 246, 272, 574, 578, 592, 698 | No public system combines (a) auto-gated Loop 1, (b) cross-organization promotion, (c) versioned lineage with RBAC, (d) rollback | **holds** | Three sweeps, 126 systems: (b) is unclaimed by any evidenced system (EvolveNet's clients are benchmark partitions, "organizations" only in motivation; MemClaw is single-tenant in its evaluation; Buildrix is an open community hub with no gate); (c) appears as lineage without RBAC everywhere (EDDOps, ACM, MemClaw, Letta, Mem0 history) and as RBAC without versioned promotion in MCP control planes (agentic-community gateway, TrueFoundry); (d) is demonstrated by Governed Capability Evolution and EDDOps and claimed by EvolveNet (round rollback) and EvoUndo (recoverability as admission), none of which has (a)+(b). |
+| 110 | "No surveyed system meets the FedAvg limit; FederatedSkill comes closest" | **sharpened** | EvolveNet (2608.04968) is now the nearest: broadcast, client-local optimization, server-side merge accepted iff fixed ≥ broken on a held-out slice, rollback to the previous shared harness. Still selection-and-merge over program edits, not averaging; cite both. |
+| 155 | "(iv) … FederatedSkill comes closest … narrowed on one property, closed on none" | **revised** | Two closest approaches now: FederatedSkill (decision log, no gate at receiver) and EvolveNet (held-out merge gate and round rollback, no lineage or RBAC). Say "narrowed on (b) and (d) by different systems, closed on none." |
+| 242 | "no member of the §3.5 research families provides (d), and only FederatedSkill provides even a partial (b)" | **revised** | (d): EvolveNet (round rollback), SkillSmith and SkillAudit (edit-level rollback inside one agent), Growing Harness and WDA (within-optimization rollback), EvoUndo (recoverability as an admission test). (b): EvolveNet and RASO partial. New sentence: "rollback now appears inside single deployments and inside one federated round; no system rolls back a promotion that has crossed an organization boundary, because none makes such a promotion." |
+
+## Matrix cells
+
+| Line | Claim | Verdict | Evidence |
+|---|---|---|---|
+| 227 | "Three cells are populated; the rest are empty for structural reasons" | **revised** | Among composite-passing systems the three cells hold; but single-loop and governance-only systems now occupy [Human × Human] (MCP registries: Azure API Center, agentic-community MCP Gateway & Registry, TrueFoundry; Buildrix; Enoch), [Human × None] (VerificAgent, revocation guard, Davis et al. governance conversion, Continual Harness human phase), [Auto+Human × None] (SkillChain, Learning on the Job), [None × Auto] (Governed Capability Evolution), [None × Auto+Human] (EDDOps), [None × Human] (ACM). Restate as: three cells hold every system that passes the composite audit; the human-authored cells are occupied only by registries and curation workflows with no session-signal loop. |
+| 229, 549 | "[Human × Auto] is empty by engineering logic … no published example exists" | **holds** | No system with human-authored candidates and automated promotion was found; the closest, MCP Gateway & Registry, adds an automated security scan to a human admission, which is [Human(+scan) × Human]. |
+| 229, 551 | "[Human × Human] is empty in the surveyed corpus" | **revised** | Occupied by MCP registries and a community hub; see above. The paper's predicted occupant (solo or small-team workflows) is also now documented empirically by "Who Maintains Agent Skills?" (2609.05677): across five public skill repositories every substantive edit is human-merged, 62% AI co-authored, 1 deprecation in 254 edits. |
+| 229 | "[Human × None] is structurally improbable" | **revised** | Occupied: VerificAgent (agent-drafted memories, human fact-check, frozen bank), the revocation guard of Shen et al., and human-in-the-loop harness phases. Restate: it is the human-curation cell, single-loop by construction. |
+| 231 | "Nearly every auto-gated system fires at n = 1" | **revised** | Batched or statistical acceptance is now common: SAGE-gate (paired per-item test), Future AGI (paired bootstrap CI), AutoSaddler (mini-batch failure signals), MGM, ModularRSI (evidence across tasks), VaG (3-of-3 critics), EvolveNet (fixed ≥ broken on held-out), VACE, HackProbe, PROCTOR. Say "common since mid-2026" and cite SAGE-gate and VaG. |
+| 231 | "no surveyed system has formalized agreement as a k-of-n acceptance rule" | **revised** | VaG requires all three heterogeneous critics to pass (3-of-3); SkillSpec is consensus-gated. Keep the p^k-vs-1/k distinction, drop "no surveyed system". |
+| 231 | "Only AlphaEvolve demonstrates explicit multi-layer depth" | **sharpened** | Still the only system with cascade evaluator plus diversity archive; HarnessBank, JIT-Agent, MGM keep archives (lineage), VaG adds tiered subset selection. Say "AlphaEvolve remains the only system combining a cascade evaluator with a diversity archive." |
+
+## "Only" and "first"
+
+| Line | Claim | Verdict | Evidence |
+|---|---|---|---|
+| 145, 299, 564, 682 | CORAL "the only asynchronous multi-agent Loop-2 mechanism in the corpus" | **revised** | Evo2Team (2609.34135) promotes routing and communication skills across 4–32-agent teams with target-side confirmation; ShareMem pools memory across users. Say "CORAL was the only one in the May corpus; Evo2Team and ShareMem add cross-team and cross-user promotion without versioning." |
+| 213 | AlphaEvolve Strassen claim | **holds** (attributed) | Third-party; attribute to the AlphaEvolve report in the same sentence. |
+| 215 | "CASCADE reports the largest within-benchmark ablation gain in the corpus" | **dropped** | Not re-checked across 127 new systems; comparing ablation gains across benchmarks is not meaningful. Removed from the IEEE text. |
+| 254, 317 | ChronoMem and rollback repair "the first surveyed instances of the rollback envelope" | **revised** | Rollback of memory is now in VerMem (soft-delete/restore ops), Mi-Memory (design), Letta (git history); and shown unsafe in checkpoint-rollback studies (2608.29381, 2608.15939). Say "among the first" and cite the counter-evidence. |
+| 316 | Cuadros "only surveyed memory system with full provenance + versioning + correction" | **holds** | Memory governance additions (TOKI, PPMF, TMA-NM, MemClaw, He & Yu) each carry provenance or lineage without correction loops or versioning, and the auto-gated memory loops (Recuris, MemGuard, VerMem, Compiled Memory) carry no lineage. |
+| 610, 630 | SkillOpt "cleanest published instance" / "first to instantiate all four simultaneously" | **sharpened** | SkillOpt-Lite (2607.03451) removes two of the four and matches it; VALVE, SkillSmith, SkillAudit instantiate held-out gates with rollback. Say "the first system we found that instantiates all four, and its own follow-up shows two of them are stabilizers rather than necessities." |
+| 686 | FederatedSkill "first … federated aggregation … first lineage record at the aggregator" | **holds** | EvolveNet (Aug 2026) postdates it and has no lineage record. |
+| 713 | SkillOpt "first published cost-per-point figure" | **holds** | No earlier figure found. |
+
+## Absences
+
+| Line | Claim | Verdict | Evidence |
+|---|---|---|---|
+| 62 | "production deployments sit at Stage 1 or 2; none reaches Stage 3" | **sharpened** | Spotify (2609.30297) runs automated prompt and planning optimization gated by human launch and A/B metrics; SkillChain (Alibaba) runs judge-monotone edits behind a human reflection gate with reported agreement. Both are Stage 3 on Loop 1 with a human Loop 2; say "production deployments reach Stage 3 on the local loop only behind a human promotion gate". |
+| 188 | S1 score-5 none; "no instruction system closes both loops" | **holds** | S1 n=15, max 4; adoption studies cut the other way (Gloaguen: context files raise cost >20% without raising success; Galster: context files dominate configuration, skills rare). |
+| 189 | "Anthropic's skills repository is one-pool with PR review but no automated eval gate" | **holds** | Confirmed by 2609.05677 (human-merged, no eval gate observed). |
+| 190 | "correctable, versioned memory is rare; production memory lacks failure-triggered correction and versioned lineage" | **revised** | Letta Context Repositories (git-backed memory, every edit committed, shared memory auto-pushed), Mem0 per-memory history and feedback endpoint, Zep bitemporal invalidation: lineage is now common in production memory; failure-triggered correction is not, and 2609.08258 shows revoked facts still outrank their replacements in five backends. Say "versioned lineage has arrived in production memory; enforced correction has not." |
+| 192 | S5 score-5 none; "topology evolution is rare" | **sharpened** | After the correction S5 has no 5 in either corpus. Gated topology evolution now exists: TOCOMAS retains only candidates satisfying structural invariants; Evo2Team promotes across teams; OptiMAS, AgentGrad, HarnessForge update S5 under evaluation. Say "rare and, where it exists, gated by evaluation alone except TOCOMAS." |
+| 196 | "no system matures all six at once" | **holds** | No October addition scores 5 on any substrate. |
+| 198a | "Failure-triggered memory is rare in production" | **holds** | One field report (SIx Harness, N=1, self-reported); Letta dreaming writes from conversation history, not failures. |
+| 198b | "Cross-customer skill promotion is nearly absent" | **holds** | ShareMem, EvolveNet, XRepoSkill, RASO promote across users, clients, or repositories inside one operator; none across customers or organizations with evidence. |
+| 198c | "Memory versioning is mostly unsolved outside Cuadros et al. and ChronoMem" | **revised** | See 190: Letta, Mem0 history, Zep bitemporal facts, TOKI audit rows, MemClaw supersession chains. |
+| 198d | "Scaffold-level curriculum is unspecified in nearly every surveyed system" | **sharpened** | Task-CoEvolve (variance-weighted task sampling) and AutoSaddler (mini-batch failure signals) specify it; still the exception. |
+| 198e | "Held-out evals at Loop-2 promotion are absent" | **revised** | Receiving-side evaluation now exists: ShareMem (evaluation tasks belong to a different user), XRepoSkill (independent verification in ≥2 repositories), Evo2Team (target-side confirmation; 4 of 22 transfers still fail on new graphs), VACE (candidate evaluated with the receiving model fixed). EvolveNet explicitly has none; Federated Agent Optimization (2610.01195) proposes a receiving-client gate without implementing it. |
+| 206, 213 | research full-auto: "enterprise governance is uniformly absent" | **holds** | No October [Auto × Auto] system reports RBAC or audited promotion. |
+| 208, 217 | governance-first: "no patch-local inner loop" | **holds** | EDDOps, ACM, GCE, MCP control planes all have Loop 1 = None. |
+| 219 | "AGENTS.md in over 60,000 repositories" | **revised** | Newer counts: 2,853-repository study (Galster), 128,018-project adoption study (Robbes: 22–29% of coding-agent projects), 36,710 repositories mined for loop engineering (Lulla 2608.21884). Replace the single count with these studies and the cost finding (Gloaguen). |
+| 264 | "no surveyed system treats pruning or expiration as a first-class gated operation (outside Ratchet, SkillOpt, ChronoMem)" | **revised** | Retirement is a gated operation in at least eleven skill systems (Library Drift: retire when n ≥ 100 and contribution ≤ −0.10 with a cap of 50; SkillSmith; SkillOps; ASSAY; HiSME; SkeMex; MUSE-Autoskill; SkillMAS; SafeEvolve; Double Ratchet; SkillGen) and expiry is a product control in Mem0, Zep, and LangGraph Platform. Say "pruning and expiry became first-class in 2026; what remains rare is pruning of a promoted artifact's descendants, which VaG shows is structurally irreversible." |
+| 266 | failure surface "largely unmitigated in production" | **holds** | Revocation unenforced in five production backends (2609.08258); checkpoint rollback unsafe in three frameworks (2608.29381); no evidentiary record in 16 deployed frameworks (Hearsay 2609.32495). |
+| 375 | multi-sample agreement "under-explored; SkillOpt-Lite nearest" | **revised** | See 231: SAGE-gate, VaG, SkillSpec. |
+| 692 | "No surveyed paper disputes the scaffold-vs-weights decomposition" | **holds** | SIA (2605.27276) updates harness and weights together but keeps them distinct levers. |
+| 694 | credit assignment "remains unsolved in the general multi-substrate case" | **holds** | HARNESSEVO (slot attribution), AgentGrad (intervention-based), CANTANTE (contrastive) each solve one substrate's case. |
+
+## Section IV claims (checked against the rescored corpus)
+
+| Claim | Statement | Verdict | Evidence |
+|---|---|---|---|
+| IV-1 | Every [Auto × Auto] system with a per-edit estimator gate runs on a C1 signal or a simulated C2 environment; [Auto × Auto] systems in C4 domains gate by proposal pruning | **holds** | May [Auto × Auto]: DGM, Voyager, AlphaEvolve, SkillOpt, SkillRL, SAGE, EvolveR, CoEvoSkills, AutoAgent, AutoManual (C1/simulated C2); NanoResearch (semantic merge, C4) and CORAL (heartbeat, C4) prune. October: EvolveNet, Evo2Team, XRepoSkill (C1 code/benchmark signals); ShareMem (C2 Mind2Web); RASO (target execution feedback, C1/C2); Letta (no gate). |
+| IV-2 | [Auto × Human] is populated only by C2/C3 systems | **holds** | SkillForge (C3 judge, human Loop 2), CASCADE (C3), Sierra (C2/C3), Devin (C2 merge outcome), Spotify (C2 A/B behind human launch). No C1 system occupies the cell. |
+| IV-3 | Rubric-as-reward builds C3 gates on the weight side; scaffold-side judge calibration under the reflexive condition is rare | **sharpened** | 14 reward papers: 8 fix the rubric or judge during policy optimization, 5 co-evolve it (RLPR by construction, EvoRubrics, SCORE, RubricEM, Rubric-ARM at the reward-model stage); only 5 report any human-agreement number and none of the co-evolving ones does. Scaffold side: SkillForge (>90% agreement), SkillChain (κ 0.72–0.91), SkillCoach (trajectory-filter consistency 82→96% against human gold) now report calibration; none calibrates a judge that is itself being edited. |
+
+## Recount output (scripts/recount.py, merged corpus, all rows)
+
+```
+rows: 269  unique systems: 256  core: 204  contrast: 52
+substrate            n   mean  score-5 systems
+INTEGRATED           52   3.81  AutoAgent, NanoResearch, SkillRL
+S1_Instructions      15   3.07  (none)
+S2_Skills            50   3.34  COSPLAY, SAGE
+S3_Memory            50   3.06  Governed Collaborative Memory (Cuadros et al.)
+S4_Tools             20   3.65  Harvey, Hippocratic AI, MCP
+S5_Orchestration     37   3.08  (none)
+S6_Governance        45   3.02  AGENTS.md / AAIF, Braintrust, LangSmith Hub, Vellum
+May corpus alone (after corrections): 130 / 99 / 31; S5 mean 2.58.
+```

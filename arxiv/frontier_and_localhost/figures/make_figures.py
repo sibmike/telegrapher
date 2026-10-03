@@ -21,11 +21,24 @@ LIGHT = "#F2F2F2"
 LW = 1.0
 
 
+OUT = {"dir": HERE, "suffix": "", "size": None}   # overridden by --ieee (see main)
+
+
 def canvas(w, h):
-    fig = plt.figure(figsize=(w, h))
+    """Axes in a (w x h)-inch coordinate frame. With OUT['size'] set, the figure is rendered
+    at that physical size while keeping the same coordinate frame, so geometry scales and
+    text (in points) does not; fonts stay >= 8 pt at IEEE column width."""
+    fw, fh = OUT["size"] or (w, h)
+    fig = plt.figure(figsize=(fw, fh))
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, w); ax.set_ylim(0, h); ax.axis("off")
     return fig, ax
+
+
+def save(fig, stem):
+    fig.savefig(os.path.join(OUT["dir"], stem + OUT["suffix"] + ".pdf"))
+    fig.savefig(os.path.join(OUT["dir"], stem + OUT["suffix"] + ".png"), dpi=200)
+    plt.close(fig)
 
 
 def box(ax, cx, cy, w, h, text, fs=9, fill="white", ls="-", rounded=True, style="normal", weight="normal"):
@@ -119,9 +132,7 @@ def fig1():
     arrow(ax, (ax_x, y - 0.25), (ax_x, oy + 0.25))
     ax.text(ax_x - 0.07, (y - 0.25 + oy + 0.25) / 2, "bounded by\nevidence radius", ha="right", va="center",
             fontsize=7.5, style="italic")
-    fig.savefig(os.path.join(HERE, "fig1_descent.pdf"))
-    fig.savefig(os.path.join(HERE, "fig1_descent.png"), dpi=200)
-    plt.close(fig)
+    save(fig, "fig1_descent")
 
 
 # ---------------------------------------------------------------- Figure 2
@@ -153,9 +164,7 @@ def fig2():
     by = rects[0][1] - 0.06
     ax.plot([xl, xl, xr, xr], [by + 0.05, by, by, by + 0.05], color="black", lw=LW)
     ax.text((xl + xr) / 2, by - 0.05, "cross-tenant", ha="center", va="top", fontsize=8, style="italic")
-    fig.savefig(os.path.join(HERE, "fig2_scope.pdf"))
-    fig.savefig(os.path.join(HERE, "fig2_scope.png"), dpi=200)
-    plt.close(fig)
+    save(fig, "fig2_scope")
 
 
 # ---------------------------------------------------------------- Figure 3
@@ -164,8 +173,10 @@ def fig3():
     fig, ax = canvas(W, H)
     cols = ["Loop 2: Auto", "Loop 2: Human", "Loop 2: None"]
     rows = ["Loop 1: Auto", "Loop 1: Human", "Loop 1: None"]
-    cw, ch = 1.15, 0.95
-    gx0, gy0 = 1.05, 0.25
+    small = OUT["suffix"] == "_ieee"          # column-width rendering: tighter grid, smaller type
+    cw, ch = (1.05, 0.95) if small else (1.15, 0.95)
+    gx0, gy0 = (1.45, 0.25) if small else (1.05, 0.25)
+    f_hdr, f_main, f_sub, f_empty = (7.5, 7, 6.5, 6.5) if small else (9, 9, 8, 8)
     cells = {
         (0, 0): ("shade", "Research full-auto", "SkillOpt, AlphaEvolve"),
         (0, 1): ("shade", "Production hybrid", "SkillForge"),
@@ -184,19 +195,70 @@ def fig3():
             fc = {"shade": SHADE, "light": LIGHT, "blank": "white"}[kind]
             ax.add_patch(Rectangle((x, y), cw, ch, lw=LW, ec="black", fc=fc))
             if main:
-                ax.text(x + cw / 2, y + ch / 2 + 0.10, main, ha="center", va="center", fontsize=9, weight="bold")
-                ax.text(x + cw / 2, y + ch / 2 - 0.14, sub, ha="center", va="center", fontsize=8)
+                if small:   # two-line titles so bold text stays inside a 0.77 in physical cell
+                    main = {"Research full-auto": "Research\nfull-auto", "Production hybrid": "Production\nhybrid",
+                            "Governance-first": "Governance-\nfirst"}.get(main, main)
+                    ax.text(x + cw / 2, y + ch / 2 + 0.17, main, ha="center", va="center", fontsize=f_main, weight="bold", linespacing=1.0)
+                    ax.text(x + cw / 2, y + ch / 2 - 0.22, sub.replace(", ", ",\n"), ha="center", va="center", fontsize=f_sub, linespacing=1.0)
+                else:
+                    ax.text(x + cw / 2, y + ch / 2 + 0.10, main, ha="center", va="center", fontsize=f_main, weight="bold")
+                    ax.text(x + cw / 2, y + ch / 2 - 0.14, sub, ha="center", va="center", fontsize=f_sub)
             else:
-                ax.text(x + cw / 2, y + ch / 2, sub, ha="center", va="center", fontsize=8, style="italic", color="#333333")
+                ax.text(x + cw / 2, y + ch / 2, sub, ha="center", va="center", fontsize=f_empty, style="italic", color="#333333")
     for c, name in enumerate(cols):
-        ax.text(gx0 + c * cw + cw / 2, gy0 + 3 * ch + 0.10, name, ha="center", va="bottom", fontsize=9)
+        ax.text(gx0 + c * cw + cw / 2, gy0 + 3 * ch + 0.10, name, ha="center", va="bottom", fontsize=f_hdr)
     for r, name in enumerate(rows):
-        ax.text(gx0 - 0.08, gy0 + (2 - r) * ch + ch / 2, name, ha="right", va="center", fontsize=9)
-    fig.savefig(os.path.join(HERE, "fig3_design_space.pdf"))
-    fig.savefig(os.path.join(HERE, "fig3_design_space.png"), dpi=200)
-    plt.close(fig)
+        ax.text(gx0 - 0.08, gy0 + (2 - r) * ch + ch / 2, name, ha="right", va="center", fontsize=f_hdr)
+    save(fig, "fig3_design_space")
 
+
+# ---------------------------------------------------------------- Figure 4 (IEEE version)
+def fig4(counts):
+    """Corpus-flow diagram: candidate pool -> core / contrast -> strict audit -> passes.
+    counts: dict with keys total, core, contrast, strict_candidates, strict_pass, industry."""
+    W, H = 3.5, 2.6
+    fig, ax = canvas(W, H)
+    bw, bh = 2.6, 0.40
+    cx = W / 2
+    ys = [2.30, 1.65, 1.00, 0.35]
+    box(ax, cx, ys[0], bw, bh, f"{counts['total']} unique systems scored\n(six substrates, 0–5 rubric; {counts['may']} by May 2026, +{counts['oct']} in the Oct 2026 sweep)", fs=7.5)
+    # split row
+    box(ax, cx - 0.72, ys[1], 1.25, bh, f"core corpus: {counts['core']}\n(score ≥ 3 on some substrate)", fs=7.5, fill=SHADE)
+    box(ax, cx + 0.72, ys[1], 1.25, bh, f"contrast: {counts['contrast']}\n(fails the discriminator)", fs=7.5, fill=LIGHT)
+    box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(Loop 1 from session signal and gated Loop 2 with versioning or lineage)", fs=7.5)
+    box(ax, cx - 0.72, ys[3], 1.25, bh, f"pass: {counts['strict_pass']} research\n+ {counts['industry']} industry exemplars", fs=7.5, fill=SHADE)
+    box(ax, cx + 0.72, ys[3], 1.25, bh, f"promote without lineage: {counts['relaxed_only']}\n(enter only under relaxation)", fs=7.5, fill=LIGHT)
+    arrow(ax, (cx - 0.3, ys[0] - bh / 2), (cx - 0.72, ys[1] + bh / 2))
+    arrow(ax, (cx + 0.3, ys[0] - bh / 2), (cx + 0.72, ys[1] + bh / 2))
+    arrow(ax, (cx - 0.72, ys[1] - bh / 2), (cx - 0.3, ys[2] + bh / 2))
+    arrow(ax, (cx - 0.3, ys[2] - bh / 2), (cx - 0.72, ys[3] + bh / 2))
+    arrow(ax, (cx + 0.3, ys[2] - bh / 2), (cx + 0.72, ys[3] + bh / 2))
+    save(fig, "fig4_corpus_flow")
+
+
+IEEE_SIZES = {  # physical sizes for the two-column IEEE Access layout (column 3.5 in, text 7.16 in)
+    "fig1": (7.16, 7.16 * 3.2 / 6.0),
+    "fig2": (3.5, 3.5 * 3.4 / 4.2),
+    "fig3": (3.5, 3.5 * 3.8 / 4.8),
+}
 
 if __name__ == "__main__":
-    fig1(); fig2(); fig3()
-    print("wrote fig1_descent, fig2_scope, fig3_design_space (.pdf + .png) in", HERE)
+    import argparse, json
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--ieee", action="store_true", help="render at IEEE sizes with suffix _ieee into --out")
+    ap.add_argument("--out", default=HERE)
+    ap.add_argument("--counts", default=None, help="JSON dict for fig4 (IEEE only)")
+    a = ap.parse_args()
+    OUT["dir"] = a.out
+    if a.ieee:
+        OUT["suffix"] = "_ieee"
+        OUT["size"] = IEEE_SIZES["fig1"]; fig1()
+        OUT["size"] = IEEE_SIZES["fig2"]; fig2()
+        OUT["size"] = IEEE_SIZES["fig3"]; fig3()
+        OUT["size"] = None
+        if a.counts:
+            fig4(json.loads(a.counts))
+        print("wrote IEEE-size figures in", a.out)
+    else:
+        fig1(); fig2(); fig3()
+        print("wrote fig1_descent, fig2_scope, fig3_design_space (.pdf + .png) in", a.out)

@@ -1,0 +1,52 @@
+## Findings: substrate maturity and four clusters {#sec:findings}
+
+### Maturity is uneven, and the 2026 additions did not change the ceiling
+
+Table REF(tab:VI-1) aggregates the corpus by substrate. The column $n$ counts scored rows on that substrate, *Mean* is the average score, and *Score-5 systems* are those that reach the substrate's top mark in Table REF(tab:V-1).
+
+| Substrate | $n$ | Mean | Score-5 systems | Survey finding |
+|---|---:|---:|---|---|
+| S1 Instructions | 15 | 3.07 | (none) | Rules persist across IDEs and agents; none closes both loops; ceiling 4 |
+| S2 Skills | 50 | 3.34 | SAGE, COSPLAY | Most active research substrate; Loop 1 routinely automated; production repositories human-merged |
+| S3 Memory | 50 | 3.06 | Cuadros et al. | Lineage now shipped in products; enforced correction still absent |
+| S4 Tools | 20 | 3.65 | MCP, Harvey, Hippocratic AI | Most mature production substrate; registries govern admission, not evaluation |
+| S5 Orchestration | 37 | 3.08 | (none) | Topologies evolve under evaluation; one structurally gated instance; no two-loop system |
+| S6 Governance | 45 | 3.02 | Braintrust, Vellum, LangSmith Hub, AGENTS.md/AAIF | Mature prompts-as-code; 2026 registries add lineage and rollback; no inner loop |
+| Integrated | 52 | 3.81 | NanoResearch, AutoAgent, SkillRL | High-water mark; research systems without enterprise governance |
+
+Table VI-1. Substrate maturity across the 256-system corpus (all scored rows; May 2026 corpus plus October 2026 sweep). No system added in 2026 scores 5 on any substrate.
+
+The rows behind the table read as follows. On S1, rules persist across IDEs and agents (Claude Code, Cursor, AGENTS.md, Windsurf, Continue.dev) and adoption is measured at a fifth to a quarter of coding-agent projects [@robbes2026agenticmuch; @galster2026harnessconfig], yet context files raise inference cost by about a fifth without raising task success in a controlled study [@gloaguen2026agentsmd]. On S2, 31 of the 2026 additions are skill systems, almost all closing Loop 1 under an automatic gate, and eleven treat retirement as a gated operation [@zhang2026librarydrift; @wei2026skillsmith; @pu2026skillops]; the public skill repositories, by contrast, are human-merged with one deprecation in 254 edits [@shen2026whomaintains]. On S3, lineage has arrived in production memory, in Letta's git-backed Context Repositories [@letta2026memfs], Mem0's per-memory history [@mem02026history], and Zep's bitemporal facts [@zep2026facts], while five production backends still return revoked facts [@shen2026revoked]; the 2026 research splits into write-gating and provenance on one side [@wang2026toki; @xu2026ppmf; @margalit2026governed] and verifier-gated failure loops on the other [@yu2026recuris; @wang2026memguard; @sun2026vermem], and no system carries both. On S4, MCP registries split into catalogs (the official registry: namespaces and version records, no scanning, no private servers) and control planes with scanning, access control, and quarantine [@agenticcommunity2026mcpgateway; @microsoft2026apicentermcp; @truefoundry2026mcpgateway]; none has evaluation-gated promotion. On S5, topologies now evolve under evaluation [@cheng2026optimas; @chu2026agentgrad; @chen2026harnessforge], TOCOMAS alone retains a topology change only when it satisfies a structural invariant [@zhao2026tocomas], and Evo2Team promotes routing skills across teams with target-side confirmation [@wang2026evo2team]. On S6, the 2026 registries bring lineage and rollback [@kang2026registry; @quessadavial2026acm; @qin2026governed], and every one of them has Loop 1 = None.
+
+Three things stand out. First, the field has converged on the six substrates: every mature system has a recognizable instance of each, under different names. Second, no system matures all six at once. Research systems learn fast and lack enterprise governance; production systems govern well and learn slowly; open standards solve artifact portability but not adaptation. Third, the 2026 sweep added 126 systems, 92 of its 102 core systems close Loop 1 under an automatic gate, and not one of them reaches the top mark on any substrate: the local loop has become routine and the governed second loop has not moved. The maturity gradient is not a quirk of the corpus. It tracks which constraints each kind of system was built to satisfy.
+
+### Five absences, read by signal class
+
+Five absences fall out of the discriminator, and each sits in a particular feedback-signal class (Section REF(sec:signal)).
+
+- **Failure-triggered memory is rare in production** (C2). Deployed memory systems record preferences and successful facts, not residuals; the one field report of anti-recurrence stores written from dead-ends is a single self-reported deployment [@helwig2026memory].
+- **Cross-customer promotion is nearly absent** (all classes). ShareMem, EvolveNet, XRepoSkill, and RASO promote across users, clients, or repositories inside one operator [@hu2026sharemem; @nie2026evolvenet; @guo2026xreposkill; @chu2026raso]; no system promotes across customers or organizations with evidence.
+- **Versioned memory has arrived; enforced correction has not** (C2, C3). Git-backed and bitemporal memory ship in products, and five backends still return revoked facts [@shen2026revoked].
+- **Scaffold-level curriculum is unspecified in nearly every system** (C2). Which sessions inform the next edit is left to the order they arrive in; Task-CoEvolve's variance-weighted task sampling and AutoSaddler's mini-batch failure signals are the exceptions [@miyai2026taskcoevolve; @park2026autosaddler].
+- **Receiving-side evaluation at promotion is rare** (C1, C2). It now exists in ShareMem (evaluation tasks belong to a different user), XRepoSkill (verification in at least two repositories), Evo2Team (target-side confirmation, which still misses four of twenty-two transfers on new graphs), and VACE (candidate evaluated with the receiving model held fixed) [@qi2026vace]; EvolveNet has none, and the federated optimization framework that proposes a receiving-client gate has not implemented it [@yang2026fao]. This is the missing piece that would catch a scaffold over-fitting one deployment before it propagates to another.
+
+### Four clusters
+
+Four archetypal clusters recur across the core corpus. They differ in where on the patchwork-to-descent gradient each sits and in which loop is automated.
+
+| Cluster | Representative systems | Loop 1 / Loop 2 | What the cluster shows |
+|---|---|---|---|
+| Research full-auto | NanoResearch, SkillOpt, SkillRL, AlphaEvolve, DGM, ADAS, Voyager; in 2026 EvolveNet, Evo2Team, XRepoSkill | Auto / Auto | Both loops can run under algorithmic gates and benchmark gains compound; enterprise governance is uniformly absent |
+| Production hybrid | SkillForge, CASCADE, Sierra Agent OS 2.0, Cognition Devin; in 2026 Spotify's recommendation loop [@palumbo2026spotify], SkillChain [@hu2026skillchain] | Auto / Human | An algorithmic Loop-1 gate with a reviewer on Loop 2 is the production-viable cell; the 2026 entries add online A/B gating and reported judge agreement |
+| Governance-first | Braintrust, Vellum, LangSmith Hub; in 2026 EDDOps, Agentic Configuration Management, Governed Capability Evolution | None / Auto or Human | Evaluation-gated promotion, lineage, and rollback exist; candidate generation is manual and no inner loop fires from session signal |
+| Open standards and registries | AGENTS.md, MCP, Anthropic Agent Skills, Cursor Rules; in 2026 the MCP control planes | Mixed, or Human / Human | Cross-vendor convergence on artifact format and tool attachment; registries govern admission and access but do not evaluate |
+
+Table VI-2. Four clusters of the core corpus.
+
+*Research full-auto* systems show that the architecture works under fully algorithmic gates. NanoResearch co-evolves skills, memory, and policy with a semantic-merge orchestrator [@xu2026nanoresearch]; SkillOpt runs held-out gating, a rejected-edit buffer, and a bounded textual learning rate on a markdown skill (Section REF(sec:families)); AlphaEvolve pairs a cascade evaluator with a diversity archive and reports production gains at Google [@alphaevolve2025]; DGM modifies its own code under sandboxed tests [@zhang2025darwin]. The 2026 entries move the cluster's frontier from a single deployment to a federation of them, but every member still lacks access control and audited promotion.
+
+*Production hybrid* systems pair an algorithmic Loop-1 gate with a reviewer on Loop 2. SkillForge routes judge-passed skill diffs to support engineers, with the judge agreeing with people more than nine times in ten [@skillforge2026]; Spotify optimizes prompts and planning automatically and launches only behind an online A/B test [@palumbo2026spotify]; SkillChain applies judge-monotone edits and then a human reflection gate, with judge-human agreement reported as a kappa between 0.72 and 0.91 [@hu2026skillchain]. The human on Loop 2 is doing the work that the missing exact signal cannot.
+
+*Governance-first* systems automate Loop 2 alone. The prompts-as-code platforms and the 2026 registries [@kang2026registry; @quessadavial2026acm; @qin2026governed] have immutable versions, evaluation thresholds, and rollback; they lack a Loop 1 because candidates are authored by engineers rather than triggered by session feedback. This is MLOps for scaffolds, distinct from MLOps for weights.
+
+*Open standards and registries* converge across vendors on format and attachment. Claude Agent Skills, Cursor Rules, GitHub Copilot instructions, Windsurf, Continue.dev, Zed, and Replit all keep a git-tracked markdown artifact attached to a workspace with an MCP-style tool layer [@galster2026harnessconfig; @barbaste2026harnessengineering]. Convergence across vendors is independent evidence, complementary to the research-side convergence of Section REF(sec:families), that the architecture is real rather than any one vendor's local optimum. Two measured facts temper the optimism: context files raise cost without raising success in a controlled study [@gloaguen2026agentsmd], and the runtime state of autonomous loops sits outside version control in the repositories that run them [@lulla2026loopengineering].

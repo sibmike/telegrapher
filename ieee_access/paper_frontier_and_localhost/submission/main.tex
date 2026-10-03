@@ -1,0 +1,128 @@
+\documentclass{ieeeaccess}
+% IEEE Access survey article. Template: ACCESS_latex_template_20260513 (official, ieeeaccess.cls),
+% assets copied verbatim from ../../paper_beyond_exponential_decay/.
+% Build: bash build.sh  (pandoc .md -> body.tex fragment; pdflatex -> bibtex -> pdflatex x2)
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{calc}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=*}
+\graphicspath{{figures/}}
+\usepackage[utf8]{inputenc}
+\DeclareUnicodeCharacter{2265}{\ensuremath{\geq}}
+\DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}
+\DeclareUnicodeCharacter{2192}{\ensuremath{\rightarrow}}
+\DeclareUnicodeCharacter{2282}{\ensuremath{\subset}}
+\DeclareUnicodeCharacter{2248}{\ensuremath{\approx}}
+\DeclareUnicodeCharacter{00D7}{\ensuremath{\times}}
+\DeclareUnicodeCharacter{2211}{\ensuremath{\sum}}
+\DeclareUnicodeCharacter{221E}{\ensuremath{\infty}}
+\DeclareUnicodeCharacter{03B5}{\ensuremath{\varepsilon}}
+\DeclareUnicodeCharacter{03C4}{\ensuremath{\tau}}
+\DeclareUnicodeCharacter{03BB}{\ensuremath{\lambda}}
+\DeclareUnicodeCharacter{03A9}{\ensuremath{\Omega}}
+\DeclareUnicodeCharacter{03B8}{\ensuremath{\theta}}
+\DeclareUnicodeCharacter{2013}{--}
+\DeclareUnicodeCharacter{2014}{---}
+
+% float placement: let several two-column tables sit at the top of one page instead of queuing to the end
+\setcounter{dbltopnumber}{3}
+\setcounter{topnumber}{3}
+\setcounter{totalnumber}{5}
+\renewcommand{\dbltopfraction}{0.95}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\dblfloatpagefraction}{0.6}
+\renewcommand{\floatpagefraction}{0.6}
+\renewcommand{\textfraction}{0.05}
+
+% pandoc fragment support
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\newcounter{none}  % absorbs pandoc longtable caption counters
+\makeatletter
+\providecommand{\pandocbounded}[1]{#1}
+\makeatother
+
+\begin{document}
+\history{Date of publication xxxx 00, 0000, date of current version xxxx 00, 0000.}
+\doi{10.1109/ACCESS.2026.0000000}
+
+\title{Frontier and Localhost: A Survey of How Production AI Learns Outside the Weights}
+
+% TODO(authors): confirm city/country for each address, middle initials, ORCIDs, and IEEE membership if any.
+\author{\uppercase{Mikhail L. Arbuzov}\authorrefmark{1},
+\uppercase{Lee Mosbacker}\authorrefmark{2},
+\uppercase{Sisong Bei}\authorrefmark{3},
+\uppercase{Ziwei Dong}\authorrefmark{4},
+\uppercase{Dmitri Kalaev}\authorrefmark{5},
+AND \uppercase{Alexey Shvets}\authorrefmark{6}}
+
+\address[1]{Independent Researcher, CITY, COUNTRY (e-mail: mike.arbuzov54@gmail.com)}
+\address[2]{Independent Researcher, CITY, COUNTRY (e-mail: lee.mosbacker@gmail.com)}
+\address[3]{Independent Researcher, CITY, COUNTRY (e-mail: qurining@gmail.com)}
+\address[4]{Independent Researcher, CITY, COUNTRY (e-mail: ziwei.dong@alumni.emory.edu)}
+\address[5]{Independent Researcher, CITY, COUNTRY (e-mail: kalaevdr@gmail.com)}
+\address[6]{Palo Alto Networks, CITY, COUNTRY (e-mail: ashvets@paloaltonetworks.com)}
+\tfootnote{TODO(authors): funding statement, e.g., ``This work received no external funding.'' A. Shvets is employed by Palo Alto Networks; the views expressed are the authors' own.}
+
+\markboth
+{Arbuzov \headeretal: Frontier and Localhost}
+{Arbuzov \headeretal: Frontier and Localhost}
+
+\corresp{Corresponding author: Mikhail L. Arbuzov (e-mail: mike.arbuzov54@gmail.com).}
+
+\begin{abstract}
+\input{abstract.tex}
+\end{abstract}
+
+\begin{keywords}
+AI governance, agent memory, agent skills, evaluation, large language models, LLM agents, prompt optimization, self-improving systems, survey
+\end{keywords}
+
+\titlepgskip=-21pt
+
+\maketitle
+
+\input{body.tex}
+
+\section*{Acknowledgment}
+% TODO(AI disclosure): IEEE Access requires disclosure of AI-generated text in the acknowledgments. Draft wording for the authors to approve:
+The authors used an AI assistant (Claude, Anthropic) to help search the literature, check citations, and edit prose; all claims, scores, and classifications were reviewed and approved by the authors. Earlier versions of this argument appeared as an arXiv preprint and as a non-archival workshop submission; this article extends them with the feedback-signal classification of Section~IV, a rescored corpus, and a claims audit.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+% TODO(bios): biographies (100-150 words) and photos for all six authors.
+\begin{IEEEbiographynophoto}{Mikhail L. Arbuzov}
+TODO(bio).
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Lee Mosbacker}
+TODO(bio).
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Sisong Bei}
+TODO(bio).
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Ziwei Dong}
+TODO(bio).
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Dmitri Kalaev}
+TODO(bio).
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Alexey Shvets}
+TODO(bio).
+\end{IEEEbiographynophoto}
+
+\EOD
+
+\end{document}
