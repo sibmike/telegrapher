@@ -1,6 +1,6 @@
 ## The missing architecture: governed cross-tenant scaffold optimization {#sec:gap}
 
-Four properties define an architecture that no surveyed system instantiates:
+What is missing is specific. Four properties define an architecture that no surveyed system instantiates:
 
 - (a) **auto-gated Loop 1**: the commit criterion is an algorithmic threshold;
 - (b) **cross-organization promotion**: Loop 2 routes artifacts between organizations (we use *cross-tenant* and *cross-organizational* interchangeably);

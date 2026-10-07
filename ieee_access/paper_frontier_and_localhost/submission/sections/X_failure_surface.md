@@ -1,6 +1,6 @@
 ## The failure surface {#sec:failure}
 
-Patchwork scaffold maintenance introduces failure modes that weight-only systems do not have; they are the scaffold-layer entries in the technical-debt ledger that machine-learning systems have carried for a decade [@sculley2015debt]. Each is also a missing piece of the optimizer, and each dominates in a particular feedback-signal class (Table REF(tab:X-1)). The entries are documented attacks and degradations, not a new threat model.
+Until the governed second loop exists, scaffold maintenance carries failure modes that weight-only systems do not have; they are the scaffold-layer entries in the technical-debt ledger that machine-learning systems have carried for a decade [@sculley2015debt]. Each is a missing piece of the optimizer, and each dominates in a particular feedback-signal class (Table REF(tab:X-1)). The entries are documented attacks and degradations, not a new threat model.
 
 | Failure | What has been measured | Architectural response | Dominant class |
 |------------|--------------------------------|--------------------------|----------|

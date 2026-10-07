@@ -1,7 +1,8 @@
-"""Generate the three paper figures specified in FIGURE_SPEC.md.
+"""Generate the paper figures.
 
 Greyscale, sans-serif, vector PDF at the spec canvas sizes; PNG previews at 200 dpi.
-Run:  python make_figures.py   (from this directory)
+Run:  python make_figures.py            (arXiv sizes, from this directory)
+      python make_figures.py --ieee --out <dir> --counts '{...}'   (IEEE Access sizes, suffix _ieee)
 """
 import os
 import matplotlib
@@ -27,7 +28,7 @@ OUT = {"dir": HERE, "suffix": "", "size": None}   # overridden by --ieee (see ma
 def canvas(w, h):
     """Axes in a (w x h)-inch coordinate frame. With OUT['size'] set, the figure is rendered
     at that physical size while keeping the same coordinate frame, so geometry scales and
-    text (in points) does not; fonts stay >= 8 pt at IEEE column width."""
+    text (in points) does not; fonts stay >= 6.5 pt at IEEE column width."""
     fw, fh = OUT["size"] or (w, h)
     fig = plt.figure(figsize=(fw, fh))
     ax = fig.add_axes([0, 0, 1, 1])
@@ -76,94 +77,78 @@ def polyline_arrow(ax, pts, label=None, lpos=None, fs=8, ha="center", va="bottom
         ax.text(lpos[0], lpos[1], label, ha=ha, va=va, fontsize=fs, style="italic")
 
 
-# ---------------------------------------------------------------- Figure 1
+# ---------------------------------------------------------------- Figure 1: Loop 1 (the local fix)
 def fig1():
-    W, H = 6.0, 3.2
+    """Six stations left to right: log -> cluster -> trace+propose -> gate -> persist -> hand-off to Loop 2.
+    One idea per box; the return path under the row says the deployment keeps running."""
+    W, H = 7.2, 2.5
     fig, ax = canvas(W, H)
-    bw, bh = 0.68, 0.62
-    y = 1.92
-    xs = [0.48, 1.28, 2.08, 2.90, 3.78]   # five boxes
-    dw = 0.70                              # diamond width/height
-    # Loop 1 group box
-    ax.add_patch(Rectangle((0.08, 0.42), 4.18, 2.38, lw=LW, ec="black", fc="none", ls=(0, (4, 3))))
-    ax.text(0.12, 2.86, "Loop 1 (one deployment)", ha="left", va="bottom", fontsize=9)
-    # Loop 2 group box
-    l2x, l2w = 4.42, 1.50
-    ax.add_patch(Rectangle((l2x, 0.85), l2w, 1.95, lw=LW, ec="black", fc="none", ls=(0, (4, 3))))
-    ax.text(l2x + 0.04, 2.86, "Loop 2 (promotion)", ha="left", va="bottom", fontsize=9)
+    y = 1.62
+    bw, bh = 1.0, 0.76
+    pitch = 1.17
+    xs = [0.62 + i * pitch for i in range(6)]
+    dw, dh = 1.0, 0.92
+    # Loop 1 group box around the first five stations
+    ax.add_patch(Rectangle((0.08, 0.30), xs[4] + bw / 2 + 0.10 - 0.08, 2.06, lw=LW, ec="black", fc="none", ls=(0, (4, 3))))
+    ax.text(0.12, 2.39, "Loop 1: the local fix, inside one deployment", ha="left", va="bottom", fontsize=8.5)
 
-    box(ax, xs[0], y, bw, bh, "Failure\n(residual)")
-    box(ax, xs[1], y, bw, bh, "Identify\nscaffold\ncoordinate")
-    box(ax, xs[2], y, bw, bh, "Candidate\nedit")
-    diamond(ax, xs[3], y, dw, dw + 0.16, "Gate: does\npatch loss\ndrop?", fs=7)
-    box(ax, xs[4], y, bw, bh, "Persist in\nscaffold", fill=SHADE)
-    # prune box below persist
-    py = 1.06
-    box(ax, xs[4], py, 0.60, 0.42, "Prune /\nroll back", fs=8)
-    # Loop 2 boxes (arrow between them offset right so the label fits inside the group box)
-    gx = l2x + l2w / 2
-    gbw = 0.92
-    oy = 1.12
-    box(ax, gx, y, gbw, 0.50, "Promotion\ngate", fill=SHADE)
-    box(ax, gx, oy, gbw, 0.50, "Other\ndeployments")
+    box(ax, xs[0], y, bw, bh, "Deployment runs;\nfailures are\nlogged", fs=7.5)
+    box(ax, xs[1], y, bw, bh, "Cluster into\nrecurring modes,\nranked by frequency\nand severity", fs=7)
+    box(ax, xs[2], y, bw, bh, "Trace one mode to\none scaffold\ncoordinate and\npropose one edit", fs=7)
+    diamond(ax, xs[3], y, dw, dh, "Gate: does\nthe patch\nloss fall?", fs=7)
+    box(ax, xs[4], y, bw, bh, "Edit persists,\nversioned (rolled\nback if it later\nregresses)", fs=7, fill=SHADE)
+    box(ax, xs[5], y, bw, bh, "Loop 2:\nhow far may\nthe edit travel?\n(Fig. 2)", fs=7.5, fill=LIGHT, ls=(0, (4, 3)))
 
-    # plain arrows 1->2->3->4
     arrow(ax, (xs[0] + bw / 2, y), (xs[1] - bw / 2, y))
     arrow(ax, (xs[1] + bw / 2, y), (xs[2] - bw / 2, y))
     arrow(ax, (xs[2] + bw / 2, y), (xs[3] - dw / 2, y))
-    # accept 4->5 (label above the box tops, clear of both shapes)
-    arrow(ax, (xs[3] + dw / 2, y), (xs[4] - bw / 2, y), "accept",
-          lpos=((xs[3] + dw / 2 + xs[4] - bw / 2) / 2, y + 0.46))
-    # reject 4->3 (return above)
-    arrow(ax, (xs[3], y + (dw + 0.16) / 2), (xs[2] + 0.10, y + bh / 2), "reject",
-          lpos=((xs[3] + xs[2]) / 2 + 0.02, y + 0.66), rad=0.45)
-    # regress 5 -> prune (down), prune -> 5 (up), two parallel verticals
-    arrow(ax, (xs[4] + 0.10, y - bh / 2), (xs[4] + 0.10, py + 0.21), "regress", fs=7.5,
-          lpos=(xs[4] + 0.15, (y - bh / 2 + py + 0.21) / 2), ha="left", va="center")
-    arrow(ax, (xs[4] - 0.10, py + 0.21), (xs[4] - 0.10, y - bh / 2))
-    # next failure: leaves Persist's right edge, runs under the row back to box 1
-    x0 = xs[4] + bw / 2 + 0.10
-    polyline_arrow(ax, [(xs[4] + bw / 2, y - 0.22), (x0, y - 0.22), (x0, 0.62), (xs[0], 0.62), (xs[0], y - bh / 2)],
-                   label="next failure", lpos=((x0 + xs[0]) / 2, 0.66))
-    # 5 -> promotion gate
-    arrow(ax, (xs[4] + bw / 2, y), (gx - gbw / 2, y))
-    # promotion gate -> other deployments, labelled inside the Loop 2 box
-    ax_x = gx + 0.30
-    arrow(ax, (ax_x, y - 0.25), (ax_x, oy + 0.25))
-    ax.text(ax_x - 0.07, (y - 0.25 + oy + 0.25) / 2, "bounded by\nevidence radius", ha="right", va="center",
-            fontsize=7.5, style="italic")
+    arrow(ax, (xs[3] + dw / 2, y), (xs[4] - bw / 2, y), "yes",
+          lpos=((xs[3] + dw / 2 + xs[4] - bw / 2) / 2, y + 0.04), fs=7)
+    arrow(ax, (xs[4] + bw / 2, y), (xs[5] - bw / 2, y))
+    # reject: straight down from the diamond
+    arrow(ax, (xs[3], y - dh / 2), (xs[3], 0.84), "no: discarded", lpos=(xs[3], 0.78), fs=7, va="top")
+    # the deployment keeps running: from the persisted edit back to the log
+    polyline_arrow(ax, [(xs[4], y - bh / 2), (xs[4], 0.50), (xs[0], 0.50), (xs[0], y - bh / 2)],
+                   label="the deployment keeps running with the edited scaffold", lpos=((xs[0] + xs[3]) / 2 - 0.1, 0.54), fs=7.5)
     save(fig, "fig1_descent")
 
 
-# ---------------------------------------------------------------- Figure 2
+# ---------------------------------------------------------------- Figure 2: Loop 2 (the promotion ladder)
 def fig2():
-    W, H = 4.2, 3.4
+    """Five nested scopes drawn as a ladder. An edit rises one rung at a time; each rung has a gate;
+    the dashed line is the evidence radius; the top rung crosses tenants."""
+    W, H = 3.5, 3.4
     fig, ax = canvas(W, H)
-    names = ["CORE", "TENANT", "STACK", "PROJECT", "USER"]
-    x0, y0, x1, y1 = 0.15, 0.40, 3.95, 3.30
-    dx, dy = 0.26, 0.36
-    rects = []
-    for i, n in enumerate(names):
-        ax.add_patch(Rectangle((x0, y0), x1 - x0, y1 - y0, lw=LW, ec="black", fc="white"))
-        ax.text(x0 + 0.06, y1 - 0.05, n, ha="left", va="top", fontsize=9, weight="bold")
-        rects.append((x0, y0, x1, y1))
-        x0 += dx; y0 += dy * 0.35; x1 -= dx; y1 -= dy
-    ux0, uy0, ux1, uy1 = rects[-1]
-    ucx, ucy = (ux0 + ux1) / 2, (uy0 + uy1) / 2 - 0.10
-    ax.plot([ucx], [ucy], marker="o", ms=4, color="black")
-    ax.text(ucx + 0.08, ucy, "Loop 1 (local)", ha="left", va="center", fontsize=8, style="italic")
-    # outward arrow from USER up-right through every ring to just inside the CORE edge
-    cx0, cy0, cx1, cy1 = rects[0]
-    p0 = (ucx - 0.20, ucy + 0.14); p1 = (cx1 - 0.35, cy1 - 0.10)
-    arrow(ax, p0, p1)
-    # label to the right of the arrow's lower half, three short lines so it stays inside CORE
-    ax.text(ucx + 0.55, ucy + 0.78, "Loop 2 promotion —\nbounded by\nevidence radius", ha="left", va="center",
-            fontsize=7.5, style="italic", bbox=dict(fc="white", ec="none", pad=1.0))
-    # bracket under the bottom edge spanning the two outer rings' right-hand bands (CORE + TENANT)
-    xl, xr = rects[2][2], rects[0][2]   # STACK right edge .. CORE right edge
-    by = rects[0][1] - 0.06
-    ax.plot([xl, xl, xr, xr], [by + 0.05, by, by, by + 0.05], color="black", lw=LW)
-    ax.text((xl + xr) / 2, by - 0.05, "cross-tenant", ha="center", va="top", fontsize=8, style="italic")
+    rungs = [("USER", "one person's account or fork"), ("PROJECT", "one repository or workspace"),
+             ("STACK", "a team's bundle of projects"), ("TENANT", "one organization or customer"),
+             ("CORE", "shared by every tenant")]
+    x0, x1 = 1.2, 3.4
+    bh, pitch, ybase = 0.40, 0.62, 0.50
+    cx = (x0 + x1) / 2
+    ys = [ybase + i * pitch for i in range(5)]
+    for (name, desc), y in zip(rungs, ys):
+        ax.add_patch(Rectangle((x0, y - bh / 2), x1 - x0, bh, lw=LW, ec="black", fc=SHADE if name == "CORE" else "white"))
+        ax.text(cx, y + 0.07, name, ha="center", va="center", fontsize=8, weight="bold")
+        ax.text(cx, y - 0.09, desc, ha="center", va="center", fontsize=6.8)
+    ax_x = x0 + 0.28
+    labels = ["gate: the wider loss must fall", "checked where the edit arrives", None, "cross-tenant: no surveyed system"]
+    for i in range(4):
+        ya, yb = ys[i] + bh / 2, ys[i + 1] - bh / 2
+        arrow(ax, (ax_x, ya), (ax_x, yb))
+        ym = (ya + yb) / 2
+        if labels[i] is None:
+            ax.plot([x0, x1], [ym, ym], color="black", lw=LW, ls=(0, (3, 2)))
+            ax.text(ax_x + 0.14, ym, "evidence radius: the edit rises no further", ha="left", va="center",
+                    fontsize=6.5, style="italic", bbox=dict(fc="white", ec="none", pad=0.8))
+        else:
+            ax.text(ax_x + 0.14, ym, labels[i], ha="left", va="center", fontsize=6.5, style="italic")
+    # left-hand annotations
+    ax.text(0.58, ys[0], "Loop 1\nedits here", ha="center", va="center", fontsize=7, style="italic")
+    arrow(ax, (0.96, ys[0]), (x0, ys[0]))
+    ym2 = (ys[1] + ys[3]) / 2
+    ax.text(0.58, ym2, "Loop 2\npromotes\nupward,\none gate\nper rung", ha="center", va="center", fontsize=7, style="italic")
+    arrow(ax, (0.96, ym2), (x0, ym2))
+    ax.text(W / 2, 0.11, "rung loss = mean failure rate over the deployments it contains", ha="center", va="center", fontsize=6.5)
     save(fig, "fig2_scope")
 
 
@@ -224,7 +209,7 @@ def fig3():
 # ---------------------------------------------------------------- Figure 4 (IEEE version)
 def fig4(counts):
     """Corpus-flow diagram: candidate pool -> core / contrast -> strict audit -> passes.
-    counts: dict with keys total, core, contrast, strict_candidates, strict_pass, industry."""
+    counts: dict with keys total, may, oct, core, contrast, strict_pass, industry, relaxed_only."""
     W, H = 3.5, 3.0
     fig, ax = canvas(W, H)
     # Column-width figure: full-width boxes 3.3 in, split boxes 1.62 in, three text lines each,
@@ -238,7 +223,7 @@ def fig4(counts):
     box(ax, cx + dx, ys[1], sw, bh, f"contrast: {counts['contrast']}\n(fails the\ndiscriminator)", fs=7, fill=LIGHT)
     box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(Loop 1 from session signal;\nLoop 2 across contexts with versioning or lineage)", fs=7.5)
     box(ax, cx - dx, ys[3], sw, bh, f"pass: {counts['strict_pass']} research\n+ {counts['industry']} industry\nexemplars", fs=7, fill=SHADE)
-    box(ax, cx + dx, ys[3], sw, bh, f"promote without lineage: {counts['relaxed_only']}\n(enter the matrix\nonly under relaxation)", fs=7, fill=LIGHT)
+    box(ax, cx + dx, ys[3], sw, bh, f"promote with no lineage: {counts['relaxed_only']}\n(fail the audit on\ngovernance alone)", fs=7, fill=LIGHT)
     arrow(ax, (cx - 0.3, ys[0] - bh / 2), (cx - dx, ys[1] + bh / 2))
     arrow(ax, (cx + 0.3, ys[0] - bh / 2), (cx + dx, ys[1] + bh / 2))
     arrow(ax, (cx - dx, ys[1] - bh / 2), (cx - 0.3, ys[2] + bh / 2))
@@ -248,8 +233,8 @@ def fig4(counts):
 
 
 IEEE_SIZES = {  # physical sizes for the two-column IEEE Access layout (column 3.5 in, text 7.16 in)
-    "fig1": (7.16, 7.16 * 3.2 / 6.0),
-    "fig2": (3.5, 3.5 * 3.4 / 4.2),
+    "fig1": (7.16, 7.16 * 2.5 / 7.2),
+    "fig2": (3.5, 3.4),
     "fig3": (3.5, 3.5 * 3.8 / 4.8),
 }
 

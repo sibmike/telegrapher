@@ -86,3 +86,6 @@ S5_Orchestration     37   3.08  (none)
 S6_Governance        45   3.02  AGENTS.md / AAIF, Braintrust, LangSmith Hub, Vellum
 May corpus alone (after corrections): 130 / 99 / 31; S5 mean 2.58.
 ```
+
+
+**Correction (2026-10-07, story-first revision):** the corpus line above says the seven October cross-context promoters "enter only under relaxation (a)". Against the released rows (gov_props column of p3_refresh_2026-10.csv), only EvolveNet carries rollback and so enters under relaxation (a) as defined (any of versioning, lineage, or rollback); Evo2Team, XRepoSkill, ShareMem, RASO, and Spotify carry none of the three and enter only if the governance requirement is dropped altogether; Future AGI is T5-only and enters under no rule. The IEEE text (Section VII, S2, S4, S6.7) now says so.

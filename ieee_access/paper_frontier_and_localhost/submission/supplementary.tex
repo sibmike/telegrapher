@@ -749,17 +749,20 @@ that count.
 The governance relaxation counts any of versioning, lineage, or rollback
 as Loop-2 governance. It re-admits MAE, MetaGen, MetaReflection, and
 CLIN from the first pass, raising the research count to approximately
-eighteen.
+eighteen, and of the second-pass promoters below it admits EvolveNet
+alone, whose rollback to the previous shared harness counts.
 
 Seven second-pass systems promote across users, clients, teams, or
-repositories without versioning or lineage: EvolveNet, Evo2Team,
-XRepoSkill, ShareMem, RASO, Spotify's recommendation loop, and Future
-AGI's prompt lifecycle. Six of them would enter under the governance
-relaxation, all landing in {[}Auto × Auto{]} except Spotify's loop,
-which would land in {[}Auto × Human{]}; none would open a new cell. The
-seventh, Future AGI's prompt lifecycle, rests on T5 evidence alone,
-which the tier rule above does not count without corroboration, so it is
-not admitted under any rule.
+repositories with no versioning or lineage on the promoted artifact:
+EvolveNet, Evo2Team, XRepoSkill, ShareMem, RASO, Spotify's
+recommendation loop, and Future AGI's prompt lifecycle. They fail the
+audit on governance alone. A weaker relaxation that asks only for an
+explicit promotion mechanism, with no governance property at all, would
+admit six of them, all landing in {[}Auto × Auto{]} except Spotify's
+loop, which would land in {[}Auto × Human{]}; none would open a new
+cell. The seventh, Future AGI's prompt lifecycle, rests on T5 evidence
+alone, which the tier rule above does not count without corroboration,
+so it is not admitted under any rule.
 
 The optimizer-state relaxation admits as Loop 1 a session signal that
 updates optimizer state without persisting an artifact distinct from
@@ -770,7 +773,7 @@ attack studies, registries, audits, and conceptual frameworks, plus one
 orchestrator whose adaptation lives in the weights, and none of them
 persists optimizer state as its only artifact.
 
-The qualitative findings hold under both relaxations: {[}Auto × Auto{]}
+The qualitative findings hold under every relaxation: {[}Auto × Auto{]}
 is well populated; {[}Human × Auto{]} is empty; the other human-authored
 cells hold only registries and curation workflows that fail the
 composite audit; the governance-first cluster sits in {[}None × Auto{]};
@@ -1102,13 +1105,14 @@ decide on Loop 2 whether it ships. CASCADE, Sierra Agent OS 2.0, and
 Cognition Devin are variants of the same pairing.
 
 Seven second-pass systems promote across users, clients, teams, or
-repositories without versioning or lineage, so they sit outside the
-strict audit: EvolveNet, Evo2Team, XRepoSkill, ShareMem, RASO, Spotify's
-recommendation loop, and Future AGI's prompt lifecycle. Six of them
-would enter under the governance relaxation, all landing in {[}Auto ×
-Auto{]} except Spotify's loop in {[}Auto × Human{]}, without opening a
-new cell; the seventh, Future AGI's prompt lifecycle, rests on T5
-evidence alone and is not admitted under any rule (Section S2).
+repositories with no versioning or lineage on the promoted artifact, so
+they sit outside the strict audit: EvolveNet, Evo2Team, XRepoSkill,
+ShareMem, RASO, Spotify's recommendation loop, and Future AGI's prompt
+lifecycle. Were the audit to ask for a promotion mechanism and no
+governance property at all, six of them would enter, all landing in
+{[}Auto × Auto{]} except Spotify's loop in {[}Auto × Human{]}, without
+opening a new cell; the seventh, Future AGI's prompt lifecycle, rests on
+T5 evidence alone and is not admitted under any rule (Section S2).
 
 \textbf{{[}None × Auto{]}} holds the governance-first prompts-as-code
 systems: Braintrust, LangSmith Hub, and Vellum. Their Loop 2 is real,
@@ -1548,9 +1552,9 @@ that judging scaffold optimizers ``solely by observing target agents'
 performance gains'' misses intermediate erroneous edits that hinder
 performance, and that it is ``unclear whether harness optimization is
 driven by optimizers' informed update actions or simply
-trial-and-error''. That is the line between Stage 2 and Stage 3 of Table
-II-1, measured. An optimizer that cannot tell informed updates from
-lucky ones operates in Stage 2, whatever its benchmark gains.
+trial-and-error''. That is the line between Stage 2 and Stage 3 of
+Section III, measured. An optimizer that cannot tell informed updates
+from lucky ones operates in Stage 2, whatever its benchmark gains.
 
 \textbf{HARNESSEVO} \cite{nguyen2026harnessevo} turns the diagnosis
 into a measurement. It splits the harness into four separately evolvable
@@ -2287,12 +2291,13 @@ corpus. None of the 126 second-pass systems scores 5 on any substrate.
 The composite two-loop audit passes 14 research systems and 3 industry
 exemplars: Sierra Agent OS 2.0, Cognition Devin, and Letta's Context
 Repositories, whose shared-memory push carries git lineage but no gate.
-The 7 second-pass systems that promote across contexts without
-versioning or lineage are EvolveNet, Evo2Team, XRepoSkill, ShareMem,
-RASO, Spotify, and Future AGI. The first six enter only under the
-governance relaxation of Section S2, which counts any of versioning,
-lineage, or rollback as Loop-2 governance; Future AGI's evidence is T5
-only, so it enters not at all.
+The 7 second-pass systems that promote across contexts with no
+versioning or lineage on the promoted artifact are EvolveNet, Evo2Team,
+XRepoSkill, ShareMem, RASO, Spotify, and Future AGI. Of these, EvolveNet
+alone carries rollback and so enters under the governance relaxation of
+Section S2; the first six enter only if the audit drops its governance
+requirement altogether; Future AGI's evidence is T5 only, so it enters
+not at all.
 
 Two first-pass rows are corrected before the recount. The row ``Governed
 Collaborative Memory / SSGM'' conflated Cuadros et al.~(2605.04264) with
