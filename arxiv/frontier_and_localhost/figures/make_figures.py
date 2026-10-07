@@ -232,11 +232,11 @@ def fig4(counts):
     bw, bh, sw, dx = 3.3, 0.56, 1.62, 0.86
     cx = W / 2
     ys = [2.65, 1.87, 1.09, 0.31]
-    box(ax, cx, ys[0], bw, bh, f"{counts['total']} unique systems scored\n(six substrates, 0–5 rubric)\n{counts['may']} by May 2026, +{counts['oct']} in the Oct 2026 sweep", fs=7.5)
+    box(ax, cx, ys[0], bw, bh, f"{counts['total']} unique systems scored\n(six substrates, 0–5 rubric)\n{counts['may']} in the first pass, +{counts['oct']} in the second", fs=7.5)
     # split row
     box(ax, cx - dx, ys[1], sw, bh, f"core corpus: {counts['core']}\n(score ≥ 3 on\nsome substrate)", fs=7, fill=SHADE)
     box(ax, cx + dx, ys[1], sw, bh, f"contrast: {counts['contrast']}\n(fails the\ndiscriminator)", fs=7, fill=LIGHT)
-    box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(Loop 1 from session signal;\ngated Loop 2 with versioning or lineage)", fs=7.5)
+    box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(Loop 1 from session signal;\nLoop 2 across contexts with versioning or lineage)", fs=7.5)
     box(ax, cx - dx, ys[3], sw, bh, f"pass: {counts['strict_pass']} research\n+ {counts['industry']} industry\nexemplars", fs=7, fill=SHADE)
     box(ax, cx + dx, ys[3], sw, bh, f"promote without lineage: {counts['relaxed_only']}\n(enter the matrix\nonly under relaxation)", fs=7, fill=LIGHT)
     arrow(ax, (cx - 0.3, ys[0] - bh / 2), (cx - dx, ys[1] + bh / 2))

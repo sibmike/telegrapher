@@ -10,13 +10,13 @@ The same text as the IEEE Access survey article in `../../../ieee_access/paper_f
 | Part | Pages | Source |
 |---|---|---|
 | Sections 1–11 | 1–22 | the IEEE package's `submission/sections/*.md` |
-| References (174 cited works) | 22–33 | `references.bib` (copied from the IEEE package) |
-| Appendix A, formal statement; B, gate families | 33–37 | `appA_formal.md`, `appB_gates.md` |
-| Appendices C–H: data appendix, mechanism stack, contrast set and matrix membership (May-2026 pass), convergent families, claims audit and rubric-reward comparison, extended related work | 37–64 | the IEEE package's generated `submission/supplementary.md` (S2–S7) |
-| Appendix I: full score table (269 rows) | 64–71 | `supplementary.md` (S1) |
+| References (177 cited works) | 22–33 | `references.bib` (copied from the IEEE package) |
+| Appendix A, formal statement; B, gate families | 34–36 | `appA_formal.md`, `appB_gates.md` |
+| Appendices C–H: data appendix, mechanism stack, contrast set and matrix membership (first pass), convergent families, audit of the first-pass draft's claims with the rubric-reward comparison, extended related work | 36–66 | the IEEE package's `submission/sections/S2_*.md` … `S7_*.md`, assembled into `submission/supplementary.md` |
+| Appendix I: full score table (269 rows) | 66–73 | `supplementary.md` (S1, generated from the CSVs) |
 | Ancillary files (`anc/`) | — | the two score CSVs and `recount.py`, with a README |
 
-71 pages, 4 figures, 10 captioned tables, 11pt, 1 in margins, pdflatex with the IEEEtran bibliography style (numeric citations, as in the IEEE text).
+73 pages, 4 figures, 11 captioned tables, 11pt, 1 in margins, pdflatex with the IEEEtran bibliography style (numeric citations, as in the IEEE text). The text is the October 2026 readability revision of the IEEE article (body and appendices rewritten for first-read clarity; see the IEEE package's `REVISION_LOG_A.md` to `REVISION_LOG_D.md`).
 
 ## How it builds
 
@@ -43,7 +43,7 @@ The zip compiles standalone with pdflatex alone (arXiv does not run BibTeX; the 
 | Primary category (proposed) | cs.AI |
 | Cross-lists (proposed) | cs.LG, cs.SE |
 | License | CC BY 4.0 (the repository's paper license) |
-| Comments | 71 pages, 4 figures, 10 tables. Part 3 of a series: Part 1 arXiv:2505.24187, Part 2 arXiv:2605.30628. Score tables and recount script as ancillary files. |
+| Comments | 73 pages, 4 figures, 11 tables. Part 3 of a series: Part 1 arXiv:2505.24187, Part 2 arXiv:2605.30628. Score tables and recount script as ancillary files. |
 | Upload | `paper_frontier_and_localhost.zip` |
 
 The categories are a proposal for the submitting author to confirm on the form. The series has no arXiv id for this paper yet; once assigned, record it in `../README.md` and in the IEEE package's cover letter.

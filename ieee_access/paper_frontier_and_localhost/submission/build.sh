@@ -79,12 +79,11 @@ if [ -f supplementary.md ]; then
   echo "[6/6] supplementary.md -> supplementary.pdf"
   pandoc supplementary.md \
     --from="$FROM" --to=latex --standalone \
-    --natbib --bibliography=references.bib \
+    --natbib --bibliography=references.bib -V biblio-style=IEEEtran -V natbiboptions='numbers,sort&compress' \
     -V geometry:margin=1in -V graphics=true \
     -V header-includes='\usepackage{longtable,booktabs}\DeclareUnicodeCharacter{200B}{\hskip0pt}\DeclareUnicodeCharacter{2260}{\ensuremath{\neq}}\DeclareUnicodeCharacter{2265}{\ensuremath{\geq}}\DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}\DeclareUnicodeCharacter{2192}{\ensuremath{\rightarrow}}\DeclareUnicodeCharacter{2282}{\ensuremath{\subset}}\DeclareUnicodeCharacter{2248}{\ensuremath{\approx}}\DeclareUnicodeCharacter{00D7}{\ensuremath{\times}}\DeclareUnicodeCharacter{2211}{\ensuremath{\sum}}\DeclareUnicodeCharacter{221E}{\ensuremath{\infty}}\DeclareUnicodeCharacter{03B5}{\ensuremath{\varepsilon}}\DeclareUnicodeCharacter{03C4}{\ensuremath{\tau}}\DeclareUnicodeCharacter{03BB}{\ensuremath{\lambda}}\DeclareUnicodeCharacter{03A9}{\ensuremath{\Omega}}\DeclareUnicodeCharacter{03B8}{\ensuremath{\theta}}\DeclareUnicodeCharacter{2208}{\ensuremath{\in}}\DeclareUnicodeCharacter{2026}{\ldots}\DeclareUnicodeCharacter{2020}{\dag}\DeclareUnicodeCharacter{2021}{\ddag}\DeclareUnicodeCharacter{00A7}{\S}\DeclareUnicodeCharacter{03BA}{\ensuremath{\kappa}}\DeclareUnicodeCharacter{03B1}{\ensuremath{\alpha}}\DeclareUnicodeCharacter{03B2}{\ensuremath{\beta}}\DeclareUnicodeCharacter{03B4}{\ensuremath{\delta}}\DeclareUnicodeCharacter{03B3}{\ensuremath{\gamma}}\DeclareUnicodeCharacter{2295}{\ensuremath{\oplus}}\DeclareUnicodeCharacter{2218}{\ensuremath{\circ}}\DeclareUnicodeCharacter{2212}{-}\DeclareUnicodeCharacter{2019}{\textquoteright}\DeclareUnicodeCharacter{2018}{\textquoteleft}\DeclareUnicodeCharacter{201C}{\textquotedblleft}\DeclareUnicodeCharacter{201D}{\textquotedblright}\DeclareUnicodeCharacter{2070}{\ensuremath{^0}}\DeclareUnicodeCharacter{00B1}{\ensuremath{\pm}}\DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}' \
     --output=supplementary.tex
   fix_cites supplementary.tex
-  sed -i 's#\\end{document}#\\bibliographystyle{IEEEtran}\\bibliography{references}\n\\end{document}#' supplementary.tex
   pdflatex -interaction=nonstopmode -halt-on-error supplementary.tex > /dev/null
   bibtex supplementary > /dev/null || true
   pdflatex -interaction=nonstopmode -halt-on-error supplementary.tex > /dev/null

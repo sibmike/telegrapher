@@ -9,7 +9,7 @@ S6  Claims audit (CLAIMS_AUDIT.md, verbatim) and the rubric-reward table from th
 
 Sections are lifted by heading from the arXiv short v3.2 Markdown, so citation keys stay valid.
 """
-import csv, os, re
+import csv, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PKG = os.path.join(HERE, "..")
@@ -200,10 +200,25 @@ title: "Supplementary Material for: Frontier and Localhost: A Survey of How Prod
 date: "October 2026"
 ---
 
-This document accompanies the main article. S1 is the released score table; S2–S5 carry the verification material of the survey (data appendix, mechanism stack, contrast set and matrix membership, and the per-system walkthrough of the convergent research families); S6 is the audit of every absolute claim of the earlier preprint against the October-2026 literature, with the rubric-reward comparison that Section IV of the main text summarizes; S7 is the extended related work, organized by the article's four design commitments. Section numbers in the form "Section N" refer to the main article.
+This document accompanies the main article. S1 is the released score table; S2–S5 carry the verification material behind the survey (the data appendix, the mechanism stack, the contrast set and matrix membership, and the walkthrough of the convergent research families); S6 audits every absolute claim of the first-pass draft against the full corpus and holds the rubric-reward comparison that Section IV of the main text summarizes; S7 is the extended related work, organized by the article's four design commitments. Section numbers in the form "Section N" refer to the main article.
+
+**Key to the labels used throughout.** The substrate codes S1 to S6 name the six scaffold substrates of the main article (S1 instructions, S2 skills, S3 memory, S4 tools, S5 orchestration, S6 governance) and are distinct from the section labels S1 to S7 of this document; INT marks a row scored across several substrates. C1 to C4 are the four feedback-signal classes of Section IV: exact, observable outcome, judged, and delayed and sparse. A system's two gates are written [Loop 1 × Loop 2] with the values Auto, Human, or None; Auto+Human marks a two-stage local gate, an algorithmic check followed by a reviewer. Stages 1 to 3 are the three stages of scaffold maintenance of Table II-1: patchwork, random artifact search, artifact-layer descent. Scopes nest USER within PROJECT within STACK within TENANT within CORE, where a tenant is one organization or customer; promotion that reaches CORE crosses tenants. Properties (a) to (d) are the four properties of the missing architecture in Section IX, and the five conditions are those of Section III. A system named without a citation is a row of the score table in Section S1, which gives its source.
 
 """
-body = front + "\n\n".join([p for p in (s1, s2, s3, s4, s5, s6, s7) if p]) + "\n"
+# S2-S6 are editable section files once materialized (python generate_supplementary.py --materialize writes
+# them from the lifted text above, once). When a file exists it is the source of truth and the lifted
+# text is ignored, so the appendices can be revised like any other section.
+SFILES = {2: "S2_data.md", 3: "S3_mechanism.md", 4: "S4_contrast.md", 5: "S5_families.md", 6: "S6_audit.md"}
+SEC_DIR = os.path.join(PKG, "submission", "sections")
+lifted = {2: s2, 3: s3, 4: s4, 5: s5, 6: s6}
+parts = {}
+for n, fname in SFILES.items():
+    path = os.path.join(SEC_DIR, fname)
+    if os.path.exists(path):
+        parts[n] = open(path, encoding="utf-8").read().strip("\n")
+    else:
+        parts[n] = lifted[n]
+body = front + "\n\n".join([p for p in (s1, parts[2], parts[3], parts[4], parts[5], parts[6], s7) if p]) + "\n"
 
 # Lifted tables carry equal-dash separators, which pandoc turns into equal column widths; give
 # the long-text columns the width (dash counts are relative; cell text is untouched).
@@ -217,6 +232,18 @@ WIDTHS = {
 for header, widths in WIDTHS.items():
     sep = "|" + "|".join("-" * w for w in widths) + "|"
     body = re.sub(r"(?m)^" + re.escape(header) + r"\n\|[-:|]+\|$", header + "\n" + sep, body)
+
+if "--materialize" in sys.argv:
+    # write S2-S6 as section files (post-substitution text, i.e. exactly what renders today); never overwrite
+    for n, fname in SFILES.items():
+        path = os.path.join(SEC_DIR, fname)
+        if os.path.exists(path):
+            print("exists, not overwritten:", fname); continue
+        m = re.search(r"(?ms)^# S%d\. .*?(?=^# S%d\. |\Z)" % (n, n + 1), body)
+        if not m:
+            raise SystemExit("could not isolate S%d in the assembled body" % n)
+        open(path, "w", encoding="utf-8", newline="\n").write(m.group(0).strip("\n") + "\n")
+        print("materialized", fname, len(m.group(0).split()), "words")
 
 open(OUT, "w", encoding="utf-8", newline="\n").write(body)
 print("wrote", os.path.relpath(OUT, HERE), "rows:", len(rows))

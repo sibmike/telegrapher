@@ -11,7 +11,7 @@ Section REF(sec:loop) collapses every production gate into one per-edit test $G_
 | Reviewer judgment | Human credit assignment by pull-request review or expert sign-off | Per-edit gate $G_t$, human-instantiated | C3 (and C2 when the reviewer has outcome data) | SkillForge (Loop 2), Sierra Agent OS 2.0, Anthropic skills repository |
 | Semantic merge | Whether a candidate duplicates or conflicts with existing artifacts | Proposal pruning before $G_t$ | C4 (also a pre-filter in C2, C3) | NanoResearch orchestrator, FederatedSkill server agent |
 | Archive selection | Whether a candidate fills an unfilled cell in a behavior-diversity archive | Proposal pruning before $G_t$ | C4 | AlphaEvolve (MAP-Elites), ADAS |
-| Multi-sample agreement | Whether $k$ independent proposals or evaluations agree; false-accept rate decays as $p^k$ rather than variance as $1/k$ | Aggregation filter on the estimate | C2, C3 noise absorption | Under-explored; SkillOpt-Lite's consensus attribute mining is the nearest instance |
+| Multi-sample agreement | Whether $k$ independent proposals or evaluations agree; false-accept rate decays as $p^k$ rather than variance as $1/k$ | Aggregation filter on the estimate | C2, C3 noise absorption | VaG (three heterogeneous critics must all pass); SkillOpt-Lite (consensus filter across rollouts) |
 
 Table B-1. Gate families, their slot in the formalism, and the feedback-signal class each serves.
 

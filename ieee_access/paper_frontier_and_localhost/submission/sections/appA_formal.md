@@ -34,7 +34,7 @@ Add (A3) proposal coverage, that at every non-gate-stable scaffold $Q_t$ places 
 
 ### Correspondence
 
-Table REF(tab:A-1) pairs each optimization concept with its scaffold analogue. Credit assignment here is attribution, not backpropagation. Scaffold systems do not differentiate through instruction files; they trace an output error to an upstream coordinate, manually or with a judge or verifier. The descent argument needs only that this attribution succeeds with non-zero probability per failure, assumption (iv) of Section REF(sec:loop).
+Table REF(tab:A-1) pairs each optimization concept with its scaffold analogue. Credit assignment here is attribution, not backpropagation. Scaffold systems do not differentiate through instruction files; they trace an output error to an upstream coordinate, manually or with a judge or verifier. The descent argument needs only that this attribution succeeds with non-zero probability per failure, which is the credit-assignment condition of Section REF(sec:loop).
 
 ### Worked cases
 

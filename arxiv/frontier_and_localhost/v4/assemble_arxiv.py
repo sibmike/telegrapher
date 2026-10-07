@@ -69,6 +69,7 @@ def lifted(t):
                lambda m: "Appendices REF(app:%s-%s)–REF(app:%s-%s)" % (SUPP[m.group(1)], m.group(2), SUPP[m.group(1)], m.group(3)), t)
     t = re.sub(r"Section S(\d)((?:\.\d+)*)", lambda m: "Appendix REF(app:%s%s)" % (SUPP[m.group(1)], m.group(2).replace(".", "-")), t)
     t = t.replace("Appendix XII-D of the main text", "Appendix REF(app:formal)")
+    t = t.replace("the correspondence note of the formal appendix", "the correspondence note of Appendix REF(app:formal)")
     t = t.replace("Appendix XIII", "Appendix REF(app:gates)").replace("Appendix XII", "Appendix REF(app:formal)")
     t = re.sub(r"Sections ([IVX]+)–([IVX]+)",
                lambda m: "Sections REF(sec:%s)–REF(sec:%s)" % (SEC_IDS.get(m.group(1), m.group(1)), SEC_IDS.get(m.group(2), m.group(2))), t)
