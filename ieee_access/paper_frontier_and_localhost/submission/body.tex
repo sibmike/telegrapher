@@ -64,11 +64,11 @@ Dominant failure
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 1. Patchwork & Intuition-driven local edits & Implicit, ad hoc & None & Bloat \\
 2. Random artifact search & Many variants tried under an evaluation & Weak; the evaluation is the only signal & Evaluation-gated merge, no failure-to-coordinate tracing & Overfitting to the in-distribution patch \\
 3. Artifact-layer descent & Residual traced to a coordinate, then one edit & Explicit per failure mode & Bounded by evidence radius; reversible & (the discipline this article describes) \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 A patchwork loop becomes Stage 3 once the five conditions of Section~\ref{sec:loop} hold. The survey of Sections~\ref{sec:method} to \ref{sec:design} asks which deployed systems meet which of them.
@@ -104,7 +104,6 @@ Governance
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 Gao et al. \cite{gao2026selfevolving} & self-evolving agents & what, when, how, where to evolve & partial & partial & no & no \\
 Fang et al. \cite{fang2025comprehensive} & self-evolving agents & inputs, agent system, environment, optimizers & partial & no & no & no \\
@@ -116,6 +115,7 @@ Xia et al. \cite{xia2026harnessing} & skill-mediated agents (8 systems) & four r
 Ding et al. \cite{ding2026skilleval} & skill evaluation and evolution & four evolution paradigms × six benchmark classes & partial & partial & partial & partial \\
 Mei et al. \cite{mei2025context} & context engineering (1,411 papers) & components × system implementations & no & no & no & no \\
 This survey & 256 scaffold-adaptive systems & loop closure, gate type, signal class, governance & yes & yes & yes & yes (four-property audit) \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 Table~\ref{tab:II-2} places this survey against the surveys that cover neighboring ground. Existing surveys of self-evolving agents, agent memory, context engineering, skills, and harness design catalogue mechanisms by what they edit and when. None classifies systems by whether a feedback loop is closed, by whether the gate is algorithmic or human, or by the class of signal the gate receives; two carry a governance axis, and none a cross-organization promotion dimension. This survey classifies on those four axes and audits a named gap against them. The prompt-optimization lineage that a reader will expect here, OPRO, EvoPrompt, Promptbreeder, DSPy, and TextGrad \cite{yang2023opro, guo2023evoprompt, fernando2023promptbreeder, khattab2023dspy, yuksekgonul2024textgrad}, optimizes a prompt or program once against a development set and sits in the contrast corpus, and the evolving-playbook line of agentic context engineering \cite{ace2025agentic} sits at the single-loop boundary. The closest precedents for optimization over the scaffold itself are agent symbolic learning, which treats prompts, tools, and pipeline as symbolic parameters updated from textual feedback \cite{zhou2024symbolic}; STOP, in which a scaffolding program recursively improves its own improvement code \cite{zelikman2023stop}; and a coding agent that edits its own harness to raise its benchmark score \cite{robeyns2025sica}. Each runs one deployment's loop under a benchmark score, and Section~\ref{sec:loop} states what that loop becomes once persistence, scope, and promotion are added. Supplementary Material S7 traces each neighboring line and states what this survey inherits from it.
@@ -208,12 +208,12 @@ Corpus examples
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 C1 exact & deterministic pass/fail or exact score, immediate & surrogate verifier; exact eval cascade; \(\tau_t \approx 0\) & (1)(2)(4)(5) directly; (3) credit assignment open & {[}Auto × Auto{]}, {[}Auto × Human{]}, {[}None × Auto{]}; only class where auto-gated Loop 2 needs no receiving-side human & test overfitting; scaffold bloat & DGM, AlphaEvolve kernels, SkillOpt on math \\
 C2 observable outcome & success/failure event after one episode; noisy, confounded & RL threshold; held-out task suite; batching or agreement filter; \(\tau_t > 0\) & (1) noisy; (2) only if logged; (3) hardest; (4)(5) & {[}Auto × Auto{]} in simulators; {[}Auto × Human{]} in production & patch overfitting; poisoned memory; tool-output injection & Devin, Sierra, SAGE, SkillRL, PACE, Voyager \\
 C3 judged & judge, rubric, rating, reference comparison; no ground truth & calibrated LLM-judge or reviewer; the rubric is itself a coordinate (reflexive gate) & (1) by proxy; (2) via complaints; (3) via rubric decomposition; (4); (5) proxy & {[}Auto × Human{]} naturally; {[}Auto × Auto{]} only with calibration; {[}Human × Human{]} for high stakes (registries and curation only) & Goodhart / eval fragility; rubric accretion & SkillForge, CASCADE, skills-repository review \\
 C4 delayed, sparse & outcome at a long horizon, once per many edits & proposal pruning (semantic merge, archive selection) plus proxy milestones; no per-edit gate & (1) only at horizon; (2) rarely as a failure event; (3) temporal, open; (4); (5) replaced by novelty or taste & {[}Auto × Auto{]} through archive selection; otherwise {[}None × Auto{]} or human on both loops & drift; indistinguishable from random search & NanoResearch, CORAL, AlphaEvolve archive \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 \textbf{C1, exact.} A deterministic checker returns pass or fail, or an exact score, immediately and repeatably. Unit tests, compilers, type checkers, exact-match answer keys, proof checkers, and schema validators are all of this kind. DGM accepts a self-modification only after it passes in a sandbox on coding benchmarks \cite{zhang2025darwin}; AlphaEvolve scores candidate programs with a cascade of exact evaluators \cite{alphaevolve2025}; SkillOpt gates a skill edit on a held-out exact-match split of a math benchmark \cite{yang2026skillopt}. In the formalism the estimator bias \(\varepsilon_t\) is close to zero, the margin \(\tau_t\) can be set near zero, and accepting on a single evaluation (\(n = 1\), Section~\ref{sec:design}) is defensible because repeating the check would return the same answer. Two of the five conditions still need work even here. A failing test localizes the output, not the scaffold coordinate that caused it, so credit assignment remains open; and a checker that is also the training target can be gamed. The dominant failures are test overfitting and scaffold bloat, because cheap acceptances accumulate.
@@ -253,7 +253,6 @@ Score-5 mark
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 S1 Instructions & Project, team, or organization rules attached to a workspace & Versioned, two-loop, auto-gated promotion \\
 S2 Skills & Procedural artifacts (code or text) loaded on demand & Skill bank self-modifies on failure, test-gated, versioned, promoted \\
@@ -261,6 +260,7 @@ S3 Memory & Cross-session experience (episodic, semantic, procedural) & Provenan
 S4 Tools & Vetted action surface and context schemas & Domain-curated bundle is the product; evaluation-gated tool versions \\
 S5 Orchestration & Multi-role graph and routing & Population or policy updates from an outer-loop signal \\
 S6 Governance & Versioning, promotion, audit, rollback & Dev-to-staging-to-production with evaluation thresholds, audit log, and rollback \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 The 0 to 5 rubric is the same on every substrate: 0, ephemeral; 1, persistent and local; 2, persistent with tool attachment but no feedback; 3, multi-scope or feedback-driven but without automated promotion; 4, automated feedback updates the scaffold, so one loop is closed; 5, the substrate's own top mark in Table~\ref{tab:V-1}. On the substrates that hold adaptable content (S1, S2, S5) the top mark requires both loops; on the substrates that hold governance machinery (S3 provenance and correction, S4 evaluation-gated tool versions, S6 evaluation-gated promotion with audit and rollback) it requires the machinery a second loop would need, which is why a registry or a prompts-as-code platform can score 5 on S6 while having no inner loop at all. Systems that adapt several substrates at once receive an additional integrated row. Other partitions are possible, for instance separating evaluation suites from governance; the argument of Section~\ref{sec:loop} is invariant to the partition so long as the coordinates stay independently editable.
@@ -282,7 +282,7 @@ Two kinds of system are excluded. Those whose only update mechanism is weight-le
 
 \subsection{Evidence and scoring discipline}\label{evidence-and-scoring-discipline}
 
-Each system carries one or more evidence tiers: T1 peer-reviewed publication; T2 arXiv preprint; T3 production claim with metrics; T4 open-source artifact; T5 industry blog or interview. T1 and T4 carry the most weight in cluster-level statements; T3 is admissible when the claim is concrete (a named benchmark or integration target); T5 only when corroborated by a higher tier. Production claims are never pooled with peer-reviewed evidence when a cluster-level statistic is computed. Scoring is single-rater. One author scored every system, half-scores were used only when one criterion was clearly met and another partially, and ambiguous cases were rounded down. The complete score table, with a one-line justification per row, is released as Supplementary Material S2 so that every classification can be re-derived. The counts reported in Section~\ref{sec:findings} move under two natural relaxations of the composite criterion, counting any of versioning, lineage, or rollback as Loop-2 governance, or admitting updates that persist only optimizer state as Loop 1; the qualitative findings survive both (Supplementary Material S2).
+Each system carries one or more evidence tiers: T1 peer-reviewed publication; T2 arXiv preprint; T3 production claim with metrics; T4 open-source artifact; T5 industry blog or interview. T1 and T4 carry the most weight in cluster-level statements; T3 is admissible when the claim is concrete (a named benchmark or integration target); T5 only when corroborated by a higher tier. Production claims are never pooled with peer-reviewed evidence when a cluster-level statistic is computed. Scoring is single-rater. One author scored every system, half-scores were used only when one criterion was clearly met and another partially, and ambiguous cases were rounded down. The complete score table, with a one-line justification per row, is released as Supplementary Material S1 so that every classification can be re-derived. The counts reported in Section~\ref{sec:findings} move under two natural relaxations of the composite criterion, counting any of versioning, lineage, or rollback as Loop-2 governance, or admitting updates that persist only optimizer state as Loop 1; the qualitative findings survive both (Supplementary Material S2).
 
 \section{Findings: substrate maturity and four clusters}\label{sec:findings}
 
@@ -313,7 +313,6 @@ Survey finding
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 S1 Instructions & 15 & 3.07 & (none) & Rules persist across IDEs and agents; none closes both loops; ceiling 4 \\
 S2 Skills & 50 & 3.34 & SAGE, COSPLAY & Most active research substrate; Loop 1 routinely automated; production repositories human-merged \\
@@ -322,6 +321,7 @@ S4 Tools & 20 & 3.65 & MCP, Harvey, Hippocratic AI & Most mature production subs
 S5 Orchestration & 37 & 3.08 & (none) & Topologies evolve under evaluation; one structurally gated instance; no two-loop system \\
 S6 Governance & 45 & 3.02 & Braintrust, Vellum, LangSmith Hub, AGENTS.md/AAIF & Mature prompts-as-code; 2026 registries add lineage and rollback; no inner loop \\
 Integrated & 52 & 3.81 & NanoResearch, AutoAgent, SkillRL & High-water mark; research systems without enterprise governance \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 The rows behind the table read as follows. On S1, rules persist across IDEs and agents (Claude Code, Cursor, AGENTS.md \cite{agentsmd2025}, Windsurf, Continue.dev) and adoption is measured at a fifth to a quarter of coding-agent projects \cite{robbes2026agenticmuch, galster2026harnessconfig}, yet context files raise inference cost by about a fifth without raising task success in a controlled study \cite{gloaguen2026agentsmd}. On S2, the two systems at the top mark, SAGE and COSPLAY, close both loops inside one research environment \cite{wang2025sage, wu2026cosplay}; 31 of the 2026 additions are skill systems, almost all closing Loop 1 under an automatic gate, and eleven treat retirement as a gated operation \cite{zhang2026librarydrift, wei2026skillsmith, pu2026skillops}; the public skill repositories, by contrast, are human-merged with one deprecation in 254 edits \cite{shen2026whomaintains}. On S3, lineage has arrived in production memory, in Letta's git-backed Context Repositories \cite{letta2026memfs}, Mem0's per-memory history \cite{mem02026history}, and Zep's bitemporal facts \cite{zep2026facts}, while five production backends still return revoked facts \cite{shen2026revoked}; the 2026 research splits into write-gating and provenance on one side \cite{wang2026toki, xu2026ppmf, margalit2026governed} and verifier-gated failure loops on the other \cite{yu2026recuris, wang2026memguard, sun2026vermem}, and no system carries both. On S4, MCP registries split into catalogs (the official registry: namespaces and version records, no scanning, no private servers) and control planes with scanning, access control, and quarantine \cite{agenticcommunity2026mcpgateway, microsoft2026apicentermcp, truefoundry2026mcpgateway}; none has evaluation-gated promotion. On S5, automated workflow search predates the corpus's topology evolution, in optimizable agent graphs \cite{zhuge2024gptswarm} and in tree search over code-represented workflows \cite{zhang2024aflow}; topologies now evolve under evaluation \cite{cheng2026optimas, chu2026agentgrad, chen2026harnessforge}, TOCOMAS alone retains a topology change only when it satisfies a structural invariant \cite{zhao2026tocomas}, and Evo2Team promotes routing skills across teams with target-side confirmation \cite{wang2026evo2team}. On S6, the 2026 registries bring lineage and rollback \cite{kang2026registry, quessadavial2026acm, qin2026governed}, and every one of them has Loop 1 = None.
@@ -370,12 +370,12 @@ What the cluster shows
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 Research full-auto & NanoResearch, SkillOpt, SkillRL, AlphaEvolve, DGM, ADAS, Voyager; in 2026 EvolveNet, Evo2Team, XRepoSkill & Auto / Auto & Both loops can run under algorithmic gates and benchmark gains compound; enterprise governance is uniformly absent \\
 Production hybrid & SkillForge, CASCADE, Sierra Agent OS 2.0, Cognition Devin; in 2026 Spotify's recommendation loop \cite{palumbo2026spotify}, SkillChain \cite{hu2026skillchain} & Auto / Human & An algorithmic Loop-1 gate with a reviewer on Loop 2 is the production-viable cell; the 2026 entries add online A/B gating and reported judge agreement \\
 Governance-first & Braintrust, Vellum, LangSmith Hub; in 2026 EDDOps, Agentic Configuration Management, Governed Capability Evolution & None / Auto or Human & Evaluation-gated promotion, lineage, and rollback exist; candidate generation is manual and no inner loop fires from session signal \\
 Open standards and registries & AGENTS.md, MCP, Anthropic Agent Skills, Cursor Rules; in 2026 the MCP control planes & Mixed, or Human / Human & Cross-vendor convergence on artifact format and tool attachment; registries govern admission and access but do not evaluate \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 \emph{Research full-auto} systems show that the architecture works under fully algorithmic gates. NanoResearch co-evolves skills, memory, and policy with a semantic-merge orchestrator \cite{xu2026nanoresearch}; AutoAgent runs an execution cycle and an evolution cycle over elastic memory \cite{wang2026autoagent}; SkillOpt runs held-out gating, a rejected-edit buffer, and a bounded textual learning rate on a markdown skill (Section~\ref{sec:families}); AlphaEvolve, and FunSearch before it \cite{romeraparedes2024funsearch}, pairs an evaluator with an evolutionary archive and reports production gains at Google \cite{alphaevolve2025}; DGM modifies its own code under sandboxed tests \cite{zhang2025darwin}; ADAS searches over agent designs expressed as code \cite{hu2024adas}, and Voyager, the 2023 precursor, grows a skill library in a game environment \cite{wang2023voyager}. The 2026 entries move the cluster's frontier from a single deployment to a federation of them. Every member still lacks access control and audited promotion.
@@ -431,13 +431,13 @@ What it leaves open
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 Reflective evolution & GEPA; Tiwari et al. & proposal by reflection over trajectory evidence; two-timescale motivation & persistent artifact; bounded step; held-out gate \\
 Reflective context & RCL & the learned object in context space; generalization penalty as \(\Omega\) & cross-deployment Loop 2 \\
 Harness optimization & Meta-Harness; AHE; MOSS; CANTANTE; HARNESSEVO; HarnessForge; Growing Harness & credit assignment over orchestration; source-level edits; slot attribution & governed Loop 2; access control; rollback \\
 Lifecycle and multi-objective & Ratchet; MOCHA; SkillsVote; Library Drift; SkillSmith; ASSAY & hygiene as precondition; constraint frontier as the shape of \(\Omega\); gated retirement & gradient-analogue closure; retirement of a promoted artifact's descendants \\
 Transfer and federation & ICT; Combee; CORAL; PACE; FederatedSkill; EvolveNet; Evo2Team; XRepoSkill & empirical evidence radius; cross-client aggregation; receiving-side confirmation & cross-organization gate, lineage, rollback \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 Read against the loop and against the four properties of Section~\ref{sec:gap}, four claims are well supported.
@@ -524,7 +524,6 @@ Dominant class
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 Scaffold bloat & Instruction-following accuracy falls and latency grows sharply as instruction count scales \cite{jaroslawicz2025ifscale}; LLM-authored skills add nothing over no skill until lifecycle hygiene is applied \cite{zhang2026ratchet} & Complexity penalty \(\Omega\) in the gate; pruning and expiry as first-class gated operations & C1, C3 \\
 Poisoned memory & High attack success against standard retrieval-augmented generation \cite{zou2024poisonedrag}; backdoors planted in long-term memory or knowledge bases \cite{chen2024agentpoison}; memory control-flow attacks across major agent frameworks \cite{xu2026mcfa} & Provenance on every entry; write gating; a rollback envelope \cite{su2026chronomem, yu2026rollbackrepair} & C2 \\
@@ -533,6 +532,7 @@ Evaluation fragility & Optimizing a proxy reward past a point lowers the true sc
 Coordination failures & Fourteen failure modes in multi-agent systems, dominated by role confusion and context loss \cite{cemri2025mast} & Orchestration topology treated as a scaffold coordinate under the same gate and rollback discipline & C2 \\
 Patch overfitting & A scaffold tuned to one deployment over-fits it by construction (Appendix~\ref{app:formal}) & Evidence-radius discipline at promotion; receiving-side held-out evaluation & C2 \\
 Plasticity loss & Context rot (long-context degradation \cite{liu2023lostmiddle}), instruction conflict, memory pollution, tool-version drift & Expiry and rollback as explicit loop operations rather than retrospective hygiene & C4 \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 Two rows deserve a sentence beyond the table. Bloat is a signal-quality problem as well as a latency problem. Ratchet reports LLM-authored skills at no gain over a no-skill baseline against a double-digit gain for human-curated ones, and attributes the gap to lifecycle management, which in the vocabulary of Section~\ref{sec:loop} means that residual capture and mode discovery cannot work on a messy artifact pool \cite{zhang2026ratchet}. Evaluation fragility compounds because the evaluation suite is itself a patch-local artifact rather than a fixed instrument. It is optimized against: once a metric becomes the target it is gamed. It is read non-independently, because the gate scores path-dependent agent trajectories whose readings do not compose like ordinary test-set statistics. It goes stale, because the suite adapts on the same cadence as the scaffold it gates. And because failures concentrate in a finite catalogue of recurring modes, a suite that samples tasks at random under-weights exactly the families that drive the failure rate. The response in the table follows from those four properties: held-out, scoped, mode-weighted, re-read, and checked against attribution rather than only against score.
@@ -580,7 +580,6 @@ Scaffold analogue
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 Parameter vector & Instructions, skills, memories, tools, routing graphs, evaluation gates, governance rules \\
 Loss & Failure, user correction, evaluation regression, retrieval miss, tool error, schema violation \\
@@ -592,6 +591,7 @@ Validation loss & Held-out patch evaluation before merge \\
 Regularization & Complexity penalty \(\Omega(z)\), bloat control, cross-patch regression checks \\
 Overfitting & Scaffold improves on this deployment and degrades elsewhere \\
 Rollback & Reverting a harmful accepted update \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 \subsection{Setup}\label{setup}
@@ -647,7 +647,6 @@ Representative systems
 \end{minipage} \\
 \midrule\noalign{}
 
-\bottomrule\noalign{}
 
 Surrogate verifier & Pass or fail from tests, a symbolic checker, or an exact match & Per-edit gate \(G_t\) & C1 & DGM (sandboxed code), SkillOpt (held-out exact match), Voyager (game-state check: C2) \\
 Evaluation cascade & \(\widehat{\Delta} L_D\) on a held-out task suite, cheap-to-expensive evaluators & Per-edit gate \(G_t\) & C1 when the suite is exact; C2 when it is a task suite & AlphaEvolve, Braintrust, Vellum, LangSmith Hub \\
@@ -657,6 +656,7 @@ Reviewer judgment & Human credit assignment by pull-request review or expert sig
 Semantic merge & Whether a candidate duplicates or conflicts with existing artifacts & Proposal pruning before \(G_t\) & C4 (also a pre-filter in C2, C3) & NanoResearch orchestrator, FederatedSkill server agent \\
 Archive selection & Whether a candidate fills an unfilled cell in a behavior-diversity archive & Proposal pruning before \(G_t\) & C4 & AlphaEvolve (MAP-Elites), ADAS \\
 Multi-sample agreement & Whether \(k\) independent proposals or evaluations agree; false-accept rate decays as \(p^k\) rather than variance as \(1/k\) & Aggregation filter on the estimate & C2, C3 noise absorption & Under-explored; SkillOpt-Lite's consensus attribute mining is the nearest instance \\
+\bottomrule\noalign{}
 \end{tabular}
 \end{table*}
 The first five families populate \(G_t\) directly and inherit the descent guarantee of Appendix~\ref{app:formal} under its assumptions. Semantic merge and archive selection are not estimators of \(\widehat{\Delta} L_D\); they constrain the proposal distribution, and the descent argument applies to the composition of pruning and gate. Multi-sample agreement is listed because it is the correct analogue of ``wait for \(k\) pieces of evidence before accepting an edit'', a different operation from mini-batch averaging and one that should not be conflated with it. Read down the signal-class column. The only families available to a judged (C3) deployment are the two whose estimator is a judge, and the only families available to a delayed (C4) deployment are the two that do not estimate the loss change at all. That is the structural content of Section~\ref{sec:signal}.

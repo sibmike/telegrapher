@@ -7,7 +7,7 @@ Preprints from this repository, each with its own subdirectory containing source
 | *Telegraph English: Semantic Prompt Compression via Structured Symbolic Rewriting* | [`paper_telegraph_english/`](paper_telegraph_english/) | Preprint |
 | *Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models* | [`beyond exponential decay/`](./beyond%20exponential%20decay/) | Published as [arXiv:2505.24187](https://arxiv.org/abs/2505.24187) (v3 prepared; `main.tex` + `body.tex`) |
 | *The Architecture of Errors: From Universal Impossibility to Patch-Local LLM Reliability* | [`architecture_of_errors/`](architecture_of_errors/) | Preprint |
-| *Frontier and Localhost: How Production AI Learns Outside the Weights* | [`frontier_and_localhost/`](frontier_and_localhost/) | Preprint |
+| *Frontier and Localhost: A Survey of How Production AI Learns Outside the Weights* | [`frontier_and_localhost/`](frontier_and_localhost/) | Preprint; arXiv package ready in [`frontier_and_localhost/v4/`](frontier_and_localhost/v4/) |
 
 ## The error-clustering series
 

@@ -21,10 +21,12 @@ def convert(m):
     colspec = head.strip()
     if colspec.startswith("[]"):
         colspec = colspec[2:].strip()
+    # pandoc puts the \bottomrule in the longtable's last-foot block, i.e. BEFORE the rows; move it to the end
+    rest = re.sub(r"\\bottomrule\\noalign\{\}\s*\\endlastfoot", "", rest)
     # drop longtable-only directives
     rest = re.sub(r"\\endfirsthead|\\endhead|\\endlastfoot|\\endfoot", "", rest)
     rest = re.sub(r"\\caption\{.*?\}\\tabularnewline\n?", "", rest, flags=re.S)
-    body = "\\toprule" + rest
+    body = "\\toprule" + rest.rstrip() + "\n\\bottomrule\\noalign{}"
     # IEEE convention: the table caption sits above the table (ieeeaccess sample and IEEEtran).
     return "\\begin{table*}[!t]\n%%CAPTION%%\n\\centering\\small\n\\begin{tabular}" + colspec + "\n" + body.strip() + "\n\\end{tabular}\n\\end{table*}"
 

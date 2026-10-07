@@ -30,6 +30,29 @@ def sub(text, pairs):
     for a, b in pairs: text = text.replace(a, b)
     return text
 
+# arXiv-short section numbers -> IEEE section numbers (longest patterns first, so "§3.5" is not read as "§3" + ".5")
+SECMAP = [("§§8–10", "Sections VII–X"), ("§§8–9", "Sections VII–IX"), ("§§6–9", "Sections VI–IX"), ("§3.5", "Section VIII"), ("§11", "Section XI"),
+          ("§10", "Section X"), ("§2", "Section II"), ("§3", "Section III"), ("§4", "Section V"), ("§5", "Section V"),
+          ("§6", "Section VI"), ("§7", "Section VI"), ("§8", "Section VII"), ("§9", "Section IX"), ("§1", "Section I")]
+# arXiv-short appendix letters that leak into the lifted prose -> this document's section labels
+# ("Section S<n>" is the form the arXiv assembler re-targets to appendix cross-references)
+LETTER_RULES = [
+    (r"Appendix D\.1\b", "Section S4.1.1"), (r"Appendix D\.2\b", "Section S4.1.2"),
+    (r"\*\*D\.1\*\*", "**Section S4.1.1**"), (r"\*\*D\.2\*\*", "**Section S4.1.2**"),
+    (r"Appendix D\b", "Section S4.1"), (r"Appendix A\b", "Section S1"), (r"Appendix B\b", "Section S2"),
+    (r"Appendix E\.1\b", "Section S3.1"), (r"\bE\.1\b", "Section S3.1"),
+    (r"Appendix E\.6\b", "Appendix XII-D of the main text"), (r"\bE\.6\b", "Appendix XII-D of the main text"),
+    (r"Appendix G walkthrough", "Section S5 walkthrough"), (r"Appendix G\b", "Section S5"),
+    (r"\bG\.(\d+)–G\.(\d+)\b", r"Sections S5.\1–S5.\2"), (r"\bG\.(\d+)\b", r"Section S5.\1"),
+]
+def relabel(text):
+    text = sub(text, SECMAP)
+    for pat, rep in LETTER_RULES:
+        text = re.sub(pat, rep, text)
+    # "[@key; Section VIII; Section S5]" would print as a citation suffix "[[30]; ...]"; keep the pointer outside the cite
+    text = re.sub(r"\[(@[\w:-]+); ((?:(?!@)[^\]])*)\]", r"[\1] (\2)", text)
+    return text
+
 # ---- S1: full score table from the CSVs
 rows = []
 for name in ("p3_master_scores.csv", "p3_refresh_2026-10.csv"):
@@ -49,7 +72,7 @@ def src(s):
     s = s.split(" (")[0].strip()
     if len(s) > 30:
         s = s[:30].rsplit("/", 1)[0] if "/" in s[:30] else s[:30]
-    return s.replace("/", "/​").replace(".", ".​")
+    return s.replace("/", "/​").replace(".", ".​").replace(":", ":​")
 # dash lengths set pandoc's relative column widths
 lines = ["| Sub. | System | Score | Year | Source | Loop 1 | Loop 2 | Class | Added |",
          "|---|------------|---|---|------------|-----|-----|-----|----|"]
@@ -69,38 +92,99 @@ s1 = ("# S1. Full score table\n\nEvery scored (substrate, system) row of the cor
       "The CSV files with per-row justifications accompany this document.\n\n```{=latex}\n\\begingroup\\scriptsize\n```\n\n" + "\n".join(lines) + "\n\n```{=latex}\n\\endgroup\n```\n")
 
 # ---- S2: data appendix (arXiv Appendix B)
-s2 = "# S2. Data appendix\n\n" + sub(section("## Appendix B. Data appendix", "## Appendix C."), [
-    ("## Appendix B. Data appendix\n", ""), ("§4", "Section V of the main text"), ("§§6–9", "Sections VI–IX"),
-])
+s2 = "# S2. Data appendix\n\n" + relabel(sub(section("## Appendix B. Data appendix", "## Appendix C."), [
+    ("## Appendix B. Data appendix\n", ""), ("§4", "Section V of the main text"),
+]))
+
+# The lifted data appendix described the May-2026 pass alone; its corpus paragraphs now describe both passes
+# (numbers from scripts/recount.py on the two CSVs: 256 unique / 269 rows / 204 core / 52 contrast; May pass
+# 130 / 140 / 99 / 31; October rows 133, four of them re-audits of May systems).
+def replace_par(text, label, new):
+    pat = re.compile(r"\*\*" + re.escape(label) + r"\*\*.*?(?=\n\n)", re.S)
+    if not pat.search(text):
+        raise SystemExit("S2 paragraph not found: " + label)
+    return pat.sub(lambda m: new, text, count=1)
+s2 = replace_par(s2, "Corpus size.",
+    "**Corpus size.** The corpus was assembled in two passes. The May-2026 pass scored 130 unique systems (140 substrate-level rows in `p3_master_scores.csv`); "
+    "the October-2026 pass added 126 systems (133 rows in `p3_refresh_2026-10.csv`, four of which re-audit May systems rather than adding one), for 256 unique systems "
+    "and 269 substrate-level rows. A system may be scored on several substrates, so row counts exceed system counts; the maturity table of Section VI counts rows.")
+s2 = replace_par(s2, "Core / contrast split.",
+    "**Core / contrast split.** 204 of the 256 systems satisfy the patch-local discriminator (score ≥ 3 on at least one substrate) and form the core corpus, 99 of them from the May pass. "
+    "The remaining 52 (31 from the May pass) form the contrast corpus: commonly described as agentic or self-improving in public discourse but failing at least one discriminator. "
+    "Section S4.1 enumerates representative contrast systems from the May pass; each October contrast row carries its exclusion reason in the released CSV.")
+s2 = replace_par(s2, "Survey window and dating.",
+    "**Survey window and dating.** January 2023 to May 2026 for the first pass; June to October 2026 for the second, a systematic sweep in three parallel strands "
+    "(skills and skill lifecycle; harness, context, and LLMOps governance; memory governance, competing surveys, and rubric rewards) rather than a targeted refresh, "
+    "so the per-substrate statistics of Section VI are computed on both passes together. The cutoff is October 2026. Preprint-only systems carry T2 evidence, recorded per row "
+    "in the released CSV. A fraction of T2 work is recent enough that ablations may yet be revised; cluster-level claims are robust to dropping any single T2 system.")
+s2 = replace_par(s2, "Composite two-loop criterion (sensitivity analysis).",
+    "**Composite two-loop criterion (sensitivity analysis).** The strict count of fourteen research systems satisfying the composite two-loop criterion changes under two natural relaxations. "
+    "Relaxation (a) counts any of versioning, lineage, or rollback as Loop-2 governance: on the May pass the count rises to approximately eighteen by re-admitting MAE, MetaGen, MetaReflection, and CLIN, "
+    "and on the October pass it admits the seven systems that promote across users, clients, teams, or repositories without versioning or lineage (EvolveNet, Evo2Team, XRepoSkill, ShareMem, RASO, "
+    "Spotify's recommendation loop, and Future AGI's prompt lifecycle). Relaxation (b) admits session signal that updates optimizer state without persisting an artifact distinct from optimizer state: "
+    "on the May pass the count rises to approximately sixteen by re-admitting DSPy and TextGrad; it adds no October system, because the October contrast rows are benchmarks, evaluation and attack studies, "
+    "registries, audits, and conceptual frameworks, plus one orchestrator whose adaptation lives in the weights, none of which persists optimizer state as its only artifact. "
+    "The qualitative findings ([Auto × Auto] well populated; [Human × Auto] empty; the other human-authored cells occupied only by registries and curation workflows that fail the composite audit; "
+    "the governance-first cluster in [None × Auto]; the cross-tenant governed-optimization corner empty) survive both relaxations.")
+assert "per-row evidence column in Section S1" in s2
+s2 = s2.replace("per-row evidence column in Section S1", "per-row evidence column of the released CSV")
 
 # ---- S3: mechanism stack + continual-learning notes (E.1, E.8, E.9)
 e1 = section("### E.1 The mechanism stack", "### E.2")
 e8 = section("### E.8 Loop 1 and Loop 2", "### E.9")
 e9 = section("### E.9 Overfitting", "## Appendix F.")
-s3 = "# S3. The mechanism stack and continual-learning notes\n\n" + sub(e1 + "\n\n" + e8 + "\n\n" + e9, [("### E.1", "## S3.1"), ("### E.8", "## S3.2"), ("### E.9", "## S3.3"), ("§3", "Section III"), ("§4", "Section V")])
+s3 = "# S3. The mechanism stack and continual-learning notes\n\n" + relabel(sub(e1 + "\n\n" + e8 + "\n\n" + e9, [("### E.1", "## S3.1"), ("### E.8", "## S3.2"), ("### E.9", "## S3.3")]))
 
 # ---- S4: contrast set, matrix membership, closest approaches (D, F)
 d = section("## Appendix D. Contrast set", "## Appendix E.")
 f = section("## Appendix F. Survey detail", "## Appendix G.")
-s4 = "# S4. Contrast set, matrix membership, and closest approaches (May 2026 corpus)\n\nThe October 2026 additions are placed in the cells of Section VII of the main text and listed in S1; the per-system discussion below is the May 2026 audit on which the main text's counts build.\n\n" + sub(d + "\n\n" + f, [
+s4 = "# S4. Contrast set, matrix membership, and closest approaches (May 2026 corpus)\n\nThe October 2026 additions are placed in the cells of Section VII of the main text and listed in Section S1; the per-system discussion below is the May 2026 audit on which the main text's counts build.\n\n" + relabel(sub(d + "\n\n" + f, [
     ("## Appendix D. Contrast set", "## S4.1 Contrast set"), ("### D.1", "### S4.1.1"), ("### D.2", "### S4.1.2"),
     ("## Appendix F. Survey detail", "## S4.2 Survey detail"), ("### F.1", "### S4.2.1"), ("### F.2", "### S4.2.2"), ("### F.3", "### S4.2.3"),
-    ("§8", "Section VII"), ("§9", "Section IX"), ("§3", "Section III"), ("§5", "Section V"), ("§7", "Section VI"), ("§3.5", "Section VIII"), ("§10", "Section X"),
-])
+]))
+
+_old = "(COSPLAY, Cuadros et al., PACE, CORAL, GEPA, Meta-Harness, MOSS, RCL, marked ‡ there, and the September-2026 refresh additions marked §)"
+assert _old in s4, "S4 matrix note changed"
+s4 = s4.replace(_old, "(COSPLAY, Cuadros et al., PACE, CORAL, GEPA, Meta-Harness, MOSS, and RCL from the May pass, and every October-2026 row)")
+# the May-pass matrix discussion: point the two cells the October pass filled to the main text
+assert "empty in surveyed corpus" in s4 and "**[Human × Human]** is empty in the surveyed corpus." in s4
+s4 = s4.replace("empty in surveyed corpus", "empty in the May-2026 pass")
+s4 = s4.replace("**[Human × Human]** is empty in the surveyed corpus.",
+                "**[Human × Human]** is empty in the May-2026 pass; the October-2026 pass places MCP registries and a community hub here (Section VII of the main text).")
+s4, _n = re.subn(r"\*\*\[Human × None\]\*\* is structurally improbable: a system(.*?)Section III\.",
+                 r"**[Human × None]** was judged structurally improbable in the May-2026 pass, on the argument that a system\1Section III; the October-2026 pass found its occupants in the curation workflows of Section VII of the main text.",
+                 s4, count=1, flags=re.S)
+assert _n == 1, "S4 [Human x None] sentence changed"
 
 # ---- S5: convergent families (G)
 g = section("## Appendix G.", "## References")
-s5 = "# S5. The convergent research families, system by system\n\n" + sub(g, [
-    ("## Appendix G. SkillOpt walkthrough and the convergent families", "This section carries the May–September 2026 walkthroughs; the October 2026 additions to each family are described in Section VIII of the main text and scored in S1."),
-    ("### G.", "## S5."), ("§3.5", "Section VIII"), ("§3", "Section III"), ("§9", "Section IX"), ("§10", "Section X"), ("§8", "Section VII"), ("§4", "Section V"), ("§2", "Section II"),
-])
+s5 = "# S5. The convergent research families, system by system\n\n" + relabel(sub(g, [
+    ("## Appendix G. SkillOpt walkthrough and the convergent families", "This section carries the May–September 2026 walkthroughs; the October 2026 additions to each family are described in Section VIII of the main text and scored in Section S1."),
+    ("### G.", "## S5."),
+]))
 
 # ---- S6: claims audit + rubric table
 audit = open(os.path.join(PKG, "CLAIMS_AUDIT.md"), encoding="utf-8").read()
 audit = re.sub(r"^# .*\n", "", audit, count=1)
-# the repository path is an unbreakable code span that overruns the margin; name the file in prose
-audit = audit.replace("(`arxiv/frontier_and_localhost/short/paper_frontier_and_localhost_short.md`, line numbers as of 2026-09-20)",
-                      "(the arXiv short v3.2 Markdown source, line numbers as of 2026-09-20)")
+# The audit file is the authors' working record (it keys claims to source lines of the May-2026 draft and
+# names repository scripts). The published appendix describes the draft and the released files in prose.
+audit = audit.replace("Every absolute claim in the arXiv short v3.2 (`arxiv/frontier_and_localhost/short/paper_frontier_and_localhost_short.md`, line numbers as of 2026-09-20)",
+                      "Every absolute claim of the May-2026 draft of this survey (the version whose corpus closed in May 2026)")
+audit = audit.replace("the recount in `scripts/recount.py`", "the recount script released with the score table")
+audit = audit.replace("(`scripts/apply_corrections.py`)", "(applied before the recount)")
+audit = re.sub(r"arXiv ids are in `[^`]*`", "arXiv ids are in the reference list", audit)
+audit = audit.replace("## Recount output (scripts/recount.py, merged corpus, all rows)", "## Recount output (merged corpus, all rows)")
+audit = relabel(audit)
+# drop the draft-line-number column of the claim tables
+_out, _strip = [], False
+for _ln in audit.split("\n"):
+    if _ln.strip() == "| Line | Claim | Verdict | Evidence |":
+        _strip = True; _out.append("| Claim | Verdict | Evidence |"); continue
+    if _strip and _ln.startswith("|"):
+        _out.append("|" + "|".join(_ln.split("|")[2:])); continue
+    _strip = False
+    _out.append(_ln)
+audit = "\n".join(_out)
 _s6n = [0]
 def _s6head(m):
     _s6n[0] += 1
@@ -124,10 +208,10 @@ body = front + "\n\n".join([p for p in (s1, s2, s3, s4, s5, s6, s7) if p]) + "\n
 # Lifted tables carry equal-dash separators, which pandoc turns into equal column widths; give
 # the long-text columns the width (dash counts are relative; cell text is untouched).
 WIDTHS = {
-    "| System | Year | Discriminator failure | Brief reason |": (16, 5, 24, 40),
-    "| System | Year | Composite-criterion failure | Brief reason |": (16, 5, 24, 40),
-    "| Section III quantity | SkillOpt instantiation | Section III role explained | Algorithm pointer |": (16, 24, 26, 20),
-    "| Line | Claim | Verdict | Evidence |": (5, 23, 10, 42),
+    "| System | Year | Discriminator failure | Brief reason |": (16, 7, 24, 40),
+    "| System | Year | Composite-criterion failure | Brief reason |": (16, 7, 24, 40),
+    "| Section III quantity | SkillOpt instantiation | Section III role explained | Algorithm pointer |": (14, 24, 24, 24),
+    "| Claim | Verdict | Evidence |": (28, 10, 46),
     "| Claim | Statement | Verdict | Evidence |": (5, 23, 10, 42),
 }
 for header, widths in WIDTHS.items():
