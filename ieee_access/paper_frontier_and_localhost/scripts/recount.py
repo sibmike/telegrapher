@@ -76,7 +76,8 @@ if any("loop1" in r for r in rows):
         print(f"  [{k[0]} x {k[1]}]: {len(names)}  {names if len(names) <= 12 else names[:12] + ['...']}")
     print("\ncomposite candidates (Loop 2 present) with their gov_props:")
     for r in rows:
-        if norm_gate(r.get("loop2")) in ("Auto", "Human", "Auto+Human") and r["system"].strip() in core:
+        # a Loop-2 mechanism counts whether or not it is gated: an ungated push with lineage (Letta) is labelled None (ungated ...)
+        if (norm_gate(r.get("loop2")) in ("Auto", "Human", "Auto+Human") or "ungated" in (r.get("loop2") or "").lower()) and r["system"].strip() in core:
             print(f"  {r['system'][:48]:48s} L1={norm_gate(r.get('loop1'))} L2={norm_gate(r.get('loop2'))}  {(r.get('gov_props') or '')[:70]}  [{r.get('tier','')}]")
 
 # governance flags

@@ -89,7 +89,7 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S2 | Anthropic/skills GitHub repo | 2 | 2025 | github.​com/​anthropics/​skills |  |  |  | May 26 |
 | S2 | ASSAY | 4 | 2026 | arXiv:2606.15390 | Auto | None | C2 | Oct 26 |
 | S2 | AutoSkill | 3 | 2026 | arXiv:2603.01145 | Auto | None | C3 | Oct 26 |
-| S2 | Buildrix | 3 | 2026 | arXiv:2606.25139 | Human | Human | C3 | Oct 26 |
+| S2 | Buildrix | 3 | 2026 | arXiv:2606.25139 | None | Human | C3 | Oct 26 |
 | S2 | ChatGPT Plugins (legacy) | 1 | 2023 | openai.​com |  |  |  | May 26 |
 | S2 | Claude Code Skills | 3 | 2025 | docs.​anthropic.​com |  |  |  | May 26 |
 | S2 | COSPLAY | 5 | 2026 | arXiv:2604.20987 |  |  |  | May 26 |
@@ -131,7 +131,7 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S2 | VCE-Skill | 4 | 2026 | arXiv:2608.16544 | Auto | None | C1,C2 | Oct 26 |
 | S2 | Voyager | 4 | 2023 | arXiv:2305.16291 |  |  |  | May 26 |
 | S2 | Web2BigTable | 3 | 2026 | arXiv:2604.27221 | Auto | None | C1,C2 | Oct 26 |
-| S2 | Who Maintains Agent Skills? (empirical) | 2 | 2026 | arXiv:2609.05677 | Human | None | C3 | Oct 26 |
+| S2 | Who Maintains Agent Skills? (empirical) | 2 | 2026 | arXiv:2609.05677 | None | Human | C3 | Oct 26 |
 | S2 | WikiSkill | 4 | 2026 | arXiv:2608.27454 | Auto | None | C2 | Oct 26 |
 | S2 | XRepoSkill | 4 | 2026 | arXiv:2609.36807 | Auto | Auto-parti | C1 | Oct 26 |
 | S3 | A-MEM | 3 | 2025 | NeurIPS 2025 |  |  |  | May 26 |
@@ -155,7 +155,7 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S3 | LangGraph Long-Term Memory | 3 | 2024 | langchain.​com |  |  |  | May 26 |
 | S3 | LangGraph Store / LangMem (2026 refresh) | 3 | 2026 | docs.​langchain.​com/​oss/​python | None | None | n/a | Oct 26 |
 | S3 | Learning on the Job | 4 | 2026 | arXiv:2607.22157 | Auto+​Human | None | C2,C3 | Oct 26 |
-| S3 | Letta MemFS + Context Repositories + Dreaming (2 | 4 | 2026 | docs.​letta.​com/​letta-code | Auto | Auto | C3 | Oct 26 |
+| S3 | Letta MemFS + Context Repositories + Dreaming (2 | 4 | 2026 | docs.​letta.​com/​letta-code | Auto | None | C3 | Oct 26 |
 | S3 | Mem0 | 3 | 2025 | arXiv |  |  |  | May 26 |
 | S3 | Mem0 Platform (2026 refresh: history, feedback,  | 3 | 2026 | docs.​mem0.​ai/​api-reference | Auto | None | C3 | Oct 26 |
 | S3 | MemAudit post-hoc poisoned-memory audit (Tan et  | 3 | 2026 | arXiv:2605.23723 | Auto | None | C2 | Oct 26 |
@@ -171,7 +171,7 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S3 | REALM retrieval-driven memory reconsolidation (S | 4 | 2026 | arXiv:2609.16053 | Auto | None | C2/C3 | Oct 26 |
 | S3 | Recuris recursive experiential-working memory (Y | 4 | 2026 | arXiv:2608.24876 | Auto-gated | None | C2 | Oct 26 |
 | S3 | Reflexion | 4 | 2023 | arXiv:2303.11366 |  |  |  | May 26 |
-| S3 | Revocation guard / Revoked but Still Authoritati | 3 | 2026 | arXiv:2609.08258 | Human | None | C1 | Oct 26 |
+| S3 | Revocation guard / Revoked but Still Authoritati | 3 | 2026 | arXiv:2609.08258 | None | None | C1 | Oct 26 |
 | S3 | Safe to Resume? checkpoint-rollback continuity ( | 2 | 2026 | arXiv:2608.29381 | n/a | n/a | n/a | Oct 26 |
 | S3 | ShareMem | 4 | 2026 | arXiv:2609.32511 | Auto | Auto-parti | C3 | Oct 26 |
 | S3 | SIx Harness / Memory as Infrastructure (Helwig) | 3 | 2026 | arXiv:2609.05510 | Auto | None | C2 | Oct 26 |
@@ -249,7 +249,7 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S6 | Agentic Configuration Management ACM (Quessada-V | 3 | 2026 | arXiv:2608.11166 | None | Human | n/a | Oct 26 |
 | S6 | AGENTS.md / AAIF | 5 | 2025 | agents.​md |  |  |  | May 26 |
 | S6 | Anthropic skills repo | 4 | 2025 | github.​com/​anthropics/​skills |  |  |  | May 26 |
-| S6 | Azure API Center MCP registry | 3 | 2026 | learn.​microsoft.​com | Human | Human | - | Oct 26 |
+| S6 | Azure API Center MCP registry | 3 | 2026 | learn.​microsoft.​com | None | Human | - | Oct 26 |
 | S6 | Braintrust | 5 | 2024 | braintrust.​dev |  |  |  | May 26 |
 | S6 | Cleric.ai | 2 | 2025 | cleric.​ai |  |  |  | May 26 |
 | S6 | Competence Not Accuracy | 2 | 2026 | arXiv:2608.18719 | None | None | - | Oct 26 |
@@ -268,16 +268,16 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S6 | Inspect AI | 3 | 2024 | ukgovernmentbeis.​github.​io |  |  |  | May 26 |
 | S6 | LangFuse | 3 | 2024 | langfuse.​com |  |  |  | May 26 |
 | S6 | LangSmith Hub | 5 | 2024 | smith.​langchain.​com |  |  |  | May 26 |
-| S6 | MCP Gateway & Registry (agentic-community) | 3 | 2026 | github.​com/​agentic-community | Human | Human | C1 | Oct 26 |
+| S6 | MCP Gateway & Registry (agentic-community) | 3 | 2026 | github.​com/​agentic-community | None | Human | C1 | Oct 26 |
 | S6 | NanoResearch | 2 | 2026 | arXiv:2605.10813 |  |  |  | May 26 |
-| S6 | Official MCP Registry | 2 | 2026 | modelcontextprotocol.​io | Human | None | - | Oct 26 |
+| S6 | Official MCP Registry | 2 | 2026 | modelcontextprotocol.​io | None | None | - | Oct 26 |
 | S6 | OpenAI AgentKit Evals | 3 | 2025 | openai.​com |  |  |  | May 26 |
 | S6 | OPRO | 2 | 2023 | arXiv |  |  |  | May 26 |
 | S6 | Organizational Control Layer (Shi et al.) | 2 | 2026 | arXiv:2606.04306 | None | None | n/a | Oct 26 |
 | S6 | Registry-Governed Agent Lifecycle / EDDOps on AW | 3 | 2026 | arXiv:2607.00345 | None | Auto+​Human | C3 | Oct 26 |
 | S6 | Reward-Free Pairwise Validator | 4 | 2026 | arXiv:2607.14408 | Auto | None | C3 | Oct 26 |
 | S6 | Runtime Skill Audit | 2 | 2026 | arXiv:2606.11671 | None | None | - | Oct 26 |
-| S6 | Runtime-Independent Persistent Agents (Enoch) | 3 | 2026 | arXiv:2609.00546 | Human | Human | C1 | Oct 26 |
+| S6 | Runtime-Independent Persistent Agents (Enoch) | 3 | 2026 | arXiv:2609.00546 | None | None | C1 | Oct 26 |
 | S6 | SafeEvolve | 4 | 2026 | arXiv:2608.12851 | Auto | None | C3,C2 | Oct 26 |
 | S6 | SAGE statistical acceptance gate (≠ SAGE 2512.17 | 4 | 2026 | arXiv:2609.36043 | Auto | None | C2 | Oct 26 |
 | S6 | Self-Refine | 1 | 2023 | Madaan et al.​ |  |  |  | May 26 |
@@ -286,7 +286,7 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S6 | SkillProbe | 2 | 2026 | arXiv:2603.21019 | None | None | - | Oct 26 |
 | S6 | SkillSpec (intent-masked correctness) | 2 | 2026 | arXiv:2609.06052 | None | None | - | Oct 26 |
 | S6 | TextGrad | 2 | 2024 | arXiv |  |  |  | May 26 |
-| S6 | TrueFoundry MCP Gateway | 3 | 2026 | truefoundry.​com/​docs | Human | Human | - | Oct 26 |
+| S6 | TrueFoundry MCP Gateway | 3 | 2026 | truefoundry.​com/​docs | None | Human | - | Oct 26 |
 | S6 | Vellum | 5 | 2024 | vellum.​ai |  |  |  | May 26 |
 | S6 | Verifier-as-Gatekeeper (VaG) | 4 | 2026 | arXiv:2608.05810 | Auto | None | C2 | Oct 26 |
 | S6 | W&B Weave (Prompts) | 3 | 2024 | weave-docs.​wandb.​ai |  |  |  | May 26 |
@@ -323,7 +323,7 @@ Seven second-pass systems promote across users, clients, teams, or repositories 
 
 The optimizer-state relaxation admits as Loop 1 a session signal that updates optimizer state without persisting an artifact distinct from that state. It re-admits DSPy and TextGrad from the first pass, raising the research count to approximately sixteen. It admits no second-pass system. The second-pass contrast rows are benchmarks, evaluation and attack studies, registries, audits, and conceptual frameworks, plus one orchestrator whose adaptation lives in the weights, and none of them persists optimizer state as its only artifact.
 
-The qualitative findings hold under every relaxation: [Auto × Auto] is well populated; [Human × Auto] is empty; the other human-authored cells hold only registries and curation workflows that fail the composite audit; the governance-first cluster sits in [None × Auto]; and no system adds governed cross-tenant promotion.
+The qualitative findings hold under every relaxation: [Auto × Auto] is well populated; [Human × Auto] and [Human × Human] are empty; [Human × None] holds only curation workflows and [None × Human] only registries, all of which fail the composite audit; the governance-first cluster sits in [None × Auto]; Letta alone passes the audit with an ungated promotion; and no system adds governed cross-tenant promotion.
 
 ---
 
@@ -411,7 +411,7 @@ The contrast systems fail the discriminator in three main ways: they iterate in 
 
 ### S4.2.1 Two-loop matrix: cell-by-cell discussion
 
-The table keeps the first-pass convention, under which an engineer-authored artifact with no failure trigger has Loop 1 None; second-pass scoring, like Section VII, counts a person registering an artifact as a human local gate, and under that convention the Anthropic skills repository sits with the registries in [Human × Human].
+Both axes record who decides, as Section III defines: a gate is Auto when a program applies a check, Human when a person decides, and None when the step is absent or runs unchecked. An engineer-authored or registrant-supplied artifact with no failure trigger therefore has Loop 1 None in both passes, and who supplies each candidate is listed separately in the occupant table at the end of this section.
 
 The first-pass matrix, with the marks of Section S4.1:
 
@@ -427,7 +427,9 @@ Two placements need a word. DSPy and TextGrad sit in [Auto × None] because thei
 
 COSPLAY and Cuadros et al., which are first-pass rows, and PACE, CORAL, GEPA, Meta-Harness, MOSS, and RCL, which were classified from their papers after the first pass closed, carry no composite audit, so they are neither placed in the matrix nor counted in Section V. Second-pass systems record their gate pairs in the released score table, and the paragraphs below name those that occupy a cell.
 
-**[Auto × Auto]** is the most populated cell: twelve systems, each with a machine-evaluated criterion on both loops. Speed on both loops is what its members share; cross-organization governance is what every one of them lacks. One second-pass system joins them under the strict audit: Letta's Context Repositories, which push shared memory across agents automatically, with git lineage and no evaluation gate (Section VII). The push is unconditional, an algorithmic promotion with no evaluation threshold, so it sits in the Auto column of Loop 2; the composite audit admits it on its lineage, not on a gate.
+**[Auto × Auto]** is the most populated cell: twelve systems, each with a machine-evaluated criterion on both loops. Speed on both loops is what its members share; cross-organization governance is what every one of them lacks.
+
+**[Auto × None]** holds the systems whose local loop is gated and whose promotion has no gate, whether because nothing is promoted or because everything is. One audit passer sits here: Letta's Context Repositories push shared memory across agents automatically, with git lineage and no evaluation of any kind, so the composite audit admits them on lineage and the matrix records a promotion that nothing decides (Section VII). Mem0 Platform, TOKI, and Learning on the Job sit here with no promotion at all.
 
 **[Auto × Human]** is the production-viable cell. Loop 1 fires at machine speed under an algorithmic criterion, and Loop 2 waits for a person before an edit propagates; the pairing reconciles the speed of automation with a reviewer's accountability. SkillForge is the clearest instance: an LLM judge gates each skill diff on Loop 1, and reviewers decide on Loop 2 whether it ships. CASCADE, Sierra Agent OS 2.0, and Cognition Devin are variants of the same pairing.
 
@@ -435,11 +437,22 @@ Seven second-pass systems promote across users, clients, teams, or repositories 
 
 **[None × Auto]** holds the governance-first prompts-as-code systems: Braintrust, LangSmith Hub, and Vellum. Their Loop 2 is real, since evaluation-gated CI blocks a promotion on regression. They have no Loop 1 in the patch-local sense, because engineers author the candidate artifacts at their desks and session feedback never triggers one, and the asterisks record exactly that: governance without inner-loop adaptation. The cell is informative because it shows what survives when only the outer loop is automated. ExpeL, starred and also marked weak, sits here for a different reason: its experience bank is built from training tasks, which blurs the boundary of its loop, so it fails the audit (Section S4.1.2).
 
-**[Human × Auto]** is empty in both passes, for an engineering reason: when people author the candidates by hand, automated promotion adds little leverage. A plausible occupant would ship expert-authored skills through an automatic held-out evaluation; no published system does.
+**[Human × Auto]** is empty in both passes: no surveyed system puts a person on the local gate of a failure-driven loop and then promotes the result by program. A plausible occupant would ship person-approved skills through an automatic held-out evaluation; no published system does.
 
-**[Human × Human]** holds MCP registries and a community hub, second-pass systems in which a person registers an artifact and a person approves its use (Section VII), and, under the same convention, the Anthropic skills repository. None of its occupants has a loop that fires from session signal.
+**[Human × Human]** is empty too. The registries that a first reading puts here (Azure API Center, the agentic-community MCP Gateway and Registry, TrueFoundry, Buildrix) have no failure-driven loop: a person registers an artifact and a person, or an admission scan, approves its use, which is a promotion gate on a registrant-supplied artifact. They sit in **[None × Human]** with the Anthropic skills repository and Agentic Configuration Management, whose lifecycle states a governance role assigns, and the five public skill repositories of the field study (Section VII) show the same shape in practice. Enoch's checkpoint-and-validate protocol moves one agent's state between hosts and is neither loop. The released table records these re-codings (Section S6.7).
 
-**[Human × None]** is the curation cell, also filled only from the second pass and single-loop by construction. In VerificAgent and similar workflows an agent drafts, a person fact-checks, and the result is frozen (Section VII). Curation stays patch-local, rather than collapsing into an engineer editing a configuration file, because the agent writes each edit and the person only checks it.
+**[Human × None]** is the curation cell, also filled only from the second pass and single-loop by construction. In VerificAgent an agent drafts, a person fact-checks, and the result is frozen; in SkillChain a judge filters the candidate edits and a person decides, at a reflection gate, which refined skills are deployed; in the Davis et al. case study one engineer both writes and accepts the governance mechanisms that failures call for (Section VII). Curation stays patch-local, rather than collapsing into an engineer editing a configuration file, because the candidate answers a failure and a person decides whether it stays.
+
+The occupants, with the variable the matrix does not show:
+
+| Cell | Systems | Candidate source | Loop 1 gate | Promotion mechanism | Loop 2 gate |
+|--------|----------------------|----------------|--------------|------------------|---------------|
+| [Auto × Auto] | NanoResearch, SkillOpt, SkillRL, AlphaEvolve, ADAS, DGM, Voyager, SAGE, EvolveR, CoEvoSkills, AutoAgent, AutoManual | agent proposals from trajectories or failures | evaluator, verifier, or threshold | merge into a shared bank or archive | the same evaluator, on the shared bank |
+| [Auto × Human] | SkillForge, CASCADE, Sierra Agent OS 2.0, Cognition Devin | agent proposals | calibrated judge or outcome threshold | release to the team or product | reviewer, support engineer, or merge approval |
+| [Auto × None] | Letta Context Repositories; Mem0 Platform, TOKI, Learning on the Job | agent (Letta: sleep-time subagents) | automatic write gate | Letta: unconditional git push to shared memory; the others: none | none |
+| [None × Auto] | Braintrust, LangSmith Hub, Vellum, Governed Capability Evolution; EDDOps, with a sign-off after the threshold | engineers | none (no failure-driven loop) | evaluation-gated release | evaluation threshold |
+| [None × Human] | Azure API Center, MCP Gateway and Registry, TrueFoundry, Buildrix, Anthropic skills repository, Agentic Configuration Management | registrants, contributors, engineers | none | admission to a registry, merge into a shared repository, or a lifecycle state | approval by a person (the MCP Gateway adds an automated admission scan) |
+| [Human × None] | VerificAgent, SkillChain, Davis et al. | agent drafts (VerificAgent; SkillChain after a judge); the engineer (Davis et al.) | a person | none | none |
 
 ### S4.2.2 Closest approaches to governed cross-tenant scaffold optimization
 
@@ -614,10 +627,10 @@ The first-pass draft of this survey, written on the 130 systems of the first pas
 
 | Claim | Verdict | Evidence |
 |----------------------------|----------|----------------------------------------------|
-| "Three cells are populated; the rest are empty for structural reasons" | **revised** | Single-loop and governance-only systems occupy these cells: [Human × Human] (MCP registries: Azure API Center, agentic-community MCP Gateway & Registry, TrueFoundry; Buildrix; Enoch), [Human × None] (VerificAgent, revocation guard, Davis et al. governance conversion, Continual Harness human phase), [Auto+Human × None] (SkillChain, Learning on the Job), [None × Auto] (Governed Capability Evolution), [None × Auto+Human] (EDDOps), [None × Human] (ACM). Two cells hold every system that passes the composite audit, a third holds the governance-first platforms, and the human-authored cells are occupied only by registries and curation workflows with no session-signal loop (Section VII). |
-| "[Human × Auto] is empty by engineering logic … no published example exists" | **holds** | No system in the full corpus pairs human-authored candidates with automated promotion. The closest, MCP Gateway & Registry, adds an automated security scan to a human admission, which places it in [Human(+scan) × Human]. |
-| "[Human × Human] is empty in the surveyed corpus" | **revised** | MCP registries and a community hub occupy the cell (first row of this table). The occupant the first-pass draft predicted, solo or small-team workflows, is documented by "Who Maintains Agent Skills?" (2609.05677): across five public skill repositories every substantive edit is human-merged, 62% are AI co-authored, and there is 1 deprecation in 254 edits. The cell is occupied, and public skill repositories show its shape in practice (Section VII). |
-| "[Human × None] is structurally improbable" | **revised** | VerificAgent (agent-drafted memories, human fact-check, frozen bank), the revocation guard of Shen et al., and human-in-the-loop harness phases occupy the cell. It is the human-curation cell, single-loop by construction. |
+| "Three cells are populated; the rest are empty for structural reasons" | **revised** | Single-loop and governance-only systems occupy these cells, under the definition of Section III that a gate records who decides and not who supplies the candidate: [None × Human] (MCP registries: Azure API Center, agentic-community MCP Gateway & Registry, TrueFoundry; Buildrix; the Anthropic skills repository; ACM), [Human × None] (VerificAgent, SkillChain's second-stage reflection gate, Davis et al. governance conversion), [Auto × None] (Letta's ungated push; Mem0 Platform, TOKI, Learning on the Job), [None × Auto] (Governed Capability Evolution; EDDOps, with a sign-off after the threshold), [None × None] (Official MCP Registry; Enoch's migration protocol; Continual Harness's unchecked self-edit; the revocation guard). Two cells hold every audit passer whose promotion has a gate, a third holds the governance-first platforms, Letta passes with no promotion gate, and the human-gated row holds only curation (Section VII). |
+| "[Human × Auto] is empty by engineering logic … no published example exists" | **holds** | No system in the full corpus puts a person on the local gate of a failure-driven loop and promotes by program. MCP Gateway & Registry adds an automated security scan to a human admission, but it has no failure-driven local loop, so it sits in [None × Human]. |
+| "[Human × Human] is empty in the surveyed corpus" | **holds, after re-coding** | The registries and the community hub that a first reading places here have no failure-driven loop and sit in [None × Human] (first row). The occupant the first-pass draft predicted, solo or small-team workflows, is documented by "Who Maintains Agent Skills?" (2609.05677): across five public skill repositories every substantive edit is human-authored and human-merged, 62% are AI co-authored, and there is 1 deprecation in 254 edits; that shape is [None × Human] too, because no loop fires from session signal (Section VII). |
+| "[Human × None] is structurally improbable" | **revised** | VerificAgent (agent-drafted memories, human fact-check, frozen bank), SkillChain's second-stage human reflection gate, and the Davis et al. governance conversion occupy the cell. It is the human-curation cell, single-loop by construction. |
 | "Nearly every auto-gated system fires at n = 1" (accepts an edit on a single evaluation) | **revised** | Batched or statistical acceptance is common, and has been since mid-2026: SAGE-gate (paired per-item test), Future AGI (paired bootstrap CI), AutoSaddler (mini-batch failure signals), MGM, ModularRSI (evidence across tasks), VaG (3-of-3 critics), EvolveNet (fixed ≥ broken on held-out), VACE, HackProbe, PROCTOR. Evidence is batched before acceptance, with SAGE-gate and VaG as instances (Section VII). |
 | "no surveyed system has formalized agreement as a k-of-n acceptance rule" | **revised** | VaG requires all three heterogeneous critics to pass (3-of-3), and SkillSpec is consensus-gated, so agreement-based acceptance exists. The distinction between agreement and averaging stands: under agreement the false-accept rate decays as $p^k$, under averaging the variance decays as $1/k$ (Appendix XIII). |
 | "Only AlphaEvolve demonstrates explicit multi-layer depth" | **sharpened** | HarnessBank, JIT-Agent, and MGM keep archives for lineage, and VaG adds tiered subset selection; none pairs a cascade evaluator with a diversity archive. AlphaEvolve is the only system that combines the two. |
@@ -686,6 +699,8 @@ The only co-evolving method with a human-agreement figure, RLPR, co-evolves a pr
 The full corpus holds 256 unique systems, 130 from the first pass and 126 from the second; 204 form the core corpus and 52 the contrast corpus. None of the 126 second-pass systems scores 5 on any substrate. The composite two-loop audit passes 14 research systems and 3 industry exemplars: Sierra Agent OS 2.0, Cognition Devin, and Letta's Context Repositories, whose shared-memory push carries git lineage but no gate. The 7 second-pass systems that promote across contexts with no versioning or lineage on the promoted artifact are EvolveNet, Evo2Team, XRepoSkill, ShareMem, RASO, Spotify, and Future AGI. Of these, EvolveNet alone carries rollback and so enters under the governance relaxation of Section S2; the first six enter only if the audit drops its governance requirement altogether; Future AGI's evidence is T5 only, so it enters not at all.
 
 Two first-pass rows are corrected before the recount. The row "Governed Collaborative Memory / SSGM" conflated Cuadros et al. (2605.04264) with SSGM (Lam et al., 2603.11768); it is split, and SSGM, a conceptual framework, scores 2. MAE and Memento-Skills were scored 5 on S5 in the released CSV while the first-pass draft's table said no orchestration system reaches 5; both close one loop only and score 4 under the uniform rubric, which moves the first-pass S5 mean from 2.68 to 2.58.
+
+Nine second-pass rows had their gate labels re-coded on 2026-10-08 under the definition of Section III, which records who decides and not who supplies the candidate: Letta's Loop-2 label moved from Auto to None (an ungated git push of shared memory; the row still passes the composite audit on its lineage); the Loop-1 label of Azure API Center, the agentic-community MCP Gateway & Registry, the Official MCP Registry, TrueFoundry, Buildrix, the revocation guard, and "Who Maintains Agent Skills?" moved from Human to None (artifacts registered or authored by people, with no failure-driven loop), and Enoch's checkpoint-and-validate protocol moved to None on both loops (a migration of one agent's state, not a promotion). The MCP Gateway's Loop-2 label now records its automated admission scan beside the human approval, and the field study's Loop-2 label records that maintainers merge. No score changed; the cells of Section VII and Section S4.2.1 follow the re-coded labels.
 
 The recount runs over all substrate-level rows and gives the counts of Table VI-1; its last line is the first pass alone (systems / core / contrast) after the two corrections.
 

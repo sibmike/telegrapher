@@ -1,6 +1,6 @@
 ## What the field has built {#sec:findings}
 
-The corpus answers the question of Section REF(sec:intro) in one sentence: the local half of the loop is routine, and the governed second half has not been built. This section gives the evidence in three cuts. Per substrate, where the top mark is reached and where it is not; per missing piece, which parts of the second half are absent and in which signal class; and per cluster, which kinds of system have which half.
+The corpus answers the question of Section REF(sec:intro) in one sentence: the local half of the loop is routine, and no surveyed system documents the governed second half. This section gives the evidence in three cuts. Per substrate, where the top mark is reached and where it is not; per missing piece, which parts of the second half are absent and in which signal class; and per cluster, which kinds of system have which half.
 
 ### The local loop is routine, and no substrate is finished
 
@@ -47,7 +47,7 @@ Sort the core corpus by which half of the loop it automates and four clusters ap
 | Research full-auto | NanoResearch, SkillOpt, SkillRL, AlphaEvolve, DGM, ADAS, Voyager, EvolveNet, Evo2Team, XRepoSkill | Auto / Auto | Both loops can run under algorithmic gates and benchmark gains compound; enterprise governance is uniformly absent |
 | Production hybrid | SkillForge, CASCADE, Sierra Agent OS 2.0, Cognition Devin, Spotify's recommendation loop [@palumbo2026spotify] | Auto / Human | An algorithmic Loop-1 gate with a reviewer on Loop 2 is the production-viable cell; Spotify adds online A/B gating |
 | Governance-first | Braintrust, Vellum, LangSmith Hub, EDDOps, Agentic Configuration Management, Governed Capability Evolution | None / Auto or Human | Evaluation-gated promotion, lineage, and rollback exist; candidate generation is manual and no inner loop fires from session signal |
-| Open standards and registries | AGENTS.md, MCP, Anthropic Agent Skills, Cursor Rules, the MCP control planes | Mixed, or Human / Human | Cross-vendor convergence on artifact format and tool attachment; registries govern admission and access but do not evaluate |
+| Open standards and registries | AGENTS.md, MCP, Anthropic Agent Skills, Cursor Rules, the MCP control planes | None / Human, or None / None | Cross-vendor convergence on artifact format and tool attachment; registries govern admission and access but do not evaluate |
 
 Table VI-2. Four clusters of the core corpus.
 

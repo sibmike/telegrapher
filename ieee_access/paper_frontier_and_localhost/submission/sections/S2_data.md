@@ -25,6 +25,6 @@ Seven second-pass systems promote across users, clients, teams, or repositories 
 
 The optimizer-state relaxation admits as Loop 1 a session signal that updates optimizer state without persisting an artifact distinct from that state. It re-admits DSPy and TextGrad from the first pass, raising the research count to approximately sixteen. It admits no second-pass system. The second-pass contrast rows are benchmarks, evaluation and attack studies, registries, audits, and conceptual frameworks, plus one orchestrator whose adaptation lives in the weights, and none of them persists optimizer state as its only artifact.
 
-The qualitative findings hold under every relaxation: [Auto × Auto] is well populated; [Human × Auto] is empty; the other human-authored cells hold only registries and curation workflows that fail the composite audit; the governance-first cluster sits in [None × Auto]; and no system adds governed cross-tenant promotion.
+The qualitative findings hold under every relaxation: [Auto × Auto] is well populated; [Human × Auto] and [Human × Human] are empty; [Human × None] holds only curation workflows and [None × Human] only registries, all of which fail the composite audit; the governance-first cluster sits in [None × Auto]; Letta alone passes the audit with an ungated promotion; and no system adds governed cross-tenant promotion.
 
 ---

@@ -165,22 +165,22 @@ def fig3():
     cells = {
         (0, 0): ("shade", "Research full-auto", "SkillOpt, AlphaEvolve"),
         (0, 1): ("shade", "Production hybrid", "SkillForge"),
-        (0, 2): ("light", None, "no promotion"),
-        (1, 0): ("light", None, "engineering logic"),
-        (1, 1): ("light", None, "none surveyed"),
-        (1, 2): ("blank", None, "—"),
+        (0, 2): ("light", None, "no promotion gate"),
+        (1, 0): ("blank", None, "—"),
+        (1, 1): ("blank", None, "—"),
+        (1, 2): ("light", None, "curation"),
         (2, 0): ("shade", "Governance-first", "prompts-as-code"),
-        (2, 1): ("blank", None, "—"),
+        (2, 1): ("light", None, "registries"),
         (2, 2): ("blank", None, "—"),
     }
     if small:
-        # IEEE Access article (October-2026 corpus, its Section VII): the human-authored row is
-        # occupied by registries and curation workflows that fail the composite audit, and
-        # [Human x Auto] is the one cell with no surveyed occupant.
+        # IEEE Access article (October-2026 corpus, Section VII, strict "who decides" axes): Letta's
+        # ungated push sits in [Auto x None]; registries have no failure-driven loop and sit in
+        # [None x Human]; curation is the only human-gated cell; [Human x Auto] and [Human x Human] are empty.
         cells.update({
-            (1, 0): ("blank", None, "—"),
-            (1, 1): ("light", None, "MCP registries,\ncommunity hub"),
+            (0, 2): ("light", None, "no promotion gate\n(Letta: ungated\npush, lineage)"),
             (1, 2): ("light", None, "curation:\nagent drafts,\nperson checks"),
+            (2, 1): ("light", None, "MCP registries,\ncommunity hub"),
         })
     for r in range(3):
         for c in range(3):

@@ -16,7 +16,7 @@ The same text as the IEEE Access survey article in `../../../ieee_access/paper_f
 | Appendix I: full score table (269 rows) | 66–73 | `supplementary.md` (S1, generated from the CSVs) |
 | Ancillary files (`anc/`) | — | the two score CSVs and `recount.py`, with a README |
 
-72 pages, 4 figures, 10 captioned tables, 11pt, 1 in margins, pdflatex with the IEEEtran bibliography style (numeric citations, as in the IEEE text). The text is the October 2026 story-first revision of the IEEE article (body rewritten as a structured essay, appendices rewritten for first-read clarity; see the IEEE package's `REVISION_LOG_A.md` to `REVISION_LOG_E.md`).
+76 pages, 4 figures, 10 captioned tables, 178 references, 11pt, 1 in margins, pdflatex with the IEEEtran bibliography style (numeric citations, as in the IEEE text). The text is the October 2026 revision of the IEEE article (body rewritten as a structured essay, appendices rewritten for first-read clarity, then revised in answer to an external review; see the IEEE package's `REVISION_LOG_A.md` to `REVISION_LOG_F.md`).
 
 ## How it builds
 
