@@ -41,6 +41,11 @@ def convert(m):
         colspec = colspec[2:].strip()
     rest = re.sub(r"\\bottomrule\\noalign\{\}\s*\\endlastfoot", "", rest)      # pandoc's last-foot rule sits before the rows
     rest = re.sub(r"\\endfirsthead|\\endhead|\\endlastfoot|\\endfoot", "", rest)
+    # a little air between body rows, as in the IEEE converter
+    head_part, mid, rows = rest.partition("\\midrule")
+    if mid:
+        rows = rows.replace("\\\\\n", "\\\\ \\addlinespace[2.5pt]\n")
+        rest = head_part + mid + rows
     body = "\\toprule" + rest.rstrip() + "\n\\bottomrule\\noalign{}"
     tag = re.match(r"^Table\s+([IVXA-Z]+-\d+)\.\s*", tag_par.strip())
     cap = tag_par.strip()[tag.end():]

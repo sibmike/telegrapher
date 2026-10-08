@@ -26,6 +26,11 @@ def convert(m):
     # drop longtable-only directives
     rest = re.sub(r"\\endfirsthead|\\endhead|\\endlastfoot|\\endfoot", "", rest)
     rest = re.sub(r"\\caption\{.*?\}\\tabularnewline\n?", "", rest, flags=re.S)
+    # a little air between body rows, so multi-line cells read as rows rather than as one block
+    head_part, mid, rows = rest.partition("\\midrule")
+    if mid:
+        rows = rows.replace("\\\\\n", "\\\\ \\addlinespace[2.5pt]\n")
+        rest = head_part + mid + rows
     body = "\\toprule" + rest.rstrip() + "\n\\bottomrule\\noalign{}"
     # IEEE convention: the table caption sits above the table (ieeeaccess sample and IEEEtran).
     return "\\begin{table*}[!t]\n%%CAPTION%%\n\\centering\\small\n\\begin{tabular}" + colspec + "\n" + body.strip() + "\n\\end{tabular}\n\\end{table*}"
