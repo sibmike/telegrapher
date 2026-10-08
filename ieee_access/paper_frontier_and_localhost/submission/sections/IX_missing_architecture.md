@@ -1,6 +1,6 @@
 ## The missing architecture: governed cross-tenant scaffold optimization {#sec:gap}
 
-What is missing is specific enough to audit for. Four properties define it, and no surveyed system holds all four. Which of them a deployment should expect to meet follows from the feedback it has rather than from its domain. The four are:
+What is missing is the rung that crosses a tenant boundary under a gate, and it is specific enough to audit for. Four properties define it, and no surveyed system holds all four. Which of them a deployment should expect to meet follows from the feedback it has rather than from its domain. The four are:
 
 - (a) **auto-gated Loop 1**: the commit criterion is an algorithmic threshold;
 - (b) **cross-organization promotion**: Loop 2 routes artifacts between organizations (we use *cross-tenant* and *cross-organizational* interchangeably);
@@ -19,7 +19,7 @@ The closest approaches split these properties among them, and no row of Table RE
 
 Table IX-1. The closest approaches to governed cross-organization scaffold optimization, scored against the four properties.
 
-Row by row, the partition is tidy: the systems with a local loop carry the automatic gate and part of the promotion, the registries carry lineage and rollback without an inner loop, and the control planes carry access control alone. Rollback appears inside one federated round and inside single deployments, as edit-level reversal [@wei2026skillsmith; @gao2026skillaudit] and as an admission test that rejects edits which cannot be undone [@sah2026evoundo]. No system rolls back a promotion that has crossed an organization boundary, because none makes such a promotion (Supplementary Material S4).
+Row by row, the partition is tidy: the systems with a local loop carry the automatic gate and part of the promotion, the registries carry lineage and rollback without an inner loop, and the control planes carry access control alone. Rollback exists inside one federated round and, as Section REF(sec:findings) records, inside single deployments; no system rolls back a promotion that has crossed an organization boundary, because none makes such a promotion (Supplementary Material S4).
 
 In machine-learning terms, what is missing is a cross-tenant aggregator with an automated evaluation gate at the scaffold layer. It would carry five parts: per-tenant artifact pools, each tagged with provenance; an aggregation step across tenants that respects tenant isolation; a held-out evaluation at the receiving tenant that blocks a promotion whenever it does not lower that tenant's patch loss; versioned lineage with access control; and a rollback envelope on every promoted artifact. The federated-learning analogy [@mcmahan2017fedavg; @mcmahan2018dpfedavg; @kairouz2021federated] is useful only in the limit where artifacts are mergeable update representations; federated prompt tuning, in which participants learn a shared prompt rather than shared weights [@guo2022promptfl], is the weight-side precedent closest to that limit. In surveyed practice Loop 2 is selection and merge: the nearest systems aggregate program edits with a language model, not by averaging.
 

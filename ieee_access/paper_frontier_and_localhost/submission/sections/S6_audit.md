@@ -91,7 +91,7 @@ Two first-pass rows are corrected before the recount. The row "Governed Collabor
 
 Nine second-pass rows had their gate labels re-coded on 2026-10-08 under the definition of Section III, which records who decides and not who supplies the candidate: Letta's Loop-2 label moved from Auto to None (an ungated git push of shared memory; the row still passes the composite audit on its lineage); the Loop-1 label of Azure API Center, the agentic-community MCP Gateway & Registry, the Official MCP Registry, TrueFoundry, Buildrix, the revocation guard, and "Who Maintains Agent Skills?" moved from Human to None (artifacts registered or authored by people, with no failure-driven loop), and Enoch's checkpoint-and-validate protocol moved to None on both loops (a migration of one agent's state, not a promotion). The MCP Gateway's Loop-2 label now records its automated admission scan beside the human approval, and the field study's Loop-2 label records that maintainers merge. No score changed; the cells of Section VII and Section S4.2.1 follow the re-coded labels.
 
-The recount runs over all substrate-level rows and gives the counts of Table VI-1; its last line is the first pass alone (systems / core / contrast) after the two corrections.
+The recount runs over all substrate-level rows and gives the counts of Table V-2; its last line is the first pass alone (systems / core / contrast) after the two corrections.
 
 ```
 rows: 269  unique systems: 256  core: 204  contrast: 52

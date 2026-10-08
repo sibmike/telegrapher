@@ -47,7 +47,8 @@ names = ["abstract.md"] + ALL
 cb = sum((cites(before(n)) for n in names), collections.Counter())
 ca = sum((cites(after(n)) for n in names), collections.Counter())
 ALLOWED_NEW = {"bhattarai2026rubricgrounded", "jia2026openrubric", "lv2026queryrubrics",   # in the bib from the same sweep; cited in Appendix G so the 8/5 tally is checkable
-               "robbins1971convergence"}   # the convergence repair of Appendix A (review point 3, 2026-10-08)
+               "robbins1971convergence",   # the convergence repair of Appendix A (review point 3, 2026-10-08)
+               "cuadros2026governed"}   # named in VI as "Cuadros et al." since the readability revision; the key existed in the bib uncited (restructure, 2026-10-08)
 gone, new = set(cb) - set(ca), set(ca) - set(cb) - ALLOWED_NEW      # the KEY SET must be unchanged; occurrence counts may move
 print("(a) citations: before %d keys / after %d keys (%d -> %d occurrences)" % (len(cb), len(ca), sum(cb.values()), sum(ca.values())))
 if gone or new:
