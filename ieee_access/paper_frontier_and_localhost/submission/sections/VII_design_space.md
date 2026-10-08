@@ -1,6 +1,6 @@
 ## The four approaches side by side {#sec:design}
 
-The four clusters of Section REF(sec:findings) differ in which half of the loop they automate, and the loop makes exactly two decisions: whether a local edit enters the scaffold, and whether an accepted edit leaves the deployment. Putting those two decisions on two axes gives the grid of Fig. REF(fig:design). Each row is the gate on Loop 1 and each column the gate on Loop 2, with the three gate kinds of Section REF(sec:loop); a cell such as [Auto × Human] holds the systems whose local gate is a program and whose promotion waits for a person. The grid is the comparison the clusters only hint at. It shows which combinations the field has built, which it has not, and whether the empty cells are empty by accident.
+The four clusters of Section REF(sec:findings) differ in which half of the loop they automate, and the loop makes exactly two decisions: whether a local edit enters the scaffold, and whether an accepted edit leaves the deployment. Putting those two decisions on two axes gives the grid of Fig. REF(fig:design). Each row is the gate on Loop 1 and each column the gate on Loop 2, with the three gate kinds of Section REF(sec:loop); a cell such as [Auto × Human] holds the systems whose local gate is a program and whose promotion waits for a person. The grid is the comparison the clusters only hint at, and it answers a question the cluster table cannot: whether the combinations the field has not built are missing by accident or by the rule of Section REF(sec:signal).
 
 ```{=latex}
 \begin{figure}[!t]

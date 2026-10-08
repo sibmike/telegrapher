@@ -1,6 +1,6 @@
 ## The survey: substrates, corpus, and scoring {#sec:method}
 
-How the 256 systems were chosen and scored is set out here so that the trends of Section REF(sec:findings) can be checked against the released table; a reader who takes the scoring on trust can go straight there.
+Every claim in Section REF(sec:findings) rests on a released table, and this section says how that table was made so that any row of it can be rechecked; a reader who takes the scoring on trust can skip ahead to the findings.
 
 ### Six substrates
 

@@ -1,6 +1,6 @@
 ## Open problems and conclusion {#sec:open}
 
-Five open problems follow from the survey, one per feedback-signal class and one for the architecture.
+Each feedback-signal class leaves one problem open, and the architecture a fifth. None is a general agenda; each is the specific step its class is blocked on.
 
 1. **Exact signals: credit assignment from a failing check to a scaffold coordinate.** A test tells the loop that an output failed, not which instruction, skill, or tool binding caused it. Slot attribution [@nguyen2026harnessevo], intervention-based attribution [@chu2026agentgrad], and contrastive multi-agent attribution [@zehle2026cantante] each solve one substrate's case; a general method is the bottleneck the harness-optimization family names.
 2. **Observable outcomes: receiving-side evaluation before promotion.** The outcome that justified an edit on the sending side does not transfer, and even where a promoted edit is checked on arrival, some transfers still fail (Section REF(sec:findings)). The gate a federated scaffold optimizer needs, a held-out test at the receiving tenant, has been proposed but not built [@yang2026fao].
