@@ -1,6 +1,6 @@
 ## The failure surface {#sec:failure}
 
-Until the governed second loop exists, scaffold maintenance carries failure modes that weight-only systems do not have; they are the scaffold-layer entries in the technical-debt ledger that machine-learning systems have carried for a decade [@sculley2015debt]. Each is a missing piece of the optimizer, and each dominates in a particular feedback-signal class (Table REF(tab:X-1)). The entries are documented attacks and degradations, not a new threat model.
+Until the governed second loop exists, scaffold maintenance carries failure modes that weight-only systems do not have; they are the scaffold-layer entries in the technical-debt ledger that Sculley et al. opened for machine-learning systems a decade ago [@sculley2015debt]. Each is a missing piece of the optimizer, and each dominates in a particular feedback-signal class (Table REF(tab:X-1)). The entries are documented attacks and degradations, not a new threat model.
 
 | Failure | What has been measured | Architectural response | Dominant class |
 |------------|--------------------------------|--------------------------|----------|
@@ -14,7 +14,7 @@ Until the governed second loop exists, scaffold maintenance carries failure mode
 
 Table X-1. The failure surface of patchwork scaffold maintenance, the measured evidence, the architectural response, and the feedback-signal class in which each failure dominates.
 
-Bloat is a signal-quality problem as well as a latency problem. Ratchet reports that LLM-authored skills gain nothing over a no-skill baseline while human-curated ones show a double-digit gain, and it attributes the gap to lifecycle management [@zhang2026ratchet]. In the vocabulary of Section REF(sec:loop), that means residual capture and mode discovery cannot work on a messy artifact pool.
+Bloat is not only slow; it is a signal-quality problem. Ratchet reports what that looks like: LLM-authored skills gain nothing over a no-skill baseline, human-curated ones show a double-digit gain, and the authors attribute the gap to lifecycle management [@zhang2026ratchet]. In the vocabulary of Section REF(sec:loop), that means residual capture and mode discovery cannot work on a messy artifact pool.
 
 Evaluation fragility compounds because the evaluation suite is itself a patch-local artifact rather than a fixed instrument. It is optimized against: once a metric becomes the target, it is gamed. It is read non-independently, because the gate scores path-dependent agent trajectories whose readings do not compose like ordinary test-set statistics. It goes stale, because the suite adapts on the same cadence as the scaffold it gates. And because failures concentrate in a finite catalogue of recurring modes, a suite that samples tasks at random under-weights exactly the families that drive the failure rate. The response in the table follows from those four facts: held-out and scoped, mode-weighted, re-read, and checked against attribution rather than only against score.
 
