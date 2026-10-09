@@ -1120,20 +1120,19 @@ Repositories push shared memory across agents automatically, with git
 lineage and no evaluation of any kind, so the composite audit admits
 them on lineage and the matrix records a promotion that nothing decides
 (Section VII). Mem0 Platform, TOKI, Learning on the Job, and RASO sit
-here with no promotion at all; RASO retrieves skills from a public
-corpus, which is inbound retrieval rather than promotion. Two first-pass
-systems join them, each starred because it has no Loop 2. SkillForge's
-judge flags the failed replies that drive each skill rewrite, the
-rewrite is committed without an acceptance test, and every version stays
-in the scenario deployment; its support engineers review replies, not
-skill versions. AutoAgent's analyzer accepts revisions to one agent's
-tool and peer descriptions on an uncalibrated consistency judgment, and
-nothing leaves that agent's store. VACE belongs here too although its
-gate is a held-out check: it compares a candidate harness with the
-incumbent against the freshly trained checkpoint of the same run, so the
-edit is made and kept inside one training run \cite{qi2026vace}; and
-RASO's public corpus is read-only, an inbound source rather than a
-destination \cite{chu2026raso}.
+here with no promotion at all; RASO retrieves skills from a read-only
+public corpus, which is inbound retrieval rather than promotion
+\cite{chu2026raso}. Two first-pass systems join them, each starred
+because it has no Loop 2. SkillForge's judge flags the failed replies
+that drive each skill rewrite, the rewrite is committed without an
+acceptance test, and every version stays in the scenario deployment; its
+support engineers review replies, not skill versions. AutoAgent's
+analyzer accepts revisions to one agent's tool and peer descriptions on
+an uncalibrated consistency judgment, and nothing leaves that agent's
+store. VACE belongs here too although its gate is a held-out check: it
+compares a candidate harness with the incumbent against the freshly
+trained checkpoint of the same run, so the edit is made and kept inside
+one training run \cite{qi2026vace}.
 
 \textbf{{[}Auto × Human{]}} is the production-viable cell. Loop 1 fires
 at machine speed under an algorithmic criterion, and Loop 2 waits for a
@@ -1232,11 +1231,12 @@ bank \\
 agent proposals & calibrated judge or outcome threshold & release to the
 team or product & reviewer, domain expert, or merge approval \\
 {[}Auto × None{]} & Letta Context Repositories; Mem0 Platform, TOKI,
-Learning on the Job, RASO; SkillForge, AutoAgent & agent (Letta:
+Learning on the Job, RASO, VACE; SkillForge, AutoAgent & agent (Letta:
 sleep-time subagents) & automatic write gate (RASO: validation-set
-acceptance; SkillForge: a calibrated judge that flags failed replies;
-AutoAgent: an uncalibrated consistency judgment) & Letta: unconditional
-git push to shared memory; the others: none & none \\
+acceptance; VACE: held-out comparison against the incumbent harness;
+SkillForge: a calibrated judge that flags failed replies; AutoAgent: an
+uncalibrated consistency judgment) & Letta: unconditional git push to
+shared memory; the others: none & none \\
 {[}None × Auto{]} & Braintrust, LangSmith Hub, Vellum, Governed
 Capability Evolution; EDDOps, with a sign-off after the threshold &
 engineers & none (no failure-driven loop) & evaluation-gated release &
@@ -1299,10 +1299,12 @@ and (d) rollback. The closest approaches split them among themselves:
   Appendix XII. It has no cross-organization promotion, no access
   control, and no rollback.
 \item
-  \textbf{SkillForge} has (a) and a partial (c) through VFS commits, but
-  no (b): each rewritten skill version stays in the scenario deployment
-  that produced it, and its support engineers review replies, not skill
-  versions; (d) is undocumented in the public report.
+  \textbf{SkillForge} has a partial (a), a calibrated judge that selects
+  failures with no acceptance test on the rewrite, and a partial (c)
+  through VFS commits, but no (b): each rewritten skill version stays in
+  the scenario deployment that produced it, and its support engineers
+  review replies, not skill versions; (d) is undocumented in the public
+  report.
 \item
   \textbf{Sierra Agent OS 2.0} has a partial (a). Its cross-organization
   promotion is claimed in vendor documentation only and not counted as
@@ -2333,7 +2335,8 @@ they exceed twelve, so it decides by a model judge over a simulated
 outcome (C3 over C2) and prunes, and the claim does not bear on it.
 SkillRL and AutoAgent no longer sit in {[}Auto × Auto{]} (Section S6.7).
 Second pass: EvolveNet, Evo2Team, XRepoSkill (C1 code or benchmark
-signals); ShareMem (C2, Mind2Web); Letta (no gate). \\
+signals); ShareMem (judged consolidation, C3, measured on Mind2Web);
+Letta (no gate). \\
 Second & {[}Auto × Human{]} should hold only C2 and C3 systems, because
 the human on Loop 2 substitutes for the exact signal that Loop 1 lacks &
 \textbf{holds} & CASCADE (C3), Sierra (C2/C3), Devin (C2 merge outcome),
