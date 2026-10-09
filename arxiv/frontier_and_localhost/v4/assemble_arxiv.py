@@ -40,6 +40,7 @@ def common(t):
 def figures(t):
     t = t.replace("\\begin{figure}[!t]", "\\begin{figure}[htbp]")
     t = re.sub(r"width=0\.9\\columnwidth\]\{(\w+?)_ieee\}", r"width=0.5\\textwidth]{figures/\1}", t)
+    t = re.sub(r"width=0\.95\\columnwidth\]\{(\w+?)_ieee\}", r"width=0.52\\textwidth]{figures/\1}", t)
     t = re.sub(r"width=\\columnwidth\]\{(\w+?)_ieee\}", r"width=0.55\\textwidth]{figures/\1}", t)
     t = re.sub(r"width=\\textwidth\]\{(\w+?)_ieee\}", r"width=\\textwidth]{figures/\1}", t)
     return t
@@ -73,6 +74,8 @@ def lifted(t):
     t = t.replace("Appendix XIII", "Appendix REF(app:gates)").replace("Appendix XII", "Appendix REF(app:formal)")
     t = re.sub(r"Sections ([IVX]+)–([IVX]+)",
                lambda m: "Sections REF(sec:%s)–REF(sec:%s)" % (SEC_IDS.get(m.group(1), m.group(1)), SEC_IDS.get(m.group(2), m.group(2))), t)
+    t = re.sub(r"Sections ([IVX]+) and ([IVX]+)\b",
+               lambda m: "Sections REF(sec:%s) and REF(sec:%s)" % (SEC_IDS.get(m.group(1), m.group(1)), SEC_IDS.get(m.group(2), m.group(2))), t)
     t = re.sub(r"Section ([IVX]+)\b", sec_ref, t)
     t = re.sub(r"Table ([IVX]+)-(\d+)\b", r"Table REF(tab:\1-\2)", t)
     t = t.replace("accompany this document", "are released as ancillary files with this preprint")

@@ -104,8 +104,8 @@ feedback-signal classes of Section IV: exact, observable outcome,
 judged, and delayed and sparse. A system's two gates are written {[}Loop
 1 × Loop 2{]} with the values Auto, Human, or None; Auto+Human marks a
 two-stage local gate, an algorithmic check followed by a reviewer.
-Stages 1 to 3 are the three stages of scaffold maintenance of Table
-II-1: patchwork, random artifact search, artifact-layer descent. Scopes
+Stages 1 to 3 are the three stages of scaffold maintenance of Section
+III: patchwork, random artifact search, artifact-layer descent. Scopes
 nest USER within PROJECT within STACK within TENANT within CORE, where a
 tenant is one organization or customer; promotion that reaches CORE
 crosses tenants. Properties (a) to (d) are the four properties of the
@@ -117,9 +117,10 @@ table in Section S1, which gives its source.
 
 Every scored (substrate, system) row of the corpus: 130 systems scored
 by May 2026 and 126 added by the October 2026 sweep. Scores follow the
-0--5 rubric of the main text (Table V-1); Loop 1 / Loop 2 gate types and
-signal classes are recorded for the October rows (and for May rows
-re-audited in Section VII). Substrate codes: INT integrated, S1
+0--5 rubric of the main text (Table 3); Loop 1 / Loop 2 gate types and
+signal classes are recorded for the October rows (the gate pairs of the
+first-pass systems audited under the composite criterion are in the
+matrix of Section S4.2.1). Substrate codes: INT integrated, S1
 instructions, S2 skills, S3 memory, S4 tools, S5 orchestration, S6
 governance. A year of ``---'' marks a classical system that predates the
 survey window. The CSV files with per-row justifications accompany this
@@ -547,7 +548,7 @@ S5 & OpenAI AgentKit & 4 & 2025 & openai.\hspace{0pt}com & & & & May
 26 \\
 S5 & OpenAI Swarm & 1 & 2024 & openai.\hspace{0pt}com & & & & May 26 \\
 S5 & OpenHands / CodeAct & 3 & 2024 & arXiv:2407.16741 & & & & May 26 \\
-S5 & OptiMAS & 4 & 2026 & arXiv:2608.21918 & Auto & None & C2 & Oct
+S5 & OptiMAS & 4 & 2026 & arXiv:2608.21918 & None & None & C2 & Oct
 26 \\
 S5 & PluginRSI & 4 & 2026 & arXiv:2609.32423 & Auto & None & C2 & Oct
 26 \\
@@ -663,7 +664,8 @@ rows; \texttt{p3\_refresh\_2026-10.csv} holds the 126 second-pass
 systems in 133 rows, four of which re-audit a first-pass system and
 replace its row rather than add a system. The corpus therefore has 140 +
 133 − 4 = 269 substrate-level rows. A system may be scored on several
-substrates, so rows outnumber systems, and Table V-2 counts rows.
+substrates, so rows outnumber systems, and Table 4 of the main article
+counts rows.
 
 \textbf{Two passes.} Every system in either pass is scored against one
 rubric, from its own method section or documentation. First-pass systems
@@ -758,7 +760,7 @@ EvolveNet, Evo2Team, XRepoSkill, ShareMem, Spotify's recommendation
 loop, and Future AGI's prompt lifecycle. They fail the audit on
 governance alone. RASO, which retrieves skills from a public corpus, is
 not among them, because inbound retrieval is not a promotion (Section
-VII). A weaker relaxation that asks only for an explicit promotion
+S4.2.1). A weaker relaxation that asks only for an explicit promotion
 mechanism, with no governance property at all, would admit five of them,
 all landing in {[}Auto × Auto{]} except Spotify's loop, which would land
 in {[}Auto × Human{]}; none would open a new cell. The sixth, Future
@@ -931,7 +933,7 @@ ReAct \cite{yao2023react}† & 2023 & No persistent artifact &
 Thought-act-observe loop is intra-session \\
 TextGrad \cite{yuksekgonul2024textgrad} & 2024 & No artifact distinct
 from optimizer state & Textual-gradient optimization; SkillOpt
-\cite{yang2026skillopt} (Section VIII; Section S5) adds the persistent
+\cite{yang2026skillopt} (Section VI; Section S5) adds the persistent
 \texttt{best\_skill.md}, held-out validation gate, rejected-edit memory,
 and textual learning-rate schedule that TextGrad lacks. \\
 OPRO, Toolformer & 2023 & No persistent deployment artifact &
@@ -989,7 +991,7 @@ persistence \\
 MemGPT & 2023 & No Loop 2 & Virtual-context management per agent \\
 DSPy & 2023 & No artifact distinct from optimizer state &
 Prompt-template optimization; SkillOpt \cite{yang2026skillopt} (Section
-VIII; Section S5) realizes the artifact-bearing form. \\
+VI; Section S5) realizes the artifact-bearing form. \\
 MetaGen† & 2026 & No Loop 2; no cross-session persistence & Role pool
 dynamic within single inference call \\
 MAE (Multi-Agent Evolve) & 2025 & No Loop 2 & Co-evolution within
@@ -1068,13 +1070,13 @@ The first-pass matrix, with the marks of Section S4.1:
 \endlastfoot
 \textbf{Loop-1 Auto-gated} & NanoResearch, SkillOpt, AlphaEvolve, ADAS,
 DGM, Voyager, SAGE, EvolveR, CoEvoSkills, AutoManual & CASCADE, Sierra
-Agent OS 2.0†, Cognition Devin† & SkillForge*, AutoAgent*, MAE*,
-MetaGen*, MetaReflection*, CLIN*, DSPy*, TextGrad* \\
+Agent OS 2.0†, Cognition Devin† & AutoAgent*, MAE*, MetaGen*,
+MetaReflection*, CLIN*, DSPy*, TextGrad* \\
 \textbf{Loop-1 Human-gated} & \textbf{{[}empty by engineering logic{]}}
 & \textbf{{[}empty in the first pass{]}} & \emph{(none)} \\
 \textbf{Loop-1 None} & ExpeL* (weak), Braintrust*, LangSmith Hub*,
 Vellum* & Anthropic skills repository* & Self-Refine*, ReAct*, Mem0*,
-SkillRL* \\
+SkillRL*, SkillForge* \\
 \end{longtable}
 }
 
@@ -1099,7 +1101,11 @@ without human intervention \cite{zhang2025darwin}. SkillRL sits in
 {[}None × None{]} although its loop is failure-driven: a per-category
 success rate below 0.4 triggers new skill proposals, and the skill bank
 takes each proposal as an unconditional union, so the step that keeps an
-edit runs unchecked, and the bank never leaves its run.
+edit runs unchecked, and the bank never leaves its run. SkillForge sits
+beside it for the same reason: a calibrated judge selects the failed
+replies that drive each skill rewrite, the rewrite is committed without
+an acceptance test, every version stays in the scenario deployment, and
+its support engineers review replies, not skill versions.
 
 COSPLAY and Cuadros et al., which are first-pass rows, and PACE, CORAL,
 GEPA, Meta-Harness, MOSS, and RCL, which were classified from their
@@ -1122,17 +1128,13 @@ them on lineage and the matrix records a promotion that nothing decides
 (Section VII). Mem0 Platform, TOKI, Learning on the Job, and RASO sit
 here with no promotion at all; RASO retrieves skills from a read-only
 public corpus, which is inbound retrieval rather than promotion
-\cite{chu2026raso}. Two first-pass systems join them, each starred
-because it has no Loop 2. SkillForge's judge flags the failed replies
-that drive each skill rewrite, the rewrite is committed without an
-acceptance test, and every version stays in the scenario deployment; its
-support engineers review replies, not skill versions. AutoAgent's
-analyzer accepts revisions to one agent's tool and peer descriptions on
-an uncalibrated consistency judgment, and nothing leaves that agent's
-store. VACE belongs here too although its gate is a held-out check: it
-compares a candidate harness with the incumbent against the freshly
-trained checkpoint of the same run, so the edit is made and kept inside
-one training run \cite{qi2026vace}.
+\cite{chu2026raso}. One first-pass system joins them, starred because
+it has no Loop 2: AutoAgent's analyzer accepts revisions to one agent's
+tool and peer descriptions on an uncalibrated consistency judgment, and
+nothing leaves that agent's store. VACE belongs here too although its
+gate is a held-out check: it compares a candidate harness with the
+incumbent against the freshly trained checkpoint of the same run, so the
+edit is made and kept inside one training run \cite{qi2026vace}.
 
 \textbf{{[}Auto × Human{]}} is the production-viable cell. Loop 1 fires
 at machine speed under an algorithmic criterion, and Loop 2 waits for a
@@ -1231,10 +1233,9 @@ bank \\
 agent proposals & calibrated judge or outcome threshold & release to the
 team or product & reviewer, domain expert, or merge approval \\
 {[}Auto × None{]} & Letta Context Repositories; Mem0 Platform, TOKI,
-Learning on the Job, RASO, VACE; SkillForge, AutoAgent & agent (Letta:
-sleep-time subagents) & automatic write gate (RASO: validation-set
-acceptance; VACE: held-out comparison against the incumbent harness;
-SkillForge: a calibrated judge that flags failed replies; AutoAgent: an
+Learning on the Job, RASO, VACE; AutoAgent & agent (Letta: sleep-time
+subagents) & automatic write gate (RASO: validation-set acceptance;
+VACE: held-out comparison against the incumbent harness; AutoAgent: an
 uncalibrated consistency judgment) & Letta: unconditional git push to
 shared memory; the others: none & none \\
 {[}None × Auto{]} & Braintrust, LangSmith Hub, Vellum, Governed
@@ -1247,6 +1248,9 @@ Configuration Management & registrants, contributors, engineers & none &
 admission to a registry, merge into a shared repository, or a lifecycle
 state & approval by a person (the MCP Gateway adds an automated
 admission scan) \\
+{[}None × None{]} & SkillRL, SkillForge & agent proposals from a
+success-rate trigger or a judge's failure flags & none (the rewrite is
+kept unchecked) & none & none \\
 {[}Human × None{]} & VerificAgent, SkillChain, Davis et al. & agent
 drafts (VerificAgent; SkillChain after a judge); the engineer (Davis et
 al.) & a person & none & none \\
@@ -1299,12 +1303,11 @@ and (d) rollback. The closest approaches split them among themselves:
   Appendix XII. It has no cross-organization promotion, no access
   control, and no rollback.
 \item
-  \textbf{SkillForge} has a partial (a), a calibrated judge that selects
-  failures with no acceptance test on the rewrite, and a partial (c)
-  through VFS commits, but no (b): each rewritten skill version stays in
-  the scenario deployment that produced it, and its support engineers
-  review replies, not skill versions; (d) is undocumented in the public
-  report.
+  \textbf{SkillForge} has no (a), since its calibrated judge selects
+  failures and nothing tests the rewrite, and a partial (c) through VFS
+  commits, but no (b): each rewritten skill version stays in the
+  scenario deployment that produced it, and its support engineers review
+  replies, not skill versions; (d) is undocumented in the public report.
 \item
   \textbf{Sierra Agent OS 2.0} has a partial (a). Its cross-organization
   promotion is claimed in vendor documentation only and not counted as
@@ -1313,13 +1316,13 @@ and (d) rollback. The closest approaches split them among themselves:
   the strict sense.
 \item
   \textbf{FederatedSkill} \cite{yang2026federatedskill} has (a) and,
-  with EvolveNet (Table IX-1), the strongest partial (b) among the
-  surveyed systems: heterogeneous clients, each a backbone-plus-harness
-  profile under one federation operator, exchange semantic skill diffs,
-  and a server-side evolution agent applies, adapts, or rejects each
-  patch per client. An auditable decision log, recording source patch,
-  reward, and justification for each modified path, gives a partial (c);
-  there is no access control and no (d).
+  with EvolveNet (Table 7 of the main article), the strongest partial
+  (b) among the surveyed systems: heterogeneous clients, each a
+  backbone-plus-harness profile under one federation operator, exchange
+  semantic skill diffs, and a server-side evolution agent applies,
+  adapts, or rejects each patch per client. An auditable decision log,
+  recording source patch, reward, and justification for each modified
+  path, gives a partial (c); there is no access control and no (d).
 \item
   \textbf{SkillClaw} \cite{ma2026skillclaw} has a partial (a), through
   a nightly validation step, and a partial (b) across the users of one
@@ -1359,7 +1362,7 @@ system by system, at the level of mechanism, so that each conclusion of
 that section can be checked against what the systems do. The
 walkthroughs were written before the second pass and updated where the
 audit of Section S6 revised a claim; the members the second pass adds to
-each family appear in Table VIII-1 and in Section S1.
+each family are cited in Section VIII and appear in Section S1.
 
 \subsection{S5.1 The convergent
 landscape}\label{s5.1-the-convergent-landscape}
@@ -1809,7 +1812,7 @@ receiving client.
 \subsection{S5.9 Synthesis: what the convergence
 establishes}\label{s5.9-synthesis-what-the-convergence-establishes}
 
-Section VIII draws four conclusions from the families, and the
+Sections VI and VIII draw four conclusions from the families, and the
 walkthroughs support them as follows.
 
 \begin{enumerate}
@@ -1983,14 +1986,14 @@ system demonstrates promotion across organizations, and EvolveNet has a
 partial (b) inside one operator (its clients are benchmark partitions,
 ``organizations'' only in motivation), while RASO, which retrieves from
 a public corpus, promotes nothing; MemClaw is single-tenant in its
-evaluation, and Buildrix is an open community hub with no gate; (c)
-appears as lineage without RBAC everywhere (EDDOps, Agentic
-Configuration Management (ACM), MemClaw, Letta, Mem0 history) and as
-RBAC without versioned promotion in the MCP control planes
-(agentic-community gateway, TrueFoundry); (d) is demonstrated by
-Governed Capability Evolution and EDDOps and claimed by EvolveNet (round
-rollback) and EvoUndo (recoverability as admission), none of which has
-(a)+(b). \\
+evaluation, and Buildrix is an open community hub whose artifacts a
+person approves, with no failure-driven loop; (c) appears as lineage
+without RBAC everywhere (EDDOps, Agentic Configuration Management (ACM),
+MemClaw, Letta, Mem0 history) and as RBAC without versioned promotion in
+the MCP control planes (agentic-community gateway, TrueFoundry); (d) is
+demonstrated by Governed Capability Evolution and EDDOps and claimed by
+EvolveNet (round rollback) and EvoUndo (recoverability as admission),
+none of which has (a)+(b). \\
 ``No surveyed system meets the FedAvg limit; FederatedSkill comes
 closest'' & \textbf{sharpened} & EvolveNet (2608.04968) comes nearer: it
 broadcasts a shared harness, optimizes it locally at each client, merges
@@ -2046,7 +2049,8 @@ None{]} (VerificAgent, SkillChain's second-stage reflection gate, Davis
 et al.~governance conversion), {[}Auto × None{]} (Letta's ungated push;
 Mem0 Platform, TOKI, Learning on the Job, RASO), {[}None × Auto{]}
 (Governed Capability Evolution; EDDOps, with a sign-off after the
-threshold), {[}None × None{]} (Official MCP Registry; Enoch's migration
+threshold), {[}None × None{]} (SkillRL and SkillForge, failure-driven
+skill loops that run unchecked; Official MCP Registry; Enoch's migration
 protocol; Continual Harness's unchecked self-edit; the revocation
 guard). Two cells hold every audit passer whose promotion has a gate, a
 third holds the governance-first platforms, Letta passes with no
@@ -2080,7 +2084,7 @@ per-item test), Future AGI (paired bootstrap CI), AutoSaddler
 (mini-batch failure signals), MGM, ModularRSI (evidence across tasks),
 VaG (3-of-3 critics), EvolveNet (fixed ≥ broken on held-out), VACE,
 HackProbe, PROCTOR. Evidence is batched before acceptance, with
-SAGE-gate and VaG as instances (Section VII). \\
+SAGE-gate and VaG as instances (Section VI). \\
 ``no surveyed system has formalized agreement as a k-of-n acceptance
 rule'' & \textbf{revised} & VaG requires all three heterogeneous critics
 to pass (3-of-3), and SkillSpec is consensus-gated, so agreement-based
@@ -2143,8 +2147,9 @@ Cuadros ``only surveyed memory system with full provenance + versioning
 + correction'' & \textbf{holds} & The memory-governance systems of the
 second pass (TOKI, PPMF, TMA-NM, MemClaw, He \& Yu) each carry
 provenance or lineage without correction loops or versioning, and the
-auto-gated memory loops (Recuris, MemGuard, VerMem, Compiled Memory)
-carry no lineage. \\
+auto-gated memory loops (Recuris, MemGuard, Compiled Memory) carry no
+lineage, while VerMem keeps prior versions without an operation that
+reverts a write. \\
 SkillOpt ``cleanest published instance'' / ``first to instantiate all
 four simultaneously'' & \textbf{sharpened} & SkillOpt-Lite (2607.03451)
 removes two of the four controls and matches or beats SkillOpt; VALVE
@@ -2184,13 +2189,13 @@ Evidence
 ``production deployments sit at Stage 1 or 2; none reaches Stage 3'' &
 \textbf{sharpened} & Spotify (2609.30297) runs automated prompt and
 planning optimization gated by human launch and A/B metrics; this is
-Stage 3 on Loop 1 with a human Loop 2: production deployments reach
-Stage 3 on the local loop only behind a human promotion gate (Section
-III). SkillForge (2604.08618) stops short of it: a judge that agrees
-with experts more than nine times in ten flags the failed replies that
-drive each skill rewrite, but the rewrite is committed without an
-acceptance test, and support engineers review replies, not skill
-versions. \\
+Stage 3 on Loop 1 with a human Loop 2: production deployments that reach
+Stage 3 on the local loop promote behind a human gate or, in Letta's
+case alone, by an ungated push (Section III). SkillForge (2604.08618)
+stops short of it: a judge that agrees with experts more than nine times
+in ten flags the failed replies that drive each skill rewrite, but the
+rewrite is committed without an acceptance test, and support engineers
+review replies, not skill versions. \\
 No S1 system scores 5; ``no instruction system closes both loops'' &
 \textbf{holds} & On S1, n=15 and the maximum score is 4. Adoption
 studies point the same way: context files raise cost by more than 20\%
@@ -2251,7 +2256,7 @@ rather than receiving-side evaluation and is not counted here. EvolveNet
 gates the merge on a server-side held-out slice but runs no check at the
 receiving client, and Federated Agent Optimization (2610.01195) proposes
 a receiving-client gate without implementing it. Receiving-side
-evaluation at promotion is rare, not absent (Section VI). \\
+evaluation at promotion is rare, not absent (Section VII). \\
 Research full-auto cluster: ``enterprise governance is uniformly
 absent'' & \textbf{holds} & No second-pass {[}Auto × Auto{]} system
 reports RBAC or audited promotion. \\
@@ -2299,8 +2304,9 @@ IV}\label{s6.5-the-three-predictions-of-section-iv}
 
 Section IV predicts from the signal classes which cells of the design
 space each class can reach, and Section VII confirms the predictions;
-the rows give the systems behind each verdict, in the order Section IV
-states them.
+the first two rows give the systems behind the two cells Section IV
+assigns, and the third row gives those behind its claim about the
+reflexive gate.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -2334,14 +2340,16 @@ test of the edit, and its Consolidator merges and deletes rules once
 they exceed twelve, so it decides by a model judge over a simulated
 outcome (C3 over C2) and prunes, and the claim does not bear on it.
 SkillRL and AutoAgent no longer sit in {[}Auto × Auto{]} (Section S6.7).
-Second pass: EvolveNet, Evo2Team, XRepoSkill (C1 code or benchmark
-signals); ShareMem (judged consolidation, C3, measured on Mind2Web);
-Letta (no gate). \\
+Second pass: EvolveNet, Evo2Team, XRepoSkill (C1 code signals or
+re-runnable benchmark outcomes, the simulated C2 of Section IV);
+ShareMem (judged consolidation, C3, measured on Mind2Web); Letta (no
+gate). \\
 Second & {[}Auto × Human{]} should hold only C2 and C3 systems, because
 the human on Loop 2 substitutes for the exact signal that Loop 1 lacks &
 \textbf{holds} & CASCADE (C3), Sierra (C2/C3), Devin (C2 merge outcome),
-Spotify (C2 A/B behind human launch). No C1 system occupies the cell;
-SkillForge, also C3, promotes nothing and sits in {[}Auto × None{]}. \\
+Spotify (C3 judge locally, C2 A/B behind human launch). No C1 system
+occupies the cell; SkillForge, also C3, promotes nothing and sits in
+{[}Auto × None{]}. \\
 Third & No scaffold system should yet calibrate a judged gate under the
 reflexive condition & \textbf{sharpened} & Three scaffold systems report
 calibration: SkillForge (\textgreater90\% agreement), SkillChain
@@ -2471,23 +2479,26 @@ SkillForge moves from {[}Auto × Human{]} to {[}Auto × None{]}: its judge
 flags the failed replies that drive each skill rewrite, the rewrite is
 committed without an acceptance test, its support engineers review
 replies and not skill versions, and no skill version leaves the scenario
-deployment. SkillRL's Loop-1 label is None: a per-category success rate
-below 0.4 triggers new skill proposals, and the skill bank takes each
-one as an unconditional union, a step that runs unchecked. AutoAgent
-moves from {[}Auto × Auto{]} to {[}Auto × None{]}: its analyzer accepts
-text revisions on an uncalibrated consistency judgment, and each
-revision stays, unversioned, in one agent's own store. Co-Harness's
-governance entry now records a partial (c), its versioned diff registry,
-and (d) within one run, and its signal class records C1 for the held-out
-gate beside C2 for attribution. The audit therefore passes 11 research
-systems rather than 14, {[}Auto × Auto{]} holds ten research systems
-rather than twelve, the {[}Auto × Human{]} cell of Section S4.2.1 holds
-CASCADE, Sierra Agent OS 2.0, and Cognition Devin, and six systems
-rather than seven promote without lineage. No score changed.
+deployment. On the final consistency pass SkillForge moved on to {[}None
+× None{]}, since nothing tests its rewrite, the same reading that places
+SkillRL there. SkillRL's Loop-1 label is None: a per-category success
+rate below 0.4 triggers new skill proposals, and the skill bank takes
+each one as an unconditional union, a step that runs unchecked.
+AutoAgent moves from {[}Auto × Auto{]} to {[}Auto × None{]}: its
+analyzer accepts text revisions on an uncalibrated consistency judgment,
+and each revision stays, unversioned, in one agent's own store.
+Co-Harness's governance entry now records a partial (c), its versioned
+diff registry, and (d) within one run, and its signal class records C1
+for the held-out gate beside C2 for attribution. The audit therefore
+passes 11 research systems rather than 14, {[}Auto × Auto{]} holds ten
+research systems rather than twelve, the {[}Auto × Human{]} cell of
+Section S4.2.1 holds CASCADE, Sierra Agent OS 2.0, and Cognition Devin,
+and six systems rather than seven promote without lineage. No score
+changed.
 
 The recount runs over all substrate-level rows and gives the counts of
-Table V-2; its last line is the first pass alone (systems / core /
-contrast) after the two corrections.
+Table 4 of the main article; its last line is the first pass alone
+(systems / core / contrast) after the two corrections.
 
 \begin{verbatim}
 rows: 269  unique systems: 256  core: 204  contrast: 52
@@ -2593,7 +2604,8 @@ and TextGrad score below the core-corpus threshold and DSPy, which
 persists only optimizer state, closes no second loop; Section S4.1 lists
 all three. SkillOpt is the point where the lineage crosses into the
 corpus, by adding a persistent skill document, a held-out acceptance
-gate, and a rejected-edit buffer to the same proposer (Section VIII).
+gate, and a rejected-edit buffer to the same proposer (Sections VI and
+VIII).
 
 The second line optimizes the scaffold as a whole rather than one
 prompt, and it is the nearest precedent for the loop of Section III.

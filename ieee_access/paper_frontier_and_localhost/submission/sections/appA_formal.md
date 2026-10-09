@@ -4,7 +4,7 @@ This appendix states the setup behind Section REF(sec:loop), a one-step descent 
 
 | Optimization concept | Scaffold analogue |
 |--------------|----------------------------------------------|
-| Parameter vector | Instructions, skills, memories, tools, routing graphs, evaluation gates, governance rules |
+| Parameter vector | Instructions, skills, memories, tools, routing graphs, and governance rules, evaluation gates among them |
 | Loss | Failure, user correction, evaluation regression, retrieval miss, tool error, schema violation |
 | Gradient estimate | Credit assignment identifying the coordinate responsible for a failure |
 | Step | Accepted scaffold edit; step size is edit magnitude under $\oplus$ |

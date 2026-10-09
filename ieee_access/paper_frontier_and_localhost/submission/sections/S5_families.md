@@ -1,6 +1,6 @@
 # S5. The convergent research families, system by system
 
-This appendix walks the convergent research families of Section VIII system by system, at the level of mechanism, so that each conclusion of that section can be checked against what the systems do. The walkthroughs were written before the second pass and updated where the audit of Section S6 revised a claim; the members the second pass adds to each family appear in Table VIII-1 and in Section S1.
+This appendix walks the convergent research families of Section VIII system by system, at the level of mechanism, so that each conclusion of that section can be checked against what the systems do. The walkthroughs were written before the second pass and updated where the audit of Section S6 revised a claim; the members the second pass adds to each family are cited in Section VIII and appear in Section S1.
 
 ## S5.1 The convergent landscape
 
@@ -101,7 +101,7 @@ Several papers measure what Section III calls the *evidence radius* of a scaffol
 
 ## S5.9 Synthesis: what the convergence establishes
 
-Section VIII draws four conclusions from the families, and the walkthroughs support them as follows.
+Sections VI and VIII draw four conclusions from the families, and the walkthroughs support them as follows.
 
 1. **The scaffold-versus-weights decomposition is independently confirmed.** GEPA, Meta-Harness, MOSS, RCL, and PACE all begin from the observation that model weights and the external artifact layer are distinct adaptation surfaces with different cost, reversibility, and scope properties. No surveyed paper disputes this decomposition; the variation is in which substrate each paper targets (skill document, harness code, system prompt, shared memory).
 

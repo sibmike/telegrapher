@@ -2,20 +2,20 @@
 
 What is missing is the rung that crosses a tenant boundary under a gate, and it is specific enough to audit for. Four properties define it, and no surveyed system holds all four. Which of them a deployment should expect to meet follows from the feedback it has rather than from its domain. The four are:
 
-- (a) **auto-gated Loop 1**: the commit criterion is an algorithmic threshold;
-- (b) **cross-organization promotion**: Loop 2 routes artifacts between organizations (we use *cross-tenant* and *cross-organizational* interchangeably);
-- (c) **versioned lineage with access control**: promoted artifacts carry versions, audit trails, and role-based access policies;
-- (d) **rollback**: a bad promotion can be reverted without redeploy.
+(a) **auto-gated Loop 1**: the commit criterion is an algorithmic threshold;
+(b) **cross-organization promotion**: Loop 2 routes artifacts between organizations (we use *cross-tenant* and *cross-organizational* interchangeably);
+(c) **versioned lineage with access control**: promoted artifacts carry versions, audit trails, and role-based access policies;
+(d) **rollback**: a bad promotion can be reverted without redeploy.
 
 They are properties of how an artifact is made and how far it may travel. The check without which no promotion is safe, receiving-side evaluation, is a property of the gate at arrival rather than of the artifact; Section REF(sec:design) records where it exists, and the architecture below includes it as its third part. The closest approaches split the four properties among them, and no row of Table REF(tab:IX-1) is full on promotion across organizations.
 
 | System | (a) auto-gated Loop 1 | (b) cross-organization promotion | (c) versioned lineage with access control | (d) rollback |
-|----------------|----------|------------------------|----------------------|------------------|
-| FederatedSkill [@yang2026federatedskill] | full | partial: privacy-preserving aggregation of skill patches across heterogeneous clients that sit under one operator | partial: auditable per-modification decision log | none |
+|--------------|------------------|----------------------|--------------------|----------------|
+| FederatedSkill [@yang2026federatedskill] | full | partial: privacy-preserving aggregation of skill edits across heterogeneous clients that sit under one operator | partial: auditable per-modification decision log | none |
 | EvolveNet [@nie2026evolvenet] | full | partial: held-out merge gate at the aggregator, but clients are benchmark partitions, not organizations | none: no lineage, no access control | full: rollback to the previous shared harness after a failed round |
-| SkillForge [@skillforge2026] | partial: a calibrated judge selects failures, no acceptance test on the rewrite | none: skill versions stay in the scenario deployment | partial | not documented |
+| SkillForge [@skillforge2026] | none: a calibrated judge selects the failures, nothing tests the rewrite | none: skill versions stay in the scenario deployment | partial | not documented |
 | Governance-first registries [@kang2026registry; @qin2026governed; @quessadavial2026acm] | none: no inner loop | none | partial: lineage without access control | full, with evidence |
-| MCP control planes [@agenticcommunity2026mcpgateway] | none: no inner loop | none | partial: access control without evaluation-gated promotion | not reported |
+| MCP control planes [@agenticcommunity2026mcpgateway] | none: no inner loop | none | partial: access control without lineage | not reported |
 
 Table IX-1. The closest approaches to governed cross-organization scaffold optimization, scored against the four properties.
 

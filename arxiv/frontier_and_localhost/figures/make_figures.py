@@ -161,7 +161,7 @@ def fig3():
     small = OUT["suffix"] == "_ieee"          # column-width rendering: tighter grid, smaller type
     cw, ch = (1.05, 0.95) if small else (1.15, 0.95)
     gx0, gy0 = (1.45, 0.25) if small else (1.05, 0.25)
-    f_hdr, f_main, f_sub, f_empty = (7.5, 7, 6.5, 6.0) if small else (9, 9, 8, 8)
+    f_hdr, f_main, f_sub, f_empty = (7.5, 7, 7.0, 6.5) if small else (9, 9, 8, 8)
     cells = {
         (0, 0): ("shade", "Research full-auto", "SkillOpt, AlphaEvolve"),
         (0, 1): ("shade", "Production hybrid", "Sierra, Devin"),
@@ -171,7 +171,7 @@ def fig3():
         (1, 2): ("light", None, "curation"),
         (2, 0): ("shade", "Governance-first", "prompts-as-code"),
         (2, 1): ("light", None, "registries"),
-        (2, 2): ("blank", None, "—"),
+        (2, 2): ("light", None, "ungated loop"),
     }
     if small:
         # IEEE Access article (October-2026 corpus, Section VII, strict "who decides" axes): Letta's
@@ -181,6 +181,7 @@ def fig3():
             (0, 2): ("light", None, "no promotion gate\n(Letta: ungated\npush, lineage)"),
             (1, 2): ("light", None, "curation:\nagent drafts,\nperson checks"),
             (2, 1): ("light", None, "MCP registries,\ncommunity hub"),
+            (2, 2): ("light", None, "ungated loop:\nSkillRL, SkillForge"),
         })
     for r in range(3):
         for c in range(3):
@@ -217,10 +218,10 @@ def fig4(counts):
     bw, bh, sw, dx = 3.3, 0.56, 1.62, 0.86
     cx = W / 2
     ys = [2.65, 1.87, 1.09, 0.31]
-    box(ax, cx, ys[0], bw, bh, f"{counts['total']} unique systems scored\n(six substrates, 0–5 rubric)\n{counts['may']} in the first pass, +{counts['oct']} in the second", fs=7.5)
+    box(ax, cx, ys[0], bw, bh, f"{counts['total']} unique systems scored\n(six substrates, 0–5 ruler)\n{counts['may']} in the first pass, +{counts['oct']} in the second", fs=7.5)
     # split row
     box(ax, cx - dx, ys[1], sw, bh, f"core corpus: {counts['core']}\n(score ≥ 3 on\nsome substrate)", fs=7, fill=SHADE)
-    box(ax, cx + dx, ys[1], sw, bh, f"contrast: {counts['contrast']}\n(fails the\ndiscriminator)", fs=7, fill=LIGHT)
+    box(ax, cx + dx, ys[1], sw, bh, f"contrast: {counts['contrast']}\n(fails the\nfirst filter)", fs=7, fill=LIGHT)
     box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(Loop 1 from session signal;\nLoop 2 across contexts with versioning or lineage)", fs=7.5)
     box(ax, cx - dx, ys[3], sw, bh, f"pass: {counts['strict_pass']} research\n+ {counts['industry']} industry\nexemplars", fs=7, fill=SHADE)
     box(ax, cx + dx, ys[3], sw, bh, f"promote with no lineage: {counts['relaxed_only']}\n(fail the audit on\ngovernance alone)", fs=7, fill=LIGHT)
