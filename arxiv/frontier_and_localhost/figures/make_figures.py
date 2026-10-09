@@ -164,7 +164,7 @@ def fig3():
     f_hdr, f_main, f_sub, f_empty = (7.5, 7, 6.5, 6.0) if small else (9, 9, 8, 8)
     cells = {
         (0, 0): ("shade", "Research full-auto", "SkillOpt, AlphaEvolve"),
-        (0, 1): ("shade", "Production hybrid", "SkillForge"),
+        (0, 1): ("shade", "Production hybrid", "Sierra, Devin"),
         (0, 2): ("light", None, "no promotion gate"),
         (1, 0): ("blank", None, "—"),
         (1, 1): ("blank", None, "—"),

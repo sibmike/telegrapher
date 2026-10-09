@@ -175,8 +175,8 @@ INT & AutoSaddler & 4 & 2026 & arXiv:2608.23041 & Auto & None & C2 & Oct
 INT & CaptainAgent & 2.5 & 2024 & arXiv:2405.19425 & & & & May 26 \\
 INT & CASCADE & 4.5 & 2025 & arXiv:2512.23880 & & & & May 26 \\
 INT & ChatDev & 3 & 2023 & arXiv:2307.07924 & & & & May 26 \\
-INT & Co-Harness & 4 & 2026 & arXiv:2607.22688 & Auto & None & C2 & Oct
-26 \\
+INT & Co-Harness & 4 & 2026 & arXiv:2607.22688 & Auto & None & C1,C2 &
+Oct 26 \\
 INT & CoEvoSkills & 3.5 & 2026 & arXiv:2604.01687 & & & & May 26 \\
 INT & Cognition Devin & 3 & 2024 & cognition.\hspace{0pt}ai & & & & May
 26 \\
@@ -314,7 +314,7 @@ S2 & OpenAI Custom GPTs / Actions & 2 & 2023 &
 platform.\hspace{0pt}openai.\hspace{0pt}com & & & & May 26 \\
 S2 & Personalized developer skills (Huang-Du-Lan) & 3 & 2026 &
 arXiv:2608.10319 & Auto & None & C3 & Oct 26 \\
-S2 & RASO & 4 & 2026 & arXiv:2609.38024 & Auto & Auto & C2 & Oct 26 \\
+S2 & RASO & 4 & 2026 & arXiv:2609.38024 & Auto & None & C2 & Oct 26 \\
 S2 & SAGE & 5 & 2025 & arXiv:2512.17102 & & & & May 26 \\
 S2 & SCAFFOLD & 4 & 2026 & arXiv:2609.05511 & Auto & None & C2 & Oct
 26 \\
@@ -461,7 +461,7 @@ n/a & n/a & n/a & Oct 26 \\
 S3 & VerificAgent human-verified frozen memory (Nguye & 3 & 2025 &
 arXiv:2506.02539 & Human & None & C3 & Oct 26 \\
 S3 & VerMem verifiable memory management (Sun et al.) & 4 & 2026 &
-arXiv:2608.03137 & Auto-gated & None & C2/C3 & Oct 26 \\
+arXiv:2608.03137 & Auto & None & C2/C3 & Oct 26 \\
 S3 & Voyager Skill Library & 4 & 2023 & arXiv:2305.16291 & & & & May
 26 \\
 S3 & Zep / Graphiti & 3 & 2025 & arXiv & & & & May 26 \\
@@ -712,8 +712,8 @@ that reading, in the matrix or among the research families. The other
 five are contrast or boundary entries, classified from their papers and
 marked with a dagger in Section S4.1: ReAct, MetaGen, MetaReflection,
 CLIN, and ACE. The corpus counts (256, 204, 52) exclude all fifteen.
-SkillOpt is nonetheless one of the fourteen research systems that pass
-the composite audit, because the audit was applied to it from its paper.
+SkillOpt is nonetheless one of the eleven research systems that pass the
+composite audit, because the audit was applied to it from its paper.
 
 \textbf{Evidence tiers.} Each system carries one or more of five tiers:
 (T1) peer-reviewed publication; (T2) arXiv preprint; (T3) production
@@ -742,32 +742,34 @@ each row with a one-line justification in the released CSVs, so that any
 ambiguous classification can be checked independently (Section S1).
 
 \textbf{Composite two-loop criterion (sensitivity analysis).} The strict
-composite audit passes fourteen research systems, all first-pass except
+composite audit passes eleven research systems, all first-pass except
 SkillOpt, and three industry exemplars. Two natural relaxations change
 that count.
 
 The governance relaxation counts any of versioning, lineage, or rollback
 as Loop-2 governance. It re-admits MAE, MetaGen, MetaReflection, and
 CLIN from the first pass, raising the research count to approximately
-eighteen, and of the second-pass promoters below it admits EvolveNet
+fifteen, and of the second-pass promoters below it admits EvolveNet
 alone, whose rollback to the previous shared harness counts.
 
-Seven second-pass systems promote across users, clients, teams, or
+Six second-pass systems promote across users, clients, teams, or
 repositories with no versioning or lineage on the promoted artifact:
-EvolveNet, Evo2Team, XRepoSkill, ShareMem, RASO, Spotify's
-recommendation loop, and Future AGI's prompt lifecycle. They fail the
-audit on governance alone. A weaker relaxation that asks only for an
-explicit promotion mechanism, with no governance property at all, would
-admit six of them, all landing in {[}Auto × Auto{]} except Spotify's
-loop, which would land in {[}Auto × Human{]}; none would open a new
-cell. The seventh, Future AGI's prompt lifecycle, rests on T5 evidence
-alone, which the tier rule above does not count without corroboration,
-so it is not admitted under any rule.
+EvolveNet, Evo2Team, XRepoSkill, ShareMem, Spotify's recommendation
+loop, and Future AGI's prompt lifecycle. They fail the audit on
+governance alone. RASO, which retrieves skills from a public corpus, is
+not among them, because inbound retrieval is not a promotion (Section
+VII). A weaker relaxation that asks only for an explicit promotion
+mechanism, with no governance property at all, would admit five of them,
+all landing in {[}Auto × Auto{]} except Spotify's loop, which would land
+in {[}Auto × Human{]}; none would open a new cell. The sixth, Future
+AGI's prompt lifecycle, rests on T5 evidence alone, which the tier rule
+above does not count without corroboration, so it is not admitted under
+any rule.
 
 The optimizer-state relaxation admits as Loop 1 a session signal that
 updates optimizer state without persisting an artifact distinct from
 that state. It re-admits DSPy and TextGrad from the first pass, raising
-the research count to approximately sixteen. It admits no second-pass
+the research count to approximately thirteen. It admits no second-pass
 system. The second-pass contrast rows are benchmarks, evaluation and
 attack studies, registries, audits, and conceptual frameworks, plus one
 orchestrator whose adaptation lives in the weights, and none of them
@@ -1010,6 +1012,16 @@ GitHub Copilot custom instructions, Windsurf, Continue.dev, Zed AI rules
 & 2024 & No Loop 1 & Engineer-authored at repo base branch \\
 Replit \texttt{replit.md} & 2025 & Loop 2 absent & Self-writing scaffold
 but per-workspace \\
+SkillForge \cite{skillforge2026} & 2026 & No Loop 2 & A judge flags
+failed replies that drive each skill rewrite; the rewrite is committed
+without an acceptance test, versions stay in the scenario deployment,
+and engineers review replies, not skill versions \\
+AutoAgent \cite{wang2026autoagent} & 2026 & No Loop 2 & Per-agent tool
+and peer descriptions revised on an uncalibrated consistency judgment;
+never promoted or versioned \\
+SkillRL \cite{skillrl2026} & 2026 & No gate on either loop & A success
+rate below 0.4 triggers skill proposals; the skill bank takes each one
+as an unconditional union \\
 \end{longtable}
 }
 
@@ -1054,33 +1066,40 @@ The first-pass matrix, with the marks of Section S4.1:
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\textbf{Loop-1 Auto-gated} & NanoResearch, SkillOpt, SkillRL,
-AlphaEvolve, ADAS, DGM, Voyager, SAGE, EvolveR, CoEvoSkills, AutoAgent,
-AutoManual & SkillForge, CASCADE, Sierra Agent OS 2.0†, Cognition Devin†
-& MAE*, MetaGen*, MetaReflection*, CLIN*, DSPy*, TextGrad* \\
+\textbf{Loop-1 Auto-gated} & NanoResearch, SkillOpt, AlphaEvolve, ADAS,
+DGM, Voyager, SAGE, EvolveR, CoEvoSkills, AutoManual & CASCADE, Sierra
+Agent OS 2.0†, Cognition Devin† & SkillForge*, AutoAgent*, MAE*,
+MetaGen*, MetaReflection*, CLIN*, DSPy*, TextGrad* \\
 \textbf{Loop-1 Human-gated} & \textbf{{[}empty by engineering logic{]}}
 & \textbf{{[}empty in the first pass{]}} & \emph{(none)} \\
 \textbf{Loop-1 None} & ExpeL* (weak), Braintrust*, LangSmith Hub*,
-Vellum* & Anthropic skills repository* & Self-Refine*, ReAct*, Mem0* \\
+Vellum* & Anthropic skills repository* & Self-Refine*, ReAct*, Mem0*,
+SkillRL* \\
 \end{longtable}
 }
 
 The matrix places the first-pass systems audited under the composite
 criterion, with SkillOpt, and the contrast entries marked with an
 asterisk. Every matrix entry that passes the audit sits in {[}Auto ×
-Auto{]} or {[}Auto × Human{]}: the twelve research systems of the first
-cell, with SkillForge and CASCADE, are the fourteen research systems of
-Section V, and Sierra Agent OS 2.0 and Cognition Devin are two of its
-three industry exemplars. The third exemplar, Letta's Context
-Repositories, is a second-pass system.
+Auto{]} or {[}Auto × Human{]}: the ten research systems of the first
+cell, with CASCADE, are the eleven research systems of Section V, and
+Sierra Agent OS 2.0 and Cognition Devin are two of its three industry
+exemplars. The third exemplar, Letta's Context Repositories, is a
+second-pass system.
 
-Two placements need a word. DSPy and TextGrad sit in {[}Auto × None{]}
+Three placements need a word. DSPy and TextGrad sit in {[}Auto × None{]}
 because their Loop 1 is automated but persists only optimizer state,
 which only the optimizer-state relaxation of Section S2 would count as a
-persisted artifact. DGM runs in two modes depending on deployment
-configuration, archive-based evolution in {[}Auto × Auto{]} and
-sandboxed code-modification review in {[}Auto × Human{]}, and is listed
-once, in the dominant cell.
+persisted artifact. DGM sits in {[}Auto × Auto{]} although its local
+gate is a validity check rather than a loss estimate: the archive admits
+every child that compiles and can still edit code, the benchmark score
+weights parent selection rather than deciding retention, and no person
+decides anything in the loop, since self-modifications are evaluated
+without human intervention \cite{zhang2025darwin}. SkillRL sits in
+{[}None × None{]} although its loop is failure-driven: a per-category
+success rate below 0.4 triggers new skill proposals, and the skill bank
+takes each proposal as an unconditional union, so the step that keeps an
+edit runs unchecked, and the bank never leaves its run.
 
 COSPLAY and Cuadros et al., which are first-pass rows, and PACE, CORAL,
 GEPA, Meta-Harness, MOSS, and RCL, which were classified from their
@@ -1089,10 +1108,10 @@ are neither placed in the matrix nor counted in Section V. Second-pass
 systems record their gate pairs in the released score table, and the
 paragraphs below name those that occupy a cell.
 
-\textbf{{[}Auto × Auto{]}} is the most populated cell: twelve systems,
-each with a machine-evaluated criterion on both loops. Speed on both
-loops is what its members share; cross-organization governance is what
-every one of them lacks.
+\textbf{{[}Auto × Auto{]}} is the most populated cell: ten systems, each
+with a machine-evaluated criterion on both loops. Speed on both loops is
+what its members share; cross-organization governance is what every one
+of them lacks.
 
 \textbf{{[}Auto × None{]}} holds the systems whose local loop is gated
 and whose promotion has no gate, whether because nothing is promoted or
@@ -1100,25 +1119,33 @@ because everything is. One audit passer sits here: Letta's Context
 Repositories push shared memory across agents automatically, with git
 lineage and no evaluation of any kind, so the composite audit admits
 them on lineage and the matrix records a promotion that nothing decides
-(Section VII). Mem0 Platform, TOKI, and Learning on the Job sit here
-with no promotion at all.
+(Section VII). Mem0 Platform, TOKI, Learning on the Job, and RASO sit
+here with no promotion at all; RASO retrieves skills from a public
+corpus, which is inbound retrieval rather than promotion. Two first-pass
+systems join them, each starred because it has no Loop 2. SkillForge's
+judge flags the failed replies that drive each skill rewrite, the
+rewrite is committed without an acceptance test, and every version stays
+in the scenario deployment; its support engineers review replies, not
+skill versions. AutoAgent's analyzer accepts revisions to one agent's
+tool and peer descriptions on an uncalibrated consistency judgment, and
+nothing leaves that agent's store.
 
 \textbf{{[}Auto × Human{]}} is the production-viable cell. Loop 1 fires
 at machine speed under an algorithmic criterion, and Loop 2 waits for a
 person before an edit propagates; the pairing reconciles the speed of
-automation with a reviewer's accountability. SkillForge is the clearest
-instance: an LLM judge gates each skill diff on Loop 1, and reviewers
-decide on Loop 2 whether it ships. CASCADE, Sierra Agent OS 2.0, and
-Cognition Devin are variants of the same pairing.
+automation with a reviewer's accountability. CASCADE, Sierra Agent OS
+2.0, and Cognition Devin occupy it: a human-and-agent consolidation
+gate, human-authored expert answers, and a reviewer's merge of a pull
+request each put a person on promotion.
 
-Seven second-pass systems promote across users, clients, teams, or
+Six second-pass systems promote across users, clients, teams, or
 repositories with no versioning or lineage on the promoted artifact, so
 they sit outside the strict audit: EvolveNet, Evo2Team, XRepoSkill,
-ShareMem, RASO, Spotify's recommendation loop, and Future AGI's prompt
+ShareMem, Spotify's recommendation loop, and Future AGI's prompt
 lifecycle. Were the audit to ask for a promotion mechanism and no
-governance property at all, six of them would enter, all landing in
+governance property at all, five of them would enter, all landing in
 {[}Auto × Auto{]} except Spotify's loop in {[}Auto × Human{]}, without
-opening a new cell; the seventh, Future AGI's prompt lifecycle, rests on
+opening a new cell; the sixth, Future AGI's prompt lifecycle, rests on
 T5 evidence alone and is not admitted under any rule (Section S2).
 
 \textbf{{[}None × Auto{]}} holds the governance-first prompts-as-code
@@ -1191,19 +1218,20 @@ Loop 2 gate
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-{[}Auto × Auto{]} & NanoResearch, SkillOpt, SkillRL, AlphaEvolve, ADAS,
-DGM, Voyager, SAGE, EvolveR, CoEvoSkills, AutoAgent, AutoManual & agent
-proposals from trajectories or failures & evaluator, verifier, or
-threshold & merge into a shared bank or archive & the same evaluator, on
-the shared bank \\
-{[}Auto × Human{]} & SkillForge, CASCADE, Sierra Agent OS 2.0, Cognition
-Devin & agent proposals & calibrated judge or outcome threshold &
-release to the team or product & reviewer, support engineer, or merge
-approval \\
+{[}Auto × Auto{]} & NanoResearch, SkillOpt, AlphaEvolve, ADAS, DGM,
+Voyager, SAGE, EvolveR, CoEvoSkills, AutoManual & agent proposals from
+trajectories or failures & evaluator, verifier, or threshold & merge
+into a shared bank or archive & the same evaluator, on the shared
+bank \\
+{[}Auto × Human{]} & CASCADE, Sierra Agent OS 2.0, Cognition Devin &
+agent proposals & calibrated judge or outcome threshold & release to the
+team or product & reviewer, domain expert, or merge approval \\
 {[}Auto × None{]} & Letta Context Repositories; Mem0 Platform, TOKI,
-Learning on the Job & agent (Letta: sleep-time subagents) & automatic
-write gate & Letta: unconditional git push to shared memory; the others:
-none & none \\
+Learning on the Job, RASO; SkillForge, AutoAgent & agent (Letta:
+sleep-time subagents) & automatic write gate (RASO: validation-set
+acceptance; SkillForge: a calibrated judge that flags failed replies;
+AutoAgent: an uncalibrated consistency judgment) & Letta: unconditional
+git push to shared memory; the others: none & none \\
 {[}None × Auto{]} & Braintrust, LangSmith Hub, Vellum, Governed
 Capability Evolution; EDDOps, with a sign-off after the threshold &
 engineers & none (no failure-driven loop) & evaluation-gated release &
@@ -1266,9 +1294,10 @@ and (d) rollback. The closest approaches split them among themselves:
   Appendix XII. It has no cross-organization promotion, no access
   control, and no rollback.
 \item
-  \textbf{SkillForge} has (a), a partial (b) that is cross-team within
-  one enterprise, and a partial (c) through VFS commits; (d) is
-  undocumented in the public report.
+  \textbf{SkillForge} has (a) and a partial (c) through VFS commits, but
+  no (b): each rewritten skill version stays in the scenario deployment
+  that produced it, and its support engineers review replies, not skill
+  versions; (d) is undocumented in the public report.
 \item
   \textbf{Sierra Agent OS 2.0} has a partial (a). Its cross-organization
   promotion is claimed in vendor documentation only and not counted as
@@ -1749,8 +1778,8 @@ small model.
 \textbf{SkillClaw} \cite{ma2026skillclaw} and \textbf{FederatedSkill}
 \cite{yang2026federatedskill} are the two systems of these walkthroughs
 whose Loop 2 crosses users rather than tasks or agents; in the full
-corpus, EvolveNet, ShareMem, XRepoSkill, and RASO also promote across
-users, clients, or repositories, each inside one operator (Section VII).
+corpus, EvolveNet, ShareMem, and XRepoSkill also promote across users,
+clients, or repositories, each inside one operator (Section VII).
 SkillClaw aggregates many users' trajectories, turns recurring
 behavioral patterns into skill-set updates, and synchronizes the updated
 skills across users; its evaluation runs a day-night cycle in which
@@ -1943,10 +1972,10 @@ Evidence
 No public system combines (a) auto-gated Loop 1, (b) cross-organization
 promotion, (c) versioned lineage with role-based access control (RBAC),
 (d) rollback & \textbf{holds} & Across the 126 second-pass systems: no
-system demonstrates promotion across organizations, and EvolveNet and
-RASO have a partial (b) inside one operator (EvolveNet's clients are
-benchmark partitions, ``organizations'' only in motivation; RASO draws
-on a public corpus as its source); MemClaw is single-tenant in its
+system demonstrates promotion across organizations, and EvolveNet has a
+partial (b) inside one operator (its clients are benchmark partitions,
+``organizations'' only in motivation), while RASO, which retrieves from
+a public corpus, promotes nothing; MemClaw is single-tenant in its
 evaluation, and Buildrix is an open community hub with no gate; (c)
 appears as lineage without RBAC everywhere (EDDOps, Agentic
 Configuration Management (ACM), MemClaw, Letta, Mem0 history) and as
@@ -1971,12 +2000,13 @@ on (b) and (d) by different systems and closed on none (Table IX-1). \\
 ``no member of the Section VIII research families provides (d), and only
 FederatedSkill provides even a partial (b)'' & \textbf{revised} & (d)
 appears in EvolveNet (round rollback), SkillSmith and SkillAudit
-(edit-level rollback inside one agent), Growing Harness and WDA
-(rollback within an optimization run), and EvoUndo (recoverability as an
-admission test); EvolveNet and RASO provide a partial (b). Rollback
-appears inside single deployments and inside one federated round; no
-system rolls back a promotion that has crossed an organization boundary,
-because none makes such a promotion. \\
+(edit-level rollback inside one agent), Growing Harness, WDA, and
+Co-Harness (rollback within an optimization run; Co-Harness adds a
+partial (c), a versioned diff registry without access control), and
+EvoUndo (recoverability as an admission test); EvolveNet provides a
+partial (b). Rollback appears inside single deployments and inside one
+federated round; no system rolls back a promotion that has crossed an
+organization boundary, because none makes such a promotion. \\
 \end{longtable}
 }
 
@@ -2007,13 +2037,14 @@ registries: Azure API Center, agentic-community MCP Gateway \& Registry,
 TrueFoundry; Buildrix; the Anthropic skills repository; ACM), {[}Human ×
 None{]} (VerificAgent, SkillChain's second-stage reflection gate, Davis
 et al.~governance conversion), {[}Auto × None{]} (Letta's ungated push;
-Mem0 Platform, TOKI, Learning on the Job), {[}None × Auto{]} (Governed
-Capability Evolution; EDDOps, with a sign-off after the threshold),
-{[}None × None{]} (Official MCP Registry; Enoch's migration protocol;
-Continual Harness's unchecked self-edit; the revocation guard). Two
-cells hold every audit passer whose promotion has a gate, a third holds
-the governance-first platforms, Letta passes with no promotion gate, and
-the human-gated row holds only curation (Section VII). \\
+Mem0 Platform, TOKI, Learning on the Job, RASO), {[}None × Auto{]}
+(Governed Capability Evolution; EDDOps, with a sign-off after the
+threshold), {[}None × None{]} (Official MCP Registry; Enoch's migration
+protocol; Continual Harness's unchecked self-edit; the revocation
+guard). Two cells hold every audit passer whose promotion has a gate, a
+third holds the governance-first platforms, Letta passes with no
+promotion gate, and the human-gated row holds only curation (Section
+VII). \\
 ``{[}Human × Auto{]} is empty by engineering logic \ldots{} no published
 example exists'' & \textbf{holds} & No system in the full corpus puts a
 person on the local gate of a failure-driven loop and promotes by
@@ -2094,11 +2125,13 @@ systems, and ablation gains measured on different benchmarks are not
 comparable. The article does not make the claim. \\
 ChronoMem and rollback repair ``the first surveyed instances of the
 rollback envelope'' & \textbf{revised} & Memory rollback also appears in
-VerMem (soft-delete and restore operations), Mi-Memory (as a design),
-and Letta (git history), and checkpoint-rollback studies (2608.29381,
-2608.15939) show rollback unsafe. ChronoMem and rollback repair are
-among the first instances, and the checkpoint-rollback studies are the
-counter-evidence. \\
+Mi-Memory (as a design) and Letta (git history), and checkpoint-rollback
+studies (2608.29381, 2608.15939) show rollback unsafe. VerMem keeps
+prior versions and soft-deleted records but has no operation that
+reverses an edit; the ``Restore'' in its tool table moves episodic
+fragments of the current task back into context. ChronoMem and rollback
+repair are among the first instances, and the checkpoint-rollback
+studies are the counter-evidence. \\
 Cuadros ``only surveyed memory system with full provenance + versioning
 + correction'' & \textbf{holds} & The memory-governance systems of the
 second pass (TOKI, PPMF, TMA-NM, MemClaw, He \& Yu) each carry
@@ -2107,11 +2140,13 @@ auto-gated memory loops (Recuris, MemGuard, VerMem, Compiled Memory)
 carry no lineage. \\
 SkillOpt ``cleanest published instance'' / ``first to instantiate all
 four simultaneously'' & \textbf{sharpened} & SkillOpt-Lite (2607.03451)
-removes two of the four controls and matches or beats SkillOpt; VALVE,
-SkillSmith, and SkillAudit instantiate held-out gates with rollback.
-SkillOpt is the first system we found that instantiates all four, and
-its own follow-up shows that two of them are stabilizers rather than
-necessities (Section S5.3). \\
+removes two of the four controls and matches or beats SkillOpt; VALVE
+instantiates a held-out gate that rejects a candidate before commit and
+never reverts an accepted update, and SkillSmith and SkillAudit
+instantiate held-out gates with edit-level rollback. SkillOpt is the
+first system we found that instantiates all four, and its own follow-up
+shows that two of them are stabilizers rather than necessities (Section
+S5.3). \\
 FederatedSkill ``first \ldots{} federated aggregation \ldots{} first
 lineage record at the aggregator'' & \textbf{holds} & EvolveNet (August
 2026) postdates it and keeps no lineage record. \\
@@ -2141,12 +2176,14 @@ Evidence
 \endlastfoot
 ``production deployments sit at Stage 1 or 2; none reaches Stage 3'' &
 \textbf{sharpened} & Spotify (2609.30297) runs automated prompt and
-planning optimization gated by human launch and A/B metrics; SkillForge
-passes each skill diff through a judge that agrees with engineers more
-than nine times in ten, and support engineers decide whether it ships.
-Both are Stage 3 on Loop 1 with a human Loop 2: production deployments
-reach Stage 3 on the local loop only behind a human promotion gate
-(Section III). \\
+planning optimization gated by human launch and A/B metrics; this is
+Stage 3 on Loop 1 with a human Loop 2: production deployments reach
+Stage 3 on the local loop only behind a human promotion gate (Section
+III). SkillForge (2604.08618) stops short of it: a judge that agrees
+with experts more than nine times in ten flags the failed replies that
+drive each skill rewrite, but the rewrite is committed without an
+acceptance test, and support engineers review replies, not skill
+versions. \\
 No S1 system scores 5; ``no instruction system closes both loops'' &
 \textbf{holds} & On S1, n=15 and the maximum score is 4. Adoption
 studies point the same way: context files raise cost by more than 20\%
@@ -2169,17 +2206,23 @@ No S5 system scores 5; ``topology evolution is rare'' &
 \textbf{sharpened} & With MAE and Memento-Skills corrected to 4 (Section
 S6.7), S5 has no score of 5 in either pass. Gated topology evolution
 exists: TOCOMAS keeps only candidates that satisfy structural
-invariants; Evo2Team promotes across teams; OptiMAS, AgentGrad, and
-HarnessForge update S5 under evaluation. Topology evolution is rare and,
-where it exists, gated by evaluation alone except in TOCOMAS. \\
+invariants; Evo2Team promotes across teams; AgentGrad and HarnessForge
+update S5 under an evaluation gate. OptiMAS updates S5 through an LLM
+optimizer that reads a running validation score and reverts an edit only
+when its own analysis refutes it, with no keep-if-better test (its
+Algorithm 2 returns the last configuration, and the only programmatic
+check is structural validity). Topology evolution is rare and, where it
+exists, gated by evaluation alone except in TOCOMAS, which adds a
+structural invariant, and OptiMAS, where the evaluation informs the edit
+rather than gating it. \\
 ``no system matures all six at once'' & \textbf{holds} & None of the 126
 second-pass systems scores 5 on any substrate. \\
 ``Failure-triggered memory is rare in production'' & \textbf{holds} &
 One field report exists (SIx Harness, N=1, self-reported); Letta's
 dreaming writes from conversation history, not from failures. \\
 ``Cross-customer skill promotion is nearly absent'' & \textbf{holds} &
-ShareMem, EvolveNet, XRepoSkill, and RASO promote across users, clients,
-or repositories inside one operator; none promotes across customers or
+ShareMem, EvolveNet, and XRepoSkill promote across users, clients, or
+repositories inside one operator; none promotes across customers or
 organizations with evidence. \\
 ``Memory versioning is mostly unsolved outside Cuadros et al.~and
 ChronoMem'' & \textbf{revised} & The evidence is the same as for the
@@ -2195,12 +2238,13 @@ remain the exception. \\
 Receiving-side evaluation exists: ShareMem (evaluation tasks belong to a
 different user), XRepoSkill (independent verification in ≥2
 repositories), Evo2Team (target-side confirmation; 4 of 22 transfers
-still fail on new graphs), VACE (candidate evaluated with the receiving
-model fixed). EvolveNet gates the merge on a server-side held-out slice
-but runs no check at the receiving client, and Federated Agent
-Optimization (2610.01195) proposes a receiving-client gate without
-implementing it. Receiving-side evaluation at promotion is rare, not
-absent (Section VI). \\
+still fail on new graphs). VACE's held-out gate compares two harnesses
+on the next checkpoint of the same training run, so it is a Loop-1 check
+rather than receiving-side evaluation and is not counted here. EvolveNet
+gates the merge on a server-side held-out slice but runs no check at the
+receiving client, and Federated Agent Optimization (2610.01195) proposes
+a receiving-client gate without implementing it. Receiving-side
+evaluation at promotion is rare, not absent (Section VI). \\
 Research full-auto cluster: ``enterprise governance is uniformly
 absent'' & \textbf{holds} & No second-pass {[}Auto × Auto{]} system
 reports RBAC or audited promotion. \\
@@ -2275,23 +2319,28 @@ First & An {[}Auto × Auto{]} system whose gate estimates the loss change
 per edit should run on a C1 signal or a simulated C2 environment; one
 that works on a C4 signal should prune proposals rather than estimate &
 \textbf{holds} & Before the second pass: DGM, Voyager, AlphaEvolve,
-SkillOpt, SkillRL, SAGE, EvolveR, CoEvoSkills, AutoAgent, AutoManual (C1
-or simulated C2); NanoResearch (semantic merge, C4) and CORAL
-(heartbeat, C4) prune. Second pass: EvolveNet, Evo2Team, XRepoSkill (C1
-code or benchmark signals); ShareMem (C2, Mind2Web); RASO (target
-execution feedback, C1/C2); Letta (no gate). \\
+SkillOpt, SAGE, EvolveR, CoEvoSkills (C1 or simulated C2); NanoResearch
+(semantic merge, C4) and CORAL (heartbeat, C4) prune. AutoManual
+estimates nothing: its Builder reads each episode's trajectory and
+binary outcome and writes or rewrites rules by its own judgment, with no
+test of the edit, and its Consolidator merges and deletes rules once
+they exceed twelve, so it decides by a model judge over a simulated
+outcome (C3 over C2) and prunes, and the claim does not bear on it.
+SkillRL and AutoAgent no longer sit in {[}Auto × Auto{]} (Section S6.7).
+Second pass: EvolveNet, Evo2Team, XRepoSkill (C1 code or benchmark
+signals); ShareMem (C2, Mind2Web); Letta (no gate). \\
 Second & {[}Auto × Human{]} should hold only C2 and C3 systems, because
 the human on Loop 2 substitutes for the exact signal that Loop 1 lacks &
-\textbf{holds} & SkillForge (C3 judge, human Loop 2), CASCADE (C3),
-Sierra (C2/C3), Devin (C2 merge outcome), Spotify (C2 A/B behind human
-launch). No C1 system occupies the cell. \\
+\textbf{holds} & CASCADE (C3), Sierra (C2/C3), Devin (C2 merge outcome),
+Spotify (C2 A/B behind human launch). No C1 system occupies the cell;
+SkillForge, also C3, promotes nothing and sits in {[}Auto × None{]}. \\
 Third & No scaffold system should yet calibrate a judged gate under the
 reflexive condition & \textbf{sharpened} & Three scaffold systems report
-calibration: SkillForge (\textgreater90\% agreement), SkillChain (κ
-0.72--0.91), and SkillCoach (trajectory-filter consistency 82→96\%
-against human gold); none calibrates a judge that is itself being
-edited. On the weight side, no method that co-evolves a rubric or judge
-reports agreement with people (Section S6.6). \\
+calibration: SkillForge (\textgreater90\% agreement), SkillChain
+(\(\kappa\) 0.72 to 0.91), and SkillCoach (trajectory-filter consistency
+82→96\% against human gold); none calibrates a judge that is itself
+being edited. On the weight side, no method that co-evolves a rubric or
+judge reports agreement with people (Section S6.6). \\
 \end{longtable}
 }
 
@@ -2369,14 +2418,14 @@ corpus}\label{s6.7-recount-of-the-full-corpus}
 The full corpus holds 256 unique systems, 130 from the first pass and
 126 from the second; 204 form the core corpus and 52 the contrast
 corpus. None of the 126 second-pass systems scores 5 on any substrate.
-The composite two-loop audit passes 14 research systems and 3 industry
+The composite two-loop audit passes 11 research systems and 3 industry
 exemplars: Sierra Agent OS 2.0, Cognition Devin, and Letta's Context
 Repositories, whose shared-memory push carries git lineage but no gate.
-The 7 second-pass systems that promote across contexts with no
+The 6 second-pass systems that promote across contexts with no
 versioning or lineage on the promoted artifact are EvolveNet, Evo2Team,
-XRepoSkill, ShareMem, RASO, Spotify, and Future AGI. Of these, EvolveNet
-alone carries rollback and so enters under the governance relaxation of
-Section S2; the first six enter only if the audit drops its governance
+XRepoSkill, ShareMem, Spotify, and Future AGI. Of these, EvolveNet alone
+carries rollback and so enters under the governance relaxation of
+Section S2; the first five enter only if the audit drops its governance
 requirement altogether; Future AGI's evidence is T5 only, so it enters
 not at all.
 
@@ -2403,6 +2452,30 @@ Loop-2 label now records its automated admission scan beside the human
 approval, and the field study's Loop-2 label records that maintainers
 merge. No score changed; the cells of Section VII and Section S4.2.1
 follow the re-coded labels.
+
+Five more rows were corrected on 2026-10-08 after a reading of the full
+texts against the same definition. RASO's Loop-2 label moved from Auto
+to None: it accepts a rewritten skill only if the rewrite beats the
+incumbent on a validation split, but the optimized skill never leaves
+the task, and its use of a public corpus is inbound retrieval, not a
+promotion. Three first-pass systems leave the composite audit.
+SkillForge moves from {[}Auto × Human{]} to {[}Auto × None{]}: its judge
+flags the failed replies that drive each skill rewrite, the rewrite is
+committed without an acceptance test, its support engineers review
+replies and not skill versions, and no skill version leaves the scenario
+deployment. SkillRL's Loop-1 label is None: a per-category success rate
+below 0.4 triggers new skill proposals, and the skill bank takes each
+one as an unconditional union, a step that runs unchecked. AutoAgent
+moves from {[}Auto × Auto{]} to {[}Auto × None{]}: its analyzer accepts
+text revisions on an uncalibrated consistency judgment, and each
+revision stays, unversioned, in one agent's own store. Co-Harness's
+governance entry now records a partial (c), its versioned diff registry,
+and (d) within one run, and its signal class records C1 for the held-out
+gate beside C2 for attribution. The audit therefore passes 11 research
+systems rather than 14, {[}Auto × Auto{]} holds ten research systems
+rather than twelve, the {[}Auto × Human{]} cell of Section S4.2.1 holds
+CASCADE, Sierra Agent OS 2.0, and Cognition Devin, and six systems
+rather than seven promote without lineage. No score changed.
 
 The recount runs over all substrate-level rows and gives the counts of
 Table V-2; its last line is the first pass alone (systems / core /
@@ -2634,14 +2707,14 @@ benchmark partitions, and note that a program edit can itself encode
 client information \cite{nie2026evolvenet}. The registries supply the
 remaining properties without an inner loop: EDDOps promotes through
 automatic evaluation thresholds and human sign-off with supersession
-lineage and emergency rollback, and states that it does not address
-role-based access control \cite{kang2026registry}; Agentic
-Configuration Management keeps immutable revisions and baselines that
-enable rollback \cite{quessadavial2026acm}; Governed Capability
-Evolution gates activation and rolls back on monitoring, recovering in
-72.4\% of drift cases in its proof of concept \cite{qin2026governed};
-and the MCP control planes add role-based access and quarantine without
-an evaluation gate
+lineage and emergency rollback, and does not implement role-based access
+control \cite{kang2026registry}; Agentic Configuration Management keeps
+immutable revisions and baselines that enable rollback
+\cite{quessadavial2026acm}; Governed Capability Evolution gates
+activation and rolls back on monitoring, recovering in 72.4\% of drift
+cases in its proof of concept \cite{qin2026governed}; and the MCP
+control planes add role-based access and quarantine without an
+evaluation gate
 \cite{agenticcommunity2026mcpgateway, microsoft2026apicentermcp, truefoundry2026mcpgateway}.
 Letta's Context Repositories commit every memory edit to git and push
 shared memory across agents without a gate \cite{letta2026memfs}.

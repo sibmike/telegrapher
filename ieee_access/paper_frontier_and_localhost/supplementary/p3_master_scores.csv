@@ -31,7 +31,7 @@ S3_Memory,Reflexion,4,2023,arXiv:2303.11366,Research,+8% absolute from self-refl
 S3_Memory,MemGPT / Letta,3,2023,arXiv:2310.08560,Research,Hierarchical paging; cross-session
 S3_Memory,Generative Agents,3,2023,arXiv:2304.03442,Research,Reflection synthesis; importance scoring
 S3_Memory,A-MEM,3,2025,NeurIPS 2025,Research,Atomic notes + linking; cross-session
-S3_Memory,Mem0,3,2025,arXiv,Production-OSS,93.4% LongMemEval; 6787 tokens/query
+S3_Memory,Mem0,3,2025,arXiv,Production-OSS,LOCOMO overall LLM-as-a-Judge 66.88 (Mem0) / 68.44 (Mem0^g); ~7k memory tokens per conversation vs ~26k full context; p95 latency 91% lower and >90% token cost saved vs full context; +26% relative J over OpenAI memory (arXiv:2504.19413)
 S3_Memory,Zep / Graphiti,3,2025,arXiv,Production,94.8% DMR; +18.5% LongMemEval
 S3_Memory,LangGraph Long-Term Memory,3,2024,langchain.com,Production,Store API; semantic search
 S3_Memory,LangChain Primitives (legacy),1,2023,langchain.com,Production-Legacy,Within-session only
@@ -131,11 +131,11 @@ INTEGRATED,Sakana AI Scientist,3,2024,arXiv:2408.06292,Research,SHALLOW-MED
 INTEGRATED,CaptainAgent,2.5,2024,arXiv:2405.19425,Research,SHALLOW
 INTEGRATED,Plan4MC,2.5,2023,GitHub/arXiv,Research,SHALLOW
 INTEGRATED,OpenCore,4,2025,github.com/sibmike/opencore,Open-Source,4-layer fork (CORE/STACK/PROJECT/USER); 10 practices + dream→delta→PR; PR-gated promotion; explicit two-loop README; MIT; multi-tool agnostic
-INTEGRATED,SkillRL,5,2026,arXiv:2602.08234,Research,Recursive skill-augmented RL; teacher distillation; SR<0.4 auto gate per category; +15.3% over baselines
+INTEGRATED,SkillRL,5,2026,arXiv:2602.08234,Research,Recursive skill-augmented RL; teacher distillation; SR<0.4 per-category trigger for teacher skill proposals; unconditional SkillBank union (no acceptance test); +15.3% over baselines
 INTEGRATED,AlphaEvolve,4,2025,arXiv:2506.13131,Production-Research,Gemini ensemble + cascade evaluator; MAP-Elites archive; Borg +0.7% worldwide compute; Gemini kernel +23%; FlashAttention +32.5%; Strassen-beating 4×4 complex matmul at 48 mult
-INTEGRATED,Darwin Gödel Machine,4,2025,arXiv:2505.22954,Research,Recursive self-modifying code + growing archive; SWE-bench 20%→50%; Polyglot 14.2%→30.7%; human sandbox oversight
+INTEGRATED,Darwin Gödel Machine,4,2025,arXiv:2505.22954,Research,Recursive self-modifying code + growing archive; SWE-bench 20%→50%; Polyglot 14.2%→30.7%; sandboxed self-modification kept if it compiles and still edits code; score weights parent selection; human monitoring and reviewable lineage but no human gate
 INTEGRATED,ADAS / Meta Agent Search,4,2024,arXiv:2408.08435,Research,Meta agent writes new agent code in Python; ever-growing archive; cross-domain transfer
-INTEGRATED,SkillForge,4,2026,arXiv:2604.08618,Production,Alibaba Cloud tech support; LLM-judge >90% human-agreement + VFS version commits + human review; SkillsBench 86 tasks 11 domains
+INTEGRATED,SkillForge,4,2026,arXiv:2604.08618,Production,Alibaba Cloud tech support; LLM-judge >90% human-agreement + VFS version commits + human review of replies; SkillsBench 86 tasks 11 domains
 INTEGRATED,Sierra Agent OS 2.0,3,2025,sierra.ai/blog/agent-os-2-0,Production,Insights 2.0 + Expert Answers + ADP unified data; GitHub-style Workspaces; hybrid AI+human gate
 INTEGRATED,Cognition Devin,3,2024,cognition.ai,Production,Dynamic re-planning + persisted tools/scripts; 67% PR merge rate; human gate
 INTEGRATED,SkillOS,3,2026,SemanticScholar:2653e4c7,Research,Learned skill curator over streaming task experience; cross-domain skill generalization
