@@ -1128,7 +1128,12 @@ rewrite is committed without an acceptance test, and every version stays
 in the scenario deployment; its support engineers review replies, not
 skill versions. AutoAgent's analyzer accepts revisions to one agent's
 tool and peer descriptions on an uncalibrated consistency judgment, and
-nothing leaves that agent's store.
+nothing leaves that agent's store. VACE belongs here too although its
+gate is a held-out check: it compares a candidate harness with the
+incumbent against the freshly trained checkpoint of the same run, so the
+edit is made and kept inside one training run \cite{qi2026vace}; and
+RASO's public corpus is read-only, an inbound source rather than a
+destination \cite{chu2026raso}.
 
 \textbf{{[}Auto × Human{]}} is the production-viable cell. Loop 1 fires
 at machine speed under an algorithmic criterion, and Loop 2 waits for a
