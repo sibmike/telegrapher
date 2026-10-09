@@ -21,11 +21,11 @@ OUT = os.path.join(HERE, "paper_frontier_and_localhost.md")
 
 def rd(p): return io.open(p, encoding="utf-8").read()
 
-BODY = ["I_III.md", "IV_feedback_signal_classes.md", "V_method.md", "VI_findings.md", "VII_design_space.md",
-        "VIII_families.md", "IX_missing_architecture.md", "X_failure_surface.md", "XI_open_problems_conclusion.md"]
+BODY = ["I_II_intro_loop.md", "III_method.md", "IV_local_findings.md", "V_feedback_signal_classes.md", "VI_promotion.md",
+        "VII_failure_surface.md", "VIII_missing_architecture.md", "IX_families.md", "X_open_problems_conclusion.md"]
 APPS = ["appA_formal.md", "appB_gates.md"]
 ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI"]
-SEC_IDS = dict(zip(ROMAN, ["intro", "why", "loop", "signal", "method", "findings", "design", "families", "gap", "failure", "open"]))
+SEC_IDS = dict(zip(ROMAN, ["intro", "loop", "method", "findings", "signal", "design", "failure", "gap", "families", "open"]))
 ARABIC = {r: str(i + 1) for i, r in enumerate(ROMAN)}
 SUPP = {"1": "scores", "2": "data", "3": "mechanism", "4": "contrast", "5": "families", "6": "audit", "7": "related"}
 SUPP_ORDER = ["2", "3", "4", "5", "6", "7", "1"]
@@ -71,7 +71,7 @@ def lifted(t):
     t = re.sub(r"Section S(\d)((?:\.\d+)*)", lambda m: "Appendix REF(app:%s%s)" % (SUPP[m.group(1)], m.group(2).replace(".", "-")), t)
     t = t.replace("Appendix XII-D of the main text", "Appendix REF(app:formal)")
     t = t.replace("the correspondence note of the formal appendix", "the correspondence note of Appendix REF(app:formal)")
-    t = t.replace("Appendix XIII", "Appendix REF(app:gates)").replace("Appendix XII", "Appendix REF(app:formal)")
+    t = t.replace("Appendix XII", "Appendix REF(app:gates)").replace("Appendix XI", "Appendix REF(app:formal)")
     t = re.sub(r"Sections ([IVX]+)–([IVX]+)",
                lambda m: "Sections REF(sec:%s)–REF(sec:%s)" % (SEC_IDS.get(m.group(1), m.group(1)), SEC_IDS.get(m.group(2), m.group(2))), t)
     t = re.sub(r"Sections ([IVX]+) and ([IVX]+)\b",

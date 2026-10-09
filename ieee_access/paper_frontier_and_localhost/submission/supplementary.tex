@@ -90,34 +90,36 @@ table; S2--S5 carry the verification material behind the survey (the
 data appendix, the mechanism stack, the contrast set and matrix
 membership, and the walkthrough of the convergent research families); S6
 audits every absolute claim of the first-pass draft against the full
-corpus and holds the rubric-reward comparison that Section IV of the
-main text summarizes; S7 is the extended related work, organized by the
+corpus and holds the rubric-reward comparison that Section V of the main
+text summarizes; S7 is the extended related work, organized by the
 article's four design commitments. Section numbers in the form ``Section
 N'' refer to the main article.
 
-\textbf{Key to the labels used throughout.} The substrate codes S1 to S6
-name the six scaffold substrates of the main article (S1 instructions,
-S2 skills, S3 memory, S4 tools, S5 orchestration, S6 governance) and are
-distinct from the section labels S1 to S7 of this document; INT marks a
-row scored across several substrates. C1 to C4 are the four
-feedback-signal classes of Section IV: exact, observable outcome,
-judged, and delayed and sparse. A system's two gates are written {[}Loop
-1 × Loop 2{]} with the values Auto, Human, or None; Auto+Human marks a
-two-stage local gate, an algorithmic check followed by a reviewer.
-Stages 1 to 3 are the three stages of scaffold maintenance of Section
-III: patchwork, random artifact search, artifact-layer descent. Scopes
-nest USER within PROJECT within STACK within TENANT within CORE, where a
-tenant is one organization or customer; promotion that reaches CORE
-crosses tenants. Properties (a) to (d) are the four properties of the
-missing architecture in Section IX, and the five conditions are those of
-Section III. A system named without a citation is a row of the score
-table in Section S1, which gives its source.
+\textbf{Key to the labels used throughout.} Loop 1 and Loop 2 are the
+local loop and the promotion loop of the main article. The substrate
+codes S1 to S6 name the six scaffold substrates of the main article (S1
+instructions, S2 skills, S3 memory, S4 tools, S5 orchestration, S6
+governance) and are distinct from the section labels S1 to S7 of this
+document; INT marks a row scored across several substrates. C1 to C4 are
+the four feedback-signal classes of Section V: exact, observable
+outcome, judged, and delayed and sparse. A system's two gates are
+written {[}Loop 1 × Loop 2{]} with the values Auto, Human, or None;
+Auto+Human marks a two-stage local gate, an algorithmic check followed
+by a reviewer. Stages 1 to 3 are the three stages of scaffold
+maintenance of Section II: patchwork, random artifact search,
+artifact-layer descent. Scopes nest USER within PROJECT within STACK
+within TENANT within CORE, where a tenant is one organization or
+customer; promotion that reaches CORE crosses tenants. Properties (a) to
+(d) are the four properties of the missing architecture in Section VIII,
+and the five conditions are those of Section II. A system named without
+a citation is a row of the score table in Section S1, which gives its
+source.
 
 \section{S1. Full score table}\label{s1.-full-score-table}
 
 Every scored (substrate, system) row of the corpus: 130 systems scored
 by May 2026 and 126 added by the October 2026 sweep. Scores follow the
-0--5 rubric of the main text (Table 3); Loop 1 / Loop 2 gate types and
+0--5 rubric of the main text (Table 1); Loop 1 / Loop 2 gate types and
 signal classes are recorded for the October rows (the gate pairs of the
 first-pass systems audited under the composite criterion are in the
 matrix of Section S4.2.1). Substrate codes: INT integrated, S1
@@ -664,7 +666,7 @@ rows; \texttt{p3\_refresh\_2026-10.csv} holds the 126 second-pass
 systems in 133 rows, four of which re-audit a first-pass system and
 replace its row rather than add a system. The corpus therefore has 140 +
 133 − 4 = 269 substrate-level rows. A system may be scored on several
-substrates, so rows outnumber systems, and Table 4 of the main article
+substrates, so rows outnumber systems, and Table 2 of the main article
 counts rows.
 
 \textbf{Two passes.} Every system in either pass is scored against one
@@ -676,8 +678,8 @@ skill lifecycle; harness and context optimization; agent memory
 governance; prompt-as-code and evaluation-gated promotion; federated or
 multi-tenant skill sharing; and multi-agent topology evolution. Some
 were reached instead through the citations of the first-pass systems
-closest to the missing architecture of Section IX. The second pass was a
-systematic search of the field, not only a search around the known
+closest to the missing architecture of Section VIII. The second pass was
+a systematic search of the field, not only a search around the known
 systems, so the per-substrate statistics pool both passes.
 
 \textbf{Inclusion and exclusion.} A system enters the corpus if it
@@ -792,7 +794,7 @@ notes}\label{s3.-the-mechanism-stack-and-continual-learning-notes}
 
 \subsection{S3.1 The mechanism stack}\label{s3.1-the-mechanism-stack}
 
-The update rule of Section III expands into six operations that every
+The update rule of Section II expands into six operations that every
 patch-local system performs, whether by explicit engineering or by
 accident.
 
@@ -883,7 +885,7 @@ corpus)}\label{s4.-contrast-set-matrix-membership-and-closest-approaches-may-202
 
 The tables in this section describe the first-pass corpus, which closed
 in May 2026; the second-pass systems that occupy a cell of the Section
-VII matrix are named in the cell-by-cell discussion that follows the
+VI matrix are named in the cell-by-cell discussion that follows the
 matrix.
 
 \subsection{S4.1 Contrast set}\label{s4.1-contrast-set}
@@ -933,7 +935,7 @@ ReAct \cite{yao2023react}† & 2023 & No persistent artifact &
 Thought-act-observe loop is intra-session \\
 TextGrad \cite{yuksekgonul2024textgrad} & 2024 & No artifact distinct
 from optimizer state & Textual-gradient optimization; SkillOpt
-\cite{yang2026skillopt} (Section VI; Section S5) adds the persistent
+\cite{yang2026skillopt} (Section IV; Section S5) adds the persistent
 \texttt{best\_skill.md}, held-out validation gate, rejected-edit memory,
 and textual learning-rate schedule that TextGrad lacks. \\
 OPRO, Toolformer & 2023 & No persistent deployment artifact &
@@ -942,14 +944,14 @@ Aider conventions, Lovable knowledge & 2024 & No feedback loop &
 Engineer-authored convention files \\
 AGENTS.md (as a standard) & 2025 & No feedback loop & Cross-vendor
 artifact format as a workspace file; adoption measured, adaptation
-absent (Section VI). The specification's governance under the AAIF is a
+absent (Section IV). The specification's governance under the AAIF is a
 separate S6 entry, ``AGENTS.md / AAIF'' \\
 LangChain Skills, HuggingFace Agent Skills, CrewAI Skills & 2025--2026 &
 No feedback loop & Curated skill packs without failure-triggered
 update \\
 Tran \& Kiela \cite{tran2026singleagent} & 2026 & Not a system &
 Single-agent baselines match or beat multi-agent under matched
-thinking-token budgets; constrains S5 claims (see Section VI) \\
+thinking-token budgets; constrains S5 claims (see Section IV) \\
 \end{longtable}
 }
 
@@ -991,7 +993,7 @@ persistence \\
 MemGPT & 2023 & No Loop 2 & Virtual-context management per agent \\
 DSPy & 2023 & No artifact distinct from optimizer state &
 Prompt-template optimization; SkillOpt \cite{yang2026skillopt} (Section
-VI; Section S5) realizes the artifact-bearing form. \\
+IV; Section S5) realizes the artifact-bearing form. \\
 MetaGen† & 2026 & No Loop 2; no cross-session persistence & Role pool
 dynamic within single inference call \\
 MAE (Multi-Agent Evolve) & 2025 & No Loop 2 & Co-evolution within
@@ -1040,9 +1042,9 @@ approaches}\label{s4.2-matrix-membership-and-closest-approaches}
 \subsubsection{S4.2.1 Two-loop matrix: cell-by-cell
 discussion}\label{s4.2.1-two-loop-matrix-cell-by-cell-discussion}
 
-Both axes record who decides, as Section III defines: a gate is Auto
-when a program applies a check, Human when a person decides, and None
-when the step is absent or runs unchecked. An engineer-authored or
+Both axes record who decides, as Section II defines: a gate is Auto when
+a program applies a check, Human when a person decides, and None when
+the step is absent or runs unchecked. An engineer-authored or
 registrant-supplied artifact with no failure trigger therefore has Loop
 1 None in both passes, and who supplies each candidate is listed
 separately in the occupant table at the end of this section.
@@ -1084,7 +1086,7 @@ The matrix places the first-pass systems audited under the composite
 criterion, with SkillOpt, and the contrast entries marked with an
 asterisk. Every matrix entry that passes the audit sits in {[}Auto ×
 Auto{]} or {[}Auto × Human{]}: the ten research systems of the first
-cell, with CASCADE, are the eleven research systems of Section V, and
+cell, with CASCADE, are the eleven research systems of Section III, and
 Sierra Agent OS 2.0 and Cognition Devin are two of its three industry
 exemplars. The third exemplar, Letta's Context Repositories, is a
 second-pass system.
@@ -1110,7 +1112,7 @@ its support engineers review replies, not skill versions.
 COSPLAY and Cuadros et al., which are first-pass rows, and PACE, CORAL,
 GEPA, Meta-Harness, MOSS, and RCL, which were classified from their
 papers after the first pass closed, carry no composite audit, so they
-are neither placed in the matrix nor counted in Section V. Second-pass
+are neither placed in the matrix nor counted in Section III. Second-pass
 systems record their gate pairs in the released score table, and the
 paragraphs below name those that occupy a cell.
 
@@ -1125,7 +1127,7 @@ because everything is. One audit passer sits here: Letta's Context
 Repositories push shared memory across agents automatically, with git
 lineage and no evaluation of any kind, so the composite audit admits
 them on lineage and the matrix records a promotion that nothing decides
-(Section VII). Mem0 Platform, TOKI, Learning on the Job, and RASO sit
+(Section VI). Mem0 Platform, TOKI, Learning on the Job, and RASO sit
 here with no promotion at all; RASO retrieves skills from a read-only
 public corpus, which is inbound retrieval rather than promotion
 \cite{chu2026raso}. One first-pass system joins them, starred because
@@ -1180,9 +1182,9 @@ approves its use, which is a promotion gate on a registrant-supplied
 artifact. They sit in \textbf{{[}None × Human{]}} with the Anthropic
 skills repository and Agentic Configuration Management, whose lifecycle
 states a governance role assigns, and the five public skill repositories
-of the field study (Section VII) show the same shape in practice.
-Enoch's checkpoint-and-validate protocol moves one agent's state between
-hosts and is neither loop. The released table records these re-codings
+of the field study (Section VI) show the same shape in practice. Enoch's
+checkpoint-and-validate protocol moves one agent's state between hosts
+and is neither loop. The released table records these re-codings
 (Section S6.7).
 
 \textbf{{[}Human × None{]}} is the curation cell, also filled only from
@@ -1191,7 +1193,7 @@ agent drafts, a person fact-checks, and the result is frozen; in
 SkillChain a judge filters the candidate edits and a person decides, at
 a reflection gate, which refined skills are deployed; in the Davis et
 al.~case study one engineer both writes and accepts the governance
-mechanisms that failures call for (Section VII). Curation stays
+mechanisms that failures call for (Section VI). Curation stays
 patch-local, rather than collapsing into an engineer editing a
 configuration file, because the candidate answers a failure and a person
 decides whether it stays.
@@ -1261,7 +1263,7 @@ al.) & a person & none & none \\
 scaffold
 optimization}\label{s4.2.2-closest-approaches-to-governed-cross-tenant-scaffold-optimization}
 
-Section IX defines the four properties: (a) an auto-gated Loop 1, (b)
+Section VIII defines the four properties: (a) an auto-gated Loop 1, (b)
 cross-organization promotion, (c) versioned lineage with access control,
 and (d) rollback. The closest approaches split them among themselves:
 
@@ -1300,7 +1302,7 @@ and (d) rollback. The closest approaches split them among themselves:
   \textbf{Meta-Harness} \cite{lee2026metaharness} has (a) over the
   harness (substrate S5), with a filesystem of candidates that records
   credit assignment and serves as the accumulated history \(H_t\) of
-  Appendix XII. It has no cross-organization promotion, no access
+  Appendix XI. It has no cross-organization promotion, no access
   control, and no rollback.
 \item
   \textbf{SkillForge} has no (a), since its calibrated judge selects
@@ -1311,12 +1313,12 @@ and (d) rollback. The closest approaches split them among themselves:
 \item
   \textbf{Sierra Agent OS 2.0} has a partial (a). Its cross-organization
   promotion is claimed in vendor documentation only and not counted as
-  evidence under the tier rule of Section V, and its GitHub-style
+  evidence under the tier rule of Section III, and its GitHub-style
   Workspaces give some lineage but not access control with rollback in
   the strict sense.
 \item
   \textbf{FederatedSkill} \cite{yang2026federatedskill} has (a) and,
-  with EvolveNet (Table 7 of the main article), the strongest partial
+  with EvolveNet (Table 6 of the main article), the strongest partial
   (b) among the surveyed systems: heterogeneous clients, each a
   backbone-plus-harness profile under one federation operator, exchange
   semantic skill diffs, and a server-side evolution agent applies,
@@ -1350,19 +1352,19 @@ feedback-signal class, not on the application domain: safety-critical
 domains such as medical decision support, legal advice, and financial
 advice, where a reviewer's gate on promotion is a design feature rather
 than a defect, are judged or delayed domains with high stakes. Section
-IX gives the argument class by class.
+VIII gives the argument class by class.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \section{S5. The convergent research families, system by
 system}\label{s5.-the-convergent-research-families-system-by-system}
 
-This appendix walks the convergent research families of Section VIII
+This appendix walks the convergent research families of Section IX
 system by system, at the level of mechanism, so that each conclusion of
 that section can be checked against what the systems do. The
 walkthroughs were written before the second pass and updated where the
 audit of Section S6 revised a claim; the members the second pass adds to
-each family are cited in Section VIII and appear in Section S1.
+each family are cited in Section IX and appear in Section S1.
 
 \subsection{S5.1 The convergent
 landscape}\label{s5.1-the-convergent-landscape}
@@ -1377,26 +1379,26 @@ Meta-Harness, AHE, MOSS, CANTANTE, and Ong et al.~from harness
 engineering; MOCHA and Ratchet from skill-deployment constraints; ICT,
 Combee, CORAL, and PACE from cross-task, multi-agent, and production
 deployment. Each instantiates a different subset of the five conditions
-of Section III, and each exposes a different gap.
+of Section II, and each exposes a different gap.
 
-By substrate (Section V), GEPA and RCL work on the prompt and context
+By substrate (Section III), GEPA and RCL work on the prompt and context
 layer (S1--S2); the harness family on orchestration (S5), with MOSS
 reaching into source code (S2+S5); MOCHA and Ratchet on skills under
 deployment constraints (S2); the transfer family on integrated
 memory-plus-orchestration stacks (S3+S5); and SkillOpt on an integrated
 stack led by S2.
 
-No member of any family combines the four properties of Section IX: (a)
-auto-gated Loop 1, (b) cross-organizational Loop 2, (c) versioned
+No member of any family combines the four properties of Section VIII:
+(a) auto-gated Loop 1, (b) cross-organizational Loop 2, (c) versioned
 lineage with role-based access control (RBAC), and (d) rollback. The
-loop of Section III is realized in fragments across the families, and
-every member leaves the Section IX gap open.
+loop of Section II is realized in fragments across the families, and
+every member leaves the Section VIII gap open.
 
 \subsection{S5.2 SkillOpt: full
 correspondence}\label{s5.2-skillopt-full-correspondence}
 
-The table maps each component of SkillOpt to its quantity in Section
-III, with the role that quantity plays and a pointer into the published
+The table maps each component of SkillOpt to its quantity in Section II,
+with the role that quantity plays and a pointer into the published
 procedure (Algorithm 1 of the SkillOpt paper).
 
 {\def\LTcaptype{none} % do not increment counter
@@ -1407,11 +1409,11 @@ procedure (Algorithm 1 of the SkillOpt paper).
   >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2791}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
-Section III quantity
+Section II quantity
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 SkillOpt instantiation
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Section III role explained
+Section II role explained
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
 Algorithm pointer
 \end{minipage} \\
@@ -1439,7 +1441,7 @@ apply to obtain \(\tilde s\) (lines 12--13) \\
 \(\eta_t\) (textual learning rate) & bounded per-step edit budget;
 constant / linear / cosine / autonomous schedules; default cosine with
 floor \(\eta_t=2\) & edit-magnitude controller; the step size of Section
-III in textual form & rank/clip step (line 12); schedule applied per
+II in textual form & rank/clip step (line 12); schedule applied per
 epoch \\
 \(G_t\) (gate) & held-out selection-split accept gate, strictly greater
 than current selection score & the per-edit gate \(G_t\) --- accepts
@@ -1461,10 +1463,10 @@ deployed artifact & lines 33--34 (training-side only) \\
 \end{longtable}
 }
 
-The mapping is one-to-one at the level of Algorithm 1: every Section III
+The mapping is one-to-one at the level of Algorithm 1: every Section II
 quantity has a named, code-level counterpart, and every SkillOpt control
-surface maps onto a Section III quantity. SkillOpt is therefore the
-clearest instance we found in which the loop of Section III is
+surface maps onto a Section II quantity. SkillOpt is therefore the
+clearest instance we found in which the loop of Section II is
 \emph{mechanism} rather than \emph{metaphor}: all five conditions are
 instantiated.
 
@@ -1540,7 +1542,7 @@ full SkillOpt (LiveMath \(+8.8\) points at GPT-5.5, \(+25.4\) at
 GPT-5.4-nano). The gate and a consensus form of credit assignment are
 load-bearing; negative-feedback retention and the bounded step are
 stabilizers whose value depends on the benchmark. None of this touches
-the governance properties of Section IX.
+the governance properties of Section VIII.
 
 \subsection{S5.4 GEPA, Tiwari, and the reflective-evolution
 family}\label{s5.4-gepa-tiwari-and-the-reflective-evolution-family}
@@ -1555,7 +1557,7 @@ propose prompt updates; and maintains a Pareto frontier of candidate
 prompts rather than greedily mutating only the current best. Across six
 tasks, GEPA outperforms GRPO by 6\% on average and by up to 20\% while
 using up to 35× fewer rollouts, and also outperforms MIPROv2 in the
-reported aggregate comparison. In Section III vocabulary, GEPA strongly
+reported aggregate comparison. In Section II vocabulary, GEPA strongly
 instantiates the proposal side, \(Q_t\), through trajectory-conditioned
 reflection, and uses Pareto-based candidate selection as a proposal and
 pruning mechanism. What it does not instantiate is the full
@@ -1571,16 +1573,16 @@ in-weights adaptation (RL or fine-tuning) is unnecessary and costly.
 In-context adaptation is cheap and rapid but capacity-bounded;
 in-weights adaptation is expressive but induces catastrophic forgetting
 and loss of plasticity \cite{dohare2024loss}. The scaffold layer of
-Section II is the substrate that absorbs what in-context adaptation can
+Section IX is the substrate that absorbs what in-context adaptation can
 carry cheaply, leaving the weights free to generalize. Tiwari et
-al.~reach the two-timescale motivation from optimization and Section II
+al.~reach the two-timescale motivation from optimization and Section IX
 reaches it from production reliability; the two framings are independent
 and reinforce each other.
 
 \subsection{S5.5 Reflective Context Learning: a parallel
 formalization}\label{s5.5-reflective-context-learning-a-parallel-formalization}
 
-The most direct independent convergence on the Section III formalization
+The most direct independent convergence on the Section II formalization
 comes from \textbf{Reflective Context Learning} {[}RCL;
 \cite{vassilyev2026rcl}{]}. Their opening observation is that ``the
 fundamental problems of learning, including credit assignment,
@@ -1589,21 +1591,21 @@ signals, persist whether the learned object lies in parameter space or
 context space,'' and that current methods are ``fragmented and ad hoc''
 precisely because they address these challenges one at a time rather
 than as a unified optimization problem over the context. The parallel to
-Section III's argument, that scaffold maintenance needs the discipline
-of weight-space optimization applied to an external artifact layer, is
+Section II's argument, that scaffold maintenance needs the discipline of
+weight-space optimization applied to an external artifact layer, is
 exact and was arrived at independently.
 
-RCL maps onto Section III as follows. The \emph{learned context} is
+RCL maps onto Section II as follows. The \emph{learned context} is
 \(\theta_s\). The \emph{reflection signal} is a form of credit
 assignment identifying which context coordinate caused a failure
 (Section S3.1, operation 2). The \emph{generalization penalty} that RCL
 introduces to prevent narrow sample-specific rules is structurally the
 complexity penalty \(\Omega(z)\) of the gate condition. Where RCL and
-Section III differ is in Loop-2 scope: RCL is framed around single-agent
-cross-task generalization, while Section III's Loop 2 is
+Section II differ is in Loop-2 scope: RCL is framed around single-agent
+cross-task generalization, while Section II's Loop 2 is
 cross-deployment, cross-tenant, and cross-organizational promotion. The
 convergence is nonetheless significant: two research threads starting
-from different motivations (production reliability in Section III,
+from different motivations (production reliability in Section II,
 cognitive agent learning in RCL) arrive at the same formal observation
 that the classical learning problems do not disappear when the learned
 object moves outside the weights.
@@ -1625,10 +1627,10 @@ stated for this substrate. Existing text optimizers, it finds,
 ``compress feedback too aggressively'' for credit assignment, so it
 gives an outer-loop proposer filesystem access to the source code,
 scores, and execution traces of every prior candidate. The edit history
-becomes the credit-assignment signal. In Section III terms the
-filesystem is the accumulated history \(H_t\) that conditions the
-proposal \(Q_t\), and the outer loop closes Loop 1 over orchestration
-(S5) rather than skills (S2).
+becomes the credit-assignment signal. In Section II terms the filesystem
+is the accumulated history \(H_t\) that conditions the proposal \(Q_t\),
+and the outer loop closes Loop 1 over orchestration (S5) rather than
+skills (S2).
 
 \textbf{Agentic Harness Engineering} {[}AHE; \cite{lin2026ahe}{]} comes
 at the problem from observability. It names three obstacles: a
@@ -1638,7 +1640,7 @@ hard to attribute. They are, in order, coordinate identification
 (operation 2), residual capture (operation 1), and the credit-assignment
 half of operation 2. AHE's answer, three observability pillars that give
 every editable harness component a file-level representation, builds the
-coordinate decomposition that Section III assumes. Descent needs that
+coordinate decomposition that Section II assumes. Descent needs that
 instrumentation as much as it needs the loop.
 
 \textbf{MOSS} \cite{cai2026moss} observes that earlier self-evolving
@@ -1647,7 +1649,7 @@ harness untouched. Routing, hook ordering, state invariants, and
 dispatch live in code, so a whole class of structural failure is, in
 MOSS's phrase, ``physically unreachable from the text layer''. MOSS
 therefore extends Loop 1 to rewriting source code, evolving skills (S2)
-and orchestration (S5) together. The consequence for Section IX: a
+and orchestration (S5) together. The consequence for Section VIII: a
 governed optimizer that covers only text artifacts leaves the code
 substrate ungoverned.
 
@@ -1667,7 +1669,7 @@ performance gains'' misses intermediate erroneous edits that hinder
 performance, and that it is ``unclear whether harness optimization is
 driven by optimizers' informed update actions or simply
 trial-and-error''. That is the line between Stage 2 and Stage 3 of
-Section III, measured. An optimizer that cannot tell informed updates
+Section II, measured. An optimizer that cannot tell informed updates
 from lucky ones operates in Stage 2, whatever its benchmark gains.
 
 \textbf{HARNESSEVO} \cite{nguyen2026harnessevo} turns the diagnosis
@@ -1699,7 +1701,7 @@ limits at once, and optimizing performance alone yields skills that pass
 benchmarks but degrade on real deployment infrastructure. MOCHA
 navigates the constraint frontier with \emph{Chebyshev annealing}. It
 operationalizes the complexity penalty \(\Omega(z)\) of the gate, and it
-shows that the scalar \(\Omega\) of Section III simplifies what is, in
+shows that the scalar \(\Omega\) of Section II simplifies what is, in
 production, a Pareto frontier.
 
 \textbf{Ratchet} \cite{zhang2026ratchet} places the bottleneck
@@ -1735,13 +1737,13 @@ successful, reusable discoveries pass into evidence-gated updates.
 Attribution thus happens at the admission gate rather than inside the
 optimizer, credit assignment used as a filter on residual capture. The
 redundancy and environment sensitivity SkillsVote measures are the bloat
-and drift of Section X, arising here from many authors rather than one
+and drift of Section VII, arising here from many authors rather than one
 loop.
 
 \subsection{S5.8 Cross-task transfer and evidence
 radius}\label{s5.8-cross-task-transfer-and-evidence-radius}
 
-Several papers measure what Section III calls the \emph{evidence radius}
+Several papers measure what Section II calls the \emph{evidence radius}
 of a scaffold artifact, how far an edit validated in one context keeps
 helping when redeployed elsewhere, without using the term.
 
@@ -1789,7 +1791,7 @@ small model.
 \cite{yang2026federatedskill} are the two systems of these walkthroughs
 whose Loop 2 crosses users rather than tasks or agents; in the full
 corpus, EvolveNet, ShareMem, and XRepoSkill also promote across users,
-clients, or repositories, each inside one operator (Section VII).
+clients, or repositories, each inside one operator (Section VI).
 SkillClaw aggregates many users' trajectories, turns recurring
 behavioral patterns into skill-set updates, and synchronizes the updated
 skills across users; its evaluation runs a day-night cycle in which
@@ -1812,7 +1814,7 @@ receiving client.
 \subsection{S5.9 Synthesis: what the convergence
 establishes}\label{s5.9-synthesis-what-the-convergence-establishes}
 
-Sections VI and VIII draw four conclusions from the families, and the
+Sections IV and IX draw four conclusions from the families, and the
 walkthroughs support them as follows.
 
 \begin{enumerate}
@@ -1837,7 +1839,7 @@ walkthroughs support them as follows.
 \item
   \textbf{Lifecycle hygiene is a precondition for descent, not an
   alternative to it.} Ratchet establishes that the gradient-analog
-  mechanism of Section III requires a maintained scaffold. A dirty
+  mechanism of Section II requires a maintained scaffold. A dirty
   artifact pool (stale, bloated, miscurated) keeps the gate \(G_t\) from
   receiving a meaningful signal. Hygiene and optimization are sequential
   dependencies, not competing paradigms.
@@ -1853,16 +1855,16 @@ walkthroughs support them as follows.
   no Loop-2 promotion mechanism. FederatedSkill federates skill patches
   across clients under one operator, with a decision log but no RBAC or
   rollback, and EvolveNet adds a held-out merge gate and round rollback
-  without lineage or RBAC. The four-property gap of Section IX is
+  without lineage or RBAC. The four-property gap of Section VIII is
   narrowed on (b) and (d) by different systems and closed on none, and
   the independent convergence of several research threads on the same
   single-organization ceiling confirms it.
 \end{enumerate}
 
-\subsection{S5.10 SkillOpt against Section IX's four
-properties}\label{s5.10-skillopt-against-section-ixs-four-properties}
+\subsection{S5.10 SkillOpt against Section VIII's four
+properties}\label{s5.10-skillopt-against-section-viiis-four-properties}
 
-Mapped onto Section IX's four properties of governed cross-tenant
+Mapped onto Section VIII's four properties of governed cross-tenant
 scaffold optimization:
 
 \begin{itemize}
@@ -1915,12 +1917,12 @@ The cross-model, cross-harness, and cross-benchmark transfer experiments
 reported by SkillOpt are \emph{empirical evidence-radius measurements}:
 a skill optimized in one (model, benchmark, harness) cell continues to
 improve performance when redeployed in nearby cells without further
-optimization. In Section III vocabulary, this is a measured Loop-2
+optimization. In Section II vocabulary, this is a measured Loop-2
 \emph{radius} for the artifact, not a \emph{governance mechanism} for
 promoting it. Both readings are useful: SkillOpt is the strongest Loop-1
 proof and supplies the first systematic transfer evidence at the
-scaffold layer, while the Section IX cross-tenant governance triad ((b),
-(c), (d)) remains unfilled.
+scaffold layer, while the Section VIII cross-tenant governance triad
+((b), (c), (d)) remains unfilled.
 
 \subsection{S5.11 Cost and bloat}\label{s5.11-cost-and-bloat}
 
@@ -1930,15 +1932,15 @@ OfficeQA, LiveMath) at the cheap end and search/visual benchmarks
 (SearchQA, DocVQA) an order of magnitude more expensive per point. The
 deployed artifact remains 379--1,995 tokens regardless. This is, to our
 knowledge, the first published cost-per-point figure for scaffold-layer
-descent, and it complements the Section X scaffold-bloat discussion (and
-the Ratchet hygiene-precondition finding walked in Section S5.7): the
-textual learning rate \(\eta_t\) with cosine decay keeps the deployed
-skill compact even when the optimizer explores many more edits than are
-accepted (only 1--4 edits survive into the final skill across the six
-benchmarks). The mechanism that prevents the deployed artifact from
-bloating is exactly the complexity penalty \(\Omega(z)\) of Section III,
-instantiated as a hard cap on accepted edits per step rather than a soft
-regularizer.
+descent, and it complements the Section VII scaffold-bloat discussion
+(and the Ratchet hygiene-precondition finding walked in Section S5.7):
+the textual learning rate \(\eta_t\) with cosine decay keeps the
+deployed skill compact even when the optimizer explores many more edits
+than are accepted (only 1--4 edits survive into the final skill across
+the six benchmarks). The mechanism that prevents the deployed artifact
+from bloating is exactly the complexity penalty \(\Omega(z)\) of Section
+II, instantiated as a hard cap on accepted edits per step rather than a
+soft regularizer.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -1960,7 +1962,7 @@ Evidence names the systems that decide each verdict, and parenthetical
 numbers such as 2608.04968 are arXiv identifiers.
 
 \subsection{S6.1 The four properties of Section
-IX}\label{s6.1-the-four-properties-of-section-ix}
+VIII}\label{s6.1-the-four-properties-of-section-viii}
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -2007,7 +2009,7 @@ closest \ldots{} narrowed on one property, closed on none'' &
 (decision log; no gate at the receiving client) and EvolveNet (held-out
 merge gate and round rollback; no lineage or RBAC). The gap is narrowed
 on (b) and (d) by different systems and closed on none (Table IX-1). \\
-``no member of the Section VIII research families provides (d), and only
+``no member of the Section IX research families provides (d), and only
 FederatedSkill provides even a partial (b)'' & \textbf{revised} & (d)
 appears in EvolveNet (round rollback), SkillSmith and SkillAudit
 (edit-level rollback inside one agent), Growing Harness, WDA, and
@@ -2041,7 +2043,7 @@ Evidence
 \endlastfoot
 ``Three cells are populated; the rest are empty for structural reasons''
 & \textbf{revised} & Single-loop and governance-only systems occupy
-these cells, under the definition of Section III that a gate records who
+these cells, under the definition of Section II that a gate records who
 decides and not who supplies the candidate: {[}None × Human{]} (MCP
 registries: Azure API Center, agentic-community MCP Gateway \& Registry,
 TrueFoundry; Buildrix; the Anthropic skills repository; ACM), {[}Human ×
@@ -2055,7 +2057,7 @@ protocol; Continual Harness's unchecked self-edit; the revocation
 guard). Two cells hold every audit passer whose promotion has a gate, a
 third holds the governance-first platforms, Letta passes with no
 promotion gate, and the human-gated row holds only curation (Section
-VII). \\
+VI). \\
 ``{[}Human × Auto{]} is empty by engineering logic \ldots{} no published
 example exists'' & \textbf{holds} & No system in the full corpus puts a
 person on the local gate of a failure-driven loop and promotes by
@@ -2071,7 +2073,7 @@ Skills?'' (2609.05677): across five public skill repositories every
 substantive edit is human-authored and human-merged, 62\% are AI
 co-authored, and there is 1 deprecation in 254 edits; that shape is
 {[}None × Human{]} too, because no loop fires from session signal
-(Section VII). \\
+(Section VI). \\
 ``{[}Human × None{]} is structurally improbable'' & \textbf{revised} &
 VerificAgent (agent-drafted memories, human fact-check, frozen bank),
 SkillChain's second-stage human reflection gate, and the Davis et
@@ -2084,13 +2086,13 @@ per-item test), Future AGI (paired bootstrap CI), AutoSaddler
 (mini-batch failure signals), MGM, ModularRSI (evidence across tasks),
 VaG (3-of-3 critics), EvolveNet (fixed ≥ broken on held-out), VACE,
 HackProbe, PROCTOR. Evidence is batched before acceptance, with
-SAGE-gate and VaG as instances (Section VI). \\
+SAGE-gate and VaG as instances (Section IV). \\
 ``no surveyed system has formalized agreement as a k-of-n acceptance
 rule'' & \textbf{revised} & VaG requires all three heterogeneous critics
 to pass (3-of-3), and SkillSpec is consensus-gated, so agreement-based
 acceptance exists. The distinction between agreement and averaging
 stands: under agreement the false-accept rate decays as \(p^k\), under
-averaging the variance decays as \(1/k\) (Appendix XIII). \\
+averaging the variance decays as \(1/k\) (Appendix XII). \\
 ``Only AlphaEvolve demonstrates explicit multi-layer depth'' &
 \textbf{sharpened} & HarnessBank, JIT-Agent, and MGM keep archives for
 lineage, and VaG adds tiered subset selection; none pairs a cascade
@@ -2191,7 +2193,7 @@ Evidence
 planning optimization gated by human launch and A/B metrics; this is
 Stage 3 on Loop 1 with a human Loop 2: production deployments that reach
 Stage 3 on the local loop promote behind a human gate or, in Letta's
-case alone, by an ungated push (Section III). SkillForge (2604.08618)
+case alone, by an ungated push (Section II). SkillForge (2604.08618)
 stops short of it: a judge that agrees with experts more than nine times
 in ten flags the failed replies that drive each skill rewrite, but the
 rewrite is committed without an acceptance test, and support engineers
@@ -2213,7 +2215,7 @@ endpoint, and Zep's bitemporal invalidation make lineage common in
 production memory. Failure-triggered correction is not common, and
 2609.08258 shows revoked facts still outranking their replacements in
 five backends. Production memory is versioned, but correction is not
-enforced (Section VI). \\
+enforced (Section IV). \\
 No S5 system scores 5; ``topology evolution is rare'' &
 \textbf{sharpened} & With MAE and Memento-Skills corrected to 4 (Section
 S6.7), S5 has no score of 5 in either pass. Gated topology evolution
@@ -2256,7 +2258,7 @@ rather than receiving-side evaluation and is not counted here. EvolveNet
 gates the merge on a server-side held-out slice but runs no check at the
 receiving client, and Federated Agent Optimization (2610.01195) proposes
 a receiving-client gate without implementing it. Receiving-side
-evaluation at promotion is rare, not absent (Section VII). \\
+evaluation at promotion is rare, not absent (Section VI). \\
 Research full-auto cluster: ``enterprise governance is uniformly
 absent'' & \textbf{holds} & No second-pass {[}Auto × Auto{]} system
 reports RBAC or audited promotion. \\
@@ -2269,7 +2271,7 @@ is measured directly rather than by one repository count: a
 (Robbes: 22--29\% of coding-agent projects), and 36,710 repositories
 mined for loop engineering (Lulla, 2608.21884), alongside a controlled
 study in which context files raise cost without raising success
-(Gloaguen; Section VI). \\
+(Gloaguen; Section IV). \\
 ``no surveyed system treats pruning or expiration as a first-class gated
 operation (outside Ratchet, SkillOpt, ChronoMem)'' & \textbf{revised} &
 Retirement is a gated operation in at least eleven skill systems
@@ -2288,7 +2290,7 @@ Multi-sample agreement is ``under-explored; SkillOpt-Lite nearest'' &
 \textbf{revised} & The evidence is the same as for the two
 acceptance-rule claims of Section S6.2, single-evaluation acceptance and
 k-of-n agreement: SAGE-gate, VaG, and SkillSpec. Agreement-based
-acceptance is instantiated, not under-explored (Appendix XIII). \\
+acceptance is instantiated, not under-explored (Appendix XII). \\
 ``No surveyed paper disputes the scaffold-vs-weights decomposition'' &
 \textbf{holds} & SIA (2605.27276) updates harness and weights together
 but keeps them as distinct levers. \\
@@ -2300,13 +2302,12 @@ substrate's case. \\
 }
 
 \subsection{S6.5 The three predictions of Section
-IV}\label{s6.5-the-three-predictions-of-section-iv}
+V}\label{s6.5-the-three-predictions-of-section-v}
 
-Section IV predicts from the signal classes which cells of the design
-space each class can reach, and Section VII confirms the predictions;
-the first two rows give the systems behind the two cells Section IV
-assigns, and the third row gives those behind its claim about the
-reflexive gate.
+Section V predicts from the signal classes which cells of the design
+space each class can reach, and Section VI confirms the predictions; the
+first two rows give the systems behind the two cells Section V assigns,
+and the third row gives those behind its claim about the reflexive gate.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -2341,9 +2342,8 @@ they exceed twelve, so it decides by a model judge over a simulated
 outcome (C3 over C2) and prunes, and the claim does not bear on it.
 SkillRL and AutoAgent no longer sit in {[}Auto × Auto{]} (Section S6.7).
 Second pass: EvolveNet, Evo2Team, XRepoSkill (C1 code signals or
-re-runnable benchmark outcomes, the simulated C2 of Section IV);
-ShareMem (judged consolidation, C3, measured on Mind2Web); Letta (no
-gate). \\
+re-runnable benchmark outcomes, the simulated C2 of Section V); ShareMem
+(judged consolidation, C3, measured on Mind2Web); Letta (no gate). \\
 Second & {[}Auto × Human{]} should hold only C2 and C3 systems, because
 the human on Loop 2 substitutes for the exact signal that Loop 1 lacks &
 \textbf{holds} & CASCADE (C3), Sierra (C2/C3), Devin (C2 merge outcome),
@@ -2366,7 +2366,7 @@ comparison}\label{s6.6-the-rubric-reward-comparison}
 Reinforcement learning from verifiable rewards trains weights on exact
 signals, and extending it to writing and other open-ended tasks has
 produced the judged gates that a C3 scaffold loop can borrow. These are
-weight-side methods and the corpus does not score them; Section IV reads
+weight-side methods and the corpus does not score them; Section V reads
 one distinction from them, whether the rubric or judge is held fixed
 while the policy learns or moves with it. The comparison covers fourteen
 papers, thirteen methods and one survey. Of the methods, eight hold the
@@ -2426,7 +2426,7 @@ dynamic regime as the trend \cite{chen2026rubricsurvey} & --- \\
 The only co-evolving method with a human-agreement figure, RLPR,
 co-evolves a probability reward, not a rubric. No method that co-evolves
 a rubric or judge reports agreement with people. That is the
-reflexive-gate problem of Section IV, seen from the weight side.
+reflexive-gate problem of Section V, seen from the weight side.
 
 \subsection{S6.7 Recount of the full
 corpus}\label{s6.7-recount-of-the-full-corpus}
@@ -2454,7 +2454,7 @@ system reaches 5; both close one loop only and score 4 under the uniform
 rubric, which moves the first-pass S5 mean from 2.68 to 2.58.
 
 Nine second-pass rows had their gate labels re-coded on 2026-10-08 under
-the definition of Section III, which records who decides and not who
+the definition of Section II, which records who decides and not who
 supplies the candidate: Letta's Loop-2 label moved from Auto to None (an
 ungated git push of shared memory; the row still passes the composite
 audit on its lineage); the Loop-1 label of Azure API Center, the
@@ -2466,7 +2466,7 @@ checkpoint-and-validate protocol moved to None on both loops (a
 migration of one agent's state, not a promotion). The MCP Gateway's
 Loop-2 label now records its automated admission scan beside the human
 approval, and the field study's Loop-2 label records that maintainers
-merge. No score changed; the cells of Section VII and Section S4.2.1
+merge. No score changed; the cells of Section VI and Section S4.2.1
 follow the re-coded labels.
 
 Five more rows were corrected on 2026-10-08 after a reading of the full
@@ -2497,7 +2497,7 @@ and six systems rather than seven promote without lineage. No score
 changed.
 
 The recount runs over all substrate-level rows and gives the counts of
-Table 4 of the main article; its last line is the first pass alone
+Table 2 of the main article; its last line is the first pass alone
 (systems / core / contrast) after the two corrections.
 
 \begin{verbatim}
@@ -2562,10 +2562,10 @@ condition that changes here is the question asked of each system.
 Whether a loop closes at all, whether it closes under a gate, and
 whether a second loop promotes the result are properties that the
 mechanism inventory does not determine, and they are what the two-loop
-audit of Section V measures. Zhou et al.'s admission rule is the nearest
-precedent for the gate; it is stated for one domain, code, where the
-check is a test, and this article asks what the rule becomes when the
-check is a judge or a delayed outcome.
+audit of Section III measures. Zhou et al.'s admission rule is the
+nearest precedent for the gate; it is stated for one domain, code, where
+the check is a test, and this article asks what the rule becomes when
+the check is a judge or a delayed outcome.
 
 \subsection{S7.2 The gate as algorithmic, human, or
 absent}\label{s7.2-the-gate-as-algorithmic-human-or-absent}
@@ -2604,11 +2604,11 @@ and TextGrad score below the core-corpus threshold and DSPy, which
 persists only optimizer state, closes no second loop; Section S4.1 lists
 all three. SkillOpt is the point where the lineage crosses into the
 corpus, by adding a persistent skill document, a held-out acceptance
-gate, and a rejected-edit buffer to the same proposer (Sections VI and
-VIII).
+gate, and a rejected-edit buffer to the same proposer (Sections IV and
+IX).
 
 The second line optimizes the scaffold as a whole rather than one
-prompt, and it is the nearest precedent for the loop of Section III.
+prompt, and it is the nearest precedent for the loop of Section II.
 Agent symbolic learning treats prompts, tools, and the pipeline that
 connects them as symbolic parameters and updates them with textual
 losses and gradients \cite{zhou2024symbolic}; STOP has a scaffolding
@@ -2622,7 +2622,7 @@ workflows \cite{zhang2024aflow}. These established that the whole
 scaffold is an optimizable object and that textual feedback can drive
 its updates. Each runs within one deployment under a benchmark score,
 with no promotion to other deployments and no governance of the artifact
-it produces; the two-loop audit of Section V is the measurement of
+it produces; the two-loop audit of Section III is the measurement of
 exactly those two absences.
 
 The third line is the classic single-loop agents and their memories:
@@ -2776,7 +2776,7 @@ meets all four and that the two nearest, FederatedSkill and EvolveNet,
 each narrow different properties without meeting the set. These are the
 claims of the abstract and the introduction. Three limits bound them:
 scoring is single-rater over public evidence of uneven strength (Section
-V), the corpus closes at the October 2026 cutoff, and the evidence is
+III), the corpus closes at the October 2026 cutoff, and the evidence is
 the published behavior of the 256 systems rather than new experiments
 (Section I).
 

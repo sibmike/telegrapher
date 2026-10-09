@@ -15,8 +15,10 @@ import os, re, sys, glob, collections
 HERE = os.path.dirname(os.path.abspath(__file__))
 SUB = os.path.join(HERE, "..", "submission")
 BEFORE, AFTER = os.path.join(SUB, "sections_before"), os.path.join(SUB, "sections")
-BODY = ["I_III.md", "IV_feedback_signal_classes.md", "V_method.md", "VI_findings.md", "VII_design_space.md",
-        "VIII_families.md", "IX_missing_architecture.md", "X_failure_surface.md", "XI_open_problems_conclusion.md"]
+BODY = ["I_II_intro_loop.md", "III_method.md", "IV_local_findings.md", "V_feedback_signal_classes.md", "VI_promotion.md",
+        "VII_failure_surface.md", "VIII_missing_architecture.md", "IX_families.md", "X_open_problems_conclusion.md"]
+BODY_BEFORE = ["I_III.md", "IV_feedback_signal_classes.md", "V_method.md", "VI_findings.md", "VII_design_space.md",
+        "VIII_families.md", "IX_missing_architecture.md", "X_failure_surface.md", "XI_open_problems_conclusion.md"]   # the snapshot keeps the pre-restructure names
 APPX = ["appA_formal.md", "appB_gates.md"]
 SUPP = sorted(os.path.basename(p) for p in glob.glob(os.path.join(AFTER, "S[0-9]_*.md")))
 ALL = BODY + APPX + SUPP
@@ -44,7 +46,7 @@ fail = False
 names = ["abstract.md"] + ALL
 
 # ---- (a) citations, document-wide
-cb = sum((cites(before(n)) for n in names), collections.Counter())
+cb = sum((cites(before(n)) for n in ["abstract.md"] + BODY_BEFORE + APPX + SUPP), collections.Counter())
 ca = sum((cites(after(n)) for n in names), collections.Counter())
 ALLOWED_NEW = {"bhattarai2026rubricgrounded", "jia2026openrubric", "lv2026queryrubrics",   # in the bib from the same sweep; cited in Appendix G so the 8/5 tally is checkable
                "robbins1971convergence",   # the convergence repair of Appendix A (review point 3, 2026-10-08)
@@ -61,7 +63,7 @@ else:
     print("    OK: same key set" + ("; occurrence counts changed for " + str(moved) if moved else ""))
 
 # ---- (b) numbers that left the prose
-prose_b = sum((nums(prose_lines(before(n))) for n in ["abstract.md"] + BODY), collections.Counter())
+prose_b = sum((nums(prose_lines(before(n))) for n in ["abstract.md"] + BODY_BEFORE), collections.Counter())
 prose_a = sum((nums(prose_lines(after(n))) for n in ["abstract.md"] + BODY), collections.Counter())
 left = prose_b - prose_a
 haven = "\n".join(nonprose(after(n)) for n in names) + "\n".join(after(n) for n in APPX + SUPP) + rd(os.path.join(SUB, "supplementary.md"))
@@ -83,8 +85,8 @@ hits = []
 for n in ["abstract.md"] + BODY + APPX:
     t = after(n)
     allowed = ""
-    if n == "V_method.md":
-        m = re.search(r"(?ms)^### How the corpus was assembled.*?(?=^### )", t)
+    if n == "III_method.md":
+        m = re.search(r"(?ms)^### (How the corpus was assembled|Scope and selection).*?(?=^### )", t)
         allowed = m.group(0) if m else ""
     for i, ln in enumerate(t.split("\n"), 1):
         if allowed and ln in allowed: continue
@@ -117,13 +119,13 @@ def first_use(pat, exclude=None):
 def first_def(pat):
     return first_use(pat)
 checks = [
-    ("[L1 x L2] cell notation", r"\[(Auto|Human|None) × (Auto|Human|None)\]", r"local gate first|Loop 1 first", None),
+    ("[L1 x L2] cell notation", r"\[(Auto|Human|None) × (Auto|Human|None)\]", r"local gate first|Loop 1 first|denotes an automatic local gate", None),
     ("C1-C4 classes", r"\bC[1-4]\b", r"\*\*C1, exact\.\*\*|C1 exact", r"Table IV-1|CVE"),
-    ("properties (a)-(d)", r"propert(y|ies) \((a|b|c|d)\)|\((a|b|c|d)\) \*\*", r"\(a\) \*\*auto-gated (local loop|Loop 1)", None),
-    ("tenant", r"\btenant", r"one organization or customer", None),
+    ("properties (a)-(d)", r"propert(y|ies) \((a|b|c|d)\)|\((a|b|c|d)\) \*\*", r"\(a\) \*\*(An )?auto-gated (local loop|Loop 1)", None),
+    ("tenant", r"\btenant", r"(one |an )?organization or customer", None),
     ("patch", r"\bpatch\b", r"patch\*\* |\*\*patch\*\*|a patch is|call a patch|the patch, the slice|\bpatch\b[^.]*slice", None),
     ("evidence radius", r"evidence radius", r"evidence radius\*\*|\*\*evidence radius|call[^.]*evidence radius", None),
-    ("receiving-side evaluation", r"receiving-side", r"receiving-side[^.]*(arrives|where the edit)", None),
+    ("receiving-side evaluation", r"receiving-side", r"receiving-side[^.]*(arrives|where the edit|would adopt the edit)", None),
     ("S1-S6 substrate codes", r"\bS[1-6]\b", r"\| S1 Instructions", r"Supplementary Material|Section "),
 ]
 print("(d) label order (definition must precede first use):")
@@ -151,7 +153,7 @@ for n in ["abstract.md"] + BODY + APPX:
 print("(f) supplementary pointers not in '(Supplementary Material S<n>)' form: %d" % len(ptr_bad))
 for h in ptr_bad: print("    %s:%d  ...%s..." % h); fail = True
 
-words_b = sum(len(prose_lines(before(n)).split()) for n in ["abstract.md"] + BODY)
+words_b = sum(len(prose_lines(before(n)).split()) for n in ["abstract.md"] + BODY_BEFORE)
 words_a = sum(len(prose_lines(after(n)).split()) for n in ["abstract.md"] + BODY)
 print("body prose words: %d -> %d (%+.0f%%)" % (words_b, words_a, 100.0 * (words_a - words_b) / max(words_b, 1)))
 print("\nREVISION CHECK:", "FAIL" if fail else "PASS (a, e, f); review b-d above")

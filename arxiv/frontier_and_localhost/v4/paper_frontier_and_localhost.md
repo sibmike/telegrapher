@@ -27,7 +27,7 @@ author:
     ashvets@paloaltonetworks.com
 date: ""
 abstract: |
-  Every serious AI deployment now improves itself outside the weights. After a failure, a team edits instructions, skills, memories, tools, orchestration, or evaluation suites, and the system changes within the hour; the weights, on a cycle of months. This survey of 256 production and research systems asks what discipline that layer needs and finds most of its optimizer built, never assembled. The optimizer is one loop with two halves: the local loop traces a recurring failure to the artifact responsible, makes one edit, and keeps it only if the deployment's failure rate falls; the promotion loop decides how far it travels, to a team, an organization, or every customer. Nearly every failure-driven system closes the local loop by program but hardly builds its trace. The promotion loop exists in parts: no surveyed system assembles them into promotion across organizations with lineage, access control, and rollback, so every customer relearns the same fixes and nobody knows which rule helped. The reason is structural. What a deployment can automate is fixed by the feedback that keeps or rejects an edit: an exact check, an observed outcome, a judgment, or a reward months late. An accepted edit improves only what that feedback measured, so no lift travels on its own. The survey turns that finding into tools: five conditions that separate an optimizer from a pile, four feedback classes that say which half a deployment can automate, four properties to audit the promotion loop against, and the piece each class should build first.
+  Deployed AI systems change through instructions, skills, memories, tools, and orchestration long before their model weights are updated. These changes accumulate experience, but their persistence alone does not establish that the system is improving. This survey examines how 256 production and research systems turn experience into lasting changes outside the weights. We distinguish two decisions: whether an edit improves the deployment that produced it, and whether there is enough evidence to share it more widely. Together, these decisions define a local improvement loop and a promotion loop. Automatic acceptance tests are present in nearly every system with failure-driven local adaptation, while failure capture and attribution remain less developed. Promotion is more fragmented: the surveyed systems provide evaluation, shared artifact pools, lineage, access control, and rollback in different combinations, but none documents their integration into governed promotion across organizations. The feedback available to a deployment helps explain this pattern. Exact checks, observed outcomes, judgments, and delayed rewards support different acceptance rules and expose different limitations. In every case, an accepted edit is supported only for the measure and task distribution on which it was evaluated. We use this observation to develop five conditions for artifact-layer optimization, a classification of feedback and gate types, and four properties for auditing cross-organization promotion. The resulting framework identifies what existing systems can already automate and where new evidence or human judgment is still required.
 header-includes:
   - \usepackage{xurl}
   - \usepackage{calc}
@@ -64,49 +64,458 @@ header-includes:
 ---
 ## Introduction {#sec:intro}
 
-A growing share of the adaptation that makes a deployed AI system reliable now happens in the layer of instructions, memories, skills, and tools around a frozen model, and this survey argues that the industry has built most of an optimizer for that layer without ever assembling it. Assembled, that optimizer would replace a pile of fixes that nobody can evaluate with a loop that keeps only what measurably helps.
+A coding agent repeatedly uses the wrong naming convention in a repository. An engineer adds a line to its instructions, and the next session follows the convention. The model has not changed, but the deployed system has. Similar changes happen when an assistant corrects a stored preference, acquires a reusable skill, or learns which tool to call. Much of the experience that makes an AI system useful in one setting now accumulates in these persistent artifacts outside the model's weights.
 
-The standard mental model of a system built on a large language model (LLM) is the model. Pre-training fixes the weights, fine-tuning nudges them, and deployment wraps a thin layer of prompts and tools around the result. Production in 2025 and 2026 has stopped behaving this way. Frontier weights change on a cycle of months; the systems built on them change daily, in instruction files checked into repositories, memories that persist across sessions, skills loaded on demand, registered tools, evaluation suites that block a merge, agent topologies, and pull-request gates on shared rule repositories. We call that fast-changing layer around a slow-changing model the scaffold.
+We call this layer the **scaffold**. It includes instructions, skills, memory, tools, orchestration, and the evaluation and governance rules that control their use. In the language of compound AI systems [@zaharia2024compound], it is the part surrounding the model that a deployment can inspect and revise without retraining it. The distinction matters because the two parts change on different schedules. A team can revise an instruction or tool binding as soon as a problem is understood, while a new model requires a separate training, evaluation, and release process.
 
-Read one at a time, these artifacts look like unrelated engineering. A skill file is a procedure the model did not have; a repository rule is a convention for one project; a retrieval connector is memory access for one workflow; a tool registry provisions a capability the base model cannot reach; a pull-request review against a shared rule repository is a promotion gate. Read together, they are one adaptation surface, the non-model part of what Zaharia et al. call a compound AI system [@zaharia2024compound], and most deployments maintain it as patchwork. A failure happens, someone adds a rule, and the pile grows. Nobody knows which addition helped, a fix validated in one place leaks into another that never tested it, and every customer relearns the same lesson.
+The ease of making a change also makes it easy to accumulate changes whose value is unknown. A rule added after one incident may prevent a recurring error, conflict with another rule, or merely make the prompt longer. A corrected memory may remain in the history while the system continues to retrieve the outdated entry. Even a demonstrably useful change can become harmful when copied into a deployment with different tasks or conventions.
 
-The optimizer is one loop with two halves. Take a coding agent that keeps misnaming a class in one repository. The local loop traces that recurring failure to the rule file responsible, proposes one edit, and keeps it only if the repository's own failure rate falls. The promotion loop decides how far the edit may travel, to a team template, to the company's shared instructions, or to a registry shared across companies, and lets it travel only as far as evidence supports. Five conditions make the loop an optimizer rather than good intentions. The decisive one, a measurable loss, carries two consequences the paper returns to throughout: an accepted edit improves only what its gate measured, and the loop descends to that measure's ceiling rather than evolving toward some better goal.
+These situations raise two questions. What evidence justifies keeping a local change? What additional evidence justifies sharing it? This survey uses those questions to examine 256 public production and research systems. The first defines a **local loop**: identify a recurring failure, propose a change to the responsible artifact, and test whether the change helps. The second defines a **promotion loop**: decide whether the change should be adopted by another project, team, or organization, and preserve enough history to reverse that decision.
 
-Set side by side, the 256 systems in this survey tell one story about that loop. The local loop closes under a program nearly everywhere a failure-driven loop runs, in most research systems and a growing number of production ones. It closes from the gate backward: the gate is the best-built step, and the least built are the log of failures and the trace from a failure to the scaffold coordinate (a rule, skill, memory entry, or tool binding) that caused it. Around the gate the newer systems wait for several pieces of evidence before keeping an edit, remove stale skills through the same check that admitted them, and keep a history of every change to memory.
+The systems surveyed have developed these loops unevenly. Automatic tests for accepting a local edit are present in nearly every system that adapts from failures. The steps that should supply those tests with well-founded candidates are weaker: failures are often not retained in a usable form, and a failed output rarely identifies which instruction, memory, skill, or tool binding caused it. Meanwhile, production platforms have built substantial versioning and release machinery without any process that proposes changes from deployment experience.
 
-The promotion loop exists only in parts. Beyond the deployment, the newer systems have settled on one artifact format and one tool protocol, and in a few cases carry edits between deployments of one operator, the organization that runs both sides with no customer boundary between them. None of the 256 assembles those parts into promotion across organizations under versioned lineage, access control, and rollback. The reason is structural rather than a matter of effort. What a deployment can automate is fixed by the feedback its gate receives: a test or an observed outcome can gate an edit by program, a judgment only once the judge is calibrated against people, and a reward that arrives months later cannot gate edits one at a time. Because the lift an edit earns is bounded by what its gate measured, that lift reaches another deployment only if the receiver measures the same thing or measures again.
+Sharing adds a further limitation. A change that improves one deployment has been evaluated against that deployment's tasks and measure of success. Another deployment may need different behavior. Shared formats and registries make artifacts portable, but they do not establish that an artifact will help its recipient. Some surveyed systems check transferred changes within one operator. None documents an automatic local improvement loop connected to promotion across organizations with versioned lineage, access control, and rollback.
 
-The rest of the survey turns that story into checks a team can run on its own system. It first states the loop in plain language and as an update rule, with the five conditions that tell a team whether its own maintenance is an optimizer or a pile (Section REF(sec:loop)). It then gives the rule that decides, from the feedback a deployment can get, which half of the loop it may automate today and which failure it should expect (Section REF(sec:signal)). The corpus tests that rule: the field has converged on the local loop and sorted on the promotion loop as the rule predicts, with one qualification the data adds, and five research lines have arrived at the same loop from five different starting problems (Sections REF(sec:method) to REF(sec:families)). For the promotion loop, still unassembled, the survey ends with what any future system must show: four governance properties, the check without which no promotion is safe, the failures the literature has already measured in their absence, and, for each feedback class, the piece to build next (Sections REF(sec:gap) to REF(sec:open)). The survey runs no experiments; its evidence is the published behavior of 256 systems, scored on a released table.
+The feedback available to each system helps explain these differences. A compiler or test suite can check a candidate immediately. A booked appointment provides a later, noisier outcome. A writing task may depend on a judge, whose preferences can drift. A research decision may take months to evaluate. These signals support different kinds of automation, and none establishes an improvement beyond what it actually measures.
 
-## Why adaptation lives outside the weights {#sec:why}
+The survey develops a framework for reading this evidence. We first define the two loops and the conditions under which artifact maintenance constitutes optimization. After describing the corpus and scoring method, we examine local adaptation, the feedback that constrains it, and the evidence needed for promotion. The later sections consider failures that arise when these checks are missing, specify the unassembled architecture for governed sharing, and connect the findings to the research lines that produced its components. The evidence consists of published methods and public documentation; the survey introduces no new experiments. Its scores and classifications are released for inspection.
 
-Deployed systems adapt outside the weights because frontier training is built for breadth while a deployment's reliability is won in depth, in the conventions and failures particular to it. That mismatch is why a team's fixes land in the scaffold, and why this survey studies how those fixes are kept and how far they travel rather than how the weights are trained. Two earlier results in this series suggest why a gated scaffold is the right architecture and not a workaround, and the question this survey asks of it is one its neighbors leave open.
+## From a local fix to a measured improvement {#sec:loop}
 
-### Breadth in the weights, depth in the scaffold
+Adding a naming rule after an error is a reasonable response. To learn whether it works, however, the team must run the agent again on relevant tasks and compare the results. If the change helps, it should persist. If it causes regressions, the team needs a way to reject or reverse it. Repeating this process turns a growing collection of fixes into a procedure for improving the deployment.
 
-Frontier training optimizes the weights for breadth, across every deployment at once, so the depth that makes one deployment reliable ends up in the scaffold.
+### The local loop
 
-The weights are tuned to generalize across millions of unseen deployments, and the objective smooths over exactly what one deployment cares about: local naming conventions, contradictory preferences between customers, rare workflow-specific failures. Because reinforcement learning from human feedback reduces output diversity and homogenizes preferred style across users [@kirk2024understanding; @padmakumar2023diversity], and instruction-tuning data rewards patterns that generalize across the annotator pool, the frontier model is trained to disfavor one customer's idiosyncrasies. Tiwari et al. [@tiwari2026fastandslow] reach the same place from the optimization side: in-context adaptation is cheap but capacity-bounded, in-weights adaptation is expressive but induces forgetting and loss of plasticity [@dohare2024loss], so a system that learns slowly in the weights needs a cheap outer layer that learns fast outside them.
+The procedure starts with a record of failures: rejected answers, user corrections, failed tool calls, evaluation regressions, or unsuccessful tasks. Repeated failures are grouped into modes and prioritized by frequency and severity. For each selected mode, the system tries to identify the artifact responsible. A stale memory entry calls for a different intervention from a missing tool argument or an ambiguous instruction.
 
-Encoding every deployment in the weights is ruled out three times over: fine-tuning per customer multiplies the training, evaluation, and serving lifecycle by the number of deployments; weights ship quarterly at best, while the deployment wants daily updates; and overfitting the weights to one customer degrades the neighbors whose preferences contradict. In principle, per-customer adapters [@hu2021lora], distilled models, and learned routing could absorb some of the residual, the failures that remain after training. In practice they are rare. Adaptation lands in the scaffold, the one substrate that is cheap, inspectable, reversible, scoped to one customer, and updatable daily.
+We call this step **credit assignment**. It links an observed failure to an editable part of the scaffold, or **coordinate**. The system then proposes a candidate edit and evaluates it against the current scaffold. The acceptance test is the **gate**. An accepted edit is retained as a versioned artifact; subsequent evidence of regression can trigger rollback. Fig. REF(fig:descent) shows the complete local loop.
 
-### Why the scaffold is the right architecture: the two earlier results
+```{=latex}
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig1_descent}
+\caption{The local improvement loop. Recurring failures guide a proposed scaffold edit. An acceptance gate tests the change before it persists, and later regressions can trigger rollback. Sharing the accepted edit requires a separate promotion decision (Fig. REF(fig:scope)).}
+\label{fig:descent}
+\end{figure*}
+```
 
-Two earlier papers in this series offer a hypothesis that makes the gated scaffold the right architecture rather than a workaround, namely that a deployment's errors hinge on a few key decisions that fail in a small, recurring set of ways. Without that hypothesis, the case for learning outside the weights would rest on cost alone.
+The evaluation must be tied to the deployment's actual workload. A deployment serves a particular distribution of users, tasks, and conventions, which we call its **patch**. Its **patch loss** measures failure on that distribution. Depending on the application, this may be a task-failure rate, correction rate, retrieval error, or another operational measure. A gate can establish an improvement only to the extent that its evaluation estimates this loss.
 
-*Beyond Exponential Decay* [@arbuzov2025beyond] argues that long outputs do not fail at the rate a uniform per-token error model predicts, because reliability hinges on a sparse set of key decisions. Its evidence is twofold: a direct measurement of long-range dependence on one natural-text corpus, where under a tenth of tokens depend on distant context, and the accuracy that majority voting recovers on reasoning benchmarks. The argument stops where the number of decisions grows with the task, as in long-horizon agentic work.
+### The second decision: whether to share the fix
 
-For a deployment that operates inside a bounded slice of recurring tasks, tools, and evaluator expectations, *The Architecture of Errors* [@arbuzov2026architecture] argues that those decisions fail in a small recurring catalogue of modes whose size grows only slowly with the number of observed failures. A targeted intervention budget then covers the residual; that budget grows polylogarithmically in sequence length and becomes constant once the catalogue saturates. The paper's own negative result marks the limit: no finite catalogue covers an unbounded domain.
+Suppose the naming rule improves the original repository. The team may now consider adding it to a shared template. That decision changes the population on which the rule will act. Other repositories may follow a different convention, and the local evaluation says little about them.
 
-If those results hold in general, a deployment's errors are few enough to fix one at a time, and a small catalogue of fixable modes is exactly what a cheap, inspectable, reversible artifact layer is for. This article asks where the fixes live, and the corpus answers: in persistent artifacts outside the weights, one recurring mode at a time, which is the pattern the hypothesis predicts. On that hypothesis the gated and scoped layer is not a workaround for an inadequate model. It is the architecture the error structure calls for: a frontier model that generalizes, a local scaffold that specializes, and reliability that comes from governing the specialization. The survey's own findings, in Sections REF(sec:findings) to REF(sec:gap), stand without it.
+The promotion loop therefore asks for evidence at the receiving scope. We call this **receiving-side evaluation**: a check conducted on the tasks of the deployment that would adopt the edit. The **evidence radius** is the scope for which the available evaluation supports the change. A local success does not automatically enlarge that radius. Section REF(sec:design) develops the scopes and examines systems that already transfer artifacts between them.
 
-### Relation to existing surveys
+### Five conditions for artifact-layer optimization
 
-No neighboring survey asks the question this one is organized around, which is who decides that an edit is good and how far the edit may travel. It is the question a team faces each time it decides whether to keep a fix and whether to share it.
+We use **artifact-layer descent** for the form of maintenance that connects recurring failures to measured improvements through five conditions:
 
-The neighboring surveys explain how agents evolve, what their memories store, how context is engineered, how skills are evaluated, and how harnesses are built. The question asked here has four parts: whether a feedback loop closes at all, whether its gate is a program or a person, what the gate can observe, and whether promotion beyond one deployment is governed. Table REF(tab:II-2) says, for each neighbor, what it classifies by and where this survey departs from it.
+1. **A measurable patch loss:** the deployment has a defined measure of success or failure.
+2. **A failure log:** relevant failures are retained as evidence for later changes.
+3. **Credit assignment:** failures can, at least sometimes, be traced to the scaffold coordinates responsible.
+4. **A candidate edit:** the process proposes a change to those coordinates.
+5. **An acceptance gate:** an edit is retained or promoted only after a check of whether it lowers the relevant loss.
 
-On the governance part, two neighbors come close. Ding et al.'s survey of persistent-state agents finds the literature concentrated on accumulating and retrieving state rather than on governing, recovering, or relinquishing it [@ding2026alwayson], and the memory-security survey of Lin et al. scopes and rolls back memory for safety [@lin2026memorysecurity]; neither asks who gates an edit, and neither covers promotion across organizations.
+The model weights remain fixed during this process, and the edits persist beyond the current interaction. These conditions distinguish three recurring forms of maintenance. In *patchwork*, an engineer adds a rule after an incident without measuring the result. In *random artifact search*, a system tests many variants and keeps a winner without tracing failures to their causes. Artifact-layer descent uses that trace to direct the proposed change and tests it before acceptance. Where the conditions are only partly met, the optimization interpretation is correspondingly limited.
+
+For deployment $D$, write the patch loss as
+$$L_D(\theta_s)=\mathbb{E}_{x\sim D}\!\left[\ell(\pi(\theta_M,\theta_s,x))\right],$$
+where $\theta_M$ denotes the fixed model weights, $\theta_s$ the editable scaffold, and $\ell$ the operational loss. A proposal process uses the failure history to produce an edit $z_t$. There is no analytic gradient through an instruction file or memory entry. Instead, the gate estimates the change in loss and accepts when that estimate clears a required margin:
+$$G_t(z_t)=1\iff\widehat{\Delta}_{z_t}L_D(\theta_s^t)+\lambda\Omega(z_t)\leq-\tau_t.$$
+Here $\Omega\geq0$ penalizes edit complexity and promotion breadth, and $\tau_t\geq0$ is the acceptance margin. An evaluation that blocks a regressing merge is a practical instance of this rule. A reviewer or governance process can also instantiate the gate by requiring stronger evidence for a broader or more complex change.
+
+Appendix REF(app:formal) gives the update rule and a one-step descent inequality under assumptions on the gate's estimation bias. With additional coverage, compactness, and summable-bias assumptions, improving edits eventually stop clearing the gate. This is **gate stability**, not a claim of global optimality. A limited proposal process or biased evaluator can leave useful changes undiscovered or rejected.
+
+### Who proposes and who decides
+
+The author of an edit and the authority that accepts it are separate. An agent may draft a revision that a person approves; an engineer may write a revision that an automatic evaluation rejects. We classify the gate by who makes the acceptance decision:
+
+- **Auto:** a program applies a check, including a verifier, evaluation threshold, or language-model judge [@zheng2023judge]. Whether that judge has been calibrated against people is a separate question, which Section REF(sec:signal) takes up.
+- **Human:** a person decides whether to accept the change.
+- **None:** no acceptance decision is made, either because the loop is absent or because every proposed edit is retained.
+
+A pair such as [Auto × Human] denotes an automatic local gate followed by a human promotion gate. These labels describe the decision mechanism. They do not, by themselves, establish that the decision is well supported.
+
+The loss definition imposes two limits on every such loop. First, an accepted edit is evidence of improvement only on the measure and tasks evaluated. Promotion must preserve that meaning or establish the improvement again. Second, the loop optimizes a defined objective. It does not discover a better objective simply by accumulating edits. Revising the evaluator changes the objective itself, a complication we return to in Section REF(sec:reflexive).
+
+## Corpus and method {#sec:method}
+
+We read each system's public method or documentation for four things: the persistent artifact it changes, the feedback that prompts the change, the decision that accepts it, and the scope in which the result is used. This allows systems with different names and application domains to be compared by their behavior.
+
+### Scope and selection
+
+The corpus contains 256 unique systems from January 2023 through the October 2026 cutoff. The first search pass identified 130 systems by May 2026; the second added 126. Sources include research papers, public repositories, product documentation, and supported production reports; the search families, evidence tiers, and inclusion rules are recorded with the released data (Appendix REF(app:data)).
+
+A system enters the survey if it adapts a foundation model through a persistent artifact updated from deployment signal, or if it is publicly described as self-improving, scaffolded, or agentic. Including the latter group provides a contrast set: the survey can test whether those descriptions correspond to persistent adaptation. Systems whose only update mechanism is weight-level training are excluded, as are systems without public evidence of release or deployment.
+
+We apply two filters. The first admits a system to the **core corpus** if it scores at least 3 on at least one scaffold substrate under the rubric below. Of the 256 systems, 204 form the core corpus and 52 the contrast corpus. A system may have one integrated row or several substrate-specific rows, so the 256 systems occupy 269 scored rows.
+
+The second filter is a **two-loop audit**. It asks whether session feedback changes a persistent artifact and whether that artifact is subsequently promoted beyond the deployment that produced it, with versioning or lineage. Applied to the core systems and the additional paper-based classifications (Appendix REF(app:data)), it admits 11 research systems and 3 industry exemplars. Fig. REF(fig:corpus) summarizes the selection.
+
+```{=latex}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.55\textwidth]{figures/fig4_corpus_flow}
+\caption{Corpus selection. The 256 systems occupy 269 scored rows. The first filter separates core from contrast systems; the two-loop audit then checks persistent local adaptation and promotion with lineage. The audit includes the additional paper-based classifications described in the text.}
+\label{fig:corpus}
+\end{figure}
+```
+
+The research systems passing the audit are NanoResearch, SkillOpt, AlphaEvolve, ADAS, DGM, Voyager, SAGE, EvolveR, CoEvoSkills, AutoManual, and CASCADE. The industry exemplars are Sierra Agent OS 2.0, Cognition Devin, and Letta's Context Repositories. SkillOpt is classified from its paper and is not a row in the 256-system score table. The remaining paper-based systems are identified in the data notes (Appendix REF(app:data)) and the audit's boundary cases in the contrast set (Appendix REF(app:contrast)).
+
+Passing this audit does not establish governed sharing across organizations. All passing systems promote within one operator, into a shared bank or archive that later runs draw from, or across the agents and sessions of one deployment. Letta passes on the lineage of its shared-memory updates even though those updates have no acceptance gate. Six further systems promote across contexts without lineage on the promoted artifact; their treatment under relaxed audit rules is reported separately.
+
+### Substrates and scoring
+
+The scaffold has six substrates: instructions, skills, memory, tools, orchestration, and governance. These are the possible targets of a proposed edit. Table REF(tab:V-1) describes them; the episodic, semantic, and procedural memory categories follow Sumers et al. [@sumers2023coala].
+
+| Substrate | What persists | A score of 5 requires |
+|-----------|----------------------------|----------------------------|
+| S1 Instructions | Project, team, or organization rules attached to a workspace | Versioned rules promoted under an automatic gate |
+| S2 Skills | Procedures, as code or text, loaded on demand | A skill bank that edits itself on failure, test-gated, versioned, and promoted |
+| S3 Memory | Experience kept across sessions: episodic, semantic, procedural | Provenance, versions, and a correction path for every entry |
+| S4 Tools | The vetted action surface and its schemas | Evaluation-gated tool versions; a curated bundle as the product |
+| S5 Orchestration | The multi-role graph and its routing | Topology updated from deployment feedback by a loop outside the agent's own run |
+| S6 Governance | Versioning, promotion, audit, rollback | Staged promotion with evaluation thresholds, an audit log, and rollback |
+
+Table V-1. The six scaffold substrates, what each holds, and what a system must do on it to score 5.
+
+The common scoring scale runs from 0 to 5. At 0 an artifact is ephemeral. At 1 it persists locally; at 2 it persists with tool attachment but without feedback. At 3 it either spans scopes without a gate or is updated from feedback by a person. At 4 a program updates it from feedback. The score-5 requirement depends on the substrate, as specified in the table.
+
+This last distinction is important when interpreting the scores. Instructions and skills require both loops to reach 5. Orchestration requires a topology updated from deployment feedback by a loop outside the agent's own execution. Memory, tools, and governance are scored for their corresponding governance capabilities, so a registry can score 5 without generating local edits. Integrated rows measure breadth and depth of adaptation, not closure of either loop. The scale therefore supports substrate-specific comparisons; a top score is not a universal certificate of complete optimization.
+
+Table REF(tab:V-2) gives the corpus distribution. Research systems hold the top marks on skills, memory, and the integrated row. Production platforms and standards hold them on tools and governance. No system reaches the top score across all six substrates, and none reaches it on instructions or orchestration.
+
+| Substrate | $n$ | Mean | Score-5 systems | What the corpus holds on it |
+|------------|---:|----:|--------------------|----------------------------------|
+| S1 Instructions | 15 | 3.07 | (none) | Rules persist across IDEs and agents and nothing measures them; no system closes both loops; ceiling 4 |
+| S2 Skills | 50 | 3.34 | SAGE, COSPLAY | The local loop closes under a program in the research systems; the production repositories merge by hand |
+| S3 Memory | 50 | 3.06 | Cuadros et al. | The ledger ships in products; the correction a gate would enforce is absent |
+| S4 Tools | 20 | 3.65 | MCP, Harvey, Hippocratic AI | The most mature production substrate; registries govern admission, not evaluation |
+| S5 Orchestration | 37 | 3.08 | (none) | Topologies change under an evaluation gate; one structurally gated instance; no two-loop system with lineage |
+| S6 Governance | 45 | 3.02 | Braintrust, Vellum, LangSmith Hub, AGENTS.md under the Agentic AI Foundation (AAIF) | Prompts-as-code mature; registries add lineage and rollback; no local loop generates a candidate |
+| Integrated | 52 | 3.81 | NanoResearch, AutoAgent, SkillRL | Breadth and depth of adaptation, not the loop; reached only by research systems without enterprise governance |
+
+Table V-2. Substrate maturity across the 256-system corpus. Column n counts scored rows on each substrate, Mean is the average score, and Score-5 systems reach the substrate's top mark; the integrated row counts systems scored across several substrates as one row. Of the 126 most recently added systems, 105 are core and 32 are skill systems; 89 of those core systems close the local loop under a program, and none of the 126 scores 5 on any substrate.
+
+For the 126 most recently added systems, gate types, feedback classes, and governance properties are recorded as explicit columns of the released table, so counts based on those columns apply to those systems. For example, 89 of their 105 core systems close the local loop under a program. This is not a gate count over all 256 systems.
+
+### Evidence and limitations
+
+The evidence ranges from peer-reviewed studies and open-source artifacts to vendor claims. Every classification carries its evidence tier and a one-line justification in the released table. Peer-reviewed papers and open-source artifacts receive the greatest weight. A production claim must name a benchmark or integration target, and a blog or interview is counted only when stronger evidence corroborates it. Production claims are not pooled with peer-reviewed evidence in corpus-level statistics; vendor-based exemplars are identified as such.
+
+One author scored all systems. Ambiguous cases were rounded down, and half-scores were used only when one criterion was clearly met and another partly met. Independent re-rating remains future work. The classifications should be read as an auditable interpretation of public evidence, not a complete inventory of private production behavior.
+
+We also test the audit under alternative boundaries: counting rollback as sufficient promotion governance, allowing promotion without governance, and admitting loops that persist only optimizer state. Membership changes under these relaxations, but the principal structural findings remain: [Auto × Auto] stays well populated, the human-local cells hold only curation and registries, Letta alone passes with an ungated promotion, and no relaxation adds governed promotion across organizations (Section REF(sec:gap)). The sensitivity analysis is released with the data notes (Appendix REF(app:data)) and the full score table with the released table (Appendix REF(app:scores)).
+
+## What local adaptation actually closes {#sec:findings}
+
+A system can detect a failure, explain it, and write a plausible correction without ever establishing that the correction helps. SkillForge illustrates this distinction. Its judge agrees with people more than nine times in ten and identifies replies that should be rewritten. Those replies drive updates to the skill, but the updated skill is committed without an acceptance test [@skillforge2026]. The calibration concerns which replies are inadequate. It does not measure the effect of the resulting skill changes.
+
+SkillRL exposes the same separation through a different mechanism. A success-rate threshold triggers proposals for new skills, and the skill bank accepts each proposal unconditionally [@skillrl2026]. Both systems respond to experience, yet neither has the local acceptance gate defined in Section REF(sec:loop). This is why the survey records who accepts an edit separately from who generates it or which signal triggers it.
+
+Among the 105 core systems most recently added to the corpus, automatic local acceptance is nevertheless the dominant pattern: 89 use a program to retain or reject changes. Looking inside those loops reveals a less even picture. Evaluation is comparatively mature, while the failure record and the link from a failure to the responsible artifact are often incomplete.
+
+### Finding the right thing to change
+
+A useful failure history must retain what went wrong in a form that supports later comparison. Production memory more often records preferences, successes, or conversation history. Only one field report in the corpus describes a store of dead ends intended to prevent their recurrence, and that evidence comes from a single self-reported deployment [@helwig2026memory]. The persistent store may therefore be extensive while the particular record needed for failure-driven adaptation is missing.
+
+Even when failures are retained, nearly every system uses them in arrival order. Few explicitly choose which recurring modes deserve attention. Task-CoEvolve's variance-weighted task sampling and AutoSaddler's mini-batch failure signals are exceptions [@miyai2026taskcoevolve; @park2026autosaddler]. They weight the experience used for the next update rather than letting the most recent session determine it. The general loop described earlier would prioritize both recurrence and severity; this remains uncommon in the surveyed implementations.
+
+The next step is harder. A failed output does not reveal whether its cause was an instruction, a retrieved memory, a skill, or the route through a group of agents. Harness-optimization papers repeatedly identify this attribution problem as the bottleneck [@lin2026ahe; @zehle2026cantante; @lee2026metaharness; @nguyen2026harnessevo; @liu2026skillsvote]. An evaluation of harness optimizers reaches the same conclusion: by downstream score alone, a harness optimizer cannot be told from trial and error [@ong2026harnesseval].
+
+Existing solutions usually operate within one substrate. Meta-Harness preserves candidate harnesses and the record of which edits helped [@lee2026metaharness]. SkillsVote attributes outcomes to the skill, exploration, or environment before admitting an update [@liu2026skillsvote]. SkillOpt-Lite keeps only the attributes that recur across rollouts, and its ablation finds this consensus mechanism load-bearing [@shen2026skilloptlite]. These methods give the proposal process more useful evidence. None solves the general attribution problem across all six scaffold substrates.
+
+### Testing the candidate
+
+Research systems commonly generate candidates by reflecting on trajectories. In production prompt platforms, an engineer writes the candidate and session feedback never triggers one, while public skill repositories depend on contributors. A field study of five such repositories finds that every substantive edit was committed under a named human account and merged by a person, most carrying an AI co-author trailer [@shen2026whomaintains]. Where proposal generation depends on a person noticing a problem, the evaluation machinery can run automatically while the improvement process itself remains intermittent.
+
+On skills, SAGE and COSPLAY close both local and promotion loops inside a research environment [@wang2025sage; @wu2026cosplay]. SkillChain adds a human reflection decision after the judge, on which refined skills are deployed [@hu2026skillchain]. SkillRL and SkillForge, described above, leave the proposed changes unchecked. These differences would be obscured by classifying all three simply as systems that learn from feedback.
+
+Orchestration has followed a similar progression. Early systems searched for agent topologies under an evaluation score [@zhuge2024gptswarm; @zhang2024aflow]. More recent systems evaluate proposed topology changes before keeping them; TOCOMAS also requires a structural invariant [@chu2026agentgrad; @chen2026harnessforge; @zhao2026tocomas]. OptiMAS is an exception: its optimizer reads trajectories and validation scores to write the next configuration, but the score informs the edit rather than supplying a keep-if-better decision [@cheng2026optimas]. No orchestration system closes both loops with lineage on the promoted artifact.
+
+The most widely deployed artifact remains a useful counterpoint. Instruction files are present across Claude Code, Cursor, AGENTS.md [@agentsmd2025], Windsurf, and Continue.dev, and adoption studies find them in roughly a fifth to a quarter of coding-agent projects [@robbes2026agenticmuch; @galster2026harnessconfig]. Their prevalence does not settle their effectiveness. One controlled study reports higher inference cost without improved task success [@gloaguen2026agentsmd]. Another toggles the root AGENTS.md in paired runs on 124 pull requests and reports about 29% lower median wall-clock time and 17% fewer median output tokens, with total tokens approximately unchanged; it does not measure correctness [@lulla2026empirical]. The studies measure different outcomes and disagree on cost. Neither establishes a general task-success benefit from accumulating instruction files.
+
+Human local gates appear only in curation. VerificAgent uses fact-checked, frozen memories [@nguyen2025verificagent], and in SkillChain a person decides, at a reflection gate, which refined skills are deployed. Prompt platforms and registries without a failure-driven proposal process have no local gate in this classification. Their checks act on release or admission to a shared pool, which belongs to promotion.
+
+### Gathering enough evidence to accept
+
+An acceptance test can itself be too noisy to support a decision from one run. Several newer systems address this directly. SAGE-gate, a statistical acceptance method unrelated to SAGE, uses paired per-item comparisons before committing an edit [@wang2026sagegate]. VaG requires three heterogeneous critics to pass [@shang2026vag]. AutoSaddler uses mini-batch failure signals in validation-based selection [@park2026autosaddler].
+
+These mechanisms should not be conflated. Averaging $k$ independent noisy scores reduces the variance of their mean by a factor of $1/k$. Requiring agreement among $k$ independent checks, each with false-acceptance probability $p$, gives the idealized probability $p^k$. The independence assumptions matter, and actual critics need not satisfy them. Appendix REF(app:gates) distinguishes the gate families and their roles. The shared development is that acceptance increasingly depends on a body of evidence rather than one favorable observation.
+
+### Maintaining the artifacts that survive
+
+The evaluation of a new edit also depends on the artifacts already present. Stale or conflicting skills can cause failures that obscure the effect of the candidate under test. Ratchet reports no gain from model-written skills over a no-skill baseline until lifecycle hygiene is applied, while human-curated skills provide a double-digit gain [@zhang2026ratchet]. Eleven surveyed skill systems now treat removal as an operation that must pass a check, just as admission does [@zhang2026librarydrift; @wei2026skillsmith; @pu2026skillops; @wang2026assay] (Appendix REF(app:audit)).
+
+Memory products have made substantial progress on a different part of maintenance: recording an entry's history. Letta's Context Repositories use git, Mem0 retains per-memory history, and Zep represents facts bitemporally [@letta2026memfs; @mem02026history; @zep2026facts]. These records can explain what the system remembers and how that state arose.
+
+History does not guarantee correction. A study of five production backends finds that all five still return facts that were revoked [@shen2026revoked]. The record contains the change, but retrieval does not reliably enforce it. Research systems likewise divide between provenance and write controls [@wang2026toki; @xu2026ppmf; @margalit2026governed; @sun2026vermem] and verifier-gated failure correction [@yu2026recuris; @wang2026memguard]. Cuadros et al.'s governed collaborative memory combines provenance, versioning, and correction, earning the top memory score [@cuadros2026governed].
+
+Reversal has its own limits. SkillSmith and SkillAudit support edit-level rollback [@wei2026skillsmith; @gao2026skillaudit], and EvoUndo rejects edits that cannot be undone [@sah2026evoundo]. VaG finds that reversing a contaminated skill recovers little once other skills have been derived from it [@shang2026vag]. The consequences of an edit may therefore outlast the edit itself. Section REF(sec:failure) returns to this problem when considering promotion and artifact descendants.
+
+### A complete local example
+
+SkillOpt provides a concrete instance of all five conditions [@yang2026skillopt]. Its persistent state is one markdown skill document used by a frozen agent. Rollout and reflection batches supply the failure evidence. A consensus filter helps attribute recurring errors, and bounded add, delete, and replace operations propose changes. A held-out exact-match split supplies the loss, and a candidate is accepted only when its score strictly improves.
+
+Across six benchmarks, seven target models, and three harnesses, SkillOpt is best or tied in every cell reported by its authors. Its follow-up, SkillOpt-Lite, removes a rejected-edit buffer and slow update schedule while retaining the held-out gate and consensus filter; it matches or exceeds the original [@shen2026skilloptlite]. This comparison supports the importance of the gate and this form of credit assignment in that setting, while identifying the removed controls as stabilizers rather than necessities.
+
+SkillOpt also evaluates transfer across models, harnesses, and benchmarks. Those experiments measure how far the learned artifact remains useful. They are distinct from the acceptance decision that admits an edit to the shared skill bank. This distinction becomes central once the same local procedure is used in settings where correctness is harder to measure.
+
+## What the feedback allows a gate to know {#sec:signal}
+
+A coding agent changes a repository rule and receives a test result within seconds. A scheduling assistant changes its booking procedure and learns later whether an appointment was made. A marketing assistant changes its tone instructions and receives a reviewer's preference. A research assistant changes its strategy and may wait months to learn whether the direction was productive.
+
+All four systems can propose a persistent edit. What differs is the evidence available for accepting it. The signal's timing, exactness, and dependence on judgment determine how well a gate can estimate the change in loss. We divide the surveyed systems into four feedback classes, summarized in Table REF(tab:IV-1).
+
+| Class | The signal the gate receives | What the gate can be | What stays hard | Corpus examples |
+|---------|------------------------|--------------------|----------------------|--------------|
+| C1 exact | A check that returns pass or fail, or an exact score, at once and repeatably: tests, compilers, answer keys | An automatic check; one run per case, repeated only to sample the task mix | The lift is bounded and specific, an improvement in what the check measures on the cases it ran; the check names the failed output, not the coordinate that caused it; a check that is also the target can be gamed | DGM, AlphaEvolve, SkillOpt |
+| C2 observable outcome | A real result one episode later: a booked slot, a merged pull request, a closed ticket; noisy and confounded | An automatic threshold over batched episodes; a person at promotion | The outcome says *that* the episode failed, not *why*; the channel can be poisoned | Devin, Sierra, SAGE, SkillRL, PACE, Voyager |
+| C3 judged | A rater, a rubric, or a model judge; no ground truth | A judge calibrated against people; a person at promotion | The rubric is itself a scaffold coordinate, so the gate judges edits to itself; the proxy gets optimized past the point where it tracks quality | SkillForge, CASCADE, skills-repository review |
+| C4 delayed | An outcome weeks or months later, once per many edits | No per-edit gate; proposals are pruned and milestones stand in | Credit across many edits; drift; the loop cannot be told from random search | NanoResearch, CORAL, the AI Scientist |
+
+Table IV-1. The four feedback-signal classes. Reading across a row: what the gate receives, what it can therefore be, and what it cannot fix.
+
+The classes are assigned by the constraint that binds first. A long delay makes a signal C4 even when the eventual outcome is objective. Among timely signals, the absence of an independent ground truth makes the signal C3. Among timely objective signals, repeatable exact checks distinguish C1 from noisy observed outcomes in C2. A system may use several signals, but its operative acceptance decision must be read against the signal that supports it.
+
+### Exact checks: C1
+
+A compiler, proof checker, schema validator, or exact-match answer key can decide a specified property immediately and repeatably. This makes an automatic gate straightforward to implement. AlphaEvolve scores candidates through a cascade of exact evaluators [@alphaevolve2025], and SkillOpt uses held-out exact-match evaluation [@yang2026skillopt]. DGM makes a narrower acceptance decision: it retains self-modifications that pass a sandboxed compile-and-edit functionality check on ten benchmark tasks. The broader benchmark score weights parent selection from the archive rather than determining retention [@zhang2025darwin].
+
+Exactness applies to the check, not to the deployment as a whole. Repeating a deterministic check on the same output yields the same answer, but an agent produces stochastic outputs, and a finite suite samples only part of the task distribution. Estimating the change in patch loss still requires accounting for that variation. Passing the suite also establishes only the properties the suite tests.
+
+Two problems remain even with a reliable checker. A failed test may not identify the instruction or skill that caused the failure, and repeated optimization against the same suite can overfit it. Cheap acceptance can also allow the artifact pool to grow without sufficient pruning. Exact feedback makes evaluation easier; it does not supply attribution or lifecycle management.
+
+### Observed outcomes: C2
+
+A booked appointment, closed ticket, merged pull request, or successful tool call provides an observable result after an episode. The result is meaningful but may be noisy or confounded. A user can accept an incorrect answer or reject a correct one, and a merged pull request reflects more than the agent's technical performance.
+
+Devin reads merged pull requests as feedback [@cognition2025devinreview]. SAGE measures task success in AppWorld [@wang2025sage], and PACE uses failure signals from a deployed small model [@ling2026pace]. SkillRL uses a success-rate threshold only to trigger proposals, without testing whether the proposed skills should remain [@skillrl2026]. The same kind of outcome can therefore support different operations in different systems.
+
+Simulated outcomes, such as those in Voyager's game world or SAGE's AppWorld, remove the user confound and can be sampled repeatedly. They are treated as a distinguishable case within C2. For observed outcomes more generally, an automatic gate needs a positive margin and enough episodes or independent evidence to absorb noise. Even then, the result usually reveals that the task failed more readily than why it failed.
+
+Promotion is harder because another deployment may differ in users, tasks, and acceptance behavior. A sender's successful outcome is not an evaluation of the recipient. This class also depends on channels that can carry poisoned memories or injected tool instructions, connecting the reliability of feedback to the integrity of its source.
+
+### Judgments: C3
+
+For style, persuasion, design, or other preference-dependent tasks, a gate relies on a person, rubric, reference comparison, or model judge. There is no independent exact answer to the preference being measured. CASCADE uses a human-and-agent gate for memory consolidation [@huang2025cascade], and a reviewer approves promotion into Anthropic's skills repository. SkillForge uses its calibrated judge earlier in the process, to identify replies that motivate a rewrite [@skillforge2026].
+
+A program can make these decisions, but its score must be calibrated against the human judgment it is intended to represent before the score is treated as evidence of that preference. The gate labels deliberately do not record this distinction: an uncalibrated model judge is still an Auto gate, though the meaning of its acceptances is less established. SkillForge, SkillChain, and SkillCoach report calibration measurements [@skillforge2026; @hu2026skillchain; @zhu2026skillcoach]; no other surveyed judge does.
+
+Optimization introduces another risk. A scaffold can become better at satisfying the judge while becoming worse at the underlying task. Reward-model research measures this form of proxy overoptimization [@gao2023overoptimization]. Human evaluation is not fixed either: Shankar et al. find that evaluators' criteria change as they grade more outputs [@shankar2024validators]. If the system also edits the rubric, it changes the instrument used to assess subsequent edits. This **reflexive gate** is developed in Section REF(sec:reflexive).
+
+### Delayed and sparse outcomes: C4
+
+Research programs and open-ended discovery may produce meaningful outcomes only after weeks or months and many intervening edits. The AI Scientist illustrates the broad setting by generating ideas, conducting experiments, and writing a paper [@lu2024aiscientist]. The eventual outcome cannot usually be assigned to each preceding scaffold change.
+
+Systems in this class consequently use intermediate decisions. NanoResearch merges skills by semantic compatibility [@xu2026nanoresearch]. CORAL promotes findings into shared memory on a heartbeat [@qu2026coral]. These operations can prune or consolidate proposals, but they do not estimate each edit's contribution to the eventual loss. AlphaEvolve's archive diversity does not make it a delayed-signal example: its candidates have already been scored by exact evaluators, so archive selection is a search strategy within C1 [@alphaevolve2025].
+
+For C4, the descent interpretation applies only to whatever proxy gate is available or to an evaluation at the longer horizon. Temporal credit assignment remains unresolved, and the environment can change before the result arrives. Outcome gains alone are also insufficient to distinguish directed improvement from a successful search, a limitation emphasized in the evaluation of harness optimizers [@ong2026harnesseval].
+
+### Consequences for the two loops
+
+The classification yields three expectations that can be checked against the corpus. First, local automatic acceptance is most directly supported by exact checks and observed outcomes. Judged acceptance depends on calibration, while delayed feedback cannot evaluate edits individually. Second, automatic promotion that estimates a loss change should occur only where a comparable check can be applied at the recipient, in exact and re-runnable simulated settings, and human promotion should hold the observed outcomes and judgments. Delayed feedback supports no per-edit gate on either half. Third, the main failure risks should differ: overfitting to a suite and bloat under exact feedback, corrupted outcome channels under C2, proxy optimization under C3, and drift under C4.
+
+These are expectations about the evidence a gate can establish, not restrictions on whether software can execute a decision. A program can merge two judged artifacts or prune a delayed proposal without estimating a loss change. Section REF(sec:design) makes this qualification explicit in the gate grid. In every class, sharing remains an additional empirical question: even the same exact checker must be applied to the recipient's relevant cases before broader performance is established.
+
+## When a local improvement is shared {#sec:design}
+
+A rule can be useful in one repository and inappropriate in the next. Copying the file transfers the instruction, but not the evidence that justified it. The recipient must either share the relevant evaluation conditions or test the change on its own workload. This is the additional decision that separates local adaptation from promotion.
+
+### Scope and receiving-side evaluation
+
+We distinguish five nested scopes. **USER** covers one person's account or fork. **PROJECT** covers a repository, workflow, or product workspace. **STACK** is a team's curated bundle of projects. A **TENANT** is an organization or customer, and **CORE** is the scope shared by all tenants. A wider scope aggregates the losses of the deployments it contains. Promotion changes which population the edit is intended to improve, as shown in Fig. REF(fig:scope).
+
+```{=latex}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.55\textwidth]{figures/fig2_scope}
+\caption{Promotion scopes, from a user account to the shared core. Wider adoption changes the population on which an edit acts. Receiving-side evaluation checks whether the improvement is supported for the recipient.}
+\label{fig:scope}
+\end{figure}
+```
+
+The nesting makes an important limit visible. A lower average loss at a broad scope can conceal harm to an individual recipient. The proposed architecture in Section REF(sec:gap) therefore includes a held-out check at the receiving tenant. Versioning and access control govern whether an edit may be delivered and reversed; receiving-side evaluation tests whether it should be used there.
+
+Several systems already evaluate transfers within one operator. ShareMem consolidates memories from one user for another and evaluates them in the receiving context [@hu2026sharemem]. XRepoSkill verifies a rule in at least two repositories [@guo2026xreposkill]. Evo2Team promotes routing skills between teams and confirms them at the target [@wang2026evo2team]. These are concrete instances of evidence being gathered beyond the source deployment.
+
+Federated systems place the check elsewhere. EvolveNet merges a shared harness only when the merge fixes at least as many held-out items as it breaks, but that check occurs at the aggregator [@nie2026evolvenet]. FederatedSkill's server agent applies, adapts, or rejects each client's edit and records the decision [@yang2026federatedskill]. Their clients are partitions or agent instances under one operator, not independently governed customer organizations. They do not instantiate a receiving-organization gate.
+
+The location of the evaluation matters, and its coverage still matters after it is correctly located. ShareMem, XRepoSkill, and Evo2Team check the receiving context; EvolveNet checks the shared merge; FederatedSkill records a server decision. Even in Evo2Team, nearly a fifth of confirmed transfers fail on graphs not covered by confirmation. A receiving-side check provides necessary evidence for adoption, but finite evaluation does not guarantee performance on all future tasks.
+
+### Automatic, human, and unchecked promotion
+
+Research systems often promote by admitting a candidate to a bank or archive that later runs reuse. SkillOpt, DGM, ADAS, Voyager, and SAGE apply programmatic decisions within this shared environment [@yang2026skillopt; @zhang2025darwin; @hu2024adas; @wang2023voyager; @wang2025sage]. AlphaEvolve and its predecessor FunSearch score candidates before archive admission [@alphaevolve2025; @romeraparedes2024funsearch]. AlphaEvolve has produced gains used within Google, but it is a research loop within one operator, rather than a product for governed sharing between organizations. That pool is as far as any of them travels, and none has access control, audited promotion, or a gate at a receiving organization.
+
+Not every automatic admission has the same evidentiary meaning. NanoResearch's semantic merge, AutoManual's judged rewriting and consolidation, and ShareMem's judged consolidation are programmatic decisions, but none of them estimates a candidate's reduction in patch loss. The distinction anticipated by the feedback classes is therefore essential: an automatic promotion decision can exist where a per-edit improvement estimate does not.
+
+Production systems more often retain a person at the promotion decision. Sierra routes generated insights through human-authored expert answers [@sierra2025os20]. In Devin, the same pull-request merge serves two roles: it supplies an observed outcome to local adaptation and records the reviewer's approval for the persistent repository [@cognition2025devinreview]. Spotify's optimized prompts and plans enter production after online A/B testing and a launch decision [@palumbo2026spotify]. CASCADE also combines human and agent approval for memory consolidation [@huang2025cascade]. In each, the person at the promotion gate stands in for the exact signal production lacks, which makes a program on the local gate with a person on the promotion gate the production-viable pairing rather than a compromise.
+
+Letta's Context Repositories take a different path. Shared-memory changes are pushed with git lineage but without an acceptance check. The record explains what was shared, while leaving whether it should have been shared unresolved. In many other systems, promotion is absent altogether. AutoAgent, for example, revises the tool and peer descriptions of one agent without propagating those revisions to another deployment [@wang2026autoagent]. Both cases receive None at the promotion gate, but for different reasons: one shares without checking; the other does not share.
+
+### What formats, registries, and release platforms provide
+
+Much of the infrastructure needed for sharing already exists independently of these learning loops. Claude Agent Skills, Cursor Rules, GitHub Copilot instructions, Windsurf, Continue.dev, Zed, and Replit use git-tracked markdown artifacts attached to workspaces, with a tool layer organized around MCP-style interfaces [@galster2026harnessconfig; @barbaste2026harnessengineering]. This convergence makes artifacts easier to carry between runtimes. A study of repository-level loops nevertheless finds that the runtime state of the adaptation process remains outside version control [@lulla2026loopengineering]. The portable file does not necessarily carry the history that produced it.
+
+Public repositories provide a shared scope with human admission. In a study of five skill repositories, every substantive change was committed under a named human account and merged by a person; only one of 254 edits deprecated a skill [@shen2026whomaintains]. MCP registries provide namespaces and version records, while control planes add scanning, access control, or quarantine [@agenticcommunity2026mcpgateway; @microsoft2026apicentermcp; @truefoundry2026mcpgateway]. Governance registries add lineage and rollback [@kang2026registry; @quessadavial2026acm; @qin2026governed]. EDDOps gates promotion on evaluation thresholds before a human sign-off, but none of these registries generates candidate artifacts from failures.
+
+Braintrust, Vellum, and LangSmith Hub likewise provide immutable versions, evaluation thresholds, and rollback [@braintrust2026docs; @vellum2026docs; @langsmith2026hub]. Engineers author the candidates, and evaluations can block a regressing release. In the surveyed descriptions, session feedback does not trigger candidate generation or the release process. These platforms supply much of the machinery for controlled change without closing the failure-driven local loop.
+
+### The two decisions viewed together
+
+Fig. REF(fig:design) places the local and promotion gates on a common grid. Table REF(tab:VII-1) summarizes the occupants and their signals. The grid distinguishes a system that generates and tests improvements from one that distributes human-authored artifacts under admission control, while allowing their complementary capabilities to be compared.
+
+```{=latex}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.52\textwidth]{figures/fig3_design_space}
+\caption{Local and promotion gates. Each axis records who accepts a change: a program, a person, or no gate. None includes both absent promotion and unchecked sharing; the text distinguishes these cases.}
+\label{fig:design}
+\end{figure}
+```
+
+| Cell | Who keeps the local edit, who lets it climb | Who is there | Signal found there |
+|--------------------|------------------------------------|--------------------------------------|------------------------------|
+| [Auto × Auto] | A program keeps it; a program lets it climb | Research systems that close both halves inside one environment or one operator | Exact and simulated outcomes; delayed and judged only under pruning or merging |
+| [Auto × Human] | A program keeps it; a person lets it climb | Production systems with a reviewer on promotion, and CASCADE | Observed outcomes and judgments |
+| [Auto × None] | A program keeps it; nothing lets it climb | Letta's ungated push; systems that promote nothing | As on the local gate |
+| [Human × None] | A person keeps it; nothing lets it climb | Curation | Judged |
+| [None × Auto] | No failure triggers a candidate; a threshold gates release | Prompts-as-code platforms and governance registries | No failure-driven loop |
+| [None × Human] | No failure triggers a candidate; a person admits | Open standards, MCP registries, community hubs | No failure-driven loop |
+| [None × None] | Nothing checks or promotes the edit | SkillRL and SkillForge, unchecked skill loops | Outcomes and judgments |
+
+Table VII-1. The gate grid read cell by cell: who keeps a local edit and who lets it climb, which systems sit in the cell, and the feedback signal they gate on. [Human × Auto] and [Human × Human] hold no surveyed system.
+
+Among [Auto × Auto] systems whose promotion gate estimates a loss change, the operative signals are exact checks or simulated outcomes. The judged and delayed cases use pruning, rewriting, or merging rather than that estimate. [Auto × Human] contains observed outcomes and judgments, with no exact-signal system in the surveyed cell. These patterns match the feedback-based expectations once the meaning of automatic admission is made explicit.
+
+The [Human × Auto] and [Human × Human] cells are empty in the surveyed set: no system combines a human local gate on a failure-driven loop with subsequent promotion. Human local decisions occur in curation. The bottom row includes comparison systems without a failure-driven local loop, such as prompt platforms, registries, and community hubs including Buildrix [@jiang2026buildrix]. SkillRL and SkillForge occupy [None × None] because their failure-driven skill updates, new skills in SkillRL and rewrites in SkillForge, are kept unchecked.
+
+The audit's boundary cases do not change this structure. Of six systems that promote without artifact lineage, five have sufficient evidence under the tier rule and enter already occupied cells when the audit is relaxed; Spotify is one of them. The sixth, Future AGI's prompt lifecycle, has only uncorroborated T5 evidence. No relaxation yields governed promotion across organizations. What the grid reveals is a division of capabilities: no system has both the learning of the top row and the governance of the bottom row.
+
+## How adaptation can undermine its own evidence {#sec:failure}
+
+An improvement loop changes the context in which its next decision is made. New rules can conflict with old ones, a corrected memory can still be retrieved in its earlier form, and a frequently reused evaluator can become a target. These failures extend the technical-debt concerns identified for machine-learning systems by Sculley et al. [@sculley2015debt]. The literature documents six of these failures in a measured case; a seventh, overfitting to one deployment, follows from the scope of the loss rather than from a measurement. Table REF(tab:X-1) connects each to the control that addresses it.
+
+| Failure | What goes wrong | The loop piece that answers it | Dominant class |
+|------------|------------------------------|------------------------------|----------|
+| Scaffold bloat | Rules and skills accumulate until the model follows them worse and the gate has no clean signal | Complexity penalty $\Omega$ in the gate; pruning and expiry as first-class gated operations | C1, C3 |
+| Poisoned memory | An attacker writes an entry that later retrieval trusts | Provenance on every entry; write gating; a rollback envelope | C2 |
+| Injection via tools and MCP | A tool's output or a connected server carries instructions into context | Narrow tool permissions; a privilege hierarchy over instructions; tool bindings pass the same promotion gate as any other coordinate | C2 |
+| Evaluation fragility | The suite that gates edits is itself edited, gamed, and read non-independently | Held-out evaluations scoped within evidence radius, weighted toward recurring modes, re-read as the target drifts, checked against attribution | C3 (primary), C1 |
+| Coordination failures | Multi-agent roles blur and context is lost between agents | Orchestration topology treated as a scaffold coordinate under the same gate and rollback discipline | C2 |
+| Patch overfitting | A scaffold tuned to one deployment degrades another | Evidence-radius discipline at promotion; receiving-side held-out evaluation | C2 |
+| Plasticity loss | Old rules, polluted memory, and drifting tool versions crowd out adaptation | Expiry and rollback as explicit loop operations rather than retrospective hygiene | C4 |
+
+Table X-1. The failure surface of patchwork scaffold maintenance: what goes wrong, the piece of the loop that answers it, and the feedback-signal class in which it dominates.
+
+### Accumulation and contamination
+
+As instructions accumulate, following them becomes harder and latency increases [@jaroslawicz2025ifscale]. Ratchet's finding that model-written skills need lifecycle hygiene before producing gains makes the consequence visible at the system level [@zhang2026ratchet]. Conflicting or obsolete artifacts also complicate attribution: an evaluation may detect failure without revealing whether the cause is the new candidate or an older artifact. Gated retirement, pruning, and expiry preserve the conditions under which a new edit can be meaningfully assessed.
+
+Persistent memory creates another route to lasting error. PoisonedRAG demonstrates attacks on retrieved knowledge [@zou2024poisonedrag], AgentPoison plants backdoors in long-term memory or knowledge bases [@chen2024agentpoison], and memory control-flow attacks operate across major agent frameworks [@xu2026mcfa]. Tool outputs and connected servers can also insert instructions into the model's context [@greshake2023injection; @debenedetti2024agentdojo]. In CVE-2025-54136, a previously approved MCP configuration could be changed without renewed approval [@checkpoint2025mcpoison].
+
+These failures motivate provenance, write gating, and reversible memory changes [@su2026chronomem; @yu2026rollbackrepair], together with restricted tool permissions and an instruction privilege hierarchy [@wallace2024hierarchy]. The tool binding itself must be subject to controlled revision. Checking only the initial registration leaves later changes outside the decision that authorized it.
+
+Rollback also needs to account for derivation. If a contaminated skill has been used to create other skills, restoring its earlier version does not remove those descendants. VaG's limited recovery after such rollback [@shang2026vag] supports checking contamination before commitment and tracking consequences after it. A version history is a prerequisite for this work, but it does not perform the recovery by itself.
+
+### When the evaluator changes {#sec:reflexive}
+
+Consider a pitch-review assistant that consistently overrates decks claiming a large market without supporting numbers. The team revises its rubric from "evaluate market size" to "require a numeric estimate and a source." The edit may improve reviews, but it also changes the standard used to evaluate subsequent behavior. If the same rubric judges future rubric revisions, the improvement process is modifying its own measuring instrument.
+
+This is the reflexive-gate problem introduced with C3 feedback. The survey finds three scaffold systems reporting calibration of a judge against people: SkillForge, SkillChain, and SkillCoach [@skillforge2026; @hu2026skillchain; @zhu2026skillcoach]. None reports calibration for a judge that is itself being edited. The missing result is therefore more specific than an absence of calibrated judges. It concerns maintaining calibration while the criterion changes.
+
+Weight-level reinforcement learning has encountered a related problem in extending verifiable rewards to open-ended tasks. Some methods hold the judge fixed, using checklists, pairwise preferences, references, or rubrics [@gunjal2025rubrics; @jia2025writingzero; @shi2026references; @jin2026rlaes]. Others update the reward, rubric, or judge alongside the policy [@yu2025rlpr; @xu2026rubricarm; @ding2026evorubrics; @zhu2026score; @li2026rubricem]. Among the co-evolving methods reviewed, only RLPR reports agreement with human labels, and its reward is a probability rather than a rubric. The comparison is tabulated in the audit notes (Appendix REF(app:audit)); these weight-side methods are not included in the scaffold scores.
+
+Even a fixed evaluator can become unreliable through repeated use. Optimizing a proxy beyond a point can reduce the underlying quality [@gao2023overoptimization]. Unequal exposure to evaluation data can create apparent performance gains [@singh2025leaderboard]. Evaluations of agent trajectories are also path-dependent, and deployment tasks drift while the suite remains fixed. Human criteria themselves can shift during grading [@shankar2024validators]. Consequently, a gate needs its own held-out checks, calibration where judgment is involved, and revision history.
+
+The failure-mode hypothesis discussed in Section REF(sec:why) adds a conditional implication: if deployment failures concentrate in recurring modes, uniformly sampled tasks may underrepresent the modes that most need correction. Evaluation should then include those modes while preserving a held-out assessment. The requirement is broader than improving a benchmark score: score alone cannot tell a harness optimizer from trial and error [@ong2026harnesseval], so the evaluation must also test the claimed link between failures and edits.
+
+### Scope, coordination, and drift
+
+Some failures arise from the structure of the deployment. A study of multi-agent systems identifies fourteen failure modes, prominently including role confusion and context lost between agents [@cemri2025mast]. Treating routing and role assignments as editable scaffold coordinates makes them subject to evaluation and rollback alongside instructions and skills.
+
+Specialization creates a related boundary. A scaffold adapted to one deployment can degrade another because the tasks and preferred behavior differ. Receiving-side evaluation limits this risk at promotion; the evidence radius records where the improvement has been tested. This does not eliminate uncertainty outside the evaluated cases.
+
+Finally, the scaffold can become less adaptable as old rules, polluted memories, and drifting tool versions accumulate. Long-context degradation [@liu2023lostmiddle] provides one related mechanism. Expiry, pruning, and rollback must remain available throughout the system's lifetime, especially when delayed feedback arrives too slowly to keep the artifacts current.
+
+The feedback classes help organize these risks without making them exclusive to one class. Exact checks invite suite overfitting and cheap accumulation; observable outcomes depend on channels vulnerable to poisoning and injection; judged feedback is exposed to proxy optimization and moving criteria; delayed feedback makes drift difficult to correct promptly. Production systems provide individual controls, but the surface stays largely unmitigated because no surveyed system runs them together.
+
+## What governed sharing would require {#sec:gap}
+
+The evidence so far identifies a practical integration problem. Local optimizers can propose and test changes. Release platforms can version artifacts and reverse deployments. Registries can govern admission and access. The surveyed systems do not connect these capabilities into a process that learns in one organization and shares the resulting improvement with another under equivalent controls.
+
+We audit that missing combination through four properties:
+
+(a) **An auto-gated local loop:** an algorithmic acceptance criterion tests a proposed artifact change.
+(b) **Cross-organization promotion:** artifacts can be promoted between independently governed organizations or customers.
+(c) **Versioned lineage with access control:** a promoted artifact carries its history and audit trail, with policies controlling who may access it.
+(d) **Rollback:** a harmful promotion can be reversed without redeploying the whole system.
+
+The terms *cross-tenant* and *cross-organization* refer to the same boundary here. Sharing among agents, users, or benchmark partitions within one operator does not establish property (b).
+
+Table REF(tab:IX-1) compares the closest systems. FederatedSkill combines local adaptation with semantic skill exchange and an auditable server decision log [@yang2026federatedskill]. EvolveNet evaluates shared merges and can return to the previous shared harness [@nie2026evolvenet]. Both remain within one operator. Governance registries supply lineage and rollback without a local learning loop, and MCP control planes supply access control alone. Rollback exists inside one federated round and inside single deployments; no system rolls back a promotion that has crossed an organization boundary, because none makes such a promotion.
+
+| System | (a) auto-gated local loop | (b) cross-organization promotion | (c) versioned lineage with access control | (d) rollback |
+|--------------|------------------|----------------------|--------------------|----------------|
+| FederatedSkill [@yang2026federatedskill] | full | partial: privacy-preserving aggregation of skill edits across heterogeneous clients that sit under one operator | partial: auditable per-modification decision log | none |
+| EvolveNet [@nie2026evolvenet] | full | partial: held-out merge gate at the aggregator, but clients are benchmark partitions, not organizations | none: no lineage, no access control | full: rollback to the previous shared harness after a failed round |
+| SkillForge [@skillforge2026] | none: a calibrated judge selects the failures, nothing tests the rewrite | none: skill versions stay in the scenario deployment | partial | not documented |
+| Governance-first registries [@kang2026registry; @qin2026governed; @quessadavial2026acm] | none: no inner loop | none | partial: lineage without access control | full, with evidence |
+| MCP control planes [@agenticcommunity2026mcpgateway] | none: no inner loop | none | partial: access control without lineage | not reported |
+
+Table IX-1. The closest approaches to governed cross-organization scaffold optimization, scored against the four properties.
+
+Receiving-side evaluation is an additional requirement on the promotion decision. It is kept separate from the four-property audit, which records loop, scope, and governance capabilities. A system could satisfy those capabilities while still making an unsupported decision about whether an artifact benefits its recipient.
+
+An architecture that addresses both would contain five connected parts: per-tenant artifact pools with provenance; an aggregation or selection process that respects tenant isolation; held-out evaluation at the receiving tenant; versioned lineage and access control; and a defined reversal path for each promoted artifact. The recipient's check would reject a promotion that does not lower its own patch loss. VaG's result (Section REF(sec:findings)) suggests that the rollback envelope would also need to track an artifact's descendants.
+
+Federated learning offers a useful comparison, but the representation being shared is different. FedAvg combines comparable numeric updates, and its privacy and deployment problems have been extensively studied [@mcmahan2017fedavg; @mcmahan2018dpfedavg; @kairouz2021federated]. Federated prompt tuning moves the learned object to a shared prompt [@guo2022promptfl]. The nearest scaffold systems instead select, revise, or merge symbolic edits, often through a language model. Averaging is an appropriate analogy only where the artifact updates have a mergeable representation.
+
+The extent of automation should depend on the feedback. Exact checks provide the most direct setting for testing a transferred skill, although the recipient still needs relevant test cases. Observed outcomes require evaluation on the recipient's workload because the sender's outcome is not portable evidence of success. Where quality is judged, a human promotion gate is a design feature, supported by lineage and rollback. Delayed outcomes cannot support the per-edit automatic local gate in property (a); those systems still benefit from provenance and reversibility around proposals and milestones.
+
+Thus the four properties define a target for the settings that can support an automatic local gate. They should not be interpreted as a requirement to automate every decision in every domain. The common requirement is that the evidence attached to an edit remain meaningful where it is used, and that the system preserve the ability to inspect and reverse its adoption.
+
+## How the research lines fit together {#sec:families}
+
+The uneven architecture has a history. Different research communities began with different problems: improving prompts, learning in context, selecting agent workflows, maintaining skill libraries, or transferring experience. Each developed the part of the loop most relevant to its initial problem. Table REF(tab:VIII-1) places five such lines side by side.
+
+| Research line | Started from | The part of the loop it built | What it leaves open |
+|------------|--------------------|------------------------------|------------------------|
+| Reflective evolution | Prompt optimization and continual learning | Condition 4, the candidate: proposal by reflection over trajectory evidence; the two-timescale case for editing outside the weights | A persistent artifact; a bounded step; a held-out gate |
+| Reflective context | Learning in context as a setting of its own | Condition 5, the penalty: the learned object in context space; a generalization penalty, the $\Omega$ of the gate | A cross-deployment promotion loop |
+| Harness optimization | Orchestration and harness engineering | Condition 3, the trace: attribution of a failure to one slot of the orchestration graph; source-level edits | Attribution across substrates; a governed promotion loop; access control; rollback |
+| Lifecycle and multi-objective | Skill pools that bloat under platform limits | The gate on removal: gated retirement; hygiene as a precondition; a hard frontier as the shape of $\Omega$ | Closing the loop as descent; retiring a promoted artifact's descendants |
+| Transfer and federation | How far an edit travels | The promotion loop, the check on arrival: evidence radius measured one task at a time; cross-client aggregation; receiving-side confirmation | A cross-organization gate, lineage, and rollback |
+
+Table VIII-1. Five research lines converging on artifact-layer descent: the problem each started from, the part of the loop it built, and what it leaves open.
+
+Prompt optimization and reflective evolution developed ways to propose edits from trajectory evidence, together with an argument for adapting artifacts on a faster schedule than weights [@agrawal2025gepa; @tiwari2026fastandslow]. Reflective Context Learning formalizes learning in context and the need to control generalization, corresponding to the complexity penalty in the acceptance rule [@vassilyev2026rcl]. Harness optimization treats source-level orchestration changes as the learned object and repeatedly identifies attribution as its difficult step [@lee2026metaharness; @lin2026ahe; @cai2026moss; @zehle2026cantante; @nguyen2026harnessevo; @chen2026harnessforge; @li2026growingharness].
+
+The lifecycle literature starts from a different constraint: skill pools can become too large or internally inconsistent to remain useful. Its contributions include evaluated retirement, hygiene, and optimization under platform limits [@zhang2026ratchet; @tanjim2026mocha; @liu2026skillsvote; @zhang2026librarydrift; @wei2026skillsmith; @pu2026skillops; @wang2026assay]. Transfer and federation ask how far a learned artifact remains useful, progressing from cross-task measurements to receiving-team confirmation and shared client updates [@shalev2026ict; @li2026combee; @qu2026coral; @ling2026pace; @wang2026evo2team; @yang2026federatedskill; @nie2026evolvenet].
+
+This history helps explain why evaluation and proposal mechanisms are more developed than failure capture. Each research line inherits its loss from its benchmark and begins with available trajectories. Building a record of recurring failures was none of their starting problems. Attribution receives substantial attention, but usually within the substrate a particular line studies. The local loop has consequently developed from evaluation backward toward the evidence needed to choose a useful edit.
+
+The convergence supports a shared decomposition of the system into weights and editable artifacts. GEPA, Meta-Harness, MOSS, RCL, PACE, and the harness-optimization papers all use it. A system that updates both, SIA, still treats them as separate levers [@hebbar2026sia]. The convergence does not establish that one architecture is optimal, and none of these lines documents the complete cross-organization process. It shows that different starting problems repeatedly lead to comparable mechanisms for proposing, testing, retaining, and reusing changes.
+
+### Why specialization remains outside the weights {#sec:why}
+
+A general model and a particular deployment face different requirements. The model must work across many settings. A deployment must follow its own conventions, honor its users' preferences, and avoid failures that may be rare globally but frequent locally. The scaffold provides a place to encode those requirements with a scope narrower than the model's entire user population.
+
+Work on reinforcement learning from human feedback reports reduced output diversity and more homogeneous preferences [@kirk2024understanding; @padmakumar2023diversity]. This helps motivate the distinction between broad model behavior and customer-specific requirements. Tiwari et al. approach it from adaptation cost: in-context changes are cheap but capacity-bounded, while in-weight adaptation is more expressive and can introduce forgetting and loss of plasticity [@tiwari2026fastandslow; @dohare2024loss].
+
+Per-customer adapters [@hu2021lora], distilled models, and learned routing can absorb some local requirements. They also introduce separate training, evaluation, and serving lifecycles. In practice they are rare. Adaptation lands in persistent artifacts, the one substrate that is cheap, inspectable, reversible, scoped to one customer, and updatable daily.
+
+Two earlier papers in this series offer a hypothesis for why targeted artifact changes may be effective. *Beyond Exponential Decay* argues that long-output reliability depends on a sparse set of key decisions rather than a uniform error probability at every token [@arbuzov2025beyond]. Its evidence includes long-range dependence measured on one natural-text corpus, where fewer than a tenth of tokens depend on distant context, and the accuracy recovered through majority voting on reasoning benchmarks. Its argument is limited when the number of consequential decisions grows with the task, as in long-horizon agentic work.
+
+*The Architecture of Errors* considers a bounded deployment with recurring tasks, tools, and evaluator expectations [@arbuzov2026architecture]. It argues that failures there fall into a catalogue of modes whose size grows slowly with observed experience. Under its assumptions, the intervention budget grows polylogarithmically with sequence length and becomes constant once the catalogue saturates. Its negative result is equally relevant: a finite catalogue cannot cover an unbounded domain.
+
+If these hypotheses generalize, a deployment may be improved through a manageable set of targeted interventions. Persistent rules, memories, skills, and tool changes provide an inspectable representation for those interventions. On that hypothesis the gated and scoped artifact layer is not a workaround for an inadequate model but the architecture the error structure calls for: a frontier model that generalizes, a local scaffold that specializes, and reliability that comes from governing the specialization. The survey does not test the hypotheses; its findings about acceptance gates, feedback, and promotion follow from the corpus independently of them.
+
+### Relation to neighboring surveys
+
+Existing surveys organize the field around agent evolution, persistent state, context engineering, skills, memory security, and harness design. This survey follows a different unit of analysis: the decision that accepts a persistent change, the feedback supporting that decision, and the scope in which the change is subsequently used. Table REF(tab:II-2) records the distinction for each neighboring survey.
 
 | Survey | Scope | How this survey differs |
 |-------------|---------------|----------------------------------------------|
@@ -122,410 +531,29 @@ On the governance part, two neighbors come close. Ding et al.'s survey of persis
 
 Table II-2. Neighboring surveys and where this one departs from each. This survey classifies by loop closure, gate type, signal class, and governance, and is the only one to cover promotion across organizations.
 
-A reader will also expect the prompt-optimization lineage: OPRO, EvoPrompt, Promptbreeder, DSPy, and TextGrad [@yang2023opro; @guo2023evoprompt; @fernando2023promptbreeder; @khattab2023dspy; @yuksekgonul2024textgrad]. That lineage optimizes a prompt or program once against a development set and is not a deployed loop; agentic context engineering [@ace2025agentic] does persist its artifact, an evolving playbook, but never promotes it. The closest precedents optimize the scaffold itself under a benchmark score: agent symbolic learning updates prompts, tools, and pipeline as symbolic parameters from textual feedback [@zhou2024symbolic], STOP's scaffolding program improves its own improvement code [@zelikman2023stop], and a coding agent edits its own harness to raise its score [@robeyns2025sica]. What changes here is that the edited artifact persists in a deployment and must clear a second gate before it earns any scope beyond it (Appendix REF(app:related)).
+The closest governance precedents are Ding et al.'s survey of persistent-state agents and Lin et al.'s memory-security survey [@ding2026alwayson; @lin2026memorysecurity]. The former finds greater attention to accumulating and retrieving state than to governing, recovering, or relinquishing it. The latter treats scoping and rollback as security primitives. Neither asks who gates an edit, and neither covers promotion across organizations.
 
-## The loop: artifact-layer descent {#sec:loop}
+Prompt optimization supplies another important lineage: OPRO, EvoPrompt, Promptbreeder, DSPy, and TextGrad optimize a prompt or program once against development evidence and are not deployed loops [@yang2023opro; @guo2023evoprompt; @fernando2023promptbreeder; @khattab2023dspy; @yuksekgonul2024textgrad]. ACE persists an evolving playbook but never promotes it [@ace2025agentic]. Agent symbolic learning treats prompts, tools, and pipelines as symbolic parameters [@zhou2024symbolic]; STOP improves its own scaffolding program [@zelikman2023stop]; and SICA edits its harness to improve benchmark performance [@robeyns2025sica]. These works establish many of the underlying mechanisms.
 
-Scaffold maintenance becomes an optimizer, which this survey calls artifact-layer descent, when every fix is tested against a measured failure rate before it is kept and again before it travels. That definition gives a team a test it can apply to its own maintenance, and it gives the survey the yardstick it holds every system in the corpus against. Below, the loop appears in plain words, as five conditions with an update rule, and in one coding agent's path from patchwork to descent.
-
-### The loop in plain language
-
-Artifact-layer descent is one loop with two halves, run again and again over the life of a deployment. The local loop fixes a recurring failure inside one deployment; the promotion loop decides how far the fix may travel. (Figures and the released table label them Loop 1 and Loop 2.)
-
-Fig. REF(fig:descent) draws the local loop. The deployment runs and logs what goes wrong: failed outputs, user corrections, rejected answers, evaluation regressions, tool-call errors. The loop does not react to single failures. It clusters the log into recurring modes and takes up the ones that matter most, ranked by how often each recurs and how badly it fails. For such a mode it locates the scaffold coordinate responsible, which may be a stale memory entry, an under-specified instruction, a missing tool argument, a brittle retrieval rule, or a misrouted agent edge, and it proposes one candidate edit to that coordinate.
-
-Then it measures. A deployment serves one **patch**: the slice of users, tasks, and conventions it handles. The failure rate on that patch's recurring tasks is the **patch loss**. The local gate accepts the edit if the patch loss falls and rejects it otherwise. An accepted edit stays in the scaffold, versioned; one that a later check shows made things worse is rolled back. That is the whole of the local loop, and most research systems and a growing number of production systems now run it, though rarely every step of it (Section REF(sec:findings)).
-
-```{=latex}
-\begin{figure*}[!t]
-\centering
-\includegraphics[width=\textwidth]{figures/fig1_descent}
-\caption{The local loop of artifact-layer descent. A recurring failure is traced to one scaffold coordinate, one edit is proposed, and a gate keeps the edit only if the deployment's patch loss falls. An accepted edit then enters the promotion loop (Fig.~\ref{fig:scope}).}
-\label{fig:descent}
-\end{figure*}
-```
-
-The promotion loop is the half most systems skip. An engineer notices that a coding agent keeps misnaming a class in one repository. The fix is a one-line rule in that repository's instruction file. That same rule could be promoted to a team-wide template, to the company's shared instructions, or to a skill registry shared across companies. The edit did not change; its scope did. And the gate that should let it through gets stricter at each step, because the loss it is tested against is now an average over more deployments, and a fix that helps one repository can hurt another.
-
-The scopes nest (Fig. REF(fig:scope)). USER is one person's account or fork; PROJECT is one repository, workflow, or product workspace; STACK is a curated bundle of projects under one team; a **tenant** is one organization or customer; CORE is the scope every tenant shares. Each scope's loss is the average failure rate over the deployments it contains. Promotion that reaches CORE crosses tenants, which is what cross-tenant promotion means here. The promotion loop moves an edit upward only as far as the evidence reaches; we call that limit the edit's **evidence radius**. The check that belongs at each rung is **receiving-side evaluation**: a check run where the edit arrives, not where it was made. In optimizer terms, the local loop sets the step (how much one accepted edit changes the local scaffold) and the promotion loop sets the target (which average failure rate the scaffold is tuned to reduce). Governance is therefore not administrative overhead. It is the regularization that keeps a small fix from being aimed at the wrong target.
-
-```{=latex}
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.55\textwidth]{figures/fig2_scope}
-\caption{The promotion loop. Scopes nest from USER to CORE, each rung's loss averages the deployments it contains, and an edit rises one rung at a time, only while a check at the receiving side shows the wider loss falling and only as far as its evidence radius. Promotion into CORE crosses tenants.}
-\label{fig:scope}
-\end{figure}
-```
-
-### When the loop is an optimizer
-
-The loop is an optimizer, and not a description of good practice, only when five conditions hold, the last of them a gate that decides which edits are kept.
-
-The five conditions are these:
-
-1. a measurable patch loss, such as a failure rate, a correction rate, or an evaluation score;
-2. a failure log, so that residuals are captured rather than lost;
-3. credit assignment, so that a failure can be traced, at least sometimes, to the scaffold coordinate that caused it;
-4. a synthesized candidate edit to that coordinate; and
-5. a gate that checks whether the edit lowers the loss before the edit is kept or promoted.
-
-The conditions presuppose frozen frontier weights, edits that persist as inspectable artifacts rather than transient prompts, and promotion that widens an artifact's scope under a gate rather than averaging comparable updates as weight-space federated learning does.
-
-Written out, the patch loss of deployment $D$ is
-$$L_D(\theta_s) = \mathbb{E}_{x \sim D}\!\left[\ell(\pi(\theta_M, \theta_s, x))\right],$$
-where $\theta_M$ are the frontier weights, fixed during deployment, $\theta_s$ is the scaffold, a structured object over the six substrate coordinates of Section REF(sec:method), and $\ell$ is an operational loss. A failure yields no analytic gradient. It yields a candidate edit $z_t$, proposed by reflecting over the accumulated failure history. The gate accepts the edit when its noisy estimate of the change in loss clears a margin,
-$$G_t(z_t) = 1 \iff \widehat{\Delta}_{z_t} L_D(\theta_s^t) + \lambda\,\Omega(z_t) \le -\tau_t,$$
-where $\Omega \ge 0$ penalizes the complexity of the edit and the breadth of its promotion, and $\tau_t \ge 0$ is the required margin. Production systems implement this inequality without ever writing it down: an evaluation blocks a merge on regression, a reviewer rejects a vague rule, a governance system holds an artifact back until evidence accumulates. The update satisfies a one-step descent inequality under a bounded-bias assumption on the gate. When that bias is summable over the run, the loss converges and improving edits stop clearing the gate; the scaffold is then gate-stable, which is a statement about the gate, not about optimality (Appendix REF(app:formal)). Where a condition fails, the picture is an analogy, and the survey marks which systems meet which conditions.
-
-Each half of the loop has a gate, the local gate and the promotion gate, and we name three kinds by who decides. A gate is **Auto** when a program applies a check before the edit goes through: an evaluation score, a verifier, a reinforcement-learning threshold, or a language-model judge [@zheng2023judge], whether or not its agreement with people has been measured, a question Section REF(sec:signal) returns to. It is **Human** when a person decides. It is **None** when nothing decides, either because that half of the loop is absent or because the step runs unchecked, as when a system pushes every edit to its neighbors without a test. Who writes the candidate is recorded separately and is not a gate: the author may be an agent reflecting over failures, an engineer at a desk, or a contributor registering an artifact. We write a system's two gates as a pair, the local gate first: [Auto × Human] means an algorithmic local gate and a human promotion gate. These pairs index the design space of Section REF(sec:design).
-
-The first condition says the loss must be measurable. It does not say what measures it, and that turns out to be the question that sorts the corpus.
-
-### From patchwork to descent
-
-Scaffold maintenance passes through three stages that recur across the corpus (patchwork, random artifact search, and artifact-layer descent), and the five conditions are what separate them. The stages matter because a loop that reaches descent stops failing like a pile of fixes and starts failing through its gate.
-
-Take the coding agent above that keeps misnaming a class. At the first stage, patchwork, an engineer adds a rule to the instruction file after noticing the failure; nobody measures whether it helped, nothing is promoted on evidence, and the file sprawls with every incident until nobody knows which rule does what. At the second stage, random artifact search, the system tries many variants of the file under the test suite and keeps the best. The suite is the only signal and no failure is traced to the rule that caused it; the winning variant has learned the suite as much as the task. At the third stage, artifact-layer descent, the recurring failure is traced to the one rule responsible, one edit is proposed, the gate checks that the patch loss falls, and promotion stops at the evidence radius and can be reversed.
-
-At the third stage, the suite or judge that gates the edits is itself a scaffold artifact that drifts and can be gamed. Which failure dominates depends on the signal the gate receives (Sections REF(sec:signal) and REF(sec:failure)). Production deployments that reach the third stage in the local loop then promote in one of two ways: behind a human gate, as Spotify does [@palumbo2026spotify], or, in Letta's Context Repositories alone, by an ungated push that carries lineage but no evaluation.
-
-A measurable loss has two consequences that follow the loop everywhere. The first is that the measure bounds the lift. An accepted edit is an improvement in what the gate measured, on the tasks the gate sampled, and nothing more; a rule that lowers the failure rate on one repository's suite has earned nothing about another repository's. Every loss has a scope. That is why the promotion loop cannot carry the local loop's evidence: the receiving scope measures a different mix of tasks, so a promoted edit either travels under a measure the scopes share or re-establishes its lift where it arrives, which is what receiving-side evaluation is for. Where tenants measure different things, a lift does not transfer at all without it.
-
-The second is that the loop optimizes and does not evolve. It needs a defined measure before it can start and descends toward that measure's ceiling; at the ceiling no edit clears the gate, which is what gate stability means. It does not discover a better goal than the one its measure encodes. Two scaffolds optimized for the same goal under the same measure need not converge to one version; each stops at the ceiling by its own route. A system that edits its own measure, the reflexive gate of Section REF(sec:signal), moves the destination rather than evolving toward an unknown truth. The distinction matters because the corpus is often described in the vocabulary of evolution. What the gated systems in it actually do is descent.
-
-## Where the signal comes from: four classes of feedback {#sec:signal}
-
-What a deployment can automate is fixed by the feedback its gate receives, which is either an exact check, an observed outcome, a judgment, or a reward that arrives months later. A team that knows which of the four it has knows which half of the loop it can hand to a program today and which failure to expect, and the same rule predicts how the surveyed systems divide.
-
-Four scaffolds all run the loop of Section REF(sec:loop). A coding agent changes one line in its repository rule file; the test suite runs and reports pass or fail within seconds. A scheduling assistant changes how it phrases a booking request; the appointment either appears on the calendar or it does not, and the system learns which an hour later. When a marketing assistant changes the tone rule in its instructions, nobody can say whether the next draft is better, only whether a reviewer prefers it. A research assistant changes how it chooses which direction to pursue; whether the choice was good becomes visible months later, after many other edits have landed. All four produce a candidate edit. They differ in what the gate can know about it.
-
-The gate needs an estimate of one quantity: whether the edit lowered the patch loss. That estimate comes from a feedback signal, and signals differ in three ways: how soon they arrive, how exact they are, and whether there is a fact of the matter at all. Those three differences sort every surveyed system into four classes (Table REF(tab:IV-1)), and the class fixes what the gate can be.
-
-| Class | The signal the gate receives | What the gate can be | What stays hard | Corpus examples |
-|---------|------------------------|--------------------|----------------------|--------------|
-| C1 exact | A check that returns pass or fail, or an exact score, at once and repeatably: tests, compilers, answer keys | An automatic check; one run per case, repeated only to sample the task mix | The lift is bounded and specific, an improvement in what the check measures on the cases it ran; the check names the failed output, not the coordinate that caused it; a check that is also the target can be gamed | DGM, AlphaEvolve, SkillOpt |
-| C2 observable outcome | A real result one episode later: a booked slot, a merged pull request, a closed ticket; noisy and confounded | An automatic threshold over batched episodes; a person at promotion | The outcome says *that* the episode failed, not *why*; the channel can be poisoned | Devin, Sierra, SAGE, SkillRL, PACE, Voyager |
-| C3 judged | A rater, a rubric, or a model judge; no ground truth | A judge calibrated against people; a person at promotion | The rubric is itself a scaffold coordinate, so the gate judges edits to itself; the proxy gets optimized past the point where it tracks quality | SkillForge, CASCADE, skills-repository review |
-| C4 delayed | An outcome weeks or months later, once per many edits | No per-edit gate; proposals are pruned and milestones stand in | Credit across many edits; drift; the loop cannot be told from random search | NanoResearch, CORAL, the AI Scientist |
-
-Table IV-1. The four feedback-signal classes. Reading across a row: what the gate receives, what it can therefore be, and what it cannot fix.
-
-The classes are a partition, not three independent axes: a system is assigned by the property that binds its gate first. Delay binds before anything else, so an outcome that arrives months later is C4 even when it is objective. The absence of ground truth binds next, so an immediate judgment is C3. Among signals that are prompt and objective, exactness separates C1 from C2.
-
-**C1, exact.** A deterministic checker returns pass or fail, or an exact score, immediately and repeatably: unit tests, compilers, type checkers, exact-match answer keys, proof checkers, schema validators. DGM runs every self-modification in a sandbox and keeps every one that still compiles and can edit code, a functionality check on ten benchmark tasks; the benchmark score then weights which archive members are chosen as parents rather than deciding which are kept [@zhang2025darwin]. AlphaEvolve scores candidate programs with a cascade of exact evaluators [@alphaevolve2025], and SkillOpt gates a skill edit on a held-out exact-match split of a math benchmark [@yang2026skillopt]. Because the check is exact for the artifact and the test it runs, and repeating it returns the same answer, one run settles the checked case. What the check does not settle is the patch loss: the suite is a sample of the patch's task mix, and the agent that runs under the edited scaffold is stochastic, so the gate's estimate of the loss change still carries sampling error. The gate can be a program and its margin can be small, but the margin absorbs sampling error, not error in the check. The improvement the check certifies is also bounded and specific: an improvement in what the check measures, on the cases it ran, not an improvement in general. Two things stay hard. A failing test localizes the output, not the scaffold coordinate that caused it, so credit assignment remains open; and a checker that is also the training target can be gamed. The dominant failures are scaffold bloat, because cheap acceptances accumulate, and overfitting to the suite, which Section REF(sec:failure) files under evaluation fragility.
-
-**C2, observable outcome.** The environment or the user emits an outcome after an episode: a booked appointment, a closed ticket, a merged pull request, a tool call that returns without error, a retrieved document that contains the answer. The signal is real but one episode late, noisy, and confounded, since a user can accept a wrong answer and reject a right one. An outcome from a simulator such as Voyager's game world or SAGE's AppWorld is the same kind of signal without the confound, because no user is in the episode and it can be re-run until the noise averages out; it is what Section REF(sec:design) calls a simulated outcome. Gates of this class include Devin's merged pull requests [@cognition2025devinreview], SAGE's task success on AppWorld [@wang2025sage], and PACE's failure signals from a deployed small model [@ling2026pace]; SkillRL reads the same signal only as a trigger, a success rate that decides when new skills are proposed but not whether they stay [@skillrl2026]. The gate can still be a program (a reinforcement-learning threshold or a held-out task suite), but it needs a positive margin, and it absorbs the noise by batching episodes or by requiring agreement across samples (Appendix REF(app:gates)). Credit assignment takes its most stubborn form here: the outcome says *that* the episode failed, not *why*. Most production deployments live in this class, and its signal arrives through a channel an attacker can control, which is why poisoned memory and tool-output injection dominate.
-
-**C3, judged.** There is no fact of the matter. An essay, a marketing page, a design, a pitch deck, or a code review for style can be scored only by a judge: a human rater, a language-model judge, a rubric, or a comparison against references. In SkillForge a judge that agrees with people more than nine times in ten flags the failed replies that drive each skill rewrite, and the rewritten skill is committed without an acceptance test [@skillforge2026]; CASCADE consolidates memory under a human-and-agent gate [@huang2025cascade]; Anthropic's skills repository promotes a skill when a reviewer approves the pull request. The gate can be a program only after the judge has been calibrated against people, because the judge's bias is now the estimator's bias. Residuals, meanwhile, are captured only when someone objects, so the failure log depends on complaint channels rather than instrumentation. The dominant failure is Goodhart's law in the form measured for reward models: optimizing a proxy past a point lowers the true score [@gao2023overoptimization]. Once the judge is the target, the scaffold learns the judge. Nor is a human judge stable: Shankar et al. find that evaluators' criteria drift as they grade more outputs [@shankar2024validators].
-
-**C4, delayed and sparse.** The outcome arrives after weeks or months, once per many edits, in a world that has moved on. Research programs, product strategy, and open-ended discovery are of this kind; the clearest instances are automated research pipelines such as the AI Scientist, which generates ideas, runs experiments, and writes the paper [@lu2024aiscientist]. NanoResearch merges candidate skills by semantic compatibility rather than by a measured loss change [@xu2026nanoresearch], and CORAL promotes findings into shared memory on a heartbeat rather than on an evaluation [@qu2026coral]. AlphaEvolve's evolutionary database can look like an instance, and is not one: it balances improving the best programs against diversity only after every candidate has been scored by its exact evaluators, so it is a search strategy inside the exact class, not a gate for a delayed signal [@alphaevolve2025]. With no per-edit estimate to gate on, the gate degenerates to proposal pruning plus proxy milestones, and the descent argument covers only the composition of pruning and whatever gate exists at the horizon (Appendix REF(app:gates)). Temporal credit assignment across many edits is open. Drift dominates: the scaffold ages faster than the signal that would correct it. An optimizer in this class also cannot be told from random search by its outcomes alone; Ong et al. [@ong2026harnesseval] report the same for harness optimizers.
-
-**The judge is part of the scaffold.** The judged class has one feature the other three lack: the rubric that sets the loss is itself a scaffold coordinate, and it returns in the findings and in the open problems. Suppose a pitch-review system keeps overrating decks that claim a large market without numbers. It traces the failure to its rubric and edits "evaluate market size" into "require a numeric estimate and a source". That edit changes the gate that will judge the next edit. We call this the *reflexive gate*, and nothing in the corpus calibrates one: three scaffold systems report judge calibration [@skillforge2026; @hu2026skillchain; @zhu2026skillcoach], and none calibrates a judge that is itself being edited.
-
-The weight side faces the same question. Reinforcement learning from verifiable rewards lies outside the scored corpus, but pushing it into writing and other open-ended tasks has forced researchers to build judged gates. One group holds the gate fixed while the policy learns, as a checklist, a pairwise judge, a reference-anchored judge, or a fixed rubric [@gunjal2025rubrics; @jia2025writingzero; @shi2026references; @jin2026rlaes]. A second group lets the gate move with the policy, scoring by the policy's own probability of a reference or updating the rubric or judge during training [@yu2025rlpr; @xu2026rubricarm; @ding2026evorubrics; @zhu2026score; @li2026rubricem]. Fixed versus co-evolved is exactly the reflexive-gate question, and of the co-evolving methods only RLPR, whose reward is a probability rather than a rubric, reports agreement with human labels (Appendix REF(app:audit)).
-
-**What the class decides.** Read down the table and three consequences follow, each a prediction about the corpus that Sections REF(sec:findings), REF(sec:design), and REF(sec:failure) check. The first is which half of the loop can close automatically. An exact check or an observed outcome can gate a local edit by program. A judgment can do so only once the judge is calibrated, and a delayed reward cannot gate edits one at a time. Promotion is stricter. Only the exact class carries its own measure to the receiver, and only when the receiving side runs the same check: that is the one case in which the sending side's evidence means the same thing on arrival. In every other case the receiving-side evaluation of Section REF(sec:loop) is still owed. The second is which gate pairings a deployment can reach. [Auto × Auto] belongs to exact signals and simulated outcomes; [Auto × Human] belongs to observed outcomes and judgments, where the person at the promotion gate does the work the missing exact signal cannot; and the delayed class has no per-edit gate on either half. The third is which failure dominates: the table's column on what stays hard records it, and Section REF(sec:failure) develops it.
-
-## The corpus, and how it was read against the loop {#sec:method}
-
-The survey's evidence is a corpus of public systems, each placed on the loop by reading its own published text for which part of the scaffold it edits, whether a measure gates the edit, who decides, and how far the edit travels. Every finding that follows is a count over these placements, so the reading is released row by row with a one-line justification, and any placement can be checked against the system itself rather than against this survey.
-
-### How the corpus was assembled
-
-The corpus starts from public systems that adapt a foundation model through a persistent artifact or are described as self-improving, and two filters then narrow it, first to systems whose artifacts persist across scope or are updated from feedback, then to systems that both edit an artifact from session signal and promote it beyond the deployment that made it. Both filters are stricter than the field's own labels, so a system is placed by what it does rather than by what it is called.
-
-A system enters the corpus if it wraps a foundation model with at least one persistent artifact updated from deployment signal, or if it is described in public as self-improving, scaffolded, or agentic; the corpus excludes systems whose only update mechanism is weight-level training and systems with no public evidence of deployment or release (Appendix REF(app:data)). The systems were found in public sources in two passes (130 by May 2026 and 126 more by the October 2026 cutoff). For each system it added, the second pass records the gate on each half of the loop, the signal class, and the governance properties as columns of the released table, so the counts by gate that follow cover the systems it added.
-
-The first filter (Fig. REF(fig:corpus)) admits a system to the core corpus at a score of at least 3 on at least one substrate on the ruler below. Systems that carry the field's labels but fail this filter form a contrast corpus, kept so that the boundary can be audited rather than asserted. Of the 256 systems, 204 form the core corpus and 52 the contrast corpus. Each system is scored on the substrate it adapts or, if it adapts several, in one integrated row, and a few are scored on two rows, which is why 256 systems give 269 rows.
-
-```{=latex}
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.55\textwidth]{figures/fig4_corpus_flow}
-\caption{Corpus flow. Every system is scored on the substrates it adapts, with an integrated row for systems that adapt several, giving 269 substrate-level rows for 256 systems; the first filter splits core from contrast; the composite two-loop audit selects the systems placed in the design space of Section REF(sec:design).}
-\label{fig:corpus}
-\end{figure}
-```
-
-The second filter is the two-loop audit, which asks each core system one question for each half of the loop: does the local loop modify a persisted artifact from session signal, and is that artifact then promoted beyond the deployment that produced it, with versioning or lineage? The audit was applied to the core systems and to the ten research systems classified from their papers alone (they are not rows of the released table), with eight exceptions (Appendix REF(app:contrast)). It admits 11 research systems (NanoResearch, SkillOpt, AlphaEvolve, ADAS, DGM, Voyager, SAGE, EvolveR, CoEvoSkills, AutoManual, and CASCADE; all but SkillOpt are rows of the released table) and 3 industry exemplars (Sierra Agent OS 2.0, Cognition Devin, and Letta's Context Repositories). Section REF(sec:design) places them, with the other audited systems and the contrast corpus, on the gate grid by who decides on each half. Passing the audit is a weaker thing than having the governed promotion loop of the thesis. Every passing system promotes inside one operator, either from one agent, user, or repository to the next or into a shared bank or archive that later runs draw from; none reaches another organization; and one of them, Letta, promotes with no gate at all (Section REF(sec:design)).
-
-### Six coordinates and one ruler
-
-An edit can land on one of six substrates of the scaffold (instructions, skills, memory, tools, orchestration, and governance), and every system is scored on the substrates it adapts with one ruler, from 0 to 5, that measures how far along the loop the system has come on that substrate. The substrates say where the trace from a failure can point, and the ruler turns a system's text into the score the later counts are built from.
-
-The six substrates (Table REF(tab:V-1)) are the coordinates of $\theta_s$, each editable independently of the others. The three kinds of memory on the memory substrate follow the cognitive-architecture taxonomy of Sumers et al. [@sumers2023coala].
-
-| Substrate | What persists | A score of 5 requires |
-|-----------|----------------------------|----------------------------|
-| S1 Instructions | Project, team, or organization rules attached to a workspace | Versioned rules promoted under an automatic gate |
-| S2 Skills | Procedures, as code or text, loaded on demand | A skill bank that edits itself on failure, test-gated, versioned, and promoted |
-| S3 Memory | Experience kept across sessions: episodic, semantic, procedural | Provenance, versions, and a correction path for every entry |
-| S4 Tools | The vetted action surface and its schemas | Evaluation-gated tool versions; a curated bundle as the product |
-| S5 Orchestration | The multi-role graph and its routing | Topology updated from deployment feedback by a loop outside the agent's own run |
-| S6 Governance | Versioning, promotion, audit, rollback | Staged promotion with evaluation thresholds, an audit log, and rollback |
-
-Table V-1. The six scaffold substrates, what each holds, and what a system must do on it to score 5.
-
-At 0 the artifact is ephemeral; at 1 it is persistent and local; at 2 it is persistent with tool attachment but no feedback. Up to that point an artifact persists and nothing measures it, which is the patchwork stage of Section REF(sec:loop). At 3 the artifact either spans scopes with no gate on the way or is updated from feedback by a person; at 4 a program updates it from feedback, so the local loop closes. The top mark, 5, differs by substrate (Table REF(tab:V-1)). On instructions and skills (S1, S2) it requires both halves of the loop; on orchestration (S5) it requires a topology that a loop outside the agent's own run updates from deployment feedback; and on the substrates that hold governance (S3, S4, S6) it requires the machinery the promotion loop would need, which is why a registry or a prompt platform can score 5 with no local loop at all. The integrated row scores breadth and depth of adaptation, not the loop, so its top mark says nothing about either half.
-
-### What was gathered, by substrate
-
-No system in the corpus matures all six substrates at once, because each kind of system was built to satisfy one constraint and matured only the substrates that constraint touches.
-
-Research systems were built for fast learning: they learn fast and lack enterprise governance. Production systems were built for safe change: they govern well and learn slowly. Open standards were built for portability: they solve artifact portability but not adaptation. The top marks fall accordingly (Table REF(tab:V-2)): research systems on skills and memory and in the integrated row, products and standards on tools and governance, and no system at all on instructions or orchestration.
-
-| Substrate | $n$ | Mean | Score-5 systems | What the corpus holds on it |
-|------------|---:|----:|--------------------|----------------------------------|
-| S1 Instructions | 15 | 3.07 | (none) | Rules persist across IDEs and agents and nothing measures them; no system closes both loops; ceiling 4 |
-| S2 Skills | 50 | 3.34 | SAGE, COSPLAY | The local loop closes under a program in the research systems; the production repositories merge by hand |
-| S3 Memory | 50 | 3.06 | Cuadros et al. | The ledger ships in products; the correction a gate would enforce is absent |
-| S4 Tools | 20 | 3.65 | MCP, Harvey, Hippocratic AI | The most mature production substrate; registries govern admission, not evaluation |
-| S5 Orchestration | 37 | 3.08 | (none) | Topologies change under an evaluation gate; one structurally gated instance; no two-loop system with lineage |
-| S6 Governance | 45 | 3.02 | Braintrust, Vellum, LangSmith Hub, AGENTS.md under the Agentic AI Foundation (AAIF) | Prompts-as-code mature; registries add lineage and rollback; no local loop generates a candidate |
-| Integrated | 52 | 3.81 | NanoResearch, AutoAgent, SkillRL | Breadth and depth of adaptation, not the loop; reached only by research systems without enterprise governance |
-
-Table V-2. Substrate maturity across the 256-system corpus. Column n counts scored rows on each substrate, Mean is the average score, and Score-5 systems reach the substrate's top mark; the integrated row counts systems scored across several substrates as one row. Of the 126 most recently added systems, 105 are core and 32 are skill systems; 89 of those core systems close the local loop under a program, and none of the 126 scores 5 on any substrate.
-
-### Evidence and scoring discipline
-
-Every classification rests on public evidence of uneven strength and on one rater, and the scoring rules say how each kind of evidence counts and how close calls were settled. A reader weighing any count needs both.
-
-Every placement in Sections REF(sec:findings) to REF(sec:failure) is a reading, in the vocabulary of Section REF(sec:loop), of one system's own method section or documentation. Each system carries one or more evidence tiers (T1 to T5 in the released table: peer-reviewed publication, arXiv preprint, production claim with metrics, open-source artifact, industry blog or interview). Peer-reviewed papers and open-source artifacts weigh most in corpus-level statements. A production claim counts when it names a benchmark or integration target, a blog post or interview counts only when a higher tier corroborates it, and production claims are never pooled with peer-reviewed evidence in a corpus-level statistic. Industry systems evaluated from vendor documentation rather than a paper are flagged wherever they appear.
-
-One author scored every system, used half-scores only when one criterion was clearly met and another partially, and rounded ambiguous cases down. The scores have not been independently re-rated, and that check is future work.
-
-The complete score table, with a one-line justification per row, is released so that every scored classification can be re-derived (Appendix REF(app:scores)). Under natural relaxations of the audit (counting rollback alone as promotion governance, asking for a promotion mechanism with no governance at all, admitting a local loop that persists only optimizer state), the counts move while the qualitative findings survive every one of them (Appendix REF(app:data)).
-
-## The local loop in the industry: a failure, one edit, a gate {#sec:findings}
-
-The industry has built the local loop nearly everywhere a failure-driven loop runs, and it has built it from the gate backward. That order matters to anyone maintaining a scaffold, because a gate can only keep or discard the edit it is handed, and the steps that hand it one are the steps least built. The section follows the local loop in the order it runs, from the logged failure to one system that has all five conditions at once.
-
-In more than four of five of the most recently added core systems a program keeps or discards each local edit on a measured loss, and the pattern holds on every substrate that has a failure-driven loop at all (Table REF(tab:V-2)). What stands before the gate is far less built: production deployments log preferences and successes rather than failures, so there is little to cluster, and no general method traces a failed output to the coordinate that caused it. What stands after the gate is half built: the memory products keep every entry's history and still return facts that were revoked.
-
-### The failure and its trace
-
-The two steps that feed the local gate, logging a failure and tracing it to the artifact that caused it, are the least built steps of the loop. They decide what the gate is ever asked to judge, so a loop that skips them is guessing which artifact to change.
-
-A failure log means that failures are recorded rather than lost, and in production they are mostly lost. Only one field report describes a store that records dead ends so they are not repeated, and it covers a single, self-reported deployment [@helwig2026memory]; everywhere else the log that the local loop would cluster is never written. The gap sits in the observable-outcome class (C2), where an episode is recorded as a success or a preference and the failure that would have been the residual leaves no entry.
-
-Which sessions inform the next edit is left to chance. The loop of Section REF(sec:loop) ranks recurring modes by how often they recur and how badly they fail before it takes one up; nearly every system in the corpus takes failures in the order they arrive instead. Task-CoEvolve's variance-weighted task sampling and AutoSaddler's mini-batch failure signals are the exceptions [@miyai2026taskcoevolve; @park2026autosaddler], and both weight the sessions the loop learns from by how much they disagree (C2). A loop that learns from whatever arrived last is descending on a sample nobody chose.
-
-The trace from a failure to the coordinate that caused it, the credit assignment of the loop, is the step the field itself names as the bottleneck. The harness-optimization line [@lin2026ahe; @zehle2026cantante; @lee2026metaharness; @nguyen2026harnessevo; @liu2026skillsvote] and the evaluation of harness optimizers by Ong et al. [@ong2026harnesseval] agree that attributing a system-level failure to one scaffold coordinate is what separates descent from trial and error.
-
-Where the trace is solved, it is solved one substrate at a time. Meta-Harness keeps a filesystem of candidate harnesses that records which edit helped, and that record is the history the loop reflects over [@lee2026metaharness]. SkillsVote attributes each outcome to skill, exploration, or environment before an update is admitted [@liu2026skillsvote]. SkillOpt-Lite's consensus filter across rollouts is the form of credit assignment its ablation finds load-bearing [@shen2026skilloptlite]. In the general case, where a failed output may come from a stale memory entry, an under-specified rule, or a misrouted edge, the trace remains unsolved.
-
-### The edit and the pool
-
-Who writes the candidate edit sets how often the local loop can start, and how the pool of artifacts is kept sets whether the gate can read what the edit did. Both decide whether the gate sees enough edits, and clean enough results, to be worth having.
-
-Three kinds of author write the candidate edit. In the research systems an agent writes it by reflecting over the failure history, which is the author the loop of Section REF(sec:loop) assumes. In the prompts-as-code platforms an engineer writes it at a desk, and session feedback never triggers a candidate (Section REF(sec:design)). A contributor writes it in the public skill repositories, where every substantive edit is human-authored and human-merged [@shen2026whomaintains]. Who writes the candidate is not a gate, but where the author is a person, the local loop runs only as often as a person notices.
-
-The pool the candidate enters is governed as carefully as the candidate. Eleven skill systems treat removing an artifact as an operation that must pass a check, the same as adding one [@zhang2026librarydrift; @wei2026skillsmith; @pu2026skillops; @wang2026assay] (Appendix REF(app:audit)). The reason is in Ratchet's result: skills written by a language model gain nothing over a no-skill baseline until lifecycle hygiene is applied, while human-curated ones show a double-digit gain [@zhang2026ratchet]. A pool nobody prunes starves the gate of signal, because failures caused by stale artifacts cannot be told from failures the edit under test would fix (Section REF(sec:failure)). Hygiene is not an alternative to descent; it is what makes the gate readable.
-
-### The gate: what it measures, who decides, how long it waits
-
-The local gate is the best-built step of the local loop, and a program now decides at it nearly everywhere a failure-driven loop runs. The gate is where an edit becomes evidence, so its form decides what a kept edit is worth.
-
-On skills and orchestration, where the research activity is concentrated, the rule has four exceptions. On skills, SAGE and COSPLAY close both halves of the loop inside one research environment [@wang2025sage; @wu2026cosplay]. The first exception is SkillChain, which puts a person after the judge: a human reflection gate before an edit reaches the skill bank [@hu2026skillchain]. SkillRL is the second: its success-rate threshold decides when a new skill is proposed, and nothing decides whether the skill stays [@skillrl2026]. The third is SkillForge, whose calibrated judge picks the replies to rewrite while nothing tests the rewrite [@skillforge2026].
-
-On orchestration the systems went from search to a gate, and none closes both loops under lineage. The early ones searched for a topology under a score [@zhuge2024gptswarm; @zhang2024aflow], and the current ones keep a topology change only under an evaluation, one of them only when the change also satisfies a structural invariant [@chu2026agentgrad; @chen2026harnessforge; @zhao2026tocomas]. The fourth exception, OptiMAS, has no gate at all: its optimizer reads the trajectories and the validation score and writes the next configuration, so the evaluation informs the edit without deciding it [@cheng2026optimas].
-
-The counter-example is the most widespread artifact of all. Instruction files persist across IDEs and agents (Claude Code, Cursor, AGENTS.md [@agentsmd2025], Windsurf, Continue.dev) and appear in a fifth to a quarter of coding-agent projects [@robbes2026agenticmuch; @galster2026harnessconfig]. Yet two controlled studies disagree on cost, and neither shows a gain in task success. In one, context files raise inference cost by about a fifth and buy nothing in task success [@gloaguen2026agentsmd]. In the other, a paired run on 124 pull requests toggles only the root AGENTS.md and finds that the file cuts median wall-clock time by about 29% and median output tokens by about 17% while leaving total tokens flat; the run does not measure correctness [@lulla2026empirical]. That is the patchwork stage of Section REF(sec:loop) on the most widely deployed substrate: a rule is added after a failure, nothing measures whether it helped, and the file grows.
-
-Read by who decides, the three gate kinds of Section REF(sec:loop) fall on the local loop in a fixed pattern. A program decides nearly everywhere a failure-driven loop runs. A person decides only in curation, where an agent drafts and a person chooses what is kept, as in VerificAgent's fact-checked and frozen memories [@nguyen2025verificagent] and SkillChain's final reflection gate. Where no local loop exists, in the prompts-as-code platforms and the registries of Section REF(sec:design), nothing decides at the local gate at all; what those systems gate is admission to a shared pool, which is a promotion decision. The pattern is close to the one Section REF(sec:signal) predicts for the local half: a program wherever the loop has a check or an outcome to read, and a judge where the loop has only a judgment, calibrated against people in three systems and unmeasured elsewhere.
-
-How long the gate waits is where the newer systems differ from the earlier ones. The earlier systems accepted an edit on one evaluation and absorbed the estimator's noise through the margin alone; the newer ones wait. SAGE-gate, a statistical acceptance gate unrelated to SAGE, commits an edit only when a paired per-item test says its wins are reliable [@wang2026sagegate]; in VaG, three heterogeneous critics must pass [@shang2026vag]; AutoSaddler feeds mini-batch failure signals into validation-based selection [@park2026autosaddler]. Waiting hides two different operations: if each of $k$ independent proposals is wrongly accepted with probability $p$, requiring all $k$ to agree drives the false-accept rate to $p^k$, while averaging $k$ noisy scores shrinks the variance of the estimate only by $1/k$ (Appendix REF(app:gates)). A gate that waits for a batch is the gate taking seriously the noise in its own measure of loss, and in the corpus that care arrived after the gate itself.
-
-### The ledger: versioned, not corrected
-
-In the last step of the local loop, the memory products have built the record of how each entry came to be, and not the correction that should act on it. The record matters twice: it is how the local loop reverses an edit that a later check shows made things worse, and it is what the promotion loop would read before letting an edit travel.
-
-Letta's git-backed Context Repositories [@letta2026memfs], Mem0's per-memory history [@mem02026history], and Zep's bitemporal facts [@zep2026facts] all record how an entry came to be, so a user who asks what the system remembers and why can be answered. Research memory splits into write-gating and provenance on one side [@wang2026toki; @xu2026ppmf; @margalit2026governed; @sun2026vermem] and verifier-gated failure loops on the other [@yu2026recuris; @wang2026memguard]. Only the governed collaborative memory of Cuadros et al. does both [@cuadros2026governed], which is why it alone reaches the top mark.
-
-Five production backends still return facts that were revoked [@shen2026revoked]: the ledger exists, the gate that would act on it does not. The gap sits in the observable-outcome and judged classes (C2, C3), where a revocation arrives as a user's objection rather than as a failed check. Rollback of a single edit inside one deployment exists, as edit-level reversal [@wei2026skillsmith; @gao2026skillaudit] and as an admission test that rejects edits which cannot be undone [@sah2026evoundo]. The one negative result on it cuts deep: once a contaminated skill has descendants, rolling it back recovers little, so gating must happen before commit [@shang2026vag]. No system rolls back a promotion that has crossed an organization, because none makes one (Section REF(sec:gap)).
-
-### All five conditions in one system
-
-One system, SkillOpt, meets all five conditions of the local loop, and its stripped-down follow-up shows which of them carry the weight. That makes the conditions a description of something built rather than a wish list, and it separates the parts the loop needs from the parts that only steady it.
-
-SkillOpt [@yang2026skillopt] treats one markdown skill document as the trainable external state of a frozen agent. A held-out exact-match split is the measurable loss, condition 1, an exact signal in the terms of Section REF(sec:signal). Rollout and reflection batches are the captured residuals of the failure log, condition 2. A consensus filter across rollouts is the credit assignment, condition 3. Add, delete, and replace edits under a bounded step are the candidate edit, condition 4. A held-out gate that accepts only a strictly better score is the gate, condition 5. Across six benchmarks, seven target models, and three harnesses it is best or tied on every cell its authors evaluate.
-
-Its transfer across models, harnesses, and benchmarks measures how far one edit's lift carries, the evidence radius of Section REF(sec:loop). That transfer is a measurement, not the gate that governs the edit's travel; in SkillOpt that gate is the held-out evaluator admitting the edit to the shared skill bank.
-
-Its follow-up SkillOpt-Lite [@shen2026skilloptlite] strips two of its controls (a rejected-edit buffer and a slow update schedule), keeps the held-out gate and the consensus filter, and matches or beats it. So the gate and a consensus form of credit assignment are load-bearing, and the two it strips are stabilizers (Appendix REF(app:families)).
-
-## The promotion loop in the industry: how far an edit travels, and who lets it {#sec:design}
-
-The promotion loop exists in the industry only in parts, each built inside one operator, and no surveyed system carries a promotion out of its operator under lineage, access control, and rollback. That matters because the promotion loop is what lets a fix earned in one deployment reach another; without it, every customer relearns the same lesson. The section follows an edit upward, from a crossing inside one operator to the top rung, and ends on the grid that sets the local gate beside the promotion gate.
-
-### Inside one operator: what crosses, and the check where it arrives
-
-Every kind of crossing below the tenant boundary is occupied, each by a system of one operator, the organization that runs both sides with no customer boundary between them. Where such a system checks the arriving edit decides whether the receiving deployment ever learns that the edit helps there.
-
-The crossings run up the ladder of Section REF(sec:loop). Between users, ShareMem consolidates one user's memories for another and evaluates them there [@hu2026sharemem]. Between repositories, a rule in XRepoSkill survives only if it is verified in at least two of them [@guo2026xreposkill]. Between teams, at the STACK rung, Evo2Team promotes routing skills and confirms them at the target [@wang2026evo2team]. The data-local clients of a federated run are partitions rather than deployments and so sit on no rung; across them, EvolveNet merges a shared harness only when the merge fixes at least as many held-out items as it breaks [@nie2026evolvenet], and FederatedSkill's server agent applies, adapts, or rejects each client's edit and logs the decision [@yang2026federatedskill].
-
-A promotion differs from a push in having a check at all, and these systems differ in where the check sits. ShareMem, XRepoSkill, and Evo2Team check where the edit arrives; EvolveNet checks at the aggregator and nowhere else; FederatedSkill records a decision taken at the server. The receiving-side evaluation that Section REF(sec:loop) places at every rung is therefore present in the corpus and rare. Where it is present it is necessary rather than sufficient: nearly a fifth of Evo2Team's confirmed transfers still fail on graphs the confirmation never saw.
-
-None of these leaves its operator: no system promotes across customers or organizations with evidence. That is the thesis of this article. Because the failure log and the trace of Section REF(sec:findings) are hardly built, a system that tried would have few failure-driven edits to promote and no way to trace a failure on arrival back to the edit that caused it.
-
-### Who lets it climb: a program, a person, or nothing
-
-Who lets an edit climb is set by the feedback the crossing can get, so the corpus sorts into systems where a program admits the edit, systems where a person does, and one production system where nothing does. The sorting tells a team which promotion gate its own signal allows.
-
-A program lets an edit climb where a check travels with it, as Section REF(sec:signal) predicted. The research systems that promote into a shared bank or archive work this way: in NanoResearch, SkillOpt, DGM, ADAS, Voyager, and SAGE [@xu2026nanoresearch; @yang2026skillopt; @zhang2025darwin; @hu2024adas; @wang2023voyager; @wang2025sage] the same program that kept an edit admits it to the pool every later run draws from. In AlphaEvolve, as in FunSearch before it, the evaluator cascade that scores every candidate is the only thing that admits a program to the archive; AlphaEvolve is a research loop run inside Google rather than a product, and the programs kept in that archive went on to production gains [@alphaevolve2025; @romeraparedes2024funsearch]. That pool is as far as any of them travels, and none has access control, audited promotion, or a gate at a receiving organization.
-
-A person lets an edit climb where the signal is an observed outcome or a judgment. CASCADE consolidates memory under a human-and-agent gate [@huang2025cascade]. Sierra routes agent-generated insights through human-authored expert answers [@sierra2025os20]. In Devin one event serves both halves: the merge of a pull request is the outcome the local loop reads, and the reviewer's decision to merge is also what lets the edit stand in the repository every later session uses [@cognition2025devinreview]. Spotify's automatically optimized prompts and plans go live only after an online A/B test and a launch decision [@palumbo2026spotify]. In every one of them the person at the promotion gate stands in for the exact signal production lacks, which makes the pairing of a program on the local gate with a person on the promotion gate the production-viable one rather than a compromise.
-
-Nothing lets an edit climb in one production system, and nothing promotes at all in most research systems. Letta's Context Repositories push every edit to shared memory with lineage and no check; the ledger records what crossed, and nothing asks whether it should have. In the far larger group whose accepted edits never leave the deployment that made them, a program keeps the edit and nothing carries it anywhere; AutoAgent, whose analyzer revises one agent's own tool and peer descriptions, is among them [@wang2026autoagent].
-
-### The top rung: CORE exists, and everything in it is admitted by hand
-
-Above the tenant boundary the scope exists and the promotion does not. CORE, the scope every tenant shares, exists today in two forms, a format and a registry, and an edit promoted into it on evidence is not one of them. CORE is the rung where cross-tenant promotion would happen, so what fills it now shows how much of the promotion loop the industry has built at the top.
-
-The first form is a format. Claude Agent Skills, Cursor Rules, GitHub Copilot instructions, Windsurf, Continue.dev, Zed, and Replit all keep a git-tracked markdown artifact attached to a workspace, with an MCP-style tool layer beside it [@galster2026harnessconfig; @barbaste2026harnessengineering], so an artifact written for one deployment can be carried to any other. Even where a repository runs an autonomous loop, the runtime state of that loop sits outside version control [@lulla2026loopengineering], so what the format versions is the artifact and not the process that edits it.
-
-The second form is a registry that admits artifacts for everyone, and admission is by hand. In the five public skill repositories of one field study, every substantive edit is written and merged by a person, with one deprecation in 254 edits [@shen2026whomaintains]. The MCP registries split into catalogues (namespaces and version records, no scanning) and control planes (scanning, access control, quarantine) [@agenticcommunity2026mcpgateway; @microsoft2026apicentermcp; @truefoundry2026mcpgateway]. The governance registries bring lineage and rollback [@kang2026registry; @quessadavial2026acm; @qin2026governed]. One of them, EDDOps, gates promotion on evaluation thresholds before a human sign-off [@kang2026registry], but none generates the candidate from a failure.
-
-The prompts-as-code platforms hold the rest of the machinery the promotion loop would need, and nothing feeds it. Braintrust, Vellum, and LangSmith Hub [@braintrust2026docs; @vellum2026docs; @langsmith2026hub] keep immutable versions, evaluation thresholds, and rollback. But engineers author the candidates at a desk, an evaluation blocks a release on regression, and session feedback never triggers either, which makes them MLOps for scaffolds rather than for weights.
-
-So tools and governance reach the top mark of Section REF(sec:method) with no local loop at all.
-
-### The two halves together: the gate grid
-
-```{=latex}
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.52\textwidth]{figures/fig3_design_space}
-\caption{The two-loop design space. Rows give the local gate and columns the promotion gate, with None for a step that is absent or runs unchecked; a cell [local gate $\times$ promotion gate] such as [Auto $\times$ Human] pairs an algorithmic local gate with a human promotion gate. Darker cells mark the three populated kinds of system; lighter cells hold curation, the MCP registries and community hubs, and the systems whose promotion is ungated or absent.}
-\label{fig:design}
-\end{figure}
-```
-
-Set side by side, the local gate and the promotion gate show an industry that has converged on the first and is sorted on the second by the feedback it can get. The loop makes exactly two decisions, whether a local edit enters the scaffold and whether an accepted edit leaves the deployment, so a grid of the two gates places every system by both at once.
-
-The grid of Fig. REF(fig:design) puts the local gate in the rows and the promotion gate in the columns, each one of the three gate kinds of Section REF(sec:loop). Every system whose local gate is a program sits in the top row, and what tells them apart is the column: a program, a person, or nothing. The column is not a free choice; it follows the signal as Section REF(sec:signal) predicted, with one qualification the data adds for three systems.
-
-Every [Auto × Auto] system whose promotion gate estimates the loss change runs on an exact signal or a simulated outcome, as EvolveNet's held-out merge and XRepoSkill's second repository do. Those on delayed or judged signals, NanoResearch, AutoManual, and ShareMem, decide by program on both halves, but by pruning, a judged rewrite, or a judged merge rather than by estimating a loss change. That is the degenerate gate Section REF(sec:signal) describes for a loop without a per-edit estimate, and it is the qualification. [Auto × Human] holds observed outcomes and judgments and no exact-signal system. Nor does any system calibrate a judge under edit. Table REF(tab:VII-1) reads the grid cell by cell, with the signal found in each.
-
-| Cell | Who keeps the local edit, who lets it climb | Who is there | Signal found there |
-|--------------------|------------------------------------|--------------------------------------|------------------------------|
-| [Auto × Auto] | A program keeps it; a program lets it climb | Research systems that close both halves inside one environment or one operator | Exact and simulated outcomes; delayed and judged only under pruning or merging |
-| [Auto × Human] | A program keeps it; a person lets it climb | Production systems with a reviewer on promotion, and CASCADE | Observed outcomes and judgments |
-| [Auto × None] | A program keeps it; nothing lets it climb | Letta's ungated push; systems that promote nothing | As on the local gate |
-| [Human × None] | A person keeps it; nothing lets it climb | Curation | Judged |
-| [None × Auto] | No failure triggers a candidate; a threshold gates release | Prompts-as-code platforms and governance registries | No failure-driven loop |
-| [None × Human] | No failure triggers a candidate; a person admits | Open standards, MCP registries, community hubs | No failure-driven loop |
-| [None × None] | Nothing checks or promotes the edit | SkillRL and SkillForge, unchecked skill loops | Outcomes and judgments |
-
-Table VII-1. The gate grid read cell by cell: who keeps a local edit and who lets it climb, which systems sit in the cell, and the feedback signal they gate on. [Human × Auto] and [Human × Human] hold no surveyed system.
-
-[Human × Auto] and [Human × Human] are empty: no surveyed system puts a person on the local gate of a failure-driven loop and then promotes the result. The human-gated row holds curation alone, where an agent drafts and a person decides what is kept.
-
-The bottom row holds the systems with no failure-driven loop, which enter the grid for comparison rather than through the audit (Appendix REF(app:contrast)). They are the prompts-as-code platforms, which gate release on evaluation but generate no candidates, and the registries and community hubs, Buildrix among them [@jiang2026buildrix], in which a person registers an artifact and a person, or an admission scan, approves its use. SkillRL and SkillForge, the two failure-driven skill loops that run unchecked, sit in the row's last cell.
-
-Of the six systems that promote without lineage on the promoted artifact (Fig. REF(fig:corpus)), the tier rule of Section REF(sec:method) admits the evidence for five, Spotify among them, and these join cells already occupied and open no new one (Appendix REF(app:data)). No system has both the learning of the top row and the governance of the bottom, and what no cell contains is governed cross-tenant promotion, which Section REF(sec:gap) specifies.
-
-## Five research lines arrive at the same loop {#sec:families}
-
-Nobody designed the loop this survey describes: five lines of research built it one part at a time, each while solving a different problem, and that is why it exists in pieces that nobody has assembled. Where the parts came from explains the shape the corpus shows, in which the steps some line of research worked on are built and the steps no line started from are missing. It also checks the survey's starting premise from outside, because lines working independently of one another begin by treating the scaffold and the weights as separate things to adapt.
-
-Prompt optimization built the candidate edit, condition 4 in the list of Section REF(sec:loop). A theory of learning in context built the penalty inside the gate, condition 5. Harness engineering built the trace from a failure to its cause, condition 3. Skill-library maintenance took the gate and turned it around, so that the gate decides when a skill is retired as well as when one is admitted. Transfer and federation built the step after the gate, the promotion loop: how far an edit travels and what checks it when it arrives. Table REF(tab:VIII-1) sets the five side by side with the problem each started from and what each leaves open.
-
-Reflective evolution came from prompt optimization and continual learning. It proposes edits by reflecting over trajectories, with a two-timescale argument for keeping them outside the weights [@agrawal2025gepa; @tiwari2026fastandslow]. Reflective context learning (RCL) came from asking why learning in context overfits and forgets as learning in weights does, and its generalization penalty is the complexity term $\Omega$ of the gate [@vassilyev2026rcl]. Harness optimization grew out of orchestration, and it names the trace as its bottleneck [@lee2026metaharness; @lin2026ahe; @cai2026moss; @zehle2026cantante; @nguyen2026harnessevo; @chen2026harnessforge; @li2026growingharness]. The lifecycle line started from skill pools that bloat under platform limits and turned the gate around to face removal; once those limits bind, the complexity penalty becomes a hard frontier [@zhang2026ratchet; @tanjim2026mocha; @liu2026skillsvote; @zhang2026librarydrift; @wei2026skillsmith; @pu2026skillops; @wang2026assay]. The transfer line came from asking how far an edit travels. Its work runs from measuring one edit's reach a task at a time, through confirming a transferred skill at the receiving team, to federating edits across clients [@shalev2026ict; @li2026combee; @qu2026coral; @ling2026pace; @wang2026evo2team; @yang2026federatedskill; @nie2026evolvenet].
-
-None of the five started from the first two of the five conditions, the measurable loss and the failure log. Each line took its loss ready-made from the benchmark it inherited, and logging failures was nobody's starting problem. That is why Section REF(sec:findings) finds the loop built from the gate backward. The parts with a research line behind them are built; the trace is built, but only one substrate at a time; and the parts with no line behind them are not.
-
-| Research line | Started from | The part of the loop it built | What it leaves open |
-|------------|--------------------|------------------------------|------------------------|
-| Reflective evolution | Prompt optimization and continual learning | Condition 4, the candidate: proposal by reflection over trajectory evidence; the two-timescale case for editing outside the weights | A persistent artifact; a bounded step; a held-out gate |
-| Reflective context | Learning in context as a setting of its own | Condition 5, the penalty: the learned object in context space; a generalization penalty, the $\Omega$ of the gate | A cross-deployment promotion loop |
-| Harness optimization | Orchestration and harness engineering | Condition 3, the trace: attribution of a failure to one slot of the orchestration graph; source-level edits | Attribution across substrates; a governed promotion loop; access control; rollback |
-| Lifecycle and multi-objective | Skill pools that bloat under platform limits | The gate on removal: gated retirement; hygiene as a precondition; a hard frontier as the shape of $\Omega$ | Closing the loop as descent; retiring a promoted artifact's descendants |
-| Transfer and federation | How far an edit travels | The promotion loop, the check on arrival: evidence radius measured one task at a time; cross-client aggregation; receiving-side confirmation | A cross-organization gate, lineage, and rollback |
-
-Table VIII-1. Five research lines converging on artifact-layer descent: the problem each started from, the part of the loop it built, and what it leaves open.
-
-Two things follow from the convergence. The first is that the split between scaffold and weights is confirmed independently: GEPA, Meta-Harness, MOSS, RCL, PACE, and the harness-optimization papers all begin from the observation that weights and the external artifact layer are distinct adaptation surfaces with different cost, reversibility, and scope. A system that updates both keeps them as separate levers [@hebbar2026sia]. The second is a gap. No line documents a governed promotion loop; Section REF(sec:gap) scores the two that come closest, FederatedSkill and EvolveNet.
-
-What does not follow is that the shape is the best one. The vendors' convergence on one artifact format and one tool layer is the same kind of evidence from the production side (Section REF(sec:design)), reached by groups that were not looking for it. Convergence shows only that the same constraints keep producing the same shape.
-
-## The missing architecture: governed cross-tenant scaffold optimization {#sec:gap}
-
-The missing piece of the loop is governed cross-tenant promotion, the step that carries an edit from one organization to another under a gate, and four properties make it specific enough to audit for. Named as four properties, the gap becomes something a reader can check any system against, their own included, and no surveyed system holds all four.
-
-The four properties are these:
-
-(a) **auto-gated local loop**: the commit criterion is an algorithmic threshold;
-(b) **cross-organization promotion**: the promotion loop routes artifacts between organizations (we use *cross-tenant* and *cross-organizational* interchangeably);
-(c) **versioned lineage with access control**: promoted artifacts carry versions, audit trails, and role-based access policies;
-(d) **rollback**: a bad promotion can be reverted without redeploy.
-
-All four describe the artifact: how it is made and how far it may travel. Receiving-side evaluation, the check without which no promotion is safe, is not among them, because it is a property of the gate where the edit arrives rather than of the artifact. Section REF(sec:design) records where that check exists, and the architecture below includes it as its third part.
-
-The closest approaches split the four properties among them. No row of Table REF(tab:IX-1) is full on promotion across organizations.
-
-| System | (a) auto-gated local loop | (b) cross-organization promotion | (c) versioned lineage with access control | (d) rollback |
-|--------------|------------------|----------------------|--------------------|----------------|
-| FederatedSkill [@yang2026federatedskill] | full | partial: privacy-preserving aggregation of skill edits across heterogeneous clients that sit under one operator | partial: auditable per-modification decision log | none |
-| EvolveNet [@nie2026evolvenet] | full | partial: held-out merge gate at the aggregator, but clients are benchmark partitions, not organizations | none: no lineage, no access control | full: rollback to the previous shared harness after a failed round |
-| SkillForge [@skillforge2026] | none: a calibrated judge selects the failures, nothing tests the rewrite | none: skill versions stay in the scenario deployment | partial | not documented |
-| Governance-first registries [@kang2026registry; @qin2026governed; @quessadavial2026acm] | none: no inner loop | none | partial: lineage without access control | full, with evidence |
-| MCP control planes [@agenticcommunity2026mcpgateway] | none: no inner loop | none | partial: access control without lineage | not reported |
-
-Table IX-1. The closest approaches to governed cross-organization scaffold optimization, scored against the four properties.
-
-The partition is sharp. The two federated systems carry the automatic gate and part of the promotion. SkillForge carries a calibrated judge and part of the lineage, but no acceptance test and no promotion. The registries carry lineage and rollback without a local loop, and the control planes carry access control alone. Rollback exists inside one federated round and, as Section REF(sec:findings) records, inside single deployments; no system rolls back a promotion that has crossed an organization boundary, because none makes such a promotion (Appendix REF(app:contrast)).
-
-In machine-learning terms, what is missing is a cross-tenant aggregator with an automated evaluation gate at the scaffold layer. It would carry five parts: per-tenant artifact pools, each tagged with provenance; an aggregation step across tenants that respects tenant isolation; a held-out evaluation at the receiving tenant that blocks a promotion whenever it does not lower that tenant's patch loss; versioned lineage with access control; and a rollback envelope on every promoted artifact. The federated-learning analogy [@mcmahan2017fedavg; @mcmahan2018dpfedavg; @kairouz2021federated] is useful only in the limit where artifacts are mergeable update representations. Federated prompt tuning, in which participants learn a shared prompt rather than shared weights [@guo2022promptfl], is the weight-side precedent closest to that limit. In surveyed practice the promotion loop is selection and merge: the nearest systems aggregate program edits with a language model, not by averaging.
-
-Whether the architecture *should* be built depends on the feedback-signal class, not on the application domain (Section REF(sec:signal)). Where the signal is an exact check, automatically gated cross-tenant promotion of a test-validated skill would be low-risk, and receiving-side evaluation is cheap to add. Where it is an observed outcome, the sending side's outcome does not transfer, so promotion should be automated only behind receiving-side evaluation. That check re-establishes the lift under the receiver's own measure, and it would catch a scaffold over-fitted to one deployment before it propagates to another. Even that check is necessary rather than sufficient: some of Evo2Team's transfers still fail on new graphs after target-side confirmation [@wang2026evo2team].
-
-Where the signal is a judgment, a human promotion gate is a design feature, and governance means lineage and rollback around a human decision. With a delayed reward, property (a), the auto-gated local loop, cannot be met; what remains is lineage and rollback without an automatic gate. Safety-critical domains, the usual case for human gates, are judged or delayed domains with high stakes. Whatever the class, the measure bound of Section REF(sec:loop) holds: where tenants measure different things, as they usually do across organizations, no lift transfers without the receiving-side check.
-
-## The failure surface {#sec:failure}
-
-A deployment that runs without the loop, or with only half of it, pays in seven failures of the artifact layer, and each failure is answered by a piece of the loop that patchwork leaves out. That matters because it makes the failures a cost of patchwork rather than a new threat model, and it puts the remedy in the loop itself rather than in a further layer of defense.
-
-Table REF(tab:X-1) pairs each failure with the piece of the loop that would close it. The entries are documented attacks and degradations, the scaffold-layer entries in the technical-debt ledger that Sculley et al. opened for machine-learning systems a decade ago [@sculley2015debt]. Six are shown below in a measured case; the seventh, patch overfitting, follows from the measure bound rather than from a measurement. The table's last column records the feedback-signal class in which each failure dominates. Wherever the third prediction of Section REF(sec:signal) names a class's failure, the table agrees: bloat in the exact class, poisoning in the observable-outcome class, evaluation fragility (the gamed judge) in the judged class, and plasticity loss (the drift) in the delayed class.
-
-| Failure | What goes wrong | The loop piece that answers it | Dominant class |
-|------------|------------------------------|------------------------------|----------|
-| Scaffold bloat | Rules and skills accumulate until the model follows them worse and the gate has no clean signal | Complexity penalty $\Omega$ in the gate; pruning and expiry as first-class gated operations | C1, C3 |
-| Poisoned memory | An attacker writes an entry that later retrieval trusts | Provenance on every entry; write gating; a rollback envelope | C2 |
-| Injection via tools and MCP | A tool's output or a connected server carries instructions into context | Narrow tool permissions; a privilege hierarchy over instructions; tool bindings pass the same promotion gate as any other coordinate | C2 |
-| Evaluation fragility | The suite that gates edits is itself edited, gamed, and read non-independently | Held-out evaluations scoped within evidence radius, weighted toward recurring modes, re-read as the target drifts, checked against attribution | C3 (primary), C1 |
-| Coordination failures | Multi-agent roles blur and context is lost between agents | Orchestration topology treated as a scaffold coordinate under the same gate and rollback discipline | C2 |
-| Patch overfitting | A scaffold tuned to one deployment degrades another | Evidence-radius discipline at promotion; receiving-side held-out evaluation | C2 |
-| Plasticity loss | Old rules, polluted memory, and drifting tool versions crowd out adaptation | Expiry and rollback as explicit loop operations rather than retrospective hygiene | C4 |
-
-Table X-1. The failure surface of patchwork scaffold maintenance: what goes wrong, the piece of the loop that answers it, and the feedback-signal class in which it dominates.
-
-Bloat is not only slow; it is a signal-quality problem. Instruction-following accuracy falls and latency grows sharply as the instruction count scales [@jaroslawicz2025ifscale]. Ratchet's result is the loop-level symptom: model-written skills gain nothing until lifecycle hygiene is applied [@zhang2026ratchet]. In the vocabulary of Section REF(sec:loop), failures cannot be captured and clustered on a messy artifact pool, which is why gated retirement comes before descent, not after it.
-
-Poisoning and injection are the two ways an adversary reaches the scaffold, and both arrive through the channel the observable-outcome class depends on. Memory is reached by writing: attacks against standard retrieval-augmented generation succeed at high rates [@zou2024poisonedrag], AgentPoison shows that backdoors can be planted in long-term memory or knowledge bases [@chen2024agentpoison], and memory control-flow attacks work across the major agent frameworks [@xu2026mcfa]. Tools are reached by output: a tool's result or a connected server can smuggle instructions into context [@greshake2023injection; @debenedetti2024agentdojo], and one approved MCP configuration could later be modified without re-approval (CVE-2025-54136) [@checkpoint2025mcpoison]. The responses come from the ledger of Section REF(sec:findings) and the governance of Section REF(sec:gap): provenance and write gating with a rollback envelope on memory [@su2026chronomem; @yu2026rollbackrepair], and a privilege hierarchy over instructions [@wallace2024hierarchy] with tool bindings that pass the same promotion gate as every other coordinate.
-
-Evaluation fragility compounds because the evaluation suite is itself a patch-local artifact rather than a fixed instrument. It is optimized against: once a metric becomes the target it is gamed, optimizing a proxy reward past a point lowers the true score [@gao2023overoptimization], and access asymmetries alone produce large relative gains that reflect exposure to the test [@singh2025leaderboard]. It is read non-independently, because the gate scores path-dependent agent trajectories whose readings do not compose like ordinary test-set statistics. The suite also goes stale, because it adapts on the same cadence as the scaffold it gates. Because failures concentrate in a finite catalogue of recurring modes, a suite that samples tasks at random under-weights exactly the families that drive the failure rate. The consequence has been measured: harness optimizers cannot be told from trial-and-error by downstream score alone [@ong2026harnesseval]. The response follows from those facts: a suite that is held out and scoped, weighted toward recurring modes, re-read as the target drifts, and checked against attribution rather than only against score.
-
-The remaining three are failures of structure rather than of signal. Multi-agent systems fail in fourteen measured modes, dominated by role confusion and context lost between agents [@cemri2025mast], and the response is to treat the topology as one more scaffold coordinate under the same gate and rollback. A scaffold tuned to one deployment over-fits it by construction (Appendix REF(app:mechanism)). Because the measure bounds the lift, the response at promotion is evidence-radius discipline, with a held-out evaluation at the receiving side. And a scaffold that only grows loses plasticity the way a long context does: context rot [@liu2023lostmiddle], instruction conflict, memory pollution, and tool-version drift accumulate until the only way to recover it is expiry and rollback, run as loop operations rather than as retrospective hygiene.
-
-The surface stays largely unmitigated in production because no surveyed system runs the pieces in the table together. What the table itemizes, then, is the cost of running without the loop, already measured.
+The contribution here is their joint reading at deployment scope: whether an artifact persists, whether a local acceptance decision is made, which signal supports it, and what authorizes use elsewhere. The 256-system corpus, two-loop classification, feedback classes, and governance audit make that comparison explicit. An extended discussion separates these contributions from their precedents (Appendix REF(app:related)).
 
 ## Open problems and conclusion {#sec:open}
 
-Each feedback class leaves one problem between the industry and the assembled loop, and governed promotion across organizations leaves a fifth. That matters because it makes the remaining work specific rather than a general agenda: each problem is the step its class is blocked on.
+The remaining problems become more specific when expressed in terms of the decisions a deployment must make.
 
-1. **Exact signals: credit assignment from a failing check to a scaffold coordinate.** A failing check has to be traced to the scaffold coordinate that caused it, and the loop has no general way to do that. A test tells the loop that an output failed, not which instruction, skill, or tool binding caused it. In the observable-outcome class the gap is wider still, since the outcome says only that the episode failed. Slot attribution [@nguyen2026harnessevo], intervention-based attribution [@chu2026agentgrad], and contrastive multi-agent attribution [@zehle2026cantante] each solve one substrate's case; a general method is the bottleneck the harness-optimization family names.
-2. **Observable outcomes: receiving-side evaluation before promotion.** A promoted edit has to earn its lift again where it arrives. The outcome that justified it on the sending side does not transfer, and even where a promoted edit is checked on arrival, some transfers still fail (Section REF(sec:design)). The gate a federated scaffold optimizer needs, a held-out test at the receiving tenant, has been proposed but not built [@yang2026fao].
-3. **Judged signals: calibrating a gate that is itself being edited.** The gate in a judged deployment has to stay calibrated against people while the loop edits the rubric it judges by. When the rubric is a scaffold coordinate, each accepted edit to it moves the instrument that judges the next edit. No method that co-evolves a rubric or judge reports agreement with human judgment, apart from RLPR, whose reward is a probability rather than a rubric. No scaffold system calibrates a judge under edit (Section REF(sec:signal)), and the nearest measurement is on the human side, where evaluators' criteria drift as they grade [@shankar2024validators].
-4. **Delayed signals: telling descent from search.** When the reward arrives too late to judge each edit, the loop needs another way to show that its gains come from descent rather than search. Where the outcome arrives after many edits, an optimizer's gains cannot be distinguished from trial-and-error by outcome alone [@ong2026harnesseval]; the open method is to evaluate harness optimizers against their attribution claims rather than their scores.
-5. **The governed cross-organization loop.** Promotion across organizations needs an architecture that no surveyed system documents. Section REF(sec:gap) states that architecture as properties (a) through (d). Without the receiving-side gate of problem 2, cross-organization promotion cannot be safe in the two classes where it should be automatic, the exact and the observable-outcome classes.
+**Attributing a failure to an editable cause.** An exact check can establish that an output failed without identifying the instruction, memory, skill, or tool binding responsible. No surveyed method solves this across all substrates. Slot attribution [@nguyen2026harnessevo], intervention-based attribution [@chu2026agentgrad], and contrastive multi-agent attribution [@zehle2026cantante] provide narrower starting points. Observed outcomes make the problem harder because their causes are more confounded.
 
-The field has built an external adaptation layer for language models but has not, as far as public evidence shows, assembled the optimizer that should govern it. Both earlier papers of this series supply the hypothesis for why the layer belongs where it is: errors concentrate in a few key decisions; inside a bounded deployment, those decisions fail in a small and recurring catalogue of modes; and such a catalogue can be fixed one mode at a time in a persistent, inspectable, reversible artifact outside the weights. The corpus is consistent with that hypothesis. If it holds, the gated and scoped artifact layer is not a workaround but the architecture the error structure calls for.
+**Establishing improvement at the recipient.** A transferred artifact must be evaluated against the receiving deployment's tasks and measure. Existing receiving-side checks show that this is feasible in selected settings, while Evo2Team's failures on unseen graphs show its coverage limits. Federated Agent Optimization proposes a receiving-client gate but does not implement it [@yang2026fao]. Connecting such checks to provenance, access control, and reversal remains an architectural problem.
 
-Seen whole, the corpus says the industry has built most of that optimizer piecemeal. The local loop closes automatically in most research systems and in a growing number of production ones; evidence is batched before acceptance; retirement is gated; memory ships with its lineage; formats and registries have converged; and the first federations promote edits across clients inside one operator. What nobody has done is assemble the pieces. No surveyed system promotes a validated edit across an organization boundary under an automatic gate with lineage, access control, and rollback. Read by signal class, as Section REF(sec:gap) does, this is not one gap but four, each with its own reachable answer. Under every class the same rule holds: a lift travels only as far as its measure does.
+**Maintaining calibration while the criterion changes.** For judged tasks, the open question is how to keep a judge aligned with people while revising the rubric it applies. No surveyed scaffold system reports this measurement. The neighboring reward literature also lacks a reported human-agreement result for a co-evolving rubric or judge, with RLPR's probability-based reward a distinct case. A useful solution must evaluate the moving criterion as well as the outputs it scores.
 
-The frontier model generalizes. The local scaffold specializes. Reliability comes from governing that specialization. Because the gates that judge each edit are themselves part of the moving scaffold, the same evidence-radius and lifecycle discipline the optimizer needs must extend to the gates.
+**Evaluating improvement with delayed outcomes.** When many edits occur before a meaningful result arrives, per-edit acceptance is unavailable. Proxy milestones and proposal pruning may still be useful, but downstream gains alone do not establish successful attribution. Harness optimizers should therefore be assessed against their claims about why particular edits help, as well as their final scores [@ong2026harnesseval].
+
+**Connecting local learning to governed sharing.** No surveyed system combines automatic local acceptance, promotion across organizations, versioned lineage with access control, and rollback. The components exist in different systems. Their integration must preserve tenant isolation, evaluate the recipient, and account for artifacts derived from a change that is later withdrawn. Where feedback cannot support automatic acceptance, the design must retain the corresponding human decision or delayed evaluation.
+
+The survey's central observation is that persistent changes outside the weights have become an important form of adaptation, while the evidence supporting those changes remains fragmented. Many systems can test a local candidate. Fewer can reliably explain which recurring failure it addresses, and the machinery for transferring the resulting improvement to another organization has not been assembled in the public systems examined here.
+
+The frontier model generalizes. The local scaffold specializes. Reliability comes from governing that specialization: knowing what each change improved, where that evidence applies, and how the change can be reversed. That discipline must extend to the evaluations themselves when they become part of the adapting system.
 
 ## Acknowledgments {-}
 
@@ -606,7 +634,7 @@ The first five families populate $G_t$ directly and, under the assumptions of Ap
 ## Data appendix {#app:data}
 
 
-**Corpus and window.** The corpus holds 256 unique systems from January 2023 to the October 2026 cutoff, released as two files. `p3_master_scores.csv` holds the 130 first-pass systems in 140 rows; `p3_refresh_2026-10.csv` holds the 126 second-pass systems in 133 rows, four of which re-audit a first-pass system and replace its row rather than add a system. The corpus therefore has 140 + 133 − 4 = 269 substrate-level rows. A system may be scored on several substrates, so rows outnumber systems, and Table 4 of the main article counts rows.
+**Corpus and window.** The corpus holds 256 unique systems from January 2023 to the October 2026 cutoff, released as two files. `p3_master_scores.csv` holds the 130 first-pass systems in 140 rows; `p3_refresh_2026-10.csv` holds the 126 second-pass systems in 133 rows, four of which re-audit a first-pass system and replace its row rather than add a system. The corpus therefore has 140 + 133 − 4 = 269 substrate-level rows. A system may be scored on several substrates, so rows outnumber systems, and Table 2 of the main article counts rows.
 
 **Two passes.** Every system in either pass is scored against one rubric, from its own method section or documentation. First-pass systems were found in arXiv, vendor documentation, and public repositories through May 2026. Second-pass systems, found from June to the October 2026 cutoff, come from six query families: self-evolving skills and skill lifecycle; harness and context optimization; agent memory governance; prompt-as-code and evaluation-gated promotion; federated or multi-tenant skill sharing; and multi-agent topology evolution. Some were reached instead through the citations of the first-pass systems closest to the missing architecture of Section REF(sec:gap). The second pass was a systematic search of the field, not only a search around the known systems, so the per-substrate statistics pool both passes.
 
@@ -776,7 +804,7 @@ Section REF(sec:gap) defines the four properties: (a) an auto-gated Loop 1, (b) 
 - **Meta-Harness** [@lee2026metaharness] has (a) over the harness (substrate S5), with a filesystem of candidates that records credit assignment and serves as the accumulated history $H_t$ of Appendix REF(app:formal). It has no cross-organization promotion, no access control, and no rollback.
 - **SkillForge** has no (a), since its calibrated judge selects failures and nothing tests the rewrite, and a partial (c) through VFS commits, but no (b): each rewritten skill version stays in the scenario deployment that produced it, and its support engineers review replies, not skill versions; (d) is undocumented in the public report.
 - **Sierra Agent OS 2.0** has a partial (a). Its cross-organization promotion is claimed in vendor documentation only and not counted as evidence under the tier rule of Section REF(sec:method), and its GitHub-style Workspaces give some lineage but not access control with rollback in the strict sense.
-- **FederatedSkill** [@yang2026federatedskill] has (a) and, with EvolveNet (Table 7 of the main article), the strongest partial (b) among the surveyed systems: heterogeneous clients, each a backbone-plus-harness profile under one federation operator, exchange semantic skill diffs, and a server-side evolution agent applies, adapts, or rejects each patch per client. An auditable decision log, recording source patch, reward, and justification for each modified path, gives a partial (c); there is no access control and no (d).
+- **FederatedSkill** [@yang2026federatedskill] has (a) and, with EvolveNet (Table 6 of the main article), the strongest partial (b) among the surveyed systems: heterogeneous clients, each a backbone-plus-harness profile under one federation operator, exchange semantic skill diffs, and a server-side evolution agent applies, adapts, or rejects each patch per client. An auditable decision log, recording source patch, reward, and justification for each modified path, gives a partial (c); there is no access control and no (d).
 - **SkillClaw** [@ma2026skillclaw] has a partial (a), through a nightly validation step, and a partial (b) across the users of one shared, synchronized skill repository; it reports no (c) or (d).
 - **ChronoMem** [@su2026chronomem] has (d) and the versioning half of (c) for the memory substrate alone: whole-memory snapshots, version histories, and natural-language rollback inside Google's Agent Development Kit. It has no Loop 1, no (b), and no access control.
 - **Vellum, Braintrust, and LangSmith Hub** have (c) and (d) explicitly but neither (a) nor (b) in the strict sense; they are governance-first by construction.
@@ -840,7 +868,7 @@ Its follow-up, SkillOpt-Lite [@shen2026skilloptlite], asks which controls are ne
 
 The immediate predecessor to SkillOpt's optimizer framing is **GEPA** [@agrawal2025gepa]. It shows that natural-language reflection over execution trajectories can provide a richer adaptation signal than sparse scalar rewards for prompt evolution in compound AI systems. GEPA samples trajectories containing reasoning steps, tool calls, and tool outputs; reflects on them to diagnose failures and propose prompt updates; and maintains a Pareto frontier of candidate prompts rather than greedily mutating only the current best. Across six tasks, GEPA outperforms GRPO by 6% on average and by up to 20% while using up to 35× fewer rollouts, and also outperforms MIPROv2 in the reported aggregate comparison. In Section REF(sec:loop) vocabulary, GEPA strongly instantiates the proposal side, $Q_t$, through trajectory-conditioned reflection, and uses Pareto-based candidate selection as a proposal and pruning mechanism. What it does not instantiate is the full SkillOpt-style artifact lifecycle: a bounded edit budget on a reusable skill document, a strictly-greater held-out gate on each accepted skill update, a rejected-edit buffer used as negative feedback, and an exported deployment artifact with governance hooks.
 
-**Tiwari et al.** [@tiwari2026fastandslow] supply the broader framing from the optimization side, arguing that restricting learning to *either* in-context adaptation (prompt optimization) *or* in-weights adaptation (RL or fine-tuning) is unnecessary and costly. In-context adaptation is cheap and rapid but capacity-bounded; in-weights adaptation is expressive but induces catastrophic forgetting and loss of plasticity [@dohare2024loss]. The scaffold layer of Section REF(sec:why) is the substrate that absorbs what in-context adaptation can carry cheaply, leaving the weights free to generalize. Tiwari et al. reach the two-timescale motivation from optimization and Section REF(sec:why) reaches it from production reliability; the two framings are independent and reinforce each other.
+**Tiwari et al.** [@tiwari2026fastandslow] supply the broader framing from the optimization side, arguing that restricting learning to *either* in-context adaptation (prompt optimization) *or* in-weights adaptation (RL or fine-tuning) is unnecessary and costly. In-context adaptation is cheap and rapid but capacity-bounded; in-weights adaptation is expressive but induces catastrophic forgetting and loss of plasticity [@dohare2024loss]. The scaffold layer of Section REF(sec:families) is the substrate that absorbs what in-context adaptation can carry cheaply, leaving the weights free to generalize. Tiwari et al. reach the two-timescale motivation from optimization and Section REF(sec:families) reaches it from production reliability; the two framings are independent and reinforce each other.
 
 ### Reflective Context Learning: a parallel formalization {#app:families-5}
 
@@ -902,7 +930,7 @@ Sections REF(sec:findings) and REF(sec:families) draw four conclusions from the 
 
 4. **No surveyed system combines Loop-1 automation with cross-organizational Loop-2 governance.** SkillOpt has the strongest Loop-1 closure and the most systematic evidence-radius measurement, but it does not implement cross-organizational promotion, versioned lineage with RBAC, or rollback. CORAL implements asynchronous cross-agent promotion within one system but not across organizations. PACE implements two-timescale consolidation within one deployment. Meta-Harness implements Loop-1 closure over the harness substrate but no Loop-2 promotion mechanism. FederatedSkill federates skill patches across clients under one operator, with a decision log but no RBAC or rollback, and EvolveNet adds a held-out merge gate and round rollback without lineage or RBAC. The four-property gap of Section REF(sec:gap) is narrowed on (b) and (d) by different systems and closed on none, and the independent convergence of several research threads on the same single-organization ceiling confirms it.
 
-### SkillOpt against Section 9's four properties {#app:families-10}
+### SkillOpt against Section 8's four properties {#app:families-10}
 
 Mapped onto Section REF(sec:gap)'s four properties of governed cross-tenant scaffold optimization:
 
@@ -924,7 +952,7 @@ SkillOpt reports 0.6M to 46.4M training tokens per absolute test-point gain (the
 
 The first-pass draft of this survey, written on the 130 systems of the first pass, made absolute claims of the form *no surveyed system*, *only X*, *first*, *absent*, and *empty cell*; each row below sets one of them against the full corpus of 256 systems and records what that corpus shows. A claim **holds** when the full corpus bears it out as worded, is **sharpened** when it is true and the corpus supports a more precise statement, is **revised** when the corpus contradicts its wording, and is **dropped** when the article no longer makes it; for sharpened and revised claims the Evidence column also states the claim as the full corpus supports it. Evidence names the systems that decide each verdict, and parenthetical numbers such as 2608.04968 are arXiv identifiers.
 
-### The four properties of Section 9 {#app:audit-1}
+### The four properties of Section 8 {#app:audit-1}
 
 | Claim | Verdict | Evidence |
 |----------------------------|----------|----------------------------------------------|
@@ -982,7 +1010,7 @@ The first-pass draft of this survey, written on the 130 systems of the first pas
 | "No surveyed paper disputes the scaffold-vs-weights decomposition" | **holds** | SIA (2605.27276) updates harness and weights together but keeps them as distinct levers. |
 | Credit assignment "remains unsolved in the general multi-substrate case" | **holds** | HARNESSEVO (slot attribution), AgentGrad (intervention-based), and CANTANTE (contrastive) each solve one substrate's case. |
 
-### The three predictions of Section 4 {#app:audit-5}
+### The three predictions of Section 5 {#app:audit-5}
 
 Section REF(sec:signal) predicts from the signal classes which cells of the design space each class can reach, and Section REF(sec:design) confirms the predictions; the first two rows give the systems behind the two cells Section REF(sec:signal) assigns, and the third row gives those behind its claim about the reflexive gate.
 
@@ -1014,7 +1042,7 @@ Nine second-pass rows had their gate labels re-coded on 2026-10-08 under the def
 
 Five more rows were corrected on 2026-10-08 after a reading of the full texts against the same definition. RASO's Loop-2 label moved from Auto to None: it accepts a rewritten skill only if the rewrite beats the incumbent on a validation split, but the optimized skill never leaves the task, and its use of a public corpus is inbound retrieval, not a promotion. Three first-pass systems leave the composite audit. SkillForge moves from [Auto × Human] to [Auto × None]: its judge flags the failed replies that drive each skill rewrite, the rewrite is committed without an acceptance test, its support engineers review replies and not skill versions, and no skill version leaves the scenario deployment. On the final consistency pass SkillForge moved on to [None × None], since nothing tests its rewrite, the same reading that places SkillRL there. SkillRL's Loop-1 label is None: a per-category success rate below 0.4 triggers new skill proposals, and the skill bank takes each one as an unconditional union, a step that runs unchecked. AutoAgent moves from [Auto × Auto] to [Auto × None]: its analyzer accepts text revisions on an uncalibrated consistency judgment, and each revision stays, unversioned, in one agent's own store. Co-Harness's governance entry now records a partial (c), its versioned diff registry, and (d) within one run, and its signal class records C1 for the held-out gate beside C2 for attribution. The audit therefore passes 11 research systems rather than 14, [Auto × Auto] holds ten research systems rather than twelve, the [Auto × Human] cell of Appendix REF(app:contrast-2-1) holds CASCADE, Sierra Agent OS 2.0, and Cognition Devin, and six systems rather than seven promote without lineage. No score changed.
 
-The recount runs over all substrate-level rows and gives the counts of Table 4 of the main article; its last line is the first pass alone (systems / core / contrast) after the two corrections.
+The recount runs over all substrate-level rows and gives the counts of Table 2 of the main article; its last line is the first pass alone (systems / core / contrast) after the two corrections.
 
 ```{=latex}
 \begingroup\footnotesize
@@ -1075,7 +1103,7 @@ The ingredients have precedent, and the article says so. The six substrates are 
 
 ## Full score table {#app:scores}
 
-Every scored (substrate, system) row of the corpus: 130 systems scored by May 2026 and 126 added by the October 2026 sweep. Scores follow the 0–5 rubric of the main text (Table 3); Loop 1 / Loop 2 gate types and signal classes are recorded for the October rows (the gate pairs of the first-pass systems audited under the composite criterion are in the matrix of Appendix REF(app:contrast-2-1)). Substrate codes: INT integrated, S1 instructions, S2 skills, S3 memory, S4 tools, S5 orchestration, S6 governance. A year of “—” marks a classical system that predates the survey window. The CSV files with per-row justifications are released as ancillary files with this preprint.
+Every scored (substrate, system) row of the corpus: 130 systems scored by May 2026 and 126 added by the October 2026 sweep. Scores follow the 0–5 rubric of the main text (Table 1); Loop 1 / Loop 2 gate types and signal classes are recorded for the October rows (the gate pairs of the first-pass systems audited under the composite criterion are in the matrix of Appendix REF(app:contrast-2-1)). Substrate codes: INT integrated, S1 instructions, S2 skills, S3 memory, S4 tools, S5 orchestration, S6 governance. A year of “—” marks a classical system that predates the survey window. The CSV files with per-row justifications are released as ancillary files with this preprint.
 
 ```{=latex}
 \begingroup\scriptsize

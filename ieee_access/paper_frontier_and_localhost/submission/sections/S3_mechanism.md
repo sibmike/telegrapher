@@ -2,7 +2,7 @@
 
 ## S3.1 The mechanism stack
 
-The update rule of Section III expands into six operations that every patch-local system performs, whether by explicit engineering or by accident.
+The update rule of Section II expands into six operations that every patch-local system performs, whether by explicit engineering or by accident.
 
 1. **Residual capture.** Log failures, corrections, rejected outputs, user edits, evaluation regressions, and tool-call failures. This is the signal source of Loop 1; without it, $z_t$ has no provenance.
 2. **Mode discovery and credit assignment.** Cluster repeated failures into the deployment's own error modes (the catalogue of *The Architecture of Errors* [@arbuzov2026architecture], instantiated locally for one patch) and attribute each mode to the scaffold coordinate responsible for it (the correspondence note of the formal appendix).
