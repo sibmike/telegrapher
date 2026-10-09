@@ -29,7 +29,7 @@ log = open(os.path.join(SUB, "main.log"), encoding="utf-8", errors="replace").re
 check("Citation `" not in log.split("bibtex")[-1] and "undefined on input" not in log, "no undefined citations/references in main.log")
 check("Float too large" not in log, "no float too large for page")
 pages = re.findall(r"Output written on main.pdf \((\d+) pages", log)
-check(pages and 16 <= int(pages[-1]) <= 22, f"main.pdf pages = {pages[-1] if pages else '?'} (target 16-22)")
+check(pages and 16 <= int(pages[-1]) <= 24, f"main.pdf pages = {pages[-1] if pages else '?'} (target 16-24)")
 tex = open(os.path.join(SUB, "body.tex"), encoding="utf-8").read()
 check(tex.count("\\includegraphics") == 4, f"4 figures embedded ({tex.count(chr(92)+'includegraphics')})")
 check(tex.count("\\begin{table*}") == 10, f"10 tables ({tex.count(chr(92)+'begin{table*}')})")

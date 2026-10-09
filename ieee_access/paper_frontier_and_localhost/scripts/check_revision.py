@@ -117,9 +117,9 @@ def first_use(pat, exclude=None):
 def first_def(pat):
     return first_use(pat)
 checks = [
-    ("[L1 x L2] cell notation", r"\[(Auto|Human|None) × (Auto|Human|None)\]", r"Loop 1 first", None),
+    ("[L1 x L2] cell notation", r"\[(Auto|Human|None) × (Auto|Human|None)\]", r"local gate first|Loop 1 first", None),
     ("C1-C4 classes", r"\bC[1-4]\b", r"\*\*C1, exact\.\*\*|C1 exact", r"Table IV-1|CVE"),
-    ("properties (a)-(d)", r"propert(y|ies) \((a|b|c|d)\)|\((a|b|c|d)\) \*\*", r"\(a\) \*\*auto-gated Loop 1", None),
+    ("properties (a)-(d)", r"propert(y|ies) \((a|b|c|d)\)|\((a|b|c|d)\) \*\*", r"\(a\) \*\*auto-gated (local loop|Loop 1)", None),
     ("tenant", r"\btenant", r"one organization or customer", None),
     ("patch", r"\bpatch\b", r"patch\*\* |\*\*patch\*\*|a patch is|call a patch|the patch, the slice|\bpatch\b[^.]*slice", None),
     ("evidence radius", r"evidence radius", r"evidence radius\*\*|\*\*evidence radius|call[^.]*evidence radius", None),

@@ -90,14 +90,14 @@ def fig1():
     dw, dh = 1.0, 0.92
     # Loop 1 group box around the first five stations
     ax.add_patch(Rectangle((0.08, 0.30), xs[4] + bw / 2 + 0.10 - 0.08, 2.06, lw=LW, ec="black", fc="none", ls=(0, (4, 3))))
-    ax.text(0.12, 2.39, "Loop 1: the local fix, inside one deployment", ha="left", va="bottom", fontsize=8.5)
+    ax.text(0.12, 2.39, "The local loop: one fix, inside one deployment", ha="left", va="bottom", fontsize=8.5)
 
     box(ax, xs[0], y, bw, bh, "Deployment runs;\nfailures are\nlogged", fs=7.5)
     box(ax, xs[1], y, bw, bh, "Cluster into\nrecurring modes,\nranked by frequency\nand severity", fs=7)
     box(ax, xs[2], y, bw, bh, "Trace one mode to\none scaffold\ncoordinate and\npropose one edit", fs=7)
     diamond(ax, xs[3], y, dw, dh, "Gate: does\nthe patch\nloss fall?", fs=7)
     box(ax, xs[4], y, bw, bh, "Edit persists,\nversioned (rolled\nback if it later\nregresses)", fs=7, fill=SHADE)
-    box(ax, xs[5], y, bw, bh, "Loop 2:\nhow far may\nthe edit travel?\n(Fig. 2)", fs=7.5, fill=LIGHT, ls=(0, (4, 3)))
+    box(ax, xs[5], y, bw, bh, "The promotion\nloop: how far\nmay the edit\ntravel? (Fig. 2)", fs=7.5, fill=LIGHT, ls=(0, (4, 3)))
 
     arrow(ax, (xs[0] + bw / 2, y), (xs[1] - bw / 2, y))
     arrow(ax, (xs[1] + bw / 2, y), (xs[2] - bw / 2, y))
@@ -143,10 +143,10 @@ def fig2():
         else:
             ax.text(ax_x + 0.14, ym, labels[i], ha="left", va="center", fontsize=6.5, style="italic")
     # left-hand annotations
-    ax.text(0.58, ys[0], "Loop 1\nedits here", ha="center", va="center", fontsize=7, style="italic")
+    ax.text(0.58, ys[0], "the local\nloop edits\nhere", ha="center", va="center", fontsize=7, style="italic")
     arrow(ax, (0.96, ys[0]), (x0, ys[0]))
     ym2 = (ys[1] + ys[3]) / 2
-    ax.text(0.58, ym2, "Loop 2\npromotes\nupward,\none gate\nper rung", ha="center", va="center", fontsize=7, style="italic")
+    ax.text(0.58, ym2, "the promotion\nloop climbs,\none gate\nper rung", ha="center", va="center", fontsize=7, style="italic")
     arrow(ax, (0.96, ym2), (x0, ym2))
     ax.text(W / 2, 0.11, "rung loss = mean failure rate over the deployments it contains", ha="center", va="center", fontsize=6.5)
     save(fig, "fig2_scope")
@@ -156,8 +156,8 @@ def fig2():
 def fig3():
     W, H = 4.8, 3.8
     fig, ax = canvas(W, H)
-    cols = ["Loop 2: Auto", "Loop 2: Human", "Loop 2: None"]
-    rows = ["Loop 1: Auto", "Loop 1: Human", "Loop 1: None"]
+    cols = ["Auto", "Human", "None"]
+    rows = ["Auto", "Human", "None"]
     small = OUT["suffix"] == "_ieee"          # column-width rendering: tighter grid, smaller type
     cw, ch = (1.05, 0.95) if small else (1.15, 0.95)
     gx0, gy0 = (1.45, 0.25) if small else (1.05, 0.25)
@@ -204,6 +204,8 @@ def fig3():
         ax.text(gx0 + c * cw + cw / 2, gy0 + 3 * ch + 0.10, name, ha="center", va="bottom", fontsize=f_hdr)
     for r, name in enumerate(rows):
         ax.text(gx0 - 0.08, gy0 + (2 - r) * ch + ch / 2, name, ha="right", va="center", fontsize=f_hdr)
+    ax.text(gx0 + 1.5 * cw, gy0 + 3 * ch + 0.32, "Promotion gate", ha="center", va="bottom", fontsize=f_hdr, weight="bold")
+    ax.text(gx0 - (0.84 if small else 0.66), gy0 + 1.5 * ch, "Local gate", ha="center", va="center", fontsize=f_hdr, weight="bold", rotation=90)
     save(fig, "fig3_design_space")
 
 
@@ -222,7 +224,7 @@ def fig4(counts):
     # split row
     box(ax, cx - dx, ys[1], sw, bh, f"core corpus: {counts['core']}\n(score ≥ 3 on\nsome substrate)", fs=7, fill=SHADE)
     box(ax, cx + dx, ys[1], sw, bh, f"contrast: {counts['contrast']}\n(fails the\nfirst filter)", fs=7, fill=LIGHT)
-    box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(Loop 1 from session signal;\nLoop 2 across contexts with versioning or lineage)", fs=7.5)
+    box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(local loop from session signal;\npromotion across contexts with versioning or lineage)", fs=7.5)
     box(ax, cx - dx, ys[3], sw, bh, f"pass: {counts['strict_pass']} research\n+ {counts['industry']} industry\nexemplars", fs=7, fill=SHADE)
     box(ax, cx + dx, ys[3], sw, bh, f"promote with no lineage: {counts['relaxed_only']}\n(fail the audit on\ngovernance alone)", fs=7, fill=LIGHT)
     arrow(ax, (cx - 0.3, ys[0] - bh / 2), (cx - dx, ys[1] + bh / 2))
