@@ -22,7 +22,7 @@ LIGHT = "#F2F2F2"
 LW = 1.0
 
 
-OUT = {"dir": HERE, "suffix": "", "size": None}   # overridden by --ieee (see main)
+OUT = {"dir": HERE, "suffix": "", "size": None, "promo_ptr": "(Fig. 2)"}   # overridden by --ieee (see main)
 
 
 def canvas(w, h):
@@ -97,7 +97,7 @@ def fig1():
     box(ax, xs[2], y, bw, bh, "Trace one mode to\none scaffold\ncoordinate and\npropose one edit", fs=7)
     diamond(ax, xs[3], y, dw, dh, "Gate: does\nthe patch\nloss fall?", fs=7)
     box(ax, xs[4], y, bw, bh, "Edit persists,\nversioned (rolled\nback if it later\nregresses)", fs=7, fill=SHADE)
-    box(ax, xs[5], y, bw, bh, "The promotion\nloop: how far\nmay the edit\ntravel? (Fig. 2)", fs=7.5, fill=LIGHT, ls=(0, (4, 3)))
+    box(ax, xs[5], y, bw, bh, "The promotion\nloop: how far\nmay the edit\ntravel? " + OUT["promo_ptr"], fs=7.5, fill=LIGHT, ls=(0, (4, 3)))
 
     arrow(ax, (xs[0] + bw / 2, y), (xs[1] - bw / 2, y))
     arrow(ax, (xs[1] + bw / 2, y), (xs[2] - bw / 2, y))
@@ -247,8 +247,10 @@ if __name__ == "__main__":
     ap.add_argument("--ieee", action="store_true", help="render at IEEE sizes with suffix _ieee into --out")
     ap.add_argument("--out", default=HERE)
     ap.add_argument("--counts", default=None, help="JSON dict for fig4 (IEEE only)")
+    ap.add_argument("--promo-pointer", default="(Fig. 2)", help="cross-reference printed in Fig. 1's promotion box")
     a = ap.parse_args()
     OUT["dir"] = a.out
+    OUT["promo_ptr"] = a.promo_pointer
     if a.ieee:
         OUT["suffix"] = "_ieee"
         OUT["size"] = IEEE_SIZES["fig1"]; fig1()

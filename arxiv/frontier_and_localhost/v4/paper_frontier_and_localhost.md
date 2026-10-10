@@ -203,7 +203,7 @@ For the 126 most recently added systems, gate types, feedback classes, and gover
 
 ### Evidence and limitations
 
-The evidence ranges from peer-reviewed studies and open-source artifacts to vendor claims. Every classification carries its evidence tier and a one-line justification in the released table. Peer-reviewed papers and open-source artifacts receive the greatest weight. A production claim must name a benchmark or integration target, and a blog or interview is counted only when stronger evidence corroborates it. Production claims are not pooled with peer-reviewed evidence in corpus-level statistics; vendor-based exemplars are identified as such.
+The evidence ranges from peer-reviewed studies and open-source artifacts to vendor claims. Every row of the released table carries its source and a one-line justification, and the rows for the 126 most recently added systems also carry an evidence tier. Peer-reviewed papers and open-source artifacts receive the greatest weight. A production claim must name a benchmark or integration target, and a blog or interview is counted only when stronger evidence corroborates it. Production claims are not pooled with peer-reviewed evidence in corpus-level statistics; vendor-based exemplars are identified as such.
 
 One author scored all systems. Ambiguous cases were rounded down, and half-scores were used only when one criterion was clearly met and another partly met. Independent re-rating remains future work. The classifications should be read as an auditable interpretation of public evidence, not a complete inventory of private production behavior.
 
