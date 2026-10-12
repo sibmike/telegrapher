@@ -2354,9 +2354,12 @@ Third & No scaffold system should yet calibrate a judged gate under the
 reflexive condition & \textbf{sharpened} & Three scaffold systems report
 calibration: SkillForge (\textgreater90\% agreement), SkillChain
 (\(\kappa\) 0.72 to 0.91), and SkillCoach (trajectory-filter consistency
-82→96\% against human gold); none calibrates a judge that is itself
-being edited. On the weight side, no method that co-evolves a rubric or
-judge reports agreement with people (Section S6.6). \\
+82→96\% against human gold). SkillCoach also audits its evolved rubric
+offline against human-gold references; none reports calibration
+maintained across continuing rubric revisions in deployment. On the
+weight side, no method that co-evolves a rubric or judge reports
+agreement with people apart from RLPR, whose reward is a probability
+rather than a rubric (Section S6.6). \\
 \end{longtable}
 }
 

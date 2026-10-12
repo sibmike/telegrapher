@@ -224,7 +224,7 @@ def fig4(counts):
     # split row
     box(ax, cx - dx, ys[1], sw, bh, f"core corpus: {counts['core']}\n(score ≥ 3 on\nsome substrate)", fs=7, fill=SHADE)
     box(ax, cx + dx, ys[1], sw, bh, f"contrast: {counts['contrast']}\n(fails the\nfirst filter)", fs=7, fill=LIGHT)
-    box(ax, cx, ys[2], bw, bh, "composite two-loop audit\n(local loop from session signal;\npromotion across contexts with versioning or lineage)", fs=7.5)
+    box(ax, cx, ys[2], bw, bh, "composite two-loop audit: 202 of the 204 core systems\n+ 4 research systems classified from papers alone\n(local loop from session signal; promotion\nacross contexts with versioning or lineage)", fs=7.5)
     box(ax, cx - dx, ys[3], sw, bh, f"pass: {counts['strict_pass']} research\n+ {counts['industry']} industry\nexemplars", fs=7, fill=SHADE)
     box(ax, cx + dx, ys[3], sw, bh, f"promote with no lineage: {counts['relaxed_only']}\n(fail the audit on\ngovernance alone)", fs=7, fill=LIGHT)
     arrow(ax, (cx - 0.3, ys[0] - bh / 2), (cx - dx, ys[1] + bh / 2))

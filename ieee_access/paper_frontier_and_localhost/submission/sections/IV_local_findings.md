@@ -4,7 +4,7 @@ A system can detect a failure, explain it, and write a plausible correction with
 
 SkillRL exposes the same separation through a different mechanism. A success-rate threshold triggers proposals for new skills, and the skill bank accepts each proposal unconditionally [@skillrl2026]. Both systems respond to experience, yet neither has the local acceptance gate defined in Section REF(sec:loop). This is why the survey records who accepts an edit separately from who generates it or which signal triggers it.
 
-Among the 105 core systems most recently added to the corpus, automatic local acceptance is nevertheless the dominant pattern: 89 use a program to retain or reject changes. Looking inside those loops reveals a less even picture. Evaluation is comparatively mature, while the failure record and the link from a failure to the responsible artifact are often incomplete.
+Among the 105 core systems most recently added to the corpus, 96 have a local loop, and automatic acceptance is nevertheless the dominant pattern among them: 89 use a program to retain or reject changes. Looking inside those loops reveals a less even picture. Evaluation is comparatively mature, while the failure record and the link from a failure to the responsible artifact are often incomplete.
 
 ### Finding the right thing to change
 

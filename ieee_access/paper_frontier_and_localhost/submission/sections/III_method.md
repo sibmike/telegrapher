@@ -10,7 +10,7 @@ A system enters the survey if it adapts a foundation model through a persistent 
 
 We apply two filters. The first admits a system to the **core corpus** if it scores at least 3 on at least one scaffold substrate under the rubric below. Of the 256 systems, 204 form the core corpus and 52 the contrast corpus. A system may have one integrated row or several substrate-specific rows, so the 256 systems occupy 269 scored rows.
 
-The second filter is a **two-loop audit**. It asks whether session feedback changes a persistent artifact and whether that artifact is subsequently promoted beyond the deployment that produced it, with versioning or lineage. Applied to the core systems and the additional paper-based classifications (Supplementary Material S2), it admits 11 research systems and 3 industry exemplars. Fig. REF(fig:corpus) summarizes the selection.
+The second filter is a **two-loop audit**. It asks whether session feedback changes a persistent artifact and whether that artifact is subsequently promoted beyond the deployment that produced it, with versioning or lineage. Applied to 202 of the 204 core systems and to 4 research systems classified from their papers alone (SkillOpt, FederatedSkill, SkillClaw, and ChronoMem), it admits 11 research systems and 3 industry exemplars; the eight systems without an audit are listed with the contrast set (Supplementary Material S4). Fig. REF(fig:corpus) summarizes the selection.
 
 ```{=latex}
 \begin{figure}[!t]
@@ -56,9 +56,9 @@ Table REF(tab:V-2) gives the corpus distribution. Research systems hold the top 
 | S6 Governance | 45 | 3.02 | Braintrust, Vellum, LangSmith Hub, AGENTS.md under the Agentic AI Foundation (AAIF) | Prompts-as-code mature; registries add lineage and rollback; no local loop generates a candidate |
 | Integrated | 52 | 3.81 | NanoResearch, AutoAgent, SkillRL | Breadth and depth of adaptation, not the loop; reached only by research systems without enterprise governance |
 
-Table V-2. Substrate maturity across the 256-system corpus. Column n counts scored rows on each substrate, Mean is the average score, and Score-5 systems reach the substrate's top mark; the integrated row counts systems scored across several substrates as one row. Of the 126 most recently added systems, 105 are core and 32 are skill systems; 89 of those core systems close the local loop under a program, and none of the 126 scores 5 on any substrate.
+Table V-2. Substrate maturity across the 256-system corpus. Column n counts scored rows on each substrate, Mean is the average score, and Score-5 systems reach the substrate's top mark; the integrated row counts systems scored across several substrates as one row. Of the 126 most recently added systems, 105 are core and 32 are skill systems; 96 of those core systems have a local loop and 89 close it under a program, and none of the 126 scores 5 on any substrate.
 
-For the 126 most recently added systems, gate types, feedback classes, and governance properties are recorded as explicit columns of the released table, so counts based on those columns apply to those systems. For example, 89 of their 105 core systems close the local loop under a program. This is not a gate count over all 256 systems.
+For the 126 most recently added systems, gate types, feedback classes, and governance properties are recorded as explicit columns of the released table, so counts based on those columns apply to those systems. For example, 96 of their 105 core systems have a local loop, and 89 of those close it under a program. This is not a gate count over all 256 systems.
 
 ### Evidence and limitations
 
