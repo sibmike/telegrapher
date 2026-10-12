@@ -46,7 +46,7 @@ S3_Memory,SOAR Cognitive Architecture,4,classical,Newell/Laird,Classical-AI,Chun
 S3_Memory,Governed Collaborative Memory (Cuadros et al.),5,2026,arXiv:2605.04264,Research,Only framework with provenance+versioning+correction
 S3_Memory,NanoResearch Memory Module,3,2026,arXiv:2605.10813,Research,Tri-level co-evolution
 S3_Memory,MemoryBank,3,2023,Zhong et al.,Research,Ebbinghaus-curve forgetting
-S4_Tools,Model Context Protocol (MCP),5,2024,modelcontextprotocol.io,Open-Standard,9400+ servers; 78% enterprise; 7.8x YoY
+S4_Tools,Model Context Protocol (MCP),3,2024,modelcontextprotocol.io,Open-Standard,9400+ servers; 78% enterprise; 7.8x YoY; rescored 5 to 3 on 2026-10-12: the evidence documents adoption of a protocol and its registry, not evaluation-gated tool versions
 S4_Tools,OpenAI Function Calling,3,2023,platform.openai.com,Production,BFCL ~72% leading models
 S4_Tools,Anthropic Tool Use API,4,2024,docs.anthropic.com,Production,Tool Search Tool + defer_loading
 S4_Tools,Gemini Function Calling,3,2024,ai.google.dev,Production,Native Google Search + code exec
@@ -54,8 +54,8 @@ S4_Tools,LangChain Tools Abstraction,3,2023,langchain.com,Production,65M+ downlo
 S4_Tools,LlamaIndex Tool Ecosystem,4,2023,llamaindex.ai,Production,ToolSpec = domain bundle; on-demand
 S4_Tools,Toolformer,2,2023,arXiv:2302.04761,Research,Fixed 5 tools; self-supervised
 S4_Tools,ToolLLM / ToolBench,3,2023,arXiv:2307.16789,Research,3451 tools; 49 categories; retrieval-based
-S4_Tools,Harvey (Legal Vertical),5,2024,harvey.ai,Production-Vertical,400K queries/day; 18k workflows; 200+ legal sources
-S4_Tools,Hippocratic AI,5,2024,hippocraticai.com,Production-Vertical,$3.5B val; 30% readmission reduction
+S4_Tools,Harvey (Legal Vertical),3,2024,harvey.ai,Production-Vertical,400K queries/day; 18k workflows; 200+ legal sources; rescored 5 to 3 on 2026-10-12: the evidence documents usage of a curated tool product, not evaluation-gated tool versions
+S4_Tools,Hippocratic AI,3,2024,hippocraticai.com,Production-Vertical,$3.5B val; 30% readmission reduction; rescored 5 to 3 on 2026-10-12: the evidence documents business and outcome figures, not evaluation-gated tool versions
 S4_Tools,Sierra,4,2024,sierra.ai,Production-Vertical,Ghostwriter builds from SOPs+transcripts
 S4_Tools,Cursor MCP Integration,4,2024,docs.cursor.com,Production,4.3x faster integration vs native FC
 S4_Tools,Claude Code Tool API,4,2024,docs.anthropic.com,Production,Programmatic tool calling
@@ -87,7 +87,7 @@ S5_Orchestration,Memento-Skills,4,2026,arXiv,Research,"RW Reflective Learning + 
 S6_Governance,Braintrust,5,2024,braintrust.dev,Production,CI/CD gate + immutable IDs + 3 envs
 S6_Governance,Vellum,5,2024,vellum.ai,Production,Protected Release Tags + RBAC
 S6_Governance,LangSmith Hub,5,2024,smith.langchain.com,Production,Immutable commits + webhook CI/CD
-S6_Governance,AGENTS.md / AAIF,5,2025,agents.md,Open-Standard,Linux Foundation governance since Dec 2025
+S6_Governance,AGENTS.md / AAIF,3,2025,agents.md,Open-Standard,Linux Foundation governance since Dec 2025; rescored 5 to 3 on 2026-10-12: the evidence documents stewardship of a standard, not staged promotion with evaluation thresholds and rollback
 S6_Governance,Anthropic skills repo,4,2025,github.com/anthropics/skills,Open-Source,956+ PRs; maintainer review; no auto eval gate
 S6_Governance,GitHub Copilot enterprise,4,2026,github.com,Production,Org-level UI setting GA Apr 2026
 S6_Governance,Cursor Rules,3,2024,cursor.com,Production,PR review convention

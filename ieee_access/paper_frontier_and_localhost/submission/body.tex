@@ -144,7 +144,7 @@ The common scoring scale runs from 0 to 5. At 0 an artifact is ephemeral. At 1 i
 
 This last distinction is important when interpreting the scores. Instructions and skills require both loops to reach 5. Orchestration requires a topology updated from deployment feedback by a loop outside the agent's own execution. Memory, tools, and governance are scored for their corresponding governance capabilities, so a registry can score 5 without generating local edits. Integrated rows measure breadth and depth of adaptation, not closure of either loop. The scale therefore supports substrate-specific comparisons; a top score is not a universal certificate of complete optimization.
 
-Table~\ref{tab:V-2} gives the corpus distribution. Research systems hold the top marks on skills, memory, and the integrated row. Production platforms and standards hold them on tools and governance. No system reaches the top score across all six substrates, and none reaches it on instructions or orchestration.
+Table~\ref{tab:V-2} gives the corpus distribution. Research systems hold the top marks on skills, memory, and the integrated row, and production platforms hold them on governance. No system reaches the top score across all six substrates, and none reaches it on instructions, tools, or orchestration.
 
 \begin{table*}[!t]
 \caption{Substrate maturity across the 256-system corpus. Column n counts scored rows on each substrate, Mean is the average score, and Score-5 systems reach the substrate's top mark; the integrated row counts systems scored across several substrates as one row. Of the 126 most recently added systems, 105 are core and 32 are skill systems; 96 of those core systems have a local loop and 89 close it under a program, and none of the 126 scores 5 on any substrate.}\label{tab:V-2}
@@ -173,9 +173,9 @@ What the corpus holds on it
 S1 Instructions & 15 & 3.07 & (none) & Rules persist across IDEs and agents and nothing measures them; no system closes both loops; ceiling 4 \\ \addlinespace[2.5pt]
 S2 Skills & 50 & 3.34 & SAGE, COSPLAY & The local loop closes under a program in the research systems; the production repositories merge by hand \\ \addlinespace[2.5pt]
 S3 Memory & 50 & 3.06 & Cuadros et al. & The ledger ships in products; the correction a gate would enforce is absent \\ \addlinespace[2.5pt]
-S4 Tools & 20 & 3.65 & MCP, Harvey, Hippocratic AI & The most mature production substrate; registries govern admission, not evaluation \\ \addlinespace[2.5pt]
+S4 Tools & 20 & 3.35 & (none) & Production tools are widely shared; registries govern admission, not evaluation \\ \addlinespace[2.5pt]
 S5 Orchestration & 37 & 3.08 & (none) & Topologies change under an evaluation gate; one structurally gated instance; no two-loop system with lineage \\ \addlinespace[2.5pt]
-S6 Governance & 45 & 3.02 & Braintrust, Vellum, LangSmith Hub, AGENTS.md under the Agentic AI Foundation (AAIF) & Prompts-as-code mature; registries add lineage and rollback; no local loop generates a candidate \\ \addlinespace[2.5pt]
+S6 Governance & 45 & 2.98 & Braintrust, Vellum, LangSmith Hub & Prompts-as-code mature; registries add lineage and rollback; no local loop generates a candidate \\ \addlinespace[2.5pt]
 Integrated & 52 & 3.81 & NanoResearch, AutoAgent, SkillRL & Breadth and depth of adaptation, not the loop; reached only by research systems without enterprise governance \\ \addlinespace[2.5pt]
 \bottomrule\noalign{}
 \end{tabular}

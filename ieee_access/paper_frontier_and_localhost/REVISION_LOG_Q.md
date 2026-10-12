@@ -22,3 +22,7 @@ An external reviewer read the 22-page IEEE build and judged it a credible IEEE A
 ## Numbers
 
 IEEE `main.pdf` 22 pages, 148 references, abstract 237 words; `check_revision.py`, `verify_ieee.py`, `check_cites.py` pass; arXiv v4 83 pages, 0 undefined; ACL body ends on page 8, 0 undefined. Figures regenerated with a new durable matplotlib environment at `C:\Users\mikea\.venvs\figenv` (the scratch environment had been damaged by temp cleanup).
+
+## Author decision: the four score-5 marks (applied the same day)
+
+The authors chose to rescore all four to 3. MCP, Harvey, and Hippocratic AI on tools, and AGENTS.md under AAIF on governance, now score 3, with the reason in each CSV row. Table 2: S4 Tools 3.65 to 3.35 with no score-5 system, S6 Governance 3.02 to 2.98 with Braintrust, Vellum, and LangSmith Hub; the S4 cell no longer calls tools "the most mature production substrate". Section III's top-marks sentence, the S6 recount block, the ACL appendix table, and the ACL supplementary data were updated; `recount.py` reproduces the new table from the released CSVs. Core/contrast counts, audit passers, and grid cells are unchanged.

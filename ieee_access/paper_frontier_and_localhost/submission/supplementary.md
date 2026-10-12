@@ -196,12 +196,12 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S4 | Devin / SWE-agent Tool Harness | 4 | 2024 | cognition.​ai |  |  |  | May 26 |
 | S4 | Gemini Function Calling | 3 | 2024 | ai.​google.​dev |  |  |  | May 26 |
 | S4 | GPT Actions | 3 | 2023 | platform.​openai.​com |  |  |  | May 26 |
-| S4 | Harvey (Legal Vertical) | 5 | 2024 | harvey.​ai |  |  |  | May 26 |
-| S4 | Hippocratic AI | 5 | 2024 | hippocraticai.​com |  |  |  | May 26 |
+| S4 | Harvey (Legal Vertical) | 3 | 2024 | harvey.​ai |  |  |  | May 26 |
+| S4 | Hippocratic AI | 3 | 2024 | hippocraticai.​com |  |  |  | May 26 |
 | S4 | LangChain Tools Abstraction | 3 | 2023 | langchain.​com |  |  |  | May 26 |
 | S4 | LangGraph Tool Nodes | 4 | 2024 | langchain.​com |  |  |  | May 26 |
 | S4 | LlamaIndex Tool Ecosystem | 4 | 2023 | llamaindex.​ai |  |  |  | May 26 |
-| S4 | Model Context Protocol (MCP) | 5 | 2024 | modelcontextprotocol.​io |  |  |  | May 26 |
+| S4 | Model Context Protocol (MCP) | 3 | 2024 | modelcontextprotocol.​io |  |  |  | May 26 |
 | S4 | OpenAI Assistants API | 3 | 2023 | platform.​openai.​com |  |  |  | May 26 |
 | S4 | OpenAI Function Calling | 3 | 2023 | platform.​openai.​com |  |  |  | May 26 |
 | S4 | Sierra | 4 | 2024 | sierra.​ai |  |  |  | May 26 |
@@ -247,7 +247,7 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S5 | Workflow-Designing Agents (WDA) | 4 | 2026 | arXiv:2609.32458 | Auto | None | C2 | Oct 26 |
 | S6 | Agenta | 3 | 2024 | agenta.​ai |  |  |  | May 26 |
 | S6 | Agentic Configuration Management ACM (Quessada-V | 3 | 2026 | arXiv:2608.11166 | None | Human | n/a | Oct 26 |
-| S6 | AGENTS.md / AAIF | 5 | 2025 | agents.​md |  |  |  | May 26 |
+| S6 | AGENTS.md / AAIF | 3 | 2025 | agents.​md |  |  |  | May 26 |
 | S6 | Anthropic skills repo | 4 | 2025 | github.​com/​anthropics/​skills |  |  |  | May 26 |
 | S6 | Azure API Center MCP registry | 3 | 2026 | learn.​microsoft.​com | None | Human | - | Oct 26 |
 | S6 | Braintrust | 5 | 2024 | braintrust.​dev |  |  |  | May 26 |
@@ -717,9 +717,9 @@ INTEGRATED           52   3.81  AutoAgent, NanoResearch, SkillRL
 S1_Instructions      15   3.07  (none)
 S2_Skills            50   3.34  COSPLAY, SAGE
 S3_Memory            50   3.06  Governed Collaborative Memory (Cuadros et al.)
-S4_Tools             20   3.65  Harvey, Hippocratic AI, MCP
+S4_Tools             20   3.35  (none)
 S5_Orchestration     37   3.08  (none)
-S6_Governance        45   3.02  AGENTS.md / AAIF, Braintrust, LangSmith Hub, Vellum
+S6_Governance        45   2.98  Braintrust, LangSmith Hub, Vellum
 First pass alone (after corrections): 130 / 99 / 31; S5 mean 2.58.
 ```
 

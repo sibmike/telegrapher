@@ -102,8 +102,8 @@ INTEGRATED           52   3.81  AutoAgent, NanoResearch, SkillRL
 S1_Instructions      15   3.07  (none)
 S2_Skills            50   3.34  COSPLAY, SAGE
 S3_Memory            50   3.06  Governed Collaborative Memory (Cuadros et al.)
-S4_Tools             20   3.65  Harvey, Hippocratic AI, MCP
+S4_Tools             20   3.35  (none)
 S5_Orchestration     37   3.08  (none)
-S6_Governance        45   3.02  AGENTS.md / AAIF, Braintrust, LangSmith Hub, Vellum
+S6_Governance        45   2.98  Braintrust, LangSmith Hub, Vellum
 First pass alone (after corrections): 130 / 99 / 31; S5 mean 2.58.
 ```

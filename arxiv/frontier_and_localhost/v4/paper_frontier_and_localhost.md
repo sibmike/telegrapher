@@ -185,16 +185,16 @@ The common scoring scale runs from 0 to 5. At 0 an artifact is ephemeral. At 1 i
 
 This last distinction is important when interpreting the scores. Instructions and skills require both loops to reach 5. Orchestration requires a topology updated from deployment feedback by a loop outside the agent's own execution. Memory, tools, and governance are scored for their corresponding governance capabilities, so a registry can score 5 without generating local edits. Integrated rows measure breadth and depth of adaptation, not closure of either loop. The scale therefore supports substrate-specific comparisons; a top score is not a universal certificate of complete optimization.
 
-Table REF(tab:V-2) gives the corpus distribution. Research systems hold the top marks on skills, memory, and the integrated row. Production platforms and standards hold them on tools and governance. No system reaches the top score across all six substrates, and none reaches it on instructions or orchestration.
+Table REF(tab:V-2) gives the corpus distribution. Research systems hold the top marks on skills, memory, and the integrated row, and production platforms hold them on governance. No system reaches the top score across all six substrates, and none reaches it on instructions, tools, or orchestration.
 
 | Substrate | $n$ | Mean | Score-5 systems | What the corpus holds on it |
 |------------|---:|----:|--------------------|----------------------------------|
 | S1 Instructions | 15 | 3.07 | (none) | Rules persist across IDEs and agents and nothing measures them; no system closes both loops; ceiling 4 |
 | S2 Skills | 50 | 3.34 | SAGE, COSPLAY | The local loop closes under a program in the research systems; the production repositories merge by hand |
 | S3 Memory | 50 | 3.06 | Cuadros et al. | The ledger ships in products; the correction a gate would enforce is absent |
-| S4 Tools | 20 | 3.65 | MCP, Harvey, Hippocratic AI | The most mature production substrate; registries govern admission, not evaluation |
+| S4 Tools | 20 | 3.35 | (none) | Production tools are widely shared; registries govern admission, not evaluation |
 | S5 Orchestration | 37 | 3.08 | (none) | Topologies change under an evaluation gate; one structurally gated instance; no two-loop system with lineage |
-| S6 Governance | 45 | 3.02 | Braintrust, Vellum, LangSmith Hub, AGENTS.md under the Agentic AI Foundation (AAIF) | Prompts-as-code mature; registries add lineage and rollback; no local loop generates a candidate |
+| S6 Governance | 45 | 2.98 | Braintrust, Vellum, LangSmith Hub | Prompts-as-code mature; registries add lineage and rollback; no local loop generates a candidate |
 | Integrated | 52 | 3.81 | NanoResearch, AutoAgent, SkillRL | Breadth and depth of adaptation, not the loop; reached only by research systems without enterprise governance |
 
 Table V-2. Substrate maturity across the 256-system corpus. Column n counts scored rows on each substrate, Mean is the average score, and Score-5 systems reach the substrate's top mark; the integrated row counts systems scored across several substrates as one row. Of the 126 most recently added systems, 105 are core and 32 are skill systems; 96 of those core systems have a local loop and 89 close it under a program, and none of the 126 scores 5 on any substrate.
@@ -1055,9 +1055,9 @@ INTEGRATED           52   3.81  AutoAgent, NanoResearch, SkillRL
 S1_Instructions      15   3.07  (none)
 S2_Skills            50   3.34  COSPLAY, SAGE
 S3_Memory            50   3.06  Governed Collaborative Memory (Cuadros et al.)
-S4_Tools             20   3.65  Harvey, Hippocratic AI, MCP
+S4_Tools             20   3.35  (none)
 S5_Orchestration     37   3.08  (none)
-S6_Governance        45   3.02  AGENTS.md / AAIF, Braintrust, LangSmith Hub, Vellum
+S6_Governance        45   2.98  Braintrust, LangSmith Hub, Vellum
 First pass alone (after corrections): 130 / 99 / 31; S5 mean 2.58.
 ```
 
@@ -1290,12 +1290,12 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S4 | Devin / SWE-agent Tool Harness | 4 | 2024 | cognition.​ai |  |  |  | May 26 |
 | S4 | Gemini Function Calling | 3 | 2024 | ai.​google.​dev |  |  |  | May 26 |
 | S4 | GPT Actions | 3 | 2023 | platform.​openai.​com |  |  |  | May 26 |
-| S4 | Harvey (Legal Vertical) | 5 | 2024 | harvey.​ai |  |  |  | May 26 |
-| S4 | Hippocratic AI | 5 | 2024 | hippocraticai.​com |  |  |  | May 26 |
+| S4 | Harvey (Legal Vertical) | 3 | 2024 | harvey.​ai |  |  |  | May 26 |
+| S4 | Hippocratic AI | 3 | 2024 | hippocraticai.​com |  |  |  | May 26 |
 | S4 | LangChain Tools Abstraction | 3 | 2023 | langchain.​com |  |  |  | May 26 |
 | S4 | LangGraph Tool Nodes | 4 | 2024 | langchain.​com |  |  |  | May 26 |
 | S4 | LlamaIndex Tool Ecosystem | 4 | 2023 | llamaindex.​ai |  |  |  | May 26 |
-| S4 | Model Context Protocol (MCP) | 5 | 2024 | modelcontextprotocol.​io |  |  |  | May 26 |
+| S4 | Model Context Protocol (MCP) | 3 | 2024 | modelcontextprotocol.​io |  |  |  | May 26 |
 | S4 | OpenAI Assistants API | 3 | 2023 | platform.​openai.​com |  |  |  | May 26 |
 | S4 | OpenAI Function Calling | 3 | 2023 | platform.​openai.​com |  |  |  | May 26 |
 | S4 | Sierra | 4 | 2024 | sierra.​ai |  |  |  | May 26 |
@@ -1341,7 +1341,7 @@ Every scored (substrate, system) row of the corpus: 130 systems scored by May 20
 | S5 | Workflow-Designing Agents (WDA) | 4 | 2026 | arXiv:2609.32458 | Auto | None | C2 | Oct 26 |
 | S6 | Agenta | 3 | 2024 | agenta.​ai |  |  |  | May 26 |
 | S6 | Agentic Configuration Management ACM (Quessada-V | 3 | 2026 | arXiv:2608.11166 | None | Human | n/a | Oct 26 |
-| S6 | AGENTS.md / AAIF | 5 | 2025 | agents.​md |  |  |  | May 26 |
+| S6 | AGENTS.md / AAIF | 3 | 2025 | agents.​md |  |  |  | May 26 |
 | S6 | Anthropic skills repo | 4 | 2025 | github.​com/​anthropics/​skills |  |  |  | May 26 |
 | S6 | Azure API Center MCP registry | 3 | 2026 | learn.​microsoft.​com | None | Human | - | Oct 26 |
 | S6 | Braintrust | 5 | 2024 | braintrust.​dev |  |  |  | May 26 |
