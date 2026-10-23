@@ -1,0 +1,133 @@
+% Ledger part J5: uncertainty, calibration, and attention as explanation (10 references), checked against the source of record.
+% Verified 2026-10-03. Keys unchanged as assigned. See J5_uncertainty_attention.md for the evidence behind every field.
+% Sources: ACL Anthology .bib exports (NAACL 2019, EMNLP-IJCNLP 2019, EMNLP 2020, EMNLP 2023, ACL 2024), cross-checked with
+% Crossref; Crossref DOI record and Springer Nature RIS export (Nature); Crossref DOI record and the STOC 2024 accepted-papers
+% page (STOC); iclr.cc virtual-conference pages and the arXiv camera-ready versions (ICLR 2021, ICLR 2023; OpenReview itself
+% returned a challenge page and was not used); arXiv abs page and PDF title page (arXiv-only preprint).
+% Venue results: kuhn2023semantic is ICLR 2023 (oral); malinin2021uncertainty is ICLR 2021 (poster); kalai2024calibrated is
+% STOC 2024; manakul2023selfcheckgpt is the EMNLP 2023 main conference (not Findings, despite ref. 41 of the Nature paper);
+% kadavath2022language has no venue version as of 2026-10-03.
+% ICLR 2021/2023 papers have no page numbers or DOIs. The ACM full text of kalai2024calibrated was not opened (Cloudflare
+% check); its pages and DOI come from Crossref.
+% Author forms follow the PDF bylines where the BibTeX exports abbreviate them (Gales, Mark J. F. for SelfCheckGPT).
+% IEEEtran sentence-cases article and paper titles, so acronyms and capitals that must survive are braced.
+
+@inproceedings{kuhn2023semantic,
+  author    = {Kuhn, Lorenz and Gal, Yarin and Farquhar, Sebastian},
+  title     = {Semantic Uncertainty: Linguistic Invariances for Uncertainty Estimation in Natural Language Generation},
+  booktitle = {The Eleventh International Conference on Learning Representations (ICLR)},
+  year      = {2023},
+  url       = {https://openreview.net/forum?id=VD-AYtP0dve},
+  note      = {arXiv:2302.09664}
+}
+
+@article{farquhar2024detecting,
+  author    = {Farquhar, Sebastian and Kossen, Jannik and Kuhn, Lorenz and Gal, Yarin},
+  title     = {Detecting hallucinations in large language models using semantic entropy},
+  journal   = {Nature},
+  volume    = {630},
+  number    = {8017},
+  pages     = {625--630},
+  month     = jun,
+  year      = {2024},
+  doi       = {10.1038/s41586-024-07421-0},
+  url       = {https://www.nature.com/articles/s41586-024-07421-0}
+}
+
+@misc{kadavath2022language,
+  author       = {Kadavath, Saurav and Conerly, Tom and Askell, Amanda and Henighan, Tom and Drain, Dawn and Perez, Ethan and Schiefer, Nicholas and Hatfield-Dodds, Zac and DasSarma, Nova and Tran-Johnson, Eli and Johnston, Scott and El-Showk, Sheer and Jones, Andy and Elhage, Nelson and Hume, Tristan and Chen, Anna and Bai, Yuntao and Bowman, Sam and Fort, Stanislav and Ganguli, Deep and Hernandez, Danny and Jacobson, Josh and Kernion, Jackson and Kravec, Shauna and Lovitt, Liane and Ndousse, Kamal and Olsson, Catherine and Ringer, Sam and Amodei, Dario and Brown, Tom and Clark, Jack and Joseph, Nicholas and Mann, Ben and McCandlish, Sam and Olah, Chris and Kaplan, Jared},
+  title        = {Language Models (Mostly) Know What They Know},
+  howpublished = {arXiv preprint arXiv:2207.05221},
+  year         = {2022},
+  doi          = {10.48550/arXiv.2207.05221},
+  url          = {https://arxiv.org/abs/2207.05221},
+  note         = {Preprint}
+}
+
+@inproceedings{manakul2023selfcheckgpt,
+  author    = {Manakul, Potsawee and Liusie, Adian and Gales, Mark J. F.},
+  title     = {{SelfCheckGPT}: Zero-Resource Black-Box Hallucination Detection for Generative Large Language Models},
+  booktitle = {Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing},
+  pages     = {9004--9017},
+  address   = {Singapore},
+  publisher = {Association for Computational Linguistics},
+  month     = dec,
+  year      = {2023},
+  doi       = {10.18653/v1/2023.emnlp-main.557},
+  url       = {https://aclanthology.org/2023.emnlp-main.557/}
+}
+
+@inproceedings{duan2024shifting,
+  author    = {Duan, Jinhao and Cheng, Hao and Wang, Shiqi and Zavalny, Alex and Wang, Chenan and Xu, Renjing and Kailkhura, Bhavya and Xu, Kaidi},
+  title     = {Shifting Attention to Relevance: Towards the Predictive Uncertainty Quantification of Free-Form Large Language Models},
+  booktitle = {Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  pages     = {5050--5063},
+  address   = {Bangkok, Thailand},
+  publisher = {Association for Computational Linguistics},
+  month     = aug,
+  year      = {2024},
+  doi       = {10.18653/v1/2024.acl-long.276},
+  url       = {https://aclanthology.org/2024.acl-long.276/}
+}
+
+@inproceedings{malinin2021uncertainty,
+  author    = {Malinin, Andrey and Gales, Mark},
+  title     = {Uncertainty Estimation in Autoregressive Structured Prediction},
+  booktitle = {The Ninth International Conference on Learning Representations (ICLR)},
+  year      = {2021},
+  url       = {https://openreview.net/forum?id=jN5y-zb5Q7m},
+  note      = {arXiv:2002.07650}
+}
+
+@inproceedings{jain2019attention,
+  author    = {Jain, Sarthak and Wallace, Byron C.},
+  title     = {Attention is not {E}xplanation},
+  booktitle = {Proceedings of the 2019 Conference of the North {A}merican Chapter of the Association for Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers)},
+  pages     = {3543--3556},
+  address   = {Minneapolis, Minnesota},
+  publisher = {Association for Computational Linguistics},
+  month     = jun,
+  year      = {2019},
+  doi       = {10.18653/v1/N19-1357},
+  url       = {https://aclanthology.org/N19-1357/}
+}
+
+@inproceedings{wiegreffe2019attention,
+  author    = {Wiegreffe, Sarah and Pinter, Yuval},
+  title     = {Attention is not not {E}xplanation},
+  booktitle = {Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing (EMNLP-IJCNLP)},
+  pages     = {11--20},
+  address   = {Hong Kong, China},
+  publisher = {Association for Computational Linguistics},
+  month     = nov,
+  year      = {2019},
+  doi       = {10.18653/v1/D19-1002},
+  url       = {https://aclanthology.org/D19-1002/}
+}
+
+@inproceedings{kobayashi2020attention,
+  author    = {Kobayashi, Goro and Kuribayashi, Tatsuki and Yokoi, Sho and Inui, Kentaro},
+  title     = {Attention is Not Only a Weight: Analyzing {Transformers} with Vector Norms},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  pages     = {7057--7075},
+  address   = {Online},
+  publisher = {Association for Computational Linguistics},
+  month     = nov,
+  year      = {2020},
+  doi       = {10.18653/v1/2020.emnlp-main.574},
+  url       = {https://aclanthology.org/2020.emnlp-main.574/}
+}
+
+@inproceedings{kalai2024calibrated,
+  author    = {Kalai, Adam Tauman and Vempala, Santosh S.},
+  title     = {Calibrated Language Models Must Hallucinate},
+  booktitle = {Proceedings of the 56th Annual ACM Symposium on Theory of Computing (STOC '24)},
+  pages     = {160--171},
+  address   = {Vancouver, BC, Canada},
+  publisher = {Association for Computing Machinery},
+  month     = jun,
+  year      = {2024},
+  doi       = {10.1145/3618260.3649777},
+  url       = {https://doi.org/10.1145/3618260.3649777},
+  note      = {arXiv:2311.14648}
+}
