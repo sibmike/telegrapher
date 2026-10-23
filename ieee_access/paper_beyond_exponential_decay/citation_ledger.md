@@ -29,17 +29,17 @@ Every reference cited in `main.tex` was read in full text at the passage the man
 | 23 | `li2024snapkv` | `C_importance.md` | full text | 1 accurate, 1 narrow | |
 | 24 | `yuan2025nsa` | `C_importance.md` | full text | 1 narrow | |
 | 25 | `pang2024anchor` | `A_v3_carryover.md` | full text | 1 accurate, 4 narrow | |
-| 26 | `li2025scbench` | `C_importance.md` | full text | 1 accurate | |
-| 27 | `gu2025sink` | `C_importance.md` | full text | 1 narrow | |
-| 28 | `chen2026pitfalls` | `C_importance.md` | full text | 2 accurate | |
-| 29 | `liu2026semantic` | `C_importance.md` | full text | 1 narrow | |
-| 30 | `xiao2024streamingllm` | `C_importance.md` | full text | 1 accurate, 1 narrow | |
-| 31 | `bigelow2025forking` | `B_v3_carryover.md` | full text | 2 narrow | |
-| 32 | `lin2024critical` | `B_v3_carryover.md` | full text | 2 narrow | |
-| 33 | `wang2025beyond8020` | `B_v3_carryover.md` | full text | 2 narrow | |
-| 34 | `he2025adadec` | `D_hardness.md` | full text | 2 narrow | |
-| 35 | `li2025egb` | `D_hardness.md` | full text | 1 accurate, 1 narrow | |
-| 36 | `zheng2025processbench` | `D_hardness.md` | full text | 1 narrow | |
+| 26 | `bigelow2025forking` | `B_v3_carryover.md` | full text | 2 narrow | |
+| 27 | `lin2024critical` | `B_v3_carryover.md` | full text | 2 narrow | |
+| 28 | `wang2025beyond8020` | `B_v3_carryover.md` | full text | 2 narrow | |
+| 29 | `he2025adadec` | `D_hardness.md` | full text | 2 narrow | |
+| 30 | `li2025egb` | `D_hardness.md` | full text | 1 accurate, 1 narrow | |
+| 31 | `zheng2025processbench` | `D_hardness.md` | full text | 1 narrow | |
+| 32 | `li2025scbench` | `C_importance.md` | full text | 1 accurate | |
+| 33 | `gu2025sink` | `C_importance.md` | full text | 1 narrow | |
+| 34 | `chen2026pitfalls` | `C_importance.md` | full text | 2 accurate | |
+| 35 | `liu2026semantic` | `C_importance.md` | full text | 1 narrow | |
+| 36 | `xiao2024streamingllm` | `C_importance.md` | full text | 1 accurate, 1 narrow | |
 | 37 | `wang2024chain` | `J6_steps_repair.md` | full text | 1 accurate | |
 | 38 | `bogdan2025anchors` | `D_hardness.md` | full text | 1 narrow | |
 | 39 | `abdin2024phi4` | `D_hardness.md` | full text | 1 accurate, 1 narrow | |

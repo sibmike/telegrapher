@@ -1,6 +1,6 @@
 # Plan: Beyond Exponential Decay: Rethinking Error Accumulation in Large Language Models (IEEE Access Topical Review)
-Status: REVIEWED 2026-10-22 (P1–P4 passed; agent review; author sign-off pending on the open decisions and flags in §8) · clarity-and-grace, Full size, Revise mode
-Source: `../main.tex`   Last checked against text: 2026-10-22, after the clarity-and-grace revision (pre-revision copy: IEEE version of 2026-10-12, 11:22). Diagnostic ledger: `main.ledger.md`; reverse outline: `main.reverse_outline.md`.
+Status: REVIEWED 2026-10-23, round 2 (Intent row CONFIRMED by the author; P1–P4 passed; P3 source checks all SUPPORTED WITH QUALIFICATIONS; abstract accepted by the author under L21, D9; flags A2–A28 open) · clarity-and-grace, Full size, Revise mode
+Source: `../main.tex`   Last checked against text: 2026-10-23, after round 2; before that, 2026-10-22, after the clarity-and-grace revision (pre-revision copy: IEEE version of 2026-10-12, 11:22). Diagnostic ledger: `main.ledger.md`; reverse outline: `main.reverse_outline.md`.
 Intake: Full · Revise · genre: research paper (topical review) · readers: see the frame card · American spelling · house style: `telegrapher-style-profile`, which overrides this skill's defaults (`docs/STYLE_GUIDE.md` does not exist in this repository) · venue: IEEE Access, official `ieeeaccess.cls`, numeric citations · invariants: no claim, number, citation or cross-reference changes (every one was audited; see `../ledger_parts/K_final_wording_audit.md`).
 
 ## 1. Frame card
@@ -32,6 +32,28 @@ Intake: Full · Revise · genre: research paper (topical review) · readers: see
 - **F2:** the cost is vague and not tied to a reader.
 - **F3:** no reader is named.
 - **F4:** I ¶2 places evidence with its own caveat (the chain-of-thought study, "no controlled test of length") before the point. That evidence counts as a reason for doubt, not as context.
+
+### Intent (S1-I), round 2: the author's answers, 2026-10-23. Status: CONFIRMED
+The author chose these answers from options drafted from the paper. The option texts are recorded verbatim.
+| Question | Author's answer |
+|---|---|
+| 1. What does the work offer that the reader cannot get elsewhere? | **"Refutation of a 'law'."** A demonstration that the per-token exponential-decay argument cannot establish a general law of autoregressive generation, and of where exponential decay genuinely returns (decisions, not tokens). |
+| 2. What should the reader be able to do or believe afterwards? | **Believe: decisions, not length.** Length alone does not doom autoregressive generation. Reliability is set by how many key decisions an answer contains and how often each goes wrong, and decay returns exponentially in decisions when steps add decisions. **Do (engineers): spend effort at decisions.** Select context per step, spend compute at uncertain steps, verify rather than vote among correlated models, and evaluate at key positions and report coverage. |
+| 3. What are the examples for? | **Mechanism + reach.** The running example shows the mechanism: decisions, not length, set reliability. The agent, Hanoi and Game-of-24 cases mark where the model's reach ends and decay returns. |
+| Point strength (asked with the intent; flag A1) | **Keep "both assumptions fail."** The qualitative failure is supported (Table V rows 1–4). The unmeasured quantities belong to the prediction, not to the assumptions. |
+
+**Point tag and diff (S1-R step 4):** the point recovered from I ¶3 is a *contribution* (the argument cannot establish a general law; decay returns in decisions). It matches answer 1.
+
+**Gaps against the row (finding #1, L19):**
+- **G-I1, abstract.** It ends on "propose a direct test of how key positions grow with length". That is a measurement agenda, which the author did not choose as the offer, so the last words are not the promise. The abstract also never says what an engineer should do (answer 2b).
+- **G-I2, conclusion.** It ends on "the most useful next measurement". It has no significance line for the engineer reader (answer 2b), and its now-what is the k(n) measurement only.
+- **G-I3, point paragraph (I ¶3).** It carries answers 1 and 2a. Answer 2b is carried by Section VIII and the point paragraph's housekeeping, not by the point. Acceptable for an introduction, whose function is accepting the problem, not acting. To be checked by the gate.
+
+**Unit functions (academic-papers defaults, confirmed against the Intent row):**
+- **Title:** "Is this for me?" Kept as is; not re-drafted.
+- **Abstract** (point-bearing): "Will I read?" A pitch and promise in the reader's terms, ending on the promise. **Readers:** ML/NLP researchers who cite the compounding-error argument, and engineers building long-reasoning or agentic systems. The promise is the refutation plus where decay returns, and decisions-not-length as the thing to act on.
+- **Point paragraph, I ¶3** (point-bearing): "Do I accept the problem and want the answer?" It states the contribution as what the work offers, not its strongest result.
+- **Conclusion, X** (point-bearing): "What do I take away and do, and what comes next?" The point in fresh words; significance for both readers, including where engineers spend effort; now what.
 
 ## 2. Point outline
 **Document point:** the uniform argument's two assumptions both fail. Risk concentrates at a minority of positions, and errors depend on one another. A two-rate model that counts decisions is consistent with the evidence and predicts exponential decay only when steps add decisions. So the argument cannot establish exponential decay as a general law.
@@ -95,6 +117,10 @@ Intake: Full · Revise · genre: research paper (topical review) · readers: see
 | D3 | Keep the commercial-bridge (Mostik) footnote? | keep / delete | KEEP | author (the original request), 2026-10-03; reaffirmed 2026-10-12 |
 | D4 | Reorder the five contributions by importance? | keep order / reorder | KEEP order (structural reordering of the author's contributions needs the author) | open → carried, no change |
 | D5 | Merge the condition (I ¶2 + II-D) into one stated condition in the introduction? | merge / leave split | PROPOSED merge: the introduction states the condition, and II-D keeps the detailed review comparison | agent, 2026-10-22, for author confirmation |
+| D6 | Intent row, version 1 | (see §1, Intent) | CONFIRMED. Offer = refutation of a "law"; believe decisions, not length; engineers spend effort at decisions; examples = mechanism + reach | author, 2026-10-23 |
+| D7 | Point strength (flag A1) | keep "both assumptions fail" / "the evidence cuts against both" / separate assumptions from prediction | KEEP "both assumptions fail". Flag A1 is closed. | author, 2026-10-23 |
+| D8 | Point, version 2 (unchanged from version 1, 2026-10-22) | — | The point stands. The Intent row confirms it. The change count for L20 stays at 0. | author, 2026-10-23 |
+| D9 | L21: abstract draft 2 partial on answer 9 (the offer read as a "reframing", not a "refutation") | accept / change title / third draft / revert | ACCEPT the abstract as is. The gap stays logged, and the title is unchanged. | author, 2026-10-23 |
 
 ## 6. Review record
 
@@ -227,6 +253,80 @@ Claim-level objections from the cold read (FLAGS, no change):
 - **A18:** X, "The evidence suggests that the structure of internal representations is what makes errors cluster", vs Table V "Hypothesis; indirect support … no causal test of clustering". Consider "is a candidate explanation for why errors cluster".
 - **A19:** Table III lists ProcessBench and the Li et al. entropy-gated beam search as support, while V-A notes the null reading (short solutions plus a constant rate) and that uniform beam search achieves most of the gain. VII-B's "k grows in proportion to the number of steps" for agents is an assumption that IX.5 still needs to test. This links to A12 (the mixture reading in B-D.4).
 - **A20:** practitioners lack a plain "what to do" statement. VIII lists practices but does not say how to estimate k or e_key for one's own system. That would be a content addition, which is the author's call.
+
+## 9. Round 2 (2026-10-23): updated skill (S1-I intent, P3 source checks, fresh drafters, reader gates)
+
+### P4 on the plan, round 2 (Sonnet; frame card without the Intent row, plus the point outline): PASS
+- **Answer 3 (offer):** "a reweighing of existing evidence, plus a conditional model, that shows the exponential-decay argument is not a general law and says what to measure." This carries Intent answer 1.
+- **Answer 4 (do):** "As an engineer: put reliability effort at the few key decisions." This is Intent answer 2b. The reader kept it as the action bridge and did not promote it to the contribution.
+- **Objections:**
+  - "fail" vs "not shown to hold": the author has decided this (D7).
+  - The model is consistent but untested, and dependence is not in the product form: both are already in §6, P4-5.
+  - X had no point sentence in the outline: X is re-drafted below.
+
+### P3: claims the point rests on, each checked by a fresh reader against its source (Opus readers, full text)
+| # | Claim (where) | Source passage | Inference | Verdict | Qualifications |
+|---|---|---|---|---|---|
+| C1 | The uniform argument and LeCun's conclusion (I ¶1, abstract S1) | LeCun, LinkedIn post, 27 Mar 2023: "Let e be the probability that any generated token exits the tree of "correct" answers… (1-e)^n… making e smaller (through training) but one simply cannot eliminate the problem… A solution would require to make LLMs non auto-regressive while preserving their fluency." | The post states per-token exit e, (1−e)^n, training reduces but cannot remove the problem, and a non-autoregressive fix | SUPPORTED WITH QUALIFICATIONS | "fixed" is implied by the formula, not stated; "tree", not "set"; "while preserving their fluency" is dropped; "doomed" is the paper's framing ("the argument goes"). None touches the point. |
+| C2 | A minority of positions carries the long-range information (I ¶3; IV-A) | Fang et al., §2.2 and Fig. 4(a): "only less than 10% tokens are highly influenced by long context (with LSD>2)"; K given only as "e.g., 64" | Few tokens gain materially from distant context | SUPPORTED WITH QUALIFICATIONS | The log base is not stated, so "2 nats" assumes the natural log (flag **A21**). The model behind Fig. 4 is not named. GovReport is whole-document language modeling, not answers. "Most tokens LSD < 0.5" is not used in the paper. |
+| C3 | The outcome turns on a minority of decisions (I ¶3; V-A) | Lin et al., §2: 100/100 MATH and 99/100 GSM8K critical tokens; Pass@1 ≈ 30%, Pass@64 > 90%; "65% … 87%" of critical tokens are not error tokens | One token per wrong trace largely decides recovery | SUPPORTED WITH QUALIFICATIONS | "All but one" is pooled (199/200). Criticality is defined by zero rollout success, so recovery partly follows from the definition. Per-dataset values are figure-only. The not-error-token finding supports the paper's "sensitivity, not origin" caveat (flag A4 stands). |
+| C4 | An early wrong commitment is carried forward (I ¶3; VI-A) | Zhang et al., ICML 2024 (PMLR; the LLaMA results exist only there): detection 67.37 / 87.03 / 93.67%; Table 7 per dataset | False justifications that the model rejects separately show dependence on the early answer | SUPPORTED WITH QUALIFICATIONS | The commitment rate is measured for GPT only. "Usually support with false claims" is partly built into the dataset design. The range hides GPT-3.5's 36.9% on Primality. The mechanism is the authors' hypothesis (flag **A23**). |
+| C5 | Wrong answers agree across models (I ¶3; VI-C) | Kim et al., §1, §3.2, App. C: mean pairwise agreement 0.60 on HELM (71 models, 14,042 four-option questions); baseline 1/3; 97.5% of pairs above it | Errors are shared across models | SUPPORTED WITH QUALIFICATIONS | 60% is a mean over pairs. The uniform baseline ignores attractive distractors and difficulty, which the authors flag. "Even across providers" is the abstract's summary of a regression result. |
+| C6 | Exponential decay returns when steps add decisions; agentic tasks (abstract, I ¶3, VII-B) | Ord, pp. 4, 6, 8, 9: fits "roughly as well overall"; "merely suggestive"; "one rationale … a series of steps each of which could end your attempt" | A constant hazard fits METR's data; the subtask chain gives exponential decay in the number of subtasks | SUPPORTED WITH QUALIFICATIONS | The fit is compared visually, with no statistic. Ord calls the subtask account "one rationale", and it needs equal-length, independent subtasks. He raises heterogeneity himself (links to A12). "Decisions, not tokens" is the paper's inference, and the text marks it ("as we argue"). |
+| C7 | Wrong answers agree across samples (I ¶3; App. B-D) | Chen et al., NeurIPS 2024, Lemma 1, Fig. 4(d): on hard queries "an incorrect answer is more likely to be generated than the correct one" | Repeated samples from one model converge on a wrong answer | SUPPORTED WITH QUALIFICATIONS | The agreement is a plurality, not a majority. GPT-3.5 only, at temperature 0.1, prompted as multiple choice. Only one example measures how concentrated the wrong answers are. The source "suggests" the cause where the paper's sentence says "attributes" (flag **A22**). Links to A17. |
+
+**The point's verdict: SUPPORTED.** Every claim the point rests on is supported with qualifications, and none changes the point's strength as confirmed by the author (D7). Each qualification is already carried in the body text or goes to the author flags. Nothing blocks the re-draft of the point-bearing units.
+
+### R-6, round 2: re-draft of the point-bearing units (fresh drafters, Opus)
+**Scope.** The abstract and the conclusion were re-drafted, because they missed the Intent row (G-I1, G-I2). The point paragraph (I ¶3) was kept and gated. Non-point-bearing units were not re-drafted: the Intent row confirms the existing point (D8), so it did not change since their last draft.
+
+**Briefs** (kept verbatim in `scratchpad/drafter/brief_common.md`):
+- *Inputs.* Each drafter got four things: the paper with its unit removed; the Intent row; the unit's function with the readers named; and the house style guide, the theme registry and the claims-ledger conditions.
+- *Abstract function:* "Will I read?", a pitch ending on the promise, 150–250 words, IEEE Access constraints.
+- *Conclusion function:* "What do I take away and do, and what comes next?", with its outline line (point in fresh words; significance for both readers; now what).
+
+**Abstract.**
+- **Draft 1** (235 words) was gated by a reader given only the title and the abstract. **FAIL.**
+  - Took: "a reframing… that undercuts the uniform exponential argument".
+  - Would do: "skim… the practical advice is generic".
+  - Missed: the general-law refutation; where decay returns; the belief; the engineer action; the decision to read.
+- **Draft 2** came from a second fresh drafter, given the first brief reissued plus took/missed and never draft 1. It is 236 words, then 247 after coordinator polish of two referents ("its size … the set moves" and "their … neither").
+  - **Pitch gate (title + abstract):**
+    - Offer = "A reframed reliability model, with exponential decay in the number of key decisions rather than tokens, plus graded evidence and practical guidance on where to spend effort".
+    - Do = skim, then the "recommendations on verification and evaluation at key positions".
+  - **Whole-document reader:**
+    - Offer = "A way to reframe the exponential-decay worry as a question about the number of key decisions, with a literature map and a graded list of what is and isn't measured".
+    - Do = "count decision points per answer length in my own evals… add verification at those points".
+  - **Verdict:**
+    - Answer 10 PASSES. It names the engineer's action, and the reader's main point states the belief.
+    - Answer 9 is PARTIAL. Both readers carry "decisions, not tokens" and where decay returns. Both state the refutation ("cannot establish it as a general law") as the main point but call the *offer* a "reframing".
+    - Under L21 (second miss), this goes to the author. Candidate cause, not acted on: the title's "Rethinking" primes "reframe", and the title is a pitch unit.
+
+**Conclusion.**
+- Fresh draft, 332 words. The coordinator restored the author's sentence "The weakest part of the account is its explanation…" (the drafter had replaced it with "Those two conditions are the account's weakest part", which is a changed judgment). The coordinator also cut the re-statement of the IX protocol and kept the author's closing sentence. "Neither assumption … holds up" was changed to "Both assumptions of the uniform argument fail" (the author's wording, D7). Final: 292 words.
+- **Gate (whole-document reader):** passes. The main point, the engineer action and the now-what are all recovered.
+
+**Point paragraph (I ¶3).** The gate passes. The reader's main point matches it: "Exponential decay isn't ruled out, but the uniform argument can't establish it as a general law."
+
+**Polish (coordinator):** VII opener "do not conflict" → "conflict less than they appear to". The round-1 sentence overstated; the cold reader cited Arora et al. and the "Assumption" grade.
+
+**S7:**
+- `invdiff.py` against the round-2 baseline: numbers (627), citations (247), refs (99) and labels (25) are identical.
+- Build is clean, 22 pages, 156 bibitems.
+- Floats are unchanged (pp. 4, 5, 6, 8, 10, 12).
+- Abstract is 247 words.
+
+### New claim-level flags from the round-2 cold read (no text change)
+- **A24:** dependence helps sequence-level reliability (App. A-C; VI-D: failures are concentrated in fewer answers). The abstract and introduction present dependence only as a failure of the uniform argument, and the reader read that as "errors compound". Consider one clause.
+- **A25:** App. B-D's MAKER result (about a million Hanoi moves, none wrong, with decomposition and voting) sits beside VII-C's Hanoi collapse and the abstract's "decay returns". It is not reconciled in the main text. Links to A6.
+- **A26:** the strawman worry. III defines an error as a wrong commitment, then uses e = 0.01 over 2,000 tokens. A reviewer may say no one defends e = 0.01 per *commitment-bearing* token. The illustration is the paper's; consider saying so once.
+- **A27:** the model keeps the no-repair premise (III-A), while VI-A shows that trained models partly repair. Already stated in III-A; the reader still read it as a tension.
+- **A28:** Table V grades within-answer dependence "Strong", while its support is mostly 2023-era models that reasoning models partly escape. Consider "Moderate to strong".
+
+### New author flags from P3
+- **A21:** "2 nats" (Table II; IV-A). Fang et al. write "log" with no base. Consider "2 units of log-probability", or confirm the natural log from their code.
+- **A22:** App. B-D, Chen et al.: "the authors' analysis attributes this to a mix of query difficulties" → the source "suggest[s]". The benchmarks were "prompted as multiple choice".
+- **A23:** VI-A, Zhang et al.: "two-thirds to more than nine in ten" is an unweighted mean over three datasets. It hides GPT-3.5's 36.9% on Primality. Consider "on average, by dataset".
 
 ### Open decisions carried
 D1 (readers named only through the cost), D4 (order of the contributions) and D5 (the condition now lives in I.2; II-D keeps the detailed comparison): agent-applied, for author confirmation.
